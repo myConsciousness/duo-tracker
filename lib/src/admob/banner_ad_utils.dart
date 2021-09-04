@@ -2,7 +2,7 @@
 // Use of this source code is governed by a
 // BSD-style license that can be found in the LICENSE file.
 
-import 'package:duovoc_flutter/src/admob/duovoc_admob_unit_ids.dart';
+import 'package:duovoc/src/admob/duovoc_admob_unit_ids.dart';
 import 'package:flutter/material.dart';
 import 'package:google_mobile_ads/google_mobile_ads.dart';
 

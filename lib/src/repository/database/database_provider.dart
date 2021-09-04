@@ -2,7 +2,7 @@
 // Use of this source code is governed by a
 // BSD-style license that can be found in the LICENSE file.
 
-import 'package:duovoc_flutter/src/repository/sql/create/table_definitions.dart';
+import 'package:duovoc/src/repository/sql/create/table_definitions.dart';
 import 'package:sqflite/sqflite.dart';
 import 'package:path/path.dart';
 

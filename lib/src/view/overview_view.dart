@@ -2,7 +2,7 @@
 // Use of this source code is governed by a
 // BSD-style license that can be found in the LICENSE file.
 
-import 'package:duovoc_flutter/src/http/duolingo_api.dart';
+import 'package:duovoc/src/http/duolingo_api.dart';
 import 'package:flutter/material.dart';
 
 class OverviewView extends StatefulWidget {

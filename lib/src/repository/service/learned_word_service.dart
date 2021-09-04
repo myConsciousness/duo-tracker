@@ -2,8 +2,8 @@
 // Use of this source code is governed by a
 // BSD-style license that can be found in the LICENSE file.
 
-import 'package:duovoc_flutter/src/repository/learned_word_repository.dart';
-import 'package:duovoc_flutter/src/repository/model/learned_word_model.dart';
+import 'package:duovoc/src/repository/learned_word_repository.dart';
+import 'package:duovoc/src/repository/model/learned_word_model.dart';
 
 class LearnedWordService extends LearnedWordRepository {
   /// The singleton instance of this [LearnedWordService].
