@@ -23,7 +23,7 @@ class DuovocAdmobUnitIds extends AdmobUnitIDs {
   @override
   String get releaseBanner {
     if (Platform.isAndroid) {
-      return '';
+      return 'ca-app-pub-7168775731316469/7261516225';
     }
 
     throw UnimplementedError();
@@ -32,7 +32,7 @@ class DuovocAdmobUnitIds extends AdmobUnitIDs {
   @override
   String get releaseInterstitial {
     if (Platform.isAndroid) {
-      return '';
+      return 'ca-app-pub-7168775731316469/3809356370';
     }
 
     throw UnimplementedError();

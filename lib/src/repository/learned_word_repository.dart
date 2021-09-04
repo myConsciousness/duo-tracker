@@ -1,0 +1,8 @@
+// Copyright (c) 2021, Kato Shinya. All rights reserved.
+// Use of this source code is governed by a
+// BSD-style license that can be found in the LICENSE file.
+
+import 'package:duovoc_flutter/src/repository/model/learned_word_model.dart';
+import 'package:duovoc_flutter/src/repository/repository.dart';
+
+abstract class LearnedWordRepository extends Repository<LearnedWord> {}

@@ -2,6 +2,7 @@
 // Use of this source code is governed by a
 // BSD-style license that can be found in the LICENSE file.
 
+import 'package:duovoc_flutter/src/http/duolingo_api.dart';
 import 'package:flutter/material.dart';
 
 class OverviewView extends StatefulWidget {
@@ -31,51 +32,60 @@ class _OverviewViewState extends State<OverviewView> {
   }
 
   @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+  }
+
+  @override
+  void dispose() {
+    super.dispose();
+  }
+
+  @override
   Widget build(BuildContext context) {
     return Scaffold(
-        appBar: AppBar(
-          title: Text('test'),
-        ),
-        body: Container(
-          child: ReorderableListView(
-            padding: EdgeInsets.all(10.0),
-            header: Container(
-              width: MediaQuery.of(context).size.width,
-              color: Colors.grey,
-              padding: const EdgeInsets.all(8.0),
-              child: Center(
-                child: Text(
-                  "This is header",
-                  style: TextStyle(fontSize: 18.0),
-                ),
-              ),
-            ),
-            onReorder: (oldIndex, newIndex) {
-              if (oldIndex < newIndex) {
-                // removing the item at oldIndex will shorten the list by 1.
-                newIndex -= 1;
-              }
-              final Model model = modelList.removeAt(oldIndex);
+      appBar: AppBar(
+        title: Text('test'),
+      ),
+      body: Container(
+        child: FutureBuilder(
+          future: Api.overview.request.send(),
+          builder: (context, AsyncSnapshot snapshot) {
+            if (!snapshot.hasData) {
+              return Center(child: CircularProgressIndicator());
+            }
 
-              setState(() {
-                modelList.insert(newIndex, model);
-              });
-            },
-            children: modelList.map(
-              (Model model) {
+            return ReorderableListView.builder(
+              itemCount: snapshot.data.length,
+              itemBuilder: (context, index) {
                 return Card(
-                  elevation: 2.0,
-                  key: Key(model.key),
-                  child: ListTile(
-                    leading: const Icon(Icons.people),
-                    title: Text(model.title),
-                    subtitle: Text(model.subTitle),
+                  child: Column(
+                    mainAxisSize: MainAxisSize.min,
+                    children: <Widget>[
+                      Row(
+                        children: [Text('')],
+                      )
+                    ],
                   ),
                 );
               },
-            ).toList(),
-          ),
-        ));
+              onReorder: (oldIndex, newIndex) {
+                if (oldIndex < newIndex) {
+                  // removing the item at oldIndex will shorten the list by 1.
+                  newIndex -= 1;
+                }
+
+                final Model model = modelList.removeAt(oldIndex);
+
+                super.setState(() {
+                  modelList.insert(newIndex, model);
+                });
+              },
+            );
+          },
+        ),
+      ),
+    );
   }
 }
 
