@@ -76,4 +76,40 @@ class LearnedWordService extends LearnedWordRepository {
     this.delete(learnedWord);
     return await this.insert(learnedWord);
   }
+
+  @override
+  Future<List<LearnedWord>> findByNotBookmarkedAndNotDeleted() async =>
+      await super.database.then(
+            (database) => database
+                .query(
+                  table,
+                  where:
+                      'HISTORY_TYPE = ? AND HISTORY_SUB_TYPE = ? AND DELETED = ?',
+                  whereArgs: [],
+                  orderBy: 'CREATED_AT DESC',
+                )
+                .then(
+                  (entities) => entities
+                      .map((entity) => entity.isNotEmpty
+                          ? LearnedWord.fromMap(entity)
+                          : LearnedWord.empty())
+                      .toList(),
+                ),
+          );
+
+  @override
+  Future<void> deleteByWordId(LearnedWord learnedWord) async =>
+      await super.database.then(
+            (database) => database.delete(
+              table,
+              where: 'WORD_ID = ?',
+              whereArgs: [learnedWord.wordId],
+            ),
+          );
+
+  @override
+  Future<LearnedWord> replaceByWordId(LearnedWord learnedWord) async {
+    this.deleteByWordId(learnedWord);
+    return await this.insert(learnedWord);
+  }
 }

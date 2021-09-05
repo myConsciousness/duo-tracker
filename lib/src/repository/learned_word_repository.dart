@@ -5,4 +5,10 @@
 import 'package:duovoc/src/repository/model/learned_word_model.dart';
 import 'package:duovoc/src/repository/repository.dart';
 
-abstract class LearnedWordRepository extends Repository<LearnedWord> {}
+abstract class LearnedWordRepository extends Repository<LearnedWord> {
+  Future<List<LearnedWord>> findByNotBookmarkedAndNotDeleted();
+
+  Future<void> deleteByWordId(LearnedWord learnedWord);
+
+  Future<LearnedWord> replaceByWordId(LearnedWord learnedWord);
+}

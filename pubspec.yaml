@@ -36,6 +36,9 @@ dependencies:
   admob_unit_ids: ^1.0.2
   shared_preferences: ^2.0.7
   http: ^0.13.3
+  connectivity: ^3.0.6
+  encrypt: ^5.0.1
+  local_auth: ^1.1.7
 
 dev_dependencies:
   flutter_test:

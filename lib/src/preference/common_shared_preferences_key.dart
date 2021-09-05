@@ -5,6 +5,18 @@
 import 'package:shared_preferences/shared_preferences.dart';
 
 enum CommonSharedPreferencesKey {
+  //! The User Information ↓
+  /// The user id
+  userId,
+
+  /// The username
+  username,
+
+  /// The password
+  password,
+
+  //! The User Information ↑
+
   //! The Secutiry Config ↓
 
   /// The passcode
@@ -33,6 +45,12 @@ enum CommonSharedPreferencesKey {
 extension KeyFeature on CommonSharedPreferencesKey {
   String get key {
     switch (this) {
+      case CommonSharedPreferencesKey.userId:
+        return 'user_id';
+      case CommonSharedPreferencesKey.username:
+        return 'username';
+      case CommonSharedPreferencesKey.password:
+        return 'password';
       case CommonSharedPreferencesKey.usePasscodeLock:
         return 'use_passcode_lock';
       case CommonSharedPreferencesKey.useFingerprintRecognition:
