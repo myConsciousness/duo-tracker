@@ -10,6 +10,7 @@ import 'package:duovoc/src/http/duolingo_api.dart';
 import 'package:duovoc/src/preference/common_shared_preferences_key.dart';
 import 'package:duovoc/src/repository/model/learned_word_model.dart';
 import 'package:duovoc/src/repository/service/learned_word_service.dart';
+import 'package:duovoc/src/security/encryption.dart';
 
 /// The enum that manages API adapter type.
 enum ApiAdapterType {
@@ -76,7 +77,8 @@ class _LoginApiAdapter extends _ApiAdapter {
       } else {
         CommonSharedPreferencesKey.username.setString(jsonMap['username']);
         CommonSharedPreferencesKey.userId.setString(jsonMap['user_id']);
-        CommonSharedPreferencesKey.password.setString(params['password']);
+        CommonSharedPreferencesKey.password
+            .setString(Encryption.encode(value: params['password']));
         return ApiResponse.from(errorType: ErrorType.none);
       }
     } else if (httpStatus.isClientError) {

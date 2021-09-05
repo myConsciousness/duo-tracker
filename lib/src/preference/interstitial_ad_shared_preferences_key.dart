@@ -32,14 +32,12 @@ extension KeyFeature on InterstitialAdSharedPreferencesKey {
   }
 
   Future<bool> setInt(final int value) async {
-    final SharedPreferences sharedPreferences =
-        await SharedPreferences.getInstance();
+    final sharedPreferences = await SharedPreferences.getInstance();
     return sharedPreferences.setInt(key, value);
   }
 
   Future<int> getInt({int defaultValue = -1}) async {
-    final SharedPreferences sharedPreferences =
-        await SharedPreferences.getInstance();
+    final sharedPreferences = await SharedPreferences.getInstance();
 
     if (sharedPreferences.containsKey(key)) {
       return sharedPreferences.getInt(key) ?? defaultValue;

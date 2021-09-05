@@ -1,21 +1,12 @@
-/// Copyright 2021 Kato Shinya.
-///
-/// Licensed under the Apache License, Version 2.0 (the "License"); you may not use this file except
-/// in compliance with the License. You may obtain a copy of the License at
-///
-///     http://www.apache.org/licenses/LICENSE-2.0
-///
-/// Unless required by applicable law or agreed to in writing, software distributed under the License
-/// is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express
-/// or implied. See the License for the specific language governing permissions and limitations under
-/// the License.
+// Copyright (c) 2021, Kato Shinya. All rights reserved.
+// Use of this source code is governed by a
+// BSD-style license that can be found in the LICENSE file.
 
 import 'package:local_auth/local_auth.dart';
 
 class BiometricAuthentication {
   /// The singleton instance of this [BiometricAuthentication].
-  static final BiometricAuthentication _singletonInstance =
-      BiometricAuthentication._internal();
+  static final _singletonInstance = BiometricAuthentication._internal();
 
   /// The internal constructor.
   BiometricAuthentication._internal();
@@ -23,11 +14,11 @@ class BiometricAuthentication {
   /// Returns the singleton instance of [BiometricAuthentication].
   factory BiometricAuthentication.getInstance() => _singletonInstance;
 
-  static final LocalAuthentication _localAuthentication = LocalAuthentication();
+  static final _localAuthentication = LocalAuthentication();
 
   Future<bool> authenticate({required String reason}) async {
     if (await this.isBiometricSupported()) {
-      final List<BiometricType> availableBiometricTypes =
+      final availableBiometricTypes =
           await _localAuthentication.getAvailableBiometrics();
 
       if (availableBiometricTypes.contains(BiometricType.face) ||
