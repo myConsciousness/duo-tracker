@@ -51,7 +51,7 @@ abstract class _ApiAdapter implements Adapter {
       );
     }
 
-    return await this.doExecute();
+    return await this.doExecute(params: params);
   }
 }
 
@@ -108,12 +108,14 @@ class _OverviewApiAdapter extends _ApiAdapter {
       final learningLanguage = jsonMap['learning_language'];
       final fromLanguage = jsonMap['from_language'];
 
+      final userId = await CommonSharedPreferencesKey.userId.getString();
+
       jsonMap['vocab_overview'].forEach(
         (overview) {
           this._learnedWordService.replaceByWordId(
                 LearnedWord.from(
                   wordId: overview['word'],
-                  userId: 10010,
+                  userId: userId,
                   languageString: languageString,
                   learningLanguage: learningLanguage,
                   fromLanguage: fromLanguage,

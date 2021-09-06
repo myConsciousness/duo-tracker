@@ -2,7 +2,8 @@
 // Use of this source code is governed by a
 // BSD-style license that can be found in the LICENSE file.
 
-import 'package:duovoc/src/http/duolingo_api.dart';
+import 'package:duovoc/src/component/dialog/auth_dialog.dart';
+import 'package:duovoc/src/component/common_app_bar_titles.dart';
 import 'package:flutter/material.dart';
 
 class OverviewView extends StatefulWidget {
@@ -42,51 +43,24 @@ class _OverviewViewState extends State<OverviewView> {
   }
 
   @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        title: Text('test'),
-      ),
-      body: Container(
-        child: FutureBuilder(
-          future: Api.overview.request.send(),
-          builder: (context, AsyncSnapshot snapshot) {
-            if (!snapshot.hasData) {
-              return Center(child: CircularProgressIndicator());
-            }
-
-            return ReorderableListView.builder(
-              itemCount: snapshot.data.length,
-              itemBuilder: (context, index) {
-                return Card(
-                  child: Column(
-                    mainAxisSize: MainAxisSize.min,
-                    children: <Widget>[
-                      Row(
-                        children: [Text('')],
-                      )
-                    ],
-                  ),
-                );
-              },
-              onReorder: (oldIndex, newIndex) {
-                if (oldIndex < newIndex) {
-                  // removing the item at oldIndex will shorten the list by 1.
-                  newIndex -= 1;
-                }
-
-                final Model model = modelList.removeAt(oldIndex);
-
-                super.setState(() {
-                  modelList.insert(newIndex, model);
-                });
-              },
-            );
-          },
+  Widget build(BuildContext context) => Scaffold(
+        appBar: AppBar(
+          title: CommonAppBarTitles(
+            title: 'Learned Words',
+            subTitle: 'English → Japanese',
+          ),
         ),
-      ),
-    );
-  }
+        body: Container(
+          child: TextButton(
+            child: Text('test'),
+            onPressed: () {
+              showAuthDialog(
+                context: context,
+              );
+            },
+          ),
+        ),
+      );
 }
 
 class Model {

@@ -67,10 +67,6 @@ extension DuolingoApi on Api {
 
 /// The class that represents http request.
 abstract class Request {
-  static final _session = _Session.getInstance();
-
-  _Session get session => _session;
-
   Future<http.Response> send({Map<String, String> params});
 }
 
@@ -100,6 +96,9 @@ class _LoginRequest extends Request {
   static const _paramLogin = 'login';
   static const _paramPassword = 'password';
 
+  /// The session
+  static final _session = _Session.getInstance();
+
   /// The singleton instance of [_LoginRequest].
   static final _singletonInstance = _LoginRequest._internal();
 
@@ -121,19 +120,22 @@ class _LoginRequest extends Request {
     if (!params.containsKey(_paramPassword))
       throw FlutterError('The parameter key "$_paramPassword" is required.');
 
-    return super.session.updateCookie(
-          response: await http.post(
-            _apiUri,
-            body: {
-              _paramLogin: '${params[_paramLogin]}',
-              _paramPassword: '${params[_paramPassword]}',
-            },
-          ),
-        );
+    return _session.updateCookie(
+      response: await http.post(
+        _apiUri,
+        body: {
+          _paramLogin: '${params[_paramLogin]}',
+          _paramPassword: '${params[_paramPassword]}',
+        },
+      ),
+    );
   }
 }
 
 class _OverviewRequest extends Request {
+  /// The session
+  static final _session = _Session.getInstance();
+
   /// The singleton instance of [_OverviewRequest].
   static final _singletonInstance = _OverviewRequest._internal();
 
@@ -152,11 +154,14 @@ class _OverviewRequest extends Request {
   }) async =>
       await http.get(
         _apiUri,
-        headers: super.session.headers,
+        headers: _session.headers,
       );
 }
 
 class _OverviewTranslationRequest extends Request {
+  /// The session
+  static final _session = _Session.getInstance();
+
   /// The singleton instance of [_OverviewTranslationRequest].
   static final _singletonInstance = _OverviewTranslationRequest._internal();
 
@@ -178,12 +183,15 @@ class _OverviewTranslationRequest extends Request {
     return await http.get(
       Uri.parse(
           '${Api.overviewTranslation.url}/${params['language']}/${params['fromLanguage']}'),
-      headers: super.session.headers,
+      headers: _session.headers,
     );
   }
 }
 
 class _SwitchLanguageRequest extends Request {
+  /// The session
+  static final _session = _Session.getInstance();
+
   /// The singleton instance of [_SwitchLanguageRequest].
   static final _singletonInstance = _SwitchLanguageRequest._internal();
 
@@ -202,6 +210,6 @@ class _SwitchLanguageRequest extends Request {
   }) async =>
       await http.post(
         _apiUri,
-        headers: super.session.headers,
+        headers: _session.headers,
       );
 }

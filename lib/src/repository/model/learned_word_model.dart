@@ -7,7 +7,7 @@ import 'package:duovoc/src/repository/boolean_text.dart';
 class LearnedWord {
   int id = -1;
   final String wordId;
-  final int userId;
+  final String userId;
   final String languageString;
   final String learningLanguage;
   final String fromLanguage;
@@ -36,7 +36,7 @@ class LearnedWord {
   /// Returns the empty instance of [LearnedWord].
   LearnedWord.empty()
       : this.wordId = '',
-        this.userId = -1,
+        this.userId = '',
         this.languageString = '',
         this.learningLanguage = '',
         this.fromLanguage = '',

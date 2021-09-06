@@ -9,8 +9,8 @@ class Duovoc extends StatelessWidget {
   // This widget is the root of your application.
   @override
   Widget build(BuildContext context) => MaterialApp(
-        theme: ThemeData.light(),
-        darkTheme: ThemeData.dark(),
+        debugShowCheckedModeBanner: false,
+        theme: ThemeData.dark(),
         home: OverviewView(),
       );
 }
