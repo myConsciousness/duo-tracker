@@ -6,8 +6,7 @@
 enum ErrorType {
   none,
   network,
-  username,
-  password,
+  authentication,
   client,
   server,
   unknown,
@@ -17,9 +16,13 @@ class ApiResponse {
   /// The error type
   final ErrorType errorType;
 
-  /// Returns the new instance of [ApiResponse] based on arguments.
+  /// The message
+  final String message;
+
+  /// Returns the new instance of [ApiResponse] based on [errorType] and [message].
   ApiResponse.from({
     required this.errorType,
+    this.message = '',
   });
 
   /// Checks if response has error. Returns [true] if reponse has error otherwise [false].

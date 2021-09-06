@@ -6,26 +6,26 @@ import 'package:duovoc/src/repository/boolean_text.dart';
 
 class LearnedWord {
   int id = -1;
-  final String wordId;
-  final String userId;
-  final String languageString;
-  final String learningLanguage;
-  final String fromLanguage;
-  final String lexemeId;
-  final List<String> relatedLexemes;
-  final int strengthBars;
-  final String infinitive;
-  final String wordString;
-  final String normalizedString;
-  final String pos;
-  final int lastPracticedMs;
-  final String skill;
-  final String lastPracticed;
-  final double strength;
-  final String skillUrlTitle;
-  final String gender;
-  final bool bookmarked;
-  final bool deleted;
+  String wordId;
+  String userId;
+  String languageString;
+  String learningLanguage;
+  String fromLanguage;
+  String lexemeId;
+  List<dynamic> relatedLexemes;
+  int strengthBars;
+  String infinitive;
+  String wordString;
+  String normalizedString;
+  String pos;
+  int lastPracticedMs;
+  String skill;
+  String lastPracticed;
+  double strength;
+  String skillUrlTitle;
+  String gender;
+  bool bookmarked;
+  bool deleted;
   int sortOrder = -1;
   DateTime createdAt = DateTime.now();
   DateTime updatedAt = DateTime.now();
@@ -35,7 +35,8 @@ class LearnedWord {
 
   /// Returns the empty instance of [LearnedWord].
   LearnedWord.empty()
-      : this.wordId = '',
+      : this._empty = true,
+        this.wordId = '',
         this.userId = '',
         this.languageString = '',
         this.learningLanguage = '',
@@ -80,6 +81,7 @@ class LearnedWord {
     required this.gender,
     required this.bookmarked,
     required this.deleted,
+    this.sortOrder = -1,
     required this.createdAt,
     required this.updatedAt,
   });
@@ -107,6 +109,7 @@ class LearnedWord {
         gender: map[_ColumnName.gender],
         bookmarked: map[_ColumnName.bookmarked] == BooleanText.TRUE,
         deleted: map[_ColumnName.deleted] == BooleanText.TRUE,
+        sortOrder: map[_ColumnName.sortOrder],
         createdAt: DateTime.fromMillisecondsSinceEpoch(
           map[_ColumnName.createdAt] == null ? 0 : map[_ColumnName.createdAt],
         ),
@@ -118,7 +121,6 @@ class LearnedWord {
   /// Returns this [History] model as [Map].
   Map<String, dynamic> toMap() {
     final map = Map<String, dynamic>();
-    map[_ColumnName.id] = this.id;
     map[_ColumnName.wordId] = this.wordId;
     map[_ColumnName.userId] = this.userId;
     map[_ColumnName.languageString] = this.languageString;

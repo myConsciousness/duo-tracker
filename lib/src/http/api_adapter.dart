@@ -5,12 +5,16 @@
 import 'dart:convert';
 
 import 'package:connectivity/connectivity.dart';
+import 'package:duovoc/src/component/dialog/alert_dialog.dart';
+import 'package:duovoc/src/component/snackbar/info_snack_bar.dart';
 import 'package:duovoc/src/http/api_response.dart';
 import 'package:duovoc/src/http/duolingo_api.dart';
 import 'package:duovoc/src/preference/common_shared_preferences_key.dart';
 import 'package:duovoc/src/repository/model/learned_word_model.dart';
 import 'package:duovoc/src/repository/service/learned_word_service.dart';
 import 'package:duovoc/src/security/encryption.dart';
+import 'package:flutter/material.dart';
+import 'package:open_settings/open_settings.dart';
 
 /// The enum that manages API adapter type.
 enum ApiAdapterType {
@@ -31,8 +35,10 @@ abstract class Adapter {
     }
   }
 
-  Future<ApiResponse> execute({
+  Future<void> execute({
+    required final BuildContext context,
     final params = const <String, String>{},
+    final fromDialog = false,
   });
 }
 
@@ -42,16 +48,85 @@ abstract class _ApiAdapter implements Adapter {
   });
 
   @override
-  Future<ApiResponse> execute({
+  Future<void> execute({
+    required final BuildContext context,
     final params = const <String, String>{},
+    final fromDialog = false,
   }) async {
     if (!await _Network.isConnected()) {
-      return ApiResponse.from(
-        errorType: ErrorType.network,
+      this._checkResponse(
+        context: context,
+        response: ApiResponse.from(
+          errorType: ErrorType.network,
+          message:
+              'Could not detect a valid network. Please check the network environment and the network settings of the device.',
+        ),
+        fromDialog: fromDialog,
       );
     }
 
-    return await this.doExecute(params: params);
+    this._checkResponse(
+      context: context,
+      response: await this.doExecute(params: params),
+      fromDialog: fromDialog,
+    );
+  }
+
+  void _checkResponse({
+    required final BuildContext context,
+    required ApiResponse response,
+    required bool fromDialog,
+  }) {
+    switch (response.errorType) {
+      case ErrorType.none:
+        if (response.message.isNotEmpty) {
+          InfoSnackbar.from(context: context).show(
+            content: response.message,
+          );
+        }
+
+        if (fromDialog) {
+          Navigator.pop(context);
+        }
+
+        break;
+      case ErrorType.network:
+        OpenSettings.openNetworkOperatorSetting();
+        break;
+      case ErrorType.authentication:
+        showAlertDialog(
+            context: context,
+            title: 'Authentication failure',
+            content: response.message);
+        break;
+      case ErrorType.client:
+        showAlertDialog(
+          context: context,
+          title: 'Client error',
+          content: response.message.isEmpty
+              ? 'An error occurred while communicating with the Duolingo API. Please try again.'
+              : response.message,
+        );
+        break;
+      case ErrorType.server:
+        showAlertDialog(
+          context: context,
+          title: 'Server error',
+          content: response.message.isEmpty
+              ? 'A server error occurred while communicating with the Duolingo API. Please try again later.'
+              : response.message,
+        );
+        break;
+      case ErrorType.unknown:
+        showAlertDialog(
+          context: context,
+          title: 'Unknown error',
+          content: response.message.isEmpty
+              ? 'An unknown error occurred while communicating with the Duolingo API. Please try again.'
+              : response.message,
+        );
+        break;
+    }
   }
 }
 
@@ -67,19 +142,18 @@ class _LoginApiAdapter extends _ApiAdapter {
       final Map<String, dynamic> jsonMap = jsonDecode(response.body);
 
       if (jsonMap.containsKey('failure')) {
-        final failedReason = jsonMap['failure'];
-
-        if (failedReason == 'user_does_not_exist') {
-          return ApiResponse.from(errorType: ErrorType.username);
-        } else {
-          return ApiResponse.from(errorType: ErrorType.password);
-        }
+        return ApiResponse.from(
+            errorType: ErrorType.authentication,
+            message: 'The username or password was wrong.');
       } else {
         CommonSharedPreferencesKey.username.setString(jsonMap['username']);
         CommonSharedPreferencesKey.userId.setString(jsonMap['user_id']);
         CommonSharedPreferencesKey.password
             .setString(Encryption.encode(value: params['password']));
-        return ApiResponse.from(errorType: ErrorType.none);
+        return ApiResponse.from(
+          errorType: ErrorType.none,
+          message: 'Your account has been authenticated.',
+        );
       }
     } else if (httpStatus.isClientError) {
       return ApiResponse.from(errorType: ErrorType.client);
@@ -110,36 +184,34 @@ class _OverviewApiAdapter extends _ApiAdapter {
 
       final userId = await CommonSharedPreferencesKey.userId.getString();
 
-      jsonMap['vocab_overview'].forEach(
-        (overview) {
-          this._learnedWordService.replaceByWordId(
-                LearnedWord.from(
-                  wordId: overview['word'],
-                  userId: userId,
-                  languageString: languageString,
-                  learningLanguage: learningLanguage,
-                  fromLanguage: fromLanguage,
-                  lexemeId: overview['lexeme_id'],
-                  relatedLexemes: overview['related_lexemes'],
-                  strengthBars: overview['strength_bars'],
-                  infinitive: overview['infinitive'],
-                  wordString: overview['word_string'],
-                  normalizedString: overview['normalized_string'],
-                  pos: overview['pos'],
-                  lastPracticedMs: overview['last_practiced_ms'],
-                  skill: overview['skill'],
-                  lastPracticed: overview['last_practiced'],
-                  strength: overview['strength'],
-                  skillUrlTitle: overview['skill_url_title'],
-                  gender: overview['gender'],
-                  bookmarked: false,
-                  deleted: false,
-                  createdAt: DateTime.now(),
-                  updatedAt: DateTime.now(),
-                ),
-              );
-        },
-      );
+      for (final Map<String, dynamic> overview in jsonMap['vocab_overview']) {
+        await this._learnedWordService.replaceByWordId(
+              LearnedWord.from(
+                wordId: overview['id'],
+                userId: userId,
+                languageString: languageString,
+                learningLanguage: learningLanguage,
+                fromLanguage: fromLanguage,
+                lexemeId: overview['lexeme_id'] ?? '',
+                relatedLexemes: overview['related_lexemes'],
+                strengthBars: overview['strength_bars'] ?? -1,
+                infinitive: overview['infinitive'] ?? '',
+                wordString: overview['word_string'] ?? '',
+                normalizedString: overview['normalized_string'] ?? '',
+                pos: overview['pos'] ?? '',
+                lastPracticedMs: overview['last_practiced_ms'] ?? -1,
+                skill: overview['skill'] ?? '',
+                lastPracticed: overview['last_practiced'] ?? '',
+                strength: overview['strength'] ?? 0.0,
+                skillUrlTitle: overview['skill_url_title'] ?? '',
+                gender: overview['gender'] ?? '',
+                bookmarked: false,
+                deleted: false,
+                createdAt: DateTime.now(),
+                updatedAt: DateTime.now(),
+              ),
+            );
+      }
 
       return ApiResponse.from(errorType: ErrorType.none);
     } else if (httpStatus.isClientError) {
@@ -147,6 +219,7 @@ class _OverviewApiAdapter extends _ApiAdapter {
     } else if (httpStatus.isServerError) {
       return ApiResponse.from(errorType: ErrorType.server);
     }
+
     return ApiResponse.from(errorType: ErrorType.unknown);
   }
 }

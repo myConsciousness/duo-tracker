@@ -2,8 +2,13 @@
 // Use of this source code is governed by a
 // BSD-style license that can be found in the LICENSE file.
 
-import 'package:duovoc/src/component/dialog/auth_dialog.dart';
 import 'package:duovoc/src/component/common_app_bar_titles.dart';
+import 'package:duovoc/src/component/dialog/auth_dialog.dart';
+import 'package:duovoc/src/http/api_adapter.dart';
+import 'package:duovoc/src/preference/common_shared_preferences_key.dart';
+import 'package:duovoc/src/repository/model/learned_word_model.dart';
+import 'package:duovoc/src/repository/service/learned_word_service.dart';
+import 'package:duovoc/src/security/encryption.dart';
 import 'package:flutter/material.dart';
 
 class OverviewView extends StatefulWidget {
@@ -14,22 +19,13 @@ class OverviewView extends StatefulWidget {
 }
 
 class _OverviewViewState extends State<OverviewView> {
-  late List<Model> modelList;
+  final _learnedWordService = LearnedWordService.getInstance();
+
+  late List<LearnedWord> _learndWords;
 
   @override
   void initState() {
     super.initState();
-    modelList = [];
-    List<String> titleList = ["Title A", "Title B", "Title C"];
-    List<String> subTitleList = ["SubTitle A", "SubTitle B", "SubTitle C"];
-    for (int i = 0; i < 3; i++) {
-      Model model = Model(
-        title: titleList[i],
-        subTitle: subTitleList[i],
-        key: i.toString(),
-      );
-      modelList.add(model);
-    }
   }
 
   @override
@@ -51,26 +47,79 @@ class _OverviewViewState extends State<OverviewView> {
           ),
         ),
         body: Container(
-          child: TextButton(
-            child: Text('test'),
-            onPressed: () {
-              showAuthDialog(
-                context: context,
+          child: FutureBuilder(
+            future: this._fetchLearnedWords(context: context),
+            builder: (context, AsyncSnapshot snapshot) {
+              if (!snapshot.hasData) {
+                return Center(child: CircularProgressIndicator());
+              }
+
+              final List<LearnedWord> learnedWords = snapshot.data;
+
+              return ReorderableListView.builder(
+                itemCount: learnedWords.length,
+                onReorder: (oldIndex, newIndex) {
+                  if (oldIndex < newIndex) {
+                    // removing the item at oldIndex will shorten the list by 1.
+                    newIndex -= 1;
+                  }
+
+                  final learnedWord = this._learndWords.removeAt(oldIndex);
+
+                  super.setState(() {
+                    this._learndWords.insert(newIndex, learnedWord);
+                  });
+                },
+                itemBuilder: (context, index) {
+                  final learnedWord = learnedWords[index];
+                  return Card(
+                    elevation: 2.0,
+                    key: Key(learnedWords[index].sortOrder.toString()),
+                    child: Column(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          children: [
+                            Text(learnedWord.lastPracticed),
+                            Text('${learnedWord.strength * 100}'),
+                          ],
+                        ),
+                        Divider(),
+                        ListTile(
+                          leading: const Icon(Icons.people),
+                          title: Text(learnedWord.wordString),
+                          subtitle: Text(learnedWord.wordString),
+                        ),
+                      ],
+                    ),
+                  );
+                },
               );
             },
           ),
         ),
       );
-}
 
-class Model {
-  final String title;
-  final String subTitle;
-  final String key;
+  Future<List<LearnedWord>> _fetchLearnedWords({
+    required BuildContext context,
+  }) async {
+    await Adapter.of(type: ApiAdapterType.login).execute(
+      context: context,
+      params: {
+        'login': await CommonSharedPreferencesKey.username.getString(),
+        'password': Encryption.decode(
+          value: await CommonSharedPreferencesKey.password.getString(),
+        ),
+      },
+    );
 
-  Model({
-    required this.title,
-    required this.subTitle,
-    required this.key,
-  });
+    await Adapter.of(type: ApiAdapterType.overview).execute(context: context);
+
+    final learnedWords =
+        await this._learnedWordService.findByNotBookmarkedAndNotDeleted();
+    this._learndWords = learnedWords;
+
+    return learnedWords;
+  }
 }

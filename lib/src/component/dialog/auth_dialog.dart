@@ -3,13 +3,9 @@
 // BSD-style license that can be found in the LICENSE file.
 
 import 'package:duovoc/src/component/common_text_field.dart';
-import 'package:duovoc/src/component/dialog/alert_dialog.dart';
-import 'package:duovoc/src/component/snackbar/info_snack_bar.dart';
 import 'package:duovoc/src/component/snackbar/warn_snack_bar.dart';
 import 'package:duovoc/src/http/api_adapter.dart';
-import 'package:duovoc/src/http/api_response.dart';
 import 'package:flutter/material.dart';
-import 'package:open_settings/open_settings.dart';
 
 final _usernameController = TextEditingController();
 final _passwordController = TextEditingController();
@@ -84,56 +80,14 @@ Future<T?> showAuthDialog<T>({
                             return;
                           }
 
-                          final response =
-                              await Adapter.of(type: ApiAdapterType.login)
-                                  .execute(
+                          await Adapter.of(type: ApiAdapterType.login).execute(
+                            context: context,
                             params: {
                               'login': '${_usernameController.text}',
                               'password': '$_rawPassword',
                             },
+                            fromDialog: true,
                           );
-
-                          switch (response.errorType) {
-                            case ErrorType.none:
-                              InfoSnackbar.from(context: context).show(
-                                  content:
-                                      'Your account has been authenticated.');
-
-                              Navigator.pop(context);
-                              break;
-                            case ErrorType.network:
-                              OpenSettings.openNetworkOperatorSetting();
-                              break;
-                            case ErrorType.username:
-                            case ErrorType.password:
-                              showAlertDialog(
-                                  context: context,
-                                  title: 'Authentication failure',
-                                  content:
-                                      'The username or password was wrong.');
-                              break;
-                            case ErrorType.client:
-                              showAlertDialog(
-                                  context: context,
-                                  title: 'Client error',
-                                  content:
-                                      'An error occurred while communicating with the Duolingo API. Please try again.');
-                              break;
-                            case ErrorType.server:
-                              showAlertDialog(
-                                  context: context,
-                                  title: 'Server error',
-                                  content:
-                                      'A server error occurred while communicating with the Duolingo API. Please try again later.');
-                              break;
-                            case ErrorType.unknown:
-                              showAlertDialog(
-                                  context: context,
-                                  title: 'Unknown error',
-                                  content:
-                                      'An unknown error occurred while communicating with the Duolingo API. Please try again.');
-                              break;
-                          }
                         },
                       ),
                     ],

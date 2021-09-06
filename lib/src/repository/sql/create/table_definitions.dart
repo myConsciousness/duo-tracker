@@ -7,9 +7,9 @@ class TableDefinitions {
   /// The learned word
   static const String learnedWord = '''
         CREATE TABLE LEARNED_WORD (
-          ID INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT,
-          WORD_ID TEXT NOT NULL UNIQUE,
-          USER_ID String NOT NULL,
+          ID INTEGER PRIMARY KEY AUTOINCREMENT,
+          WORD_ID TEXT NOT NULL,
+          USER_ID TEXT NOT NULL,
           LANGUAGE_STRING TEXT NOT NULL,
           LEARNING_LANGUAGE TEXT NOT NULL,
           FROM_LANGUAGE TEXT NOT NULL,
@@ -26,9 +26,9 @@ class TableDefinitions {
           STRENGTH REAL,
           SKILL_URL_TITLE TEXT,
           GENDER TEXT,
-          BOOKMARKED INTEGER NOT NULL,
-          DELETED INTEGER NOT NULL,
-          SORT_ORDER INTEGER NOT NULL AUTOINCREMENT,
+          BOOKMARKED TEXT NOT NULL,
+          DELETED TEXT NOT NULL,
+          SORT_ORDER INTEGER,
           CREATED_AT INTEGER NOT NULL,
           UPDATED_AT INTEGER NOT NULL
         )

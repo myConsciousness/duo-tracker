@@ -2,11 +2,35 @@
 // Use of this source code is governed by a
 // BSD-style license that can be found in the LICENSE file.
 
+import 'package:duovoc/src/http/api_adapter.dart';
+import 'package:duovoc/src/preference/common_shared_preferences_key.dart';
+import 'package:duovoc/src/security/encryption.dart';
 import 'package:duovoc/src/view/overview_view.dart';
 import 'package:flutter/material.dart';
 
-class Duovoc extends StatelessWidget {
-  // This widget is the root of your application.
+class Duovoc extends StatefulWidget {
+  Duovoc({Key? key}) : super(key: key);
+
+  @override
+  _DuovocState createState() => _DuovocState();
+}
+
+class _DuovocState extends State<Duovoc> {
+  @override
+  void initState() {
+    super.initState();
+  }
+
+  @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+  }
+
+  @override
+  void dispose() {
+    super.dispose();
+  }
+
   @override
   Widget build(BuildContext context) => MaterialApp(
         debugShowCheckedModeBanner: false,

@@ -34,7 +34,6 @@ class DatabaseProvider {
         ),
         onCreate: (Database database, int version) async {
           await database.execute(TableDefinitions.learnedWord);
-          await database.execute(TableDefinitions.learnedWordRelatedLexeme);
         },
         onUpgrade: (Database db, int oldVersion, int newVersion) async {
           // Do nothing now
