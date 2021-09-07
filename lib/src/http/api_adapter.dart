@@ -173,7 +173,7 @@ class _OverviewApiAdapter extends _ApiAdapter {
   Future<ApiResponse> doExecute({
     final params = const <String, String>{},
   }) async {
-    final response = await Api.overview.request.send();
+    final response = await Api.learnedWord.request.send();
     final httpStatus = _HttpStatus.from(code: response.statusCode);
 
     if (httpStatus.isAccepted) {

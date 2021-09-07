@@ -14,10 +14,10 @@ enum Api {
   login,
 
   /// Overview
-  overview,
+  learnedWord,
 
   /// Overview Translation
-  overviewTranslation,
+  wordHint,
 
   /// Switch language
   switchLanguage,
@@ -35,9 +35,9 @@ extension DuolingoApi on Api {
         return 'https://www.duolingo.com/2017-06-30/users?username=';
       case Api.login:
         return 'https://www.duolingo.com/login';
-      case Api.overview:
+      case Api.learnedWord:
         return 'https://www.duolingo.com/vocabulary/overview';
-      case Api.overviewTranslation:
+      case Api.wordHint:
         return 'https://d2.duolingo.com/words/hints';
       case Api.switchLanguage:
         return 'https://www.duolingo.com/switch_language';
@@ -53,10 +53,10 @@ extension DuolingoApi on Api {
         return _LoginRequest.getInstance();
       case Api.login:
         return _LoginRequest.getInstance();
-      case Api.overview:
-        return _OverviewRequest.getInstance();
-      case Api.overviewTranslation:
-        return _OverviewTranslationRequest.getInstance();
+      case Api.learnedWord:
+        return _LearnedWordRequest.getInstance();
+      case Api.wordHint:
+        return _WordHintRequest.getInstance();
       case Api.switchLanguage:
         return _SwitchLanguageRequest.getInstance();
       case Api.versionInfo:
@@ -68,6 +68,14 @@ extension DuolingoApi on Api {
 /// The class that represents http request.
 abstract class Request {
   Future<http.Response> send({Map<String, String> params});
+
+  void checkParameterKey({
+    required Map<String, String> params,
+    required String name,
+  }) {
+    if (!params.containsKey(name))
+      throw FlutterError('The parameter key "$name" is required.');
+  }
 }
 
 class _Session {
@@ -93,7 +101,10 @@ class _Session {
 }
 
 class _LoginRequest extends Request {
+  /// The required parameter for username
   static const _paramLogin = 'login';
+
+  /// The required parameter for password
   static const _paramPassword = 'password';
 
   /// The session
@@ -115,10 +126,8 @@ class _LoginRequest extends Request {
   Future<http.Response> send({
     final params = const <String, String>{},
   }) async {
-    if (!params.containsKey(_paramLogin))
-      throw FlutterError('The parameter key "$_paramLogin" is required.');
-    if (!params.containsKey(_paramPassword))
-      throw FlutterError('The parameter key "$_paramPassword" is required.');
+    super.checkParameterKey(params: params, name: _paramLogin);
+    super.checkParameterKey(params: params, name: _paramPassword);
 
     return _session.updateCookie(
       response: await http.post(
@@ -132,21 +141,21 @@ class _LoginRequest extends Request {
   }
 }
 
-class _OverviewRequest extends Request {
+class _LearnedWordRequest extends Request {
   /// The session
   static final _session = _Session.getInstance();
 
-  /// The singleton instance of [_OverviewRequest].
-  static final _singletonInstance = _OverviewRequest._internal();
+  /// The singleton instance of [_LearnedWordRequest].
+  static final _singletonInstance = _LearnedWordRequest._internal();
 
   /// The API uri
-  static final _apiUri = Uri.parse(Api.overview.url);
+  static final _apiUri = Uri.parse(Api.learnedWord.url);
 
   /// The internal constructor for singleton.
-  _OverviewRequest._internal();
+  _LearnedWordRequest._internal();
 
-  /// Returns the singleton instance of [_OverviewRequest].
-  factory _OverviewRequest.getInstance() => _singletonInstance;
+  /// Returns the singleton instance of [_LearnedWordRequest].
+  factory _LearnedWordRequest.getInstance() => _singletonInstance;
 
   @override
   Future<http.Response> send({
@@ -158,31 +167,41 @@ class _OverviewRequest extends Request {
       );
 }
 
-class _OverviewTranslationRequest extends Request {
+class _WordHintRequest extends Request {
+  /// The required parameter for learning language
+  static const _paramLearningLanguage = 'learningLanguage';
+
+  /// The required parameter for from language
+  static const _paramFromLanguage = 'fromLanguage';
+
+  /// The required parameter for sentence
+  static const _paramSentence = 'sentence';
+
   /// The session
   static final _session = _Session.getInstance();
 
-  /// The singleton instance of [_OverviewTranslationRequest].
-  static final _singletonInstance = _OverviewTranslationRequest._internal();
+  /// The singleton instance of [_WordHintRequest].
+  static final _singletonInstance = _WordHintRequest._internal();
 
   /// The internal constructor for singleton.
-  _OverviewTranslationRequest._internal();
+  _WordHintRequest._internal();
 
-  /// Returns the singleton instance of [_OverviewTranslationRequest].
-  factory _OverviewTranslationRequest.getInstance() => _singletonInstance;
+  /// Returns the singleton instance of [_WordHintRequest].
+  factory _WordHintRequest.getInstance() => _singletonInstance;
 
   @override
   Future<http.Response> send({
     final params = const <String, String>{},
   }) async {
-    if (!params.containsKey('language'))
-      throw FlutterError('The parameter key "language" is required.');
-    if (!params.containsKey('fromLanguage'))
-      throw FlutterError('The parameter key "fromLanguage" is required.');
+    super.checkParameterKey(params: params, name: _paramLearningLanguage);
+    super.checkParameterKey(params: params, name: _paramFromLanguage);
+    super.checkParameterKey(params: params, name: _paramSentence);
 
     return await http.get(
       Uri.parse(
-          '${Api.overviewTranslation.url}/${params['language']}/${params['fromLanguage']}'),
+        Uri.encodeFull(
+            '${Api.wordHint.url}/${params[_paramLearningLanguage]}/${params[_paramFromLanguage]}?sentence=${params[_paramSentence]}'),
+      ),
       headers: _session.headers,
     );
   }
