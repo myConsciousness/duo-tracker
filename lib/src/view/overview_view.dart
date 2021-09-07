@@ -3,7 +3,6 @@
 // BSD-style license that can be found in the LICENSE file.
 
 import 'package:duovoc/src/component/common_app_bar_titles.dart';
-import 'package:duovoc/src/component/dialog/auth_dialog.dart';
 import 'package:duovoc/src/http/api_adapter.dart';
 import 'package:duovoc/src/preference/common_shared_preferences_key.dart';
 import 'package:duovoc/src/repository/model/learned_word_model.dart';
@@ -104,7 +103,7 @@ class _OverviewViewState extends State<OverviewView> {
   Future<List<LearnedWord>> _fetchLearnedWords({
     required BuildContext context,
   }) async {
-    await Adapter.of(type: ApiAdapterType.login).execute(
+    await ApiAdapter.of(type: ApiAdapterType.login).execute(
       context: context,
       params: {
         'login': await CommonSharedPreferencesKey.username.getString(),
@@ -114,7 +113,8 @@ class _OverviewViewState extends State<OverviewView> {
       },
     );
 
-    await Adapter.of(type: ApiAdapterType.overview).execute(context: context);
+    await ApiAdapter.of(type: ApiAdapterType.overview)
+        .execute(context: context);
 
     final learnedWords =
         await this._learnedWordService.findByNotBookmarkedAndNotDeleted();

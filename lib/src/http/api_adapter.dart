@@ -22,9 +22,9 @@ enum ApiAdapterType {
   overview,
 }
 
-abstract class Adapter {
+abstract class ApiAdapter {
   /// Returns API adapter linked to the [type] passed as an argument.
-  factory Adapter.of({
+  factory ApiAdapter.of({
     required ApiAdapterType type,
   }) {
     switch (type) {
@@ -42,7 +42,7 @@ abstract class Adapter {
   });
 }
 
-abstract class _ApiAdapter implements Adapter {
+abstract class _ApiAdapter implements ApiAdapter {
   Future<ApiResponse> doExecute({
     final params = const <String, String>{},
   });

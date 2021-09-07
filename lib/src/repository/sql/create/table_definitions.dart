@@ -5,7 +5,7 @@
 /// The class that manages table definitions.
 class TableDefinitions {
   /// The learned word
-  static const String learnedWord = '''
+  static const learnedWord = '''
         CREATE TABLE LEARNED_WORD (
           ID INTEGER PRIMARY KEY AUTOINCREMENT,
           WORD_ID TEXT NOT NULL,
@@ -34,8 +34,21 @@ class TableDefinitions {
         )
         ''';
 
+  static const wordHint = '''
+        CREATE TABLE WORD_HINT (
+          ID INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT,
+          WORD_ID TEXT NOT NULL,
+          USER_ID TEXT NOT NULL,
+          LEARNING_LANGUAGE TEXT NOT NULL,
+          FROM_LANGUAGE TEXT NOT NULL,
+          HINT TEXT NOT NULL,
+          CREATED_AT INTEGER NOT NULL,
+          UPDATED_AT INTEGER NOT NULL
+        )
+        ''';
+
   /// The learned word related lexeme
-  static const String learnedWordRelatedLexeme = '''
+  static const learnedWordRelatedLexeme = '''
         CREATE TABLE LEARNED_WORD_RELATED_LEXEME (
           ID INTEGER NOT NULL PRIMARY KEY,
           LEXEME_ID TEXT NOT NULL UNIQUE,

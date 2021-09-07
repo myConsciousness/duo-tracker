@@ -80,7 +80,8 @@ Future<T?> showAuthDialog<T>({
                             return;
                           }
 
-                          await Adapter.of(type: ApiAdapterType.login).execute(
+                          await ApiAdapter.of(type: ApiAdapterType.login)
+                              .execute(
                             context: context,
                             params: {
                               'login': '${_usernameController.text}',

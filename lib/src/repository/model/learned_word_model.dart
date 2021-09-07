@@ -118,7 +118,7 @@ class LearnedWord {
         ),
       );
 
-  /// Returns this [History] model as [Map].
+  /// Returns this [LearnedWord] model as [Map].
   Map<String, dynamic> toMap() {
     final map = Map<String, dynamic>();
     map[_ColumnName.wordId] = this.wordId;
