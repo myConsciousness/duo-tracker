@@ -82,4 +82,45 @@ class WordHintService extends WordHintRepository {
     await this.delete(wordHint);
     return await this.insert(wordHint);
   }
+
+  @override
+  Future<List<WordHint>> findByWordIdAndUserId(
+    String wordId,
+    String userId,
+  ) async =>
+      await super.database.then(
+            (database) => database
+                .query(
+                  this.table,
+                  where: 'WORD_ID = ? AND USER_ID = ?',
+                  whereArgs: [
+                    wordId,
+                    userId,
+                  ],
+                  orderBy: 'CREATED_AT DESC',
+                )
+                .then(
+                  (entities) => entities
+                      .map((entity) => entity.isNotEmpty
+                          ? WordHint.fromMap(entity)
+                          : WordHint.empty())
+                      .toList(),
+                ),
+          );
+
+  @override
+  Future<void> deleteByWordIdAndUserId(
+    String wordId,
+    String userId,
+  ) async =>
+      await super.database.then(
+            (database) => database.delete(
+              this.table,
+              where: 'WORD_ID = ? AND USER_ID = ?',
+              whereArgs: [
+                wordId,
+                userId,
+              ],
+            ),
+          );
 }

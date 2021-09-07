@@ -32,6 +32,7 @@ class _DuovocState extends State<Duovoc> {
   Widget build(BuildContext context) => MaterialApp(
         debugShowCheckedModeBanner: false,
         theme: ThemeData.dark(),
+        darkTheme: ThemeData.dark(),
         home: OverviewView(),
       );
 }

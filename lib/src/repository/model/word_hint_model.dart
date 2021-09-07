@@ -6,9 +6,10 @@ class WordHint {
   int id = -1;
   String wordId;
   String userId;
-  String hint;
   String learningLanguage;
   String fromLanguage;
+  String value;
+  String hint;
   DateTime createdAt = DateTime.now();
   DateTime updatedAt = DateTime.now();
 
@@ -22,6 +23,7 @@ class WordHint {
         this.userId = '',
         this.learningLanguage = '',
         this.fromLanguage = '',
+        this.value = '',
         this.hint = '';
 
   /// Returns the new instance of [WordHint] based on the parameters.
@@ -31,6 +33,7 @@ class WordHint {
     required this.userId,
     required this.learningLanguage,
     required this.fromLanguage,
+    required this.value,
     required this.hint,
     required this.createdAt,
     required this.updatedAt,
@@ -43,6 +46,7 @@ class WordHint {
         userId: map[_ColumnName.userId],
         learningLanguage: map[_ColumnName.learningLanguage],
         fromLanguage: map[_ColumnName.fromLanguage],
+        value: map[_ColumnName.value],
         hint: map[_ColumnName.hint],
         createdAt: DateTime.fromMillisecondsSinceEpoch(
           map[_ColumnName.createdAt] == null ? 0 : map[_ColumnName.createdAt],
@@ -59,6 +63,7 @@ class WordHint {
     map[_ColumnName.userId] = this.userId;
     map[_ColumnName.learningLanguage] = this.learningLanguage;
     map[_ColumnName.fromLanguage] = this.fromLanguage;
+    map[_ColumnName.value] = this.value;
     map[_ColumnName.hint] = this.hint;
     map[_ColumnName.createdAt] = this.createdAt.millisecondsSinceEpoch;
     map[_ColumnName.updatedAt] = this.updatedAt.millisecondsSinceEpoch;
@@ -76,6 +81,7 @@ class _ColumnName {
   static const userId = 'USER_ID';
   static const learningLanguage = 'LEARNING_LANGUAGE';
   static const fromLanguage = 'FROM_LANGUAGE';
+  static const value = 'VALUE';
   static const hint = 'HINT';
   static const createdAt = 'CREATED_AT';
   static const updatedAt = 'UPDATED_AT';

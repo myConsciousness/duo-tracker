@@ -5,4 +5,14 @@
 import 'package:duovoc/src/repository/model/word_hint_model.dart';
 import 'package:duovoc/src/repository/repository.dart';
 
-abstract class WordHintRepository extends Repository<WordHint> {}
+abstract class WordHintRepository extends Repository<WordHint> {
+  Future<List<WordHint>> findByWordIdAndUserId(
+    String wordId,
+    String userId,
+  );
+
+  Future<void> deleteByWordIdAndUserId(
+    String wordId,
+    String userId,
+  );
+}

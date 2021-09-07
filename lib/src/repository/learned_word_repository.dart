@@ -6,9 +6,19 @@ import 'package:duovoc/src/repository/model/learned_word_model.dart';
 import 'package:duovoc/src/repository/repository.dart';
 
 abstract class LearnedWordRepository extends Repository<LearnedWord> {
-  Future<List<LearnedWord>> findByNotBookmarkedAndNotDeleted();
+  Future<List<LearnedWord>> findByUserIdAndNotDeleted(
+    String userId,
+  );
 
-  Future<void> deleteByWordId(LearnedWord learnedWord);
+  Future<LearnedWord> findByWordIdAndUserId(
+    String wordId,
+    String userId,
+  );
 
-  Future<LearnedWord> replaceByWordId(LearnedWord learnedWord);
+  Future<void> deleteByWordIdAndUserId(
+    String wordId,
+    String userId,
+  );
+
+  Future<LearnedWord> replaceByWordIdAndUserId(LearnedWord learnedWord);
 }

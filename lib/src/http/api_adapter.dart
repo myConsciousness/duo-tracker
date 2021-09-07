@@ -6,12 +6,15 @@ import 'dart:convert';
 
 import 'package:connectivity/connectivity.dart';
 import 'package:duovoc/src/component/dialog/alert_dialog.dart';
+import 'package:duovoc/src/component/dialog/auth_dialog.dart';
 import 'package:duovoc/src/component/snackbar/info_snack_bar.dart';
 import 'package:duovoc/src/http/api_response.dart';
 import 'package:duovoc/src/http/duolingo_api.dart';
 import 'package:duovoc/src/preference/common_shared_preferences_key.dart';
 import 'package:duovoc/src/repository/model/learned_word_model.dart';
+import 'package:duovoc/src/repository/model/word_hint_model.dart';
 import 'package:duovoc/src/repository/service/learned_word_service.dart';
+import 'package:duovoc/src/repository/service/word_hint_service.dart';
 import 'package:duovoc/src/security/encryption.dart';
 import 'package:flutter/material.dart';
 import 'package:open_settings/open_settings.dart';
@@ -31,7 +34,7 @@ abstract class ApiAdapter {
       case ApiAdapterType.login:
         return _LoginApiAdapter();
       case ApiAdapterType.overview:
-        return _OverviewApiAdapter();
+        return _LearnedWordApiAdapter();
     }
   }
 
@@ -44,6 +47,7 @@ abstract class ApiAdapter {
 
 abstract class _ApiAdapter implements ApiAdapter {
   Future<ApiResponse> doExecute({
+    required final BuildContext context,
     final params = const <String, String>{},
   });
 
@@ -54,9 +58,10 @@ abstract class _ApiAdapter implements ApiAdapter {
     final fromDialog = false,
   }) async {
     if (!await _Network.isConnected()) {
-      this._checkResponse(
+      await this._checkResponse(
         context: context,
         response: ApiResponse.from(
+          fromApi: FromApi.none,
           errorType: ErrorType.network,
           message:
               'Could not detect a valid network. Please check the network environment and the network settings of the device.',
@@ -65,18 +70,21 @@ abstract class _ApiAdapter implements ApiAdapter {
       );
     }
 
-    this._checkResponse(
+    await this._checkResponse(
       context: context,
-      response: await this.doExecute(params: params),
+      response: await this.doExecute(
+        context: context,
+        params: params,
+      ),
       fromDialog: fromDialog,
     );
   }
 
-  void _checkResponse({
+  Future<void> _checkResponse({
     required final BuildContext context,
     required ApiResponse response,
     required bool fromDialog,
-  }) {
+  }) async {
     switch (response.errorType) {
       case ErrorType.none:
         if (response.message.isNotEmpty) {
@@ -92,6 +100,12 @@ abstract class _ApiAdapter implements ApiAdapter {
         break;
       case ErrorType.network:
         OpenSettings.openNetworkOperatorSetting();
+        break;
+      case ErrorType.noUserRegistered:
+        showAuthDialog(
+          context: context,
+          barrierDismissible: false,
+        );
         break;
       case ErrorType.authentication:
         showAlertDialog(
@@ -133,9 +147,29 @@ abstract class _ApiAdapter implements ApiAdapter {
 class _LoginApiAdapter extends _ApiAdapter {
   @override
   Future<ApiResponse> doExecute({
+    required final BuildContext context,
     final params = const <String, String>{},
   }) async {
-    final response = await Api.login.request.send(params: params);
+    final username = await CommonSharedPreferencesKey.username.getString();
+    final password = await CommonSharedPreferencesKey.password.getString();
+
+    if (username.isEmpty || password.isEmpty) {
+      /// Enter this block at first time
+      return ApiResponse.from(
+        fromApi: FromApi.login,
+        errorType: ErrorType.noUserRegistered,
+      );
+    }
+
+    final response = await Api.login.request.send(
+      params: {
+        'login': username,
+        'password': Encryption.decode(
+          value: password,
+        ),
+      },
+    );
+
     final httpStatus = _HttpStatus.from(code: response.statusCode);
 
     if (httpStatus.isAccepted) {
@@ -143,34 +177,44 @@ class _LoginApiAdapter extends _ApiAdapter {
 
       if (jsonMap.containsKey('failure')) {
         return ApiResponse.from(
+            fromApi: FromApi.login,
             errorType: ErrorType.authentication,
             message: 'The username or password was wrong.');
       } else {
-        CommonSharedPreferencesKey.username.setString(jsonMap['username']);
-        CommonSharedPreferencesKey.userId.setString(jsonMap['user_id']);
-        CommonSharedPreferencesKey.password
-            .setString(Encryption.encode(value: params['password']));
+        await CommonSharedPreferencesKey.userId.setString(jsonMap['user_id']);
+
         return ApiResponse.from(
+          fromApi: FromApi.login,
           errorType: ErrorType.none,
           message: 'Your account has been authenticated.',
         );
       }
     } else if (httpStatus.isClientError) {
-      return ApiResponse.from(errorType: ErrorType.client);
+      return ApiResponse.from(
+        fromApi: FromApi.login,
+        errorType: ErrorType.client,
+      );
     } else if (httpStatus.isServerError) {
-      return ApiResponse.from(errorType: ErrorType.server);
+      return ApiResponse.from(
+        fromApi: FromApi.login,
+        errorType: ErrorType.server,
+      );
     }
 
-    return ApiResponse.from(errorType: ErrorType.unknown);
+    return ApiResponse.from(
+      fromApi: FromApi.login,
+      errorType: ErrorType.unknown,
+    );
   }
 }
 
-class _OverviewApiAdapter extends _ApiAdapter {
+class _LearnedWordApiAdapter extends _ApiAdapter {
   /// The learned word service
   final _learnedWordService = LearnedWordService.getInstance();
 
   @override
   Future<ApiResponse> doExecute({
+    required final BuildContext context,
     final params = const <String, String>{},
   }) async {
     final response = await Api.learnedWord.request.send();
@@ -178,14 +222,17 @@ class _OverviewApiAdapter extends _ApiAdapter {
 
     if (httpStatus.isAccepted) {
       final jsonMap = jsonDecode(response.body);
-      final languageString = jsonMap['language_string'];
-      final learningLanguage = jsonMap['learning_language'];
-      final fromLanguage = jsonMap['from_language'];
+      final String languageString = jsonMap['language_string'];
+      final String learningLanguage = jsonMap['learning_language'];
+      final String fromLanguage = jsonMap['from_language'];
 
       final userId = await CommonSharedPreferencesKey.userId.getString();
 
       for (final Map<String, dynamic> overview in jsonMap['vocab_overview']) {
-        await this._learnedWordService.replaceByWordId(
+        final String wordId = overview['id'];
+        final String wordString = overview['word_string'];
+
+        await this._learnedWordService.replaceByWordIdAndUserId(
               LearnedWord.from(
                 wordId: overview['id'],
                 userId: userId,
@@ -196,7 +243,7 @@ class _OverviewApiAdapter extends _ApiAdapter {
                 relatedLexemes: overview['related_lexemes'],
                 strengthBars: overview['strength_bars'] ?? -1,
                 infinitive: overview['infinitive'] ?? '',
-                wordString: overview['word_string'] ?? '',
+                wordString: wordString,
                 normalizedString: overview['normalized_string'] ?? '',
                 pos: overview['pos'] ?? '',
                 lastPracticedMs: overview['last_practiced_ms'] ?? -1,
@@ -211,16 +258,189 @@ class _OverviewApiAdapter extends _ApiAdapter {
                 updatedAt: DateTime.now(),
               ),
             );
+
+        // Update word hint based on word id
+        _WordHintApiAdapter().execute(
+          context: context,
+          params: {
+            'wordId': wordId,
+            'userId': userId,
+            'learningLanguage': learningLanguage,
+            'fromLanguage': fromLanguage,
+            'sentence': wordString,
+          },
+        );
       }
 
-      return ApiResponse.from(errorType: ErrorType.none);
+      return ApiResponse.from(
+        fromApi: FromApi.learnedWord,
+        errorType: ErrorType.none,
+      );
     } else if (httpStatus.isClientError) {
-      return ApiResponse.from(errorType: ErrorType.client);
+      return ApiResponse.from(
+        fromApi: FromApi.learnedWord,
+        errorType: ErrorType.client,
+      );
     } else if (httpStatus.isServerError) {
-      return ApiResponse.from(errorType: ErrorType.server);
+      return ApiResponse.from(
+        fromApi: FromApi.learnedWord,
+        errorType: ErrorType.server,
+      );
     }
 
-    return ApiResponse.from(errorType: ErrorType.unknown);
+    return ApiResponse.from(
+      fromApi: FromApi.learnedWord,
+      errorType: ErrorType.unknown,
+    );
+  }
+}
+
+class _WordHintApiAdapter extends _ApiAdapter {
+  /// The required parameter for word id
+  static const _paramWordId = 'wordId';
+
+  /// The word hint service
+  final _wordHintService = WordHintService.getInstance();
+
+  @override
+  Future<ApiResponse> doExecute({
+    required final BuildContext context,
+    final params = const <String, String>{},
+  }) async {
+    if (!params.containsKey(_paramWordId))
+      throw FlutterError('The parameter "$_paramWordId" is required.');
+
+    final response = await Api.wordHint.request.send(params: params);
+    final httpStatus = _HttpStatus.from(code: response.statusCode);
+
+    if (httpStatus.isAccepted) {
+      final hintsMatrix = this._createHintsMatrix(
+        json: jsonDecode(response.body),
+      );
+
+      await this._refreshWordHints(
+        params: params,
+        hintsMatrix: hintsMatrix,
+      );
+
+      return ApiResponse.from(
+        fromApi: FromApi.wordHint,
+        errorType: ErrorType.none,
+      );
+    } else if (httpStatus.isClientError) {
+      return ApiResponse.from(
+        fromApi: FromApi.wordHint,
+        errorType: ErrorType.client,
+      );
+    } else if (httpStatus.isServerError) {
+      return ApiResponse.from(
+        fromApi: FromApi.wordHint,
+        errorType: ErrorType.server,
+      );
+    }
+
+    return ApiResponse.from(
+      fromApi: FromApi.wordHint,
+      errorType: ErrorType.unknown,
+    );
+  }
+
+  Map<String, List<String>> _createHintsMatrix({
+    required Map<String, dynamic> json,
+  }) {
+    final hintsMatrix = <String, List<String>>{};
+
+    String wordString = '';
+    int colspan = -1;
+
+    for (final Map<String, dynamic> token in json['tokens']) {
+      wordString = this._fetchWordString(token: token);
+
+      final hintTable = token['hint_table'];
+      final hints = <String>[];
+
+      for (Map<String, dynamic> row in hintTable['rows']) {
+        for (final Map<String, dynamic> cell in row['cells']) {
+          if (cell.isNotEmpty) {
+            hints.add(cell['hint']);
+            colspan = cell['colspan'] ?? -1;
+          }
+        }
+      }
+
+      String key = colspan <= 0 ? wordString : wordString.substring(0, colspan);
+      colspan = -1;
+
+      if (hintsMatrix.containsKey(key)) {
+        // Merge hints to matrix
+        final List<String> hintsInternal = hintsMatrix[key]!;
+
+        for (String hint in hints) {
+          if (!hintsInternal.contains(hint)) {
+            hintsInternal.add(hint);
+          }
+        }
+      } else {
+        hintsMatrix[key] = hints;
+      }
+    }
+
+    return hintsMatrix;
+  }
+
+  String _fetchWordString({
+    required Map<String, dynamic> token,
+  }) {
+    final hintTable = token['hint_table'];
+
+    if (!hintTable.containsKey('headers')) {
+      return token['value'];
+    }
+
+    String wordString = '';
+
+    for (final Map<String, dynamic> header in hintTable['headers']) {
+      wordString += header['token'];
+    }
+
+    return wordString;
+  }
+
+  Future<void> _refreshWordHints({
+    required Map<String, String> params,
+    required Map<String, List<String>> hintsMatrix,
+  }) async {
+    final wordId = params[_paramWordId]!;
+    final userId = await CommonSharedPreferencesKey.userId.getString();
+    final learningLanguage = params['learningLanguage']!;
+    final fromLanguage = params['fromLanguage']!;
+
+    // Refresh word hint based on word id and user id
+    await this._wordHintService.deleteByWordIdAndUserId(
+          wordId,
+          userId,
+        );
+
+    hintsMatrix.forEach(
+      (String value, List<String> hints) {
+        hints.forEach(
+          (hint) async {
+            await this._wordHintService.insert(
+                  WordHint.from(
+                    wordId: wordId,
+                    userId: userId,
+                    learningLanguage: learningLanguage,
+                    fromLanguage: fromLanguage,
+                    value: value,
+                    hint: hint,
+                    createdAt: DateTime.now(),
+                    updatedAt: DateTime.now(),
+                  ),
+                );
+          },
+        );
+      },
+    );
   }
 }
 

@@ -5,6 +5,8 @@
 import 'package:duovoc/src/component/common_text_field.dart';
 import 'package:duovoc/src/component/snackbar/warn_snack_bar.dart';
 import 'package:duovoc/src/http/api_adapter.dart';
+import 'package:duovoc/src/preference/common_shared_preferences_key.dart';
+import 'package:duovoc/src/security/encryption.dart';
 import 'package:flutter/material.dart';
 
 final _usernameController = TextEditingController();
@@ -80,13 +82,19 @@ Future<T?> showAuthDialog<T>({
                             return;
                           }
 
+                          /**
+                           * Since there is no user information in the common field when the application is first started,
+                           * the user name and password are temporarily stored so that they can be used in the authentication process.
+                           * The user ID will be stored when the authentication process with the API is completed.
+                           */
+                          CommonSharedPreferencesKey.username
+                              .setString(_usernameController.text);
+                          CommonSharedPreferencesKey.password.setString(
+                              Encryption.encode(value: _rawPassword));
+
                           await ApiAdapter.of(type: ApiAdapterType.login)
                               .execute(
                             context: context,
-                            params: {
-                              'login': '${_usernameController.text}',
-                              'password': '$_rawPassword',
-                            },
                             fromDialog: true,
                           );
                         },

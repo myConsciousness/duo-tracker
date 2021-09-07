@@ -3,6 +3,7 @@
 // BSD-style license that can be found in the LICENSE file.
 
 import 'package:duovoc/src/repository/boolean_text.dart';
+import 'package:duovoc/src/repository/model/word_hint_model.dart';
 
 class LearnedWord {
   int id = -1;
@@ -29,6 +30,9 @@ class LearnedWord {
   int sortOrder = -1;
   DateTime createdAt = DateTime.now();
   DateTime updatedAt = DateTime.now();
+
+  /// The word hints from word hint repository
+  List<WordHint> wordHints = [];
 
   /// The flag that represents if this model is exist
   bool _empty = false;

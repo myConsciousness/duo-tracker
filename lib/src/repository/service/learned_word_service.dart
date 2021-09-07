@@ -5,6 +5,7 @@
 import 'package:duovoc/src/repository/boolean_text.dart';
 import 'package:duovoc/src/repository/learned_word_repository.dart';
 import 'package:duovoc/src/repository/model/learned_word_model.dart';
+import 'package:duovoc/src/repository/service/word_hint_service.dart';
 
 class LearnedWordService extends LearnedWordRepository {
   /// The singleton instance of this [LearnedWordService].
@@ -15,6 +16,9 @@ class LearnedWordService extends LearnedWordRepository {
 
   /// Returns the singleton instance of [LearnedWordService].
   factory LearnedWordService.getInstance() => _singletonInstance;
+
+  /// The word hint service
+  final _wordHintService = WordHintService.getInstance();
 
   @override
   String get table => 'LEARNED_WORD';
@@ -88,14 +92,16 @@ class LearnedWordService extends LearnedWordRepository {
   }
 
   @override
-  Future<List<LearnedWord>> findByNotBookmarkedAndNotDeleted() async {
-    return await super.database.then(
+  Future<List<LearnedWord>> findByUserIdAndNotDeleted(
+    String userId,
+  ) async {
+    final learedWords = await super.database.then(
           (database) => database
               .query(
                 this.table,
-                where: 'BOOKMARKED = ? AND DELETED = ?',
+                where: 'USER_ID = ? AND DELETED = ?',
                 whereArgs: [
-                  BooleanText.FALSE,
+                  userId,
                   BooleanText.FALSE,
                 ],
                 orderBy: 'CREATED_AT DESC',
@@ -108,29 +114,74 @@ class LearnedWordService extends LearnedWordRepository {
                     .toList(),
               ),
         );
+
+    for (final LearnedWord learnedWord in learedWords) {
+      learnedWord.wordHints = await this
+          ._wordHintService
+          .findByWordIdAndUserId(learnedWord.wordId, userId);
+    }
+
+    return learedWords;
   }
 
   @override
-  Future<void> deleteByWordId(LearnedWord learnedWord) async =>
+  Future<void> deleteByWordIdAndUserId(
+    String wordId,
+    String userId,
+  ) async =>
       await super.database.then(
             (database) => database.delete(
               this.table,
-              where: 'WORD_ID = ?',
+              where: 'WORD_ID = ? AND USER_ID = ?',
               whereArgs: [
-                learnedWord.wordId,
+                wordId,
+                userId,
               ],
             ),
           );
 
   @override
-  Future<LearnedWord> replaceByWordId(LearnedWord learnedWord) async {
-    await this.deleteByWordId(learnedWord);
-    final newLearnedWord = await this.insert(learnedWord);
+  Future<LearnedWord> findByWordIdAndUserId(
+          String wordId, String userId) async =>
+      await super.database.then(
+            (database) => database.query(
+              this.table,
+              where: 'WORD_ID = ? AND USER_ID = ?',
+              whereArgs: [
+                wordId,
+                userId,
+              ],
+            ).then(
+              (entity) => entity.isNotEmpty
+                  ? LearnedWord.fromMap(entity[0])
+                  : LearnedWord.empty(),
+            ),
+          );
 
-    // Update sort order as id
-    newLearnedWord.sortOrder = newLearnedWord.id;
-    await this.update(newLearnedWord);
+  @override
+  Future<LearnedWord> replaceByWordIdAndUserId(LearnedWord learnedWord) async {
+    LearnedWord storedLearnedWord = await this.findByWordIdAndUserId(
+      learnedWord.wordId,
+      learnedWord.userId,
+    );
 
-    return newLearnedWord;
+    if (storedLearnedWord.isEmpty()) {
+      storedLearnedWord = await this.insert(learnedWord);
+
+      // Update sort order as id
+      storedLearnedWord.sortOrder = storedLearnedWord.id;
+      await this.update(storedLearnedWord);
+    } else {
+      learnedWord.id = storedLearnedWord.id;
+      learnedWord.bookmarked = storedLearnedWord.bookmarked;
+      learnedWord.deleted = storedLearnedWord.deleted;
+      learnedWord.sortOrder = storedLearnedWord.sortOrder;
+      learnedWord.bookmarked = storedLearnedWord.bookmarked;
+      learnedWord.createdAt = storedLearnedWord.createdAt;
+
+      await this.update(learnedWord);
+    }
+
+    return storedLearnedWord;
   }
 }
