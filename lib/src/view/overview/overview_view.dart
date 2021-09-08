@@ -10,7 +10,7 @@ import 'package:duovoc/src/repository/model/learned_word_model.dart';
 import 'package:duovoc/src/repository/model/word_hint_model.dart';
 import 'package:duovoc/src/repository/service/learned_word_service.dart';
 import 'package:duovoc/src/view/lesson_tips_view.dart';
-import 'package:duovoc/src/view/overview_tab_view.dart';
+import 'package:duovoc/src/view/overview/overview_tab_view.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 

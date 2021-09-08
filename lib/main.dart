@@ -2,7 +2,7 @@
 // Use of this source code is governed by a
 // BSD-style license that can be found in the LICENSE file.
 
-import 'package:duovoc/src/view/overview_tab_view.dart';
+import 'package:duovoc/src/view/duovoc_home_view.dart';
 import 'package:flutter/material.dart';
 
 class Duovoc extends StatefulWidget {
@@ -33,6 +33,6 @@ class _DuovocState extends State<Duovoc> {
         debugShowCheckedModeBanner: false,
         theme: ThemeData.dark(),
         darkTheme: ThemeData.dark(),
-        home: OverviewTabView(),
+        home: DuovocHomeView(),
       );
 }

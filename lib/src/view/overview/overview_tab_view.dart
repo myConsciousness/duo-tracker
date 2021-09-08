@@ -2,7 +2,8 @@
 // Use of this source code is governed by a
 // BSD-style license that can be found in the LICENSE file.
 
-import 'package:duovoc/src/view/overview_view.dart';
+import 'package:duovoc/src/utils/size_config.dart';
+import 'package:duovoc/src/view/overview/overview_view.dart';
 import 'package:flutter/material.dart';
 
 /// The enum that represents overview tab type.
@@ -52,23 +53,22 @@ class _OverviewTabViewState extends State<OverviewTabView> {
             unselectedLabelColor: Colors.white.withOpacity(0.3),
             unselectedLabelStyle: TextStyle(fontSize: 11.0),
             labelColor: Colors.white,
-            labelStyle: const TextStyle(fontSize: 13.0),
+            labelStyle: const TextStyle(fontSize: 12.0),
             indicatorColor: Colors.white,
             indicatorWeight: 2.0,
             indicator: BoxDecoration(
               border: Border(
                 bottom: BorderSide(
+                  width: this.getProportionWidth(3),
                   color: Theme.of(context).accentColor,
                 ),
               ),
             ),
-            // labelColor: Colors.white,
-            // unselectedLabelColor: Colors.grey,
             tabs: [
-              Tab(icon: Icon(Icons.list_alt)),
-              Tab(icon: Icon(Icons.bookmark_added)),
-              Tab(icon: Icon(Icons.done)),
-              Tab(icon: Icon(Icons.hide_source)),
+              this._tabTitle('All'),
+              this._tabTitle('Bookmarked'),
+              this._tabTitle('Completed'),
+              this._tabTitle('Hidden'),
             ],
           ),
           body: TabBarView(
@@ -81,4 +81,23 @@ class _OverviewTabViewState extends State<OverviewTabView> {
           ),
         ),
       );
+
+  Widget _tabTitle(final String title) {
+    return Padding(
+      padding: EdgeInsets.symmetric(
+        horizontal: this.getProportionWidth(0.5),
+      ),
+      child: Tab(text: title),
+    );
+  }
+
+  double getProportionHeight(double inputHeight) {
+    final screenHeight = SizeConfig.screenHeight;
+    return (inputHeight / 812.0) * screenHeight;
+  }
+
+  double getProportionWidth(double inputWidth) {
+    final screenWidth = SizeConfig.screenWidth;
+    return (inputWidth / 375.0) * screenWidth;
+  }
 }
