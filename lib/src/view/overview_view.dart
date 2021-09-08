@@ -100,6 +100,7 @@ class _OverviewViewState extends State<OverviewView> {
                     final learnedWord = learnedWords[index];
 
                     // TODO: 完了済みと削除済みのレコードは非表示にする。
+                    // TODO: 学習中言語と学習時使用言語の情報を認証完了時に取得し格納する。
                     return Card(
                       elevation: 2.0,
                       key: Key(learnedWords[index].sortOrder.toString()),
