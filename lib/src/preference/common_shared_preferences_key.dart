@@ -15,6 +15,12 @@ enum CommonSharedPreferencesKey {
   /// The password
   password,
 
+  /// The current learning language
+  currentLearningLanguage,
+
+  /// The current from language
+  currentFromLanguage,
+
   //! The User Information ↑
 
   //! The Sync Config ↓
@@ -58,6 +64,10 @@ extension KeyFeature on CommonSharedPreferencesKey {
         return 'username';
       case CommonSharedPreferencesKey.password:
         return 'password';
+      case CommonSharedPreferencesKey.currentLearningLanguage:
+        return 'current_learning_language';
+      case CommonSharedPreferencesKey.currentFromLanguage:
+        return 'current_from_language';
       case CommonSharedPreferencesKey.datetimeLastAutoSyncedOverview:
         return 'datetime_last_auto_synced_overview';
       case CommonSharedPreferencesKey.usePasscodeLock:

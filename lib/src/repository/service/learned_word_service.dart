@@ -2,7 +2,6 @@
 // Use of this source code is governed by a
 // BSD-style license that can be found in the LICENSE file.
 
-import 'package:duovoc/src/repository/boolean_text.dart';
 import 'package:duovoc/src/repository/learned_word_repository.dart';
 import 'package:duovoc/src/repository/model/learned_word_model.dart';
 import 'package:duovoc/src/repository/service/word_hint_service.dart';
@@ -92,18 +91,21 @@ class LearnedWordService extends LearnedWordRepository {
   }
 
   @override
-  Future<List<LearnedWord>> findByUserIdAndNotCompletedAndNotDeleted(
+  Future<List<LearnedWord>> findByUserIdAndLearningLanguageAndFromLanguage(
     String userId,
+    String learningLanguage,
+    String fromLanguage,
   ) async {
     final learedWords = await super.database.then(
           (database) => database
               .query(
                 this.table,
-                where: 'USER_ID = ? AND COMPLETED = ? AND DELETED = ?',
+                where:
+                    'USER_ID = ? AND LEARNING_LANGUAGE = ? AND FROM_LANGUAGE = ?',
                 whereArgs: [
                   userId,
-                  BooleanText.FALSE,
-                  BooleanText.FALSE,
+                  learningLanguage,
+                  fromLanguage,
                 ],
                 orderBy: 'SORT_ORDER',
               )

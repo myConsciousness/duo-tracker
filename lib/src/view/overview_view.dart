@@ -52,14 +52,18 @@ class _OverviewViewState extends State<OverviewView> {
           ),
           actions: [
             IconButton(
+              tooltip: 'Update Learned Words',
               icon: Icon(Icons.sync),
-              onPressed: () {},
+              onPressed: () async {
+                await this._syncOverview();
+                super.setState(() {});
+              },
             ),
           ],
         ),
         body: Container(
           child: FutureBuilder(
-            future: this._fetchLearnedWords(context: context),
+            future: this._fetchDataSource(context: context),
             builder: (context, AsyncSnapshot snapshot) {
               if (!snapshot.hasData) {
                 return Center(
@@ -79,163 +83,170 @@ class _OverviewViewState extends State<OverviewView> {
 
               final List<LearnedWord> learnedWords = snapshot.data;
 
-              return ReorderableListView.builder(
-                itemCount: learnedWords.length,
-                onReorder: (oldIndex, newIndex) async {
-                  await this._swapSortOrder(
-                    learnedWords: learnedWords,
-                    oldIndex: oldIndex,
-                    newIndex: newIndex,
-                  );
+              return RefreshIndicator(
+                onRefresh: () async {
+                  super.setState(() {});
                 },
-                itemBuilder: (context, index) {
-                  final learnedWord = learnedWords[index];
-                  return Card(
-                    elevation: 2.0,
-                    key: Key(learnedWords[index].sortOrder.toString()),
-                    child: Padding(
-                      padding: EdgeInsets.all(10),
-                      child: Column(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        children: [
-                          Row(
-                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                            children: [
-                              this._createCardHeaderText(
-                                  title: learnedWord.skillUrlTitle,
-                                  subTitle: 'Lesson'),
-                              this._createCardHeaderText(
-                                title: '${learnedWord.strengthBars}',
-                                subTitle: 'Level',
-                              ),
-                              this._createCardHeaderText(
-                                title:
-                                    '${(learnedWord.strength * 100.0).toStringAsFixed(2)} %',
-                                subTitle: 'Proficiency',
-                              ),
-                              this._createCardHeaderText(
-                                  title: this._datetimeFormat.format(
-                                        DateTime.fromMillisecondsSinceEpoch(
-                                            learnedWord.lastPracticedMs),
-                                      ),
-                                  subTitle: 'Last practiced at'),
-                            ],
-                          ),
-                          Divider(),
-                          Row(
-                            mainAxisAlignment: MainAxisAlignment.start,
-                            children: [
-                              Expanded(
-                                child: ListTile(
-                                  leading: IconButton(
-                                    icon: this._audioPlayer.state ==
-                                            PlayerState.PAUSED
-                                        ? const Icon(Icons.pause_circle)
-                                        : const Icon(Icons.play_circle),
-                                    onPressed: () async {
-                                      // this._audioPlayer.state ==
-                                      //         PlayerState.PLAYING
-                                      //     ? await this._audioPlayer.pause()
-                                      //     : await this._audioPlayer.play('');
-                                    },
-                                  ),
-                                  title: Text(learnedWord.wordString),
-                                  subtitle: this._createCardHintText(
-                                    wordHints: learnedWord.wordHints,
+                child: ReorderableListView.builder(
+                  itemCount: learnedWords.length,
+                  onReorder: (oldIndex, newIndex) async {
+                    await this._swapSortOrder(
+                      learnedWords: learnedWords,
+                      oldIndex: oldIndex,
+                      newIndex: newIndex,
+                    );
+                  },
+                  itemBuilder: (context, index) {
+                    final learnedWord = learnedWords[index];
+
+                    // TODO: 完了済みと削除済みのレコードは非表示にする。
+                    return Card(
+                      elevation: 2.0,
+                      key: Key(learnedWords[index].sortOrder.toString()),
+                      child: Padding(
+                        padding: EdgeInsets.all(10),
+                        child: Column(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            Row(
+                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                              children: [
+                                this._createCardHeaderText(
+                                    title: learnedWord.skillUrlTitle,
+                                    subTitle: 'Lesson'),
+                                this._createCardHeaderText(
+                                  title: '${learnedWord.strengthBars}',
+                                  subTitle: 'Level',
+                                ),
+                                this._createCardHeaderText(
+                                  title:
+                                      '${(learnedWord.strength * 100.0).toStringAsFixed(2)} %',
+                                  subTitle: 'Proficiency',
+                                ),
+                                this._createCardHeaderText(
+                                    title: this._datetimeFormat.format(
+                                          DateTime.fromMillisecondsSinceEpoch(
+                                              learnedWord.lastPracticedMs),
+                                        ),
+                                    subTitle: 'Last practiced at'),
+                              ],
+                            ),
+                            Divider(),
+                            Row(
+                              mainAxisAlignment: MainAxisAlignment.start,
+                              children: [
+                                Expanded(
+                                  child: ListTile(
+                                    leading: IconButton(
+                                      tooltip: this._audioPlayer.state ==
+                                              PlayerState.PAUSED
+                                          ? 'Pause Audio'
+                                          : 'Play Audio',
+                                      icon: this._audioPlayer.state ==
+                                              PlayerState.PAUSED
+                                          ? const Icon(Icons.pause_circle)
+                                          : const Icon(Icons.play_circle),
+                                      onPressed: () async {
+                                        // this._audioPlayer.state ==
+                                        //         PlayerState.PLAYING
+                                        //     ? await this._audioPlayer.pause()
+                                        //     : await this._audioPlayer.play('');
+                                      },
+                                    ),
+                                    title: Text(learnedWord.wordString),
+                                    subtitle: this._createCardHintText(
+                                      wordHints: learnedWord.wordHints,
+                                    ),
                                   ),
                                 ),
-                              ),
-                              IconButton(
-                                icon: learnedWord.bookmarked
-                                    ? const Icon(Icons.bookmark_added)
-                                    : const Icon(Icons.bookmark_add),
-                                onPressed: () async {
-                                  learnedWord.bookmarked =
-                                      !learnedWord.bookmarked;
-                                  learnedWord.updatedAt = DateTime.now();
+                                IconButton(
+                                  tooltip: learnedWord.bookmarked
+                                      ? 'Remove Bookmark'
+                                      : 'Add Bookmark',
+                                  icon: learnedWord.bookmarked
+                                      ? const Icon(Icons.bookmark_added)
+                                      : const Icon(Icons.bookmark_add),
+                                  onPressed: () async {
+                                    learnedWord.bookmarked =
+                                        !learnedWord.bookmarked;
+                                    learnedWord.updatedAt = DateTime.now();
 
-                                  super.setState(() async {
                                     await this._learnedWordService.update(
                                           learnedWord,
                                         );
-                                  });
-                                },
-                              ),
-                            ],
-                          ),
-                          Divider(),
-                          Row(
-                            mainAxisAlignment: MainAxisAlignment.end,
-                            crossAxisAlignment: CrossAxisAlignment.end,
-                            children: [
-                              IconButton(
-                                icon: Icon(Icons.more),
-                                onPressed: () => Navigator.push(
-                                  context,
-                                  MaterialPageRoute(
-                                    builder: (_) => LessonTipsView(
-                                        lessonName: learnedWord.skill,
-                                        html: ''),
+
+                                    super.setState(() {});
+                                  },
+                                ),
+                              ],
+                            ),
+                            Divider(),
+                            Row(
+                              mainAxisAlignment: MainAxisAlignment.end,
+                              crossAxisAlignment: CrossAxisAlignment.end,
+                              children: [
+                                IconButton(
+                                  tooltip: 'Show Tips & Notes',
+                                  icon: Icon(Icons.more),
+                                  onPressed: () => Navigator.push(
+                                    context,
+                                    MaterialPageRoute(
+                                      builder: (_) => LessonTipsView(
+                                          lessonName: learnedWord.skill,
+                                          html: ''),
+                                    ),
                                   ),
                                 ),
-                              ),
-                              IconButton(
-                                icon: Icon(Icons.done),
-                                onPressed: () {
-                                  learnedWord.completed = true;
-                                  learnedWord.updatedAt = DateTime.now();
+                                IconButton(
+                                  tooltip: 'Complete',
+                                  icon: Icon(Icons.done),
+                                  onPressed: () async {
+                                    learnedWord.completed = true;
+                                    learnedWord.updatedAt = DateTime.now();
 
-                                  super.setState(() {
-                                    this
+                                    await this
                                         ._learnedWordService
                                         .update(learnedWord);
-                                  });
-                                },
-                              ),
-                              IconButton(
-                                icon: Icon(Icons.hide_source),
-                                onPressed: () {
-                                  learnedWord.deleted = true;
-                                  learnedWord.updatedAt = DateTime.now();
 
-                                  super.setState(() {
-                                    this
+                                    super.setState(() {});
+                                  },
+                                ),
+                                IconButton(
+                                  tooltip: 'Hide',
+                                  icon: Icon(Icons.hide_source),
+                                  onPressed: () async {
+                                    learnedWord.deleted = true;
+                                    learnedWord.updatedAt = DateTime.now();
+
+                                    await this
                                         ._learnedWordService
                                         .update(learnedWord);
-                                  });
-                                },
-                              ),
-                            ],
-                          ),
-                        ],
+
+                                    super.setState(() {});
+                                  },
+                                ),
+                              ],
+                            ),
+                          ],
+                        ),
                       ),
-                    ),
-                  );
-                },
+                    );
+                  },
+                ),
               );
             },
           ),
         ),
       );
 
-  Future<List<LearnedWord>> _fetchLearnedWords({
+  Future<List<LearnedWord>> _fetchDataSource({
     required BuildContext context,
   }) async {
     if (await this._canAutoSync()) {
-      await ApiAdapter.of(type: ApiAdapterType.login).execute(context: context);
-      await ApiAdapter.of(type: ApiAdapterType.overview)
-          .execute(context: context);
-
-      await CommonSharedPreferencesKey.datetimeLastAutoSyncedOverview.setInt(
-        DateTime.now().millisecondsSinceEpoch,
-      );
+      await this._syncOverview();
     }
 
-    return await this
-        ._learnedWordService
-        .findByUserIdAndNotCompletedAndNotDeleted(
-          await CommonSharedPreferencesKey.userId.getString(),
-        );
+    return this._findLearnedWords();
   }
 
   Future<bool> _canAutoSync() async => (DateTime.now()
@@ -247,6 +258,24 @@ class _OverviewViewState extends State<OverviewView> {
           )
           .inDays >=
       7);
+
+  Future<void> _syncOverview() async {
+    await ApiAdapter.of(type: ApiAdapterType.login).execute(context: context);
+    await ApiAdapter.of(type: ApiAdapterType.overview)
+        .execute(context: context);
+
+    await CommonSharedPreferencesKey.datetimeLastAutoSyncedOverview.setInt(
+      DateTime.now().millisecondsSinceEpoch,
+    );
+  }
+
+  Future<List<LearnedWord>> _findLearnedWords() async => await this
+      ._learnedWordService
+      .findByUserIdAndLearningLanguageAndFromLanguage(
+        await CommonSharedPreferencesKey.userId.getString(),
+        await CommonSharedPreferencesKey.currentLearningLanguage.getString(),
+        await CommonSharedPreferencesKey.currentFromLanguage.getString(),
+      );
 
   Widget _createCardHeaderText({
     required String title,
