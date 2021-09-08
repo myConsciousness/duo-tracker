@@ -10,11 +10,17 @@ import 'package:duovoc/src/repository/model/learned_word_model.dart';
 import 'package:duovoc/src/repository/model/word_hint_model.dart';
 import 'package:duovoc/src/repository/service/learned_word_service.dart';
 import 'package:duovoc/src/view/lesson_tips_view.dart';
+import 'package:duovoc/src/view/overview_tab_view.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 
 class OverviewView extends StatefulWidget {
-  OverviewView({Key? key}) : super(key: key);
+  final OverviewTabType overviewTabType;
+
+  OverviewView({
+    Key? key,
+    required this.overviewTabType,
+  }) : super(key: key);
 
   @override
   _OverviewViewState createState() => _OverviewViewState();
@@ -23,14 +29,13 @@ class OverviewView extends StatefulWidget {
 class _OverviewViewState extends State<OverviewView> {
   final _learnedWordService = LearnedWordService.getInstance();
 
-  final DateFormat _datetimeFormat = DateFormat('yyyy/MM/dd HH:mm:ss');
+  final _datetimeFormat = DateFormat('yyyy/MM/dd HH:mm:ss');
 
-  final AudioPlayer _audioPlayer = AudioPlayer();
+  final _audioPlayer = AudioPlayer();
 
   @override
   void initState() {
     super.initState();
-    _audioPlayer.state;
   }
 
   @override
@@ -89,150 +94,15 @@ class _OverviewViewState extends State<OverviewView> {
                 },
                 child: ReorderableListView.builder(
                   itemCount: learnedWords.length,
-                  onReorder: (oldIndex, newIndex) async {
-                    await this._swapSortOrder(
-                      learnedWords: learnedWords,
-                      oldIndex: oldIndex,
-                      newIndex: newIndex,
-                    );
-                  },
-                  itemBuilder: (context, index) {
-                    final learnedWord = learnedWords[index];
-
-                    // TODO: 完了済みと削除済みのレコードは非表示にする。
-                    // TODO: 学習中言語と学習時使用言語の情報を認証完了時に取得し格納する。
-                    return Card(
-                      elevation: 2.0,
-                      key: Key(learnedWords[index].sortOrder.toString()),
-                      child: Padding(
-                        padding: EdgeInsets.all(10),
-                        child: Column(
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          children: [
-                            Row(
-                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                              children: [
-                                this._createCardHeaderText(
-                                    title: learnedWord.skillUrlTitle,
-                                    subTitle: 'Lesson'),
-                                this._createCardHeaderText(
-                                  title: '${learnedWord.strengthBars}',
-                                  subTitle: 'Level',
-                                ),
-                                this._createCardHeaderText(
-                                  title:
-                                      '${(learnedWord.strength * 100.0).toStringAsFixed(2)} %',
-                                  subTitle: 'Proficiency',
-                                ),
-                                this._createCardHeaderText(
-                                    title: this._datetimeFormat.format(
-                                          DateTime.fromMillisecondsSinceEpoch(
-                                              learnedWord.lastPracticedMs),
-                                        ),
-                                    subTitle: 'Last practiced at'),
-                              ],
-                            ),
-                            Divider(),
-                            Row(
-                              mainAxisAlignment: MainAxisAlignment.start,
-                              children: [
-                                Expanded(
-                                  child: ListTile(
-                                    leading: IconButton(
-                                      tooltip: this._audioPlayer.state ==
-                                              PlayerState.PAUSED
-                                          ? 'Pause Audio'
-                                          : 'Play Audio',
-                                      icon: this._audioPlayer.state ==
-                                              PlayerState.PAUSED
-                                          ? const Icon(Icons.pause_circle)
-                                          : const Icon(Icons.play_circle),
-                                      onPressed: () async {
-                                        // this._audioPlayer.state ==
-                                        //         PlayerState.PLAYING
-                                        //     ? await this._audioPlayer.pause()
-                                        //     : await this._audioPlayer.play('');
-                                      },
-                                    ),
-                                    title: Text(learnedWord.wordString),
-                                    subtitle: this._createCardHintText(
-                                      wordHints: learnedWord.wordHints,
-                                    ),
-                                  ),
-                                ),
-                                IconButton(
-                                  tooltip: learnedWord.bookmarked
-                                      ? 'Remove Bookmark'
-                                      : 'Add Bookmark',
-                                  icon: learnedWord.bookmarked
-                                      ? const Icon(Icons.bookmark_added)
-                                      : const Icon(Icons.bookmark_add),
-                                  onPressed: () async {
-                                    learnedWord.bookmarked =
-                                        !learnedWord.bookmarked;
-                                    learnedWord.updatedAt = DateTime.now();
-
-                                    await this._learnedWordService.update(
-                                          learnedWord,
-                                        );
-
-                                    super.setState(() {});
-                                  },
-                                ),
-                              ],
-                            ),
-                            Divider(),
-                            Row(
-                              mainAxisAlignment: MainAxisAlignment.end,
-                              crossAxisAlignment: CrossAxisAlignment.end,
-                              children: [
-                                IconButton(
-                                  tooltip: 'Show Tips & Notes',
-                                  icon: Icon(Icons.more),
-                                  onPressed: () => Navigator.push(
-                                    context,
-                                    MaterialPageRoute(
-                                      builder: (_) => LessonTipsView(
-                                          lessonName: learnedWord.skill,
-                                          html: ''),
-                                    ),
-                                  ),
-                                ),
-                                IconButton(
-                                  tooltip: 'Complete',
-                                  icon: Icon(Icons.done),
-                                  onPressed: () async {
-                                    learnedWord.completed = true;
-                                    learnedWord.updatedAt = DateTime.now();
-
-                                    await this
-                                        ._learnedWordService
-                                        .update(learnedWord);
-
-                                    super.setState(() {});
-                                  },
-                                ),
-                                IconButton(
-                                  tooltip: 'Hide',
-                                  icon: Icon(Icons.hide_source),
-                                  onPressed: () async {
-                                    learnedWord.deleted = true;
-                                    learnedWord.updatedAt = DateTime.now();
-
-                                    await this
-                                        ._learnedWordService
-                                        .update(learnedWord);
-
-                                    super.setState(() {});
-                                  },
-                                ),
-                              ],
-                            ),
-                          ],
-                        ),
-                      ),
-                    );
-                  },
+                  onReorder: (oldIndex, newIndex) async =>
+                      await this._sortCards(
+                    learnedWords: learnedWords,
+                    oldIndex: oldIndex,
+                    newIndex: newIndex,
+                  ),
+                  itemBuilder: (context, index) => this._createLearnedWordCard(
+                    learnedWord: learnedWords[index],
+                  ),
                 ),
               );
             },
@@ -274,8 +144,137 @@ class _OverviewViewState extends State<OverviewView> {
       ._learnedWordService
       .findByUserIdAndLearningLanguageAndFromLanguage(
         await CommonSharedPreferencesKey.userId.getString(),
-        await CommonSharedPreferencesKey.currentLearningLanguage.getString(),
-        await CommonSharedPreferencesKey.currentFromLanguage.getString(),
+        'ja',
+        'en',
+      );
+
+  Widget _createLearnedWordCard({
+    required LearnedWord learnedWord,
+  }) =>
+      Visibility(
+        key: Key(learnedWord.sortOrder.toString()),
+        visible: this._isCardVisible(learnedWord: learnedWord),
+        child: Card(
+          elevation: 2.0,
+          child: Padding(
+            padding: EdgeInsets.all(10),
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    this._createCardHeaderText(
+                        title: learnedWord.skillUrlTitle, subTitle: 'Lesson'),
+                    this._createCardHeaderText(
+                      title: '${learnedWord.strengthBars}',
+                      subTitle: 'Level',
+                    ),
+                    this._createCardHeaderText(
+                      title:
+                          '${(learnedWord.strength * 100.0).toStringAsFixed(2)} %',
+                      subTitle: 'Proficiency',
+                    ),
+                    this._createCardHeaderText(
+                        title: this._datetimeFormat.format(
+                              DateTime.fromMillisecondsSinceEpoch(
+                                  learnedWord.lastPracticedMs),
+                            ),
+                        subTitle: 'Last practiced at'),
+                  ],
+                ),
+                Divider(),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.start,
+                  children: [
+                    Expanded(
+                      child: ListTile(
+                        leading: IconButton(
+                          tooltip: this._audioPlayer.state == PlayerState.PAUSED
+                              ? 'Pause Audio'
+                              : 'Play Audio',
+                          icon: this._audioPlayer.state == PlayerState.PAUSED
+                              ? const Icon(Icons.pause_circle)
+                              : const Icon(Icons.play_circle),
+                          onPressed: () async {
+                            // this._audioPlayer.state ==
+                            //         PlayerState.PLAYING
+                            //     ? await this._audioPlayer.pause()
+                            //     : await this._audioPlayer.play('');
+                          },
+                        ),
+                        title: Text(learnedWord.wordString),
+                        subtitle: this._createCardHintText(
+                          wordHints: learnedWord.wordHints,
+                        ),
+                      ),
+                    ),
+                    IconButton(
+                      tooltip: learnedWord.bookmarked
+                          ? 'Remove Bookmark'
+                          : 'Add Bookmark',
+                      icon: learnedWord.bookmarked
+                          ? const Icon(Icons.bookmark_added)
+                          : const Icon(Icons.bookmark_add),
+                      onPressed: () async {
+                        learnedWord.bookmarked = !learnedWord.bookmarked;
+                        learnedWord.updatedAt = DateTime.now();
+
+                        await this._learnedWordService.update(
+                              learnedWord,
+                            );
+
+                        super.setState(() {});
+                      },
+                    ),
+                  ],
+                ),
+                Divider(),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.end,
+                  crossAxisAlignment: CrossAxisAlignment.end,
+                  children: [
+                    IconButton(
+                      tooltip: 'Show Tips & Notes',
+                      icon: Icon(Icons.more),
+                      onPressed: () => Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (_) => LessonTipsView(
+                              lessonName: learnedWord.skill, html: ''),
+                        ),
+                      ),
+                    ),
+                    IconButton(
+                      tooltip: 'Complete',
+                      icon: Icon(Icons.done),
+                      onPressed: () async {
+                        learnedWord.completed = true;
+                        learnedWord.updatedAt = DateTime.now();
+
+                        await this._learnedWordService.update(learnedWord);
+
+                        super.setState(() {});
+                      },
+                    ),
+                    IconButton(
+                      tooltip: 'Hide',
+                      icon: Icon(Icons.hide_source),
+                      onPressed: () async {
+                        learnedWord.deleted = true;
+                        learnedWord.updatedAt = DateTime.now();
+
+                        await this._learnedWordService.update(learnedWord);
+
+                        super.setState(() {});
+                      },
+                    ),
+                  ],
+                ),
+              ],
+            ),
+          ),
+        ),
       );
 
   Widget _createCardHeaderText({
@@ -315,7 +314,21 @@ class _OverviewViewState extends State<OverviewView> {
     );
   }
 
-  Future<void> _swapSortOrder({
+  bool _isCardVisible({
+    required LearnedWord learnedWord,
+  }) {
+    if (widget.overviewTabType == OverviewTabType.bookmarked) {
+      return learnedWord.bookmarked && !learnedWord.deleted;
+    } else if (widget.overviewTabType == OverviewTabType.completed) {
+      return learnedWord.completed && !learnedWord.deleted;
+    } else if (widget.overviewTabType == OverviewTabType.hidden) {
+      return learnedWord.deleted;
+    }
+
+    return !learnedWord.completed && !learnedWord.deleted;
+  }
+
+  Future<void> _sortCards({
     required List<LearnedWord> learnedWords,
     required int oldIndex,
     required int newIndex,
