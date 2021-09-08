@@ -40,6 +40,8 @@ dependencies:
   encrypt: ^5.0.1
   local_auth: ^1.1.7
   open_settings: ^2.0.2
+  audioplayers: ^0.20.0
+  flutter_html: ^2.1.2
 
 dev_dependencies:
   flutter_test:

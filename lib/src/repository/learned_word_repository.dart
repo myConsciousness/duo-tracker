@@ -6,7 +6,7 @@ import 'package:duovoc/src/repository/model/learned_word_model.dart';
 import 'package:duovoc/src/repository/repository.dart';
 
 abstract class LearnedWordRepository extends Repository<LearnedWord> {
-  Future<List<LearnedWord>> findByUserIdAndNotDeleted(
+  Future<List<LearnedWord>> findByUserIdAndNotCompletedAndNotDeleted(
     String userId,
   );
 
@@ -20,5 +20,7 @@ abstract class LearnedWordRepository extends Repository<LearnedWord> {
     String userId,
   );
 
-  Future<LearnedWord> replaceByWordIdAndUserId(LearnedWord learnedWord);
+  Future<LearnedWord> replaceById(LearnedWord learnedWord);
+
+  Future<void> replaceSortOrdersByIds(List<LearnedWord> learnedWords);
 }

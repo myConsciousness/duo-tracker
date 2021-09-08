@@ -92,19 +92,20 @@ class LearnedWordService extends LearnedWordRepository {
   }
 
   @override
-  Future<List<LearnedWord>> findByUserIdAndNotDeleted(
+  Future<List<LearnedWord>> findByUserIdAndNotCompletedAndNotDeleted(
     String userId,
   ) async {
     final learedWords = await super.database.then(
           (database) => database
               .query(
                 this.table,
-                where: 'USER_ID = ? AND DELETED = ?',
+                where: 'USER_ID = ? AND COMPLETED = ? AND DELETED = ?',
                 whereArgs: [
                   userId,
                   BooleanText.FALSE,
+                  BooleanText.FALSE,
                 ],
-                orderBy: 'CREATED_AT DESC',
+                orderBy: 'SORT_ORDER',
               )
               .then(
                 (entities) => entities
@@ -159,7 +160,7 @@ class LearnedWordService extends LearnedWordRepository {
           );
 
   @override
-  Future<LearnedWord> replaceByWordIdAndUserId(LearnedWord learnedWord) async {
+  Future<LearnedWord> replaceById(LearnedWord learnedWord) async {
     LearnedWord storedLearnedWord = await this.findByWordIdAndUserId(
       learnedWord.wordId,
       learnedWord.userId,
@@ -174,14 +175,29 @@ class LearnedWordService extends LearnedWordRepository {
     } else {
       learnedWord.id = storedLearnedWord.id;
       learnedWord.bookmarked = storedLearnedWord.bookmarked;
+      learnedWord.completed = storedLearnedWord.completed;
       learnedWord.deleted = storedLearnedWord.deleted;
       learnedWord.sortOrder = storedLearnedWord.sortOrder;
-      learnedWord.bookmarked = storedLearnedWord.bookmarked;
       learnedWord.createdAt = storedLearnedWord.createdAt;
 
       await this.update(learnedWord);
     }
 
     return storedLearnedWord;
+  }
+
+  @override
+  Future<void> replaceSortOrdersByIds(List<LearnedWord> learnedWords) async {
+    learnedWords.asMap().forEach((index, learnedWord) async {
+      LearnedWord storedLearnedWord = await this.findByWordIdAndUserId(
+        learnedWord.wordId,
+        learnedWord.userId,
+      );
+
+      storedLearnedWord.sortOrder = index;
+      storedLearnedWord.updatedAt = DateTime.now();
+
+      this.update(storedLearnedWord);
+    });
   }
 }

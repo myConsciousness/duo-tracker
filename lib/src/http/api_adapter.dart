@@ -99,22 +99,22 @@ abstract class _ApiAdapter implements ApiAdapter {
 
         break;
       case ErrorType.network:
-        OpenSettings.openNetworkOperatorSetting();
+        await OpenSettings.openNetworkOperatorSetting();
         break;
       case ErrorType.noUserRegistered:
-        showAuthDialog(
+        await showAuthDialog(
           context: context,
           barrierDismissible: false,
         );
         break;
       case ErrorType.authentication:
-        showAlertDialog(
+        await showAlertDialog(
             context: context,
             title: 'Authentication failure',
             content: response.message);
         break;
       case ErrorType.client:
-        showAlertDialog(
+        await showAlertDialog(
           context: context,
           title: 'Client error',
           content: response.message.isEmpty
@@ -123,7 +123,7 @@ abstract class _ApiAdapter implements ApiAdapter {
         );
         break;
       case ErrorType.server:
-        showAlertDialog(
+        await showAlertDialog(
           context: context,
           title: 'Server error',
           content: response.message.isEmpty
@@ -132,7 +132,7 @@ abstract class _ApiAdapter implements ApiAdapter {
         );
         break;
       case ErrorType.unknown:
-        showAlertDialog(
+        await showAlertDialog(
           context: context,
           title: 'Unknown error',
           content: response.message.isEmpty
@@ -232,7 +232,7 @@ class _LearnedWordApiAdapter extends _ApiAdapter {
         final String wordId = overview['id'];
         final String wordString = overview['word_string'];
 
-        await this._learnedWordService.replaceByWordIdAndUserId(
+        await this._learnedWordService.replaceById(
               LearnedWord.from(
                 wordId: overview['id'],
                 userId: userId,
@@ -253,6 +253,7 @@ class _LearnedWordApiAdapter extends _ApiAdapter {
                 skillUrlTitle: overview['skill_url_title'] ?? '',
                 gender: overview['gender'] ?? '',
                 bookmarked: false,
+                completed: false,
                 deleted: false,
                 createdAt: DateTime.now(),
                 updatedAt: DateTime.now(),

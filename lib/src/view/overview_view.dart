@@ -2,12 +2,14 @@
 // Use of this source code is governed by a
 // BSD-style license that can be found in the LICENSE file.
 
+import 'package:audioplayers/audioplayers.dart';
 import 'package:duovoc/src/component/common_app_bar_titles.dart';
 import 'package:duovoc/src/http/api_adapter.dart';
 import 'package:duovoc/src/preference/common_shared_preferences_key.dart';
 import 'package:duovoc/src/repository/model/learned_word_model.dart';
 import 'package:duovoc/src/repository/model/word_hint_model.dart';
 import 'package:duovoc/src/repository/service/learned_word_service.dart';
+import 'package:duovoc/src/view/lesson_tips_view.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 
@@ -23,9 +25,12 @@ class _OverviewViewState extends State<OverviewView> {
 
   final DateFormat _datetimeFormat = DateFormat('yyyy/MM/dd HH:mm:ss');
 
+  final AudioPlayer _audioPlayer = AudioPlayer();
+
   @override
   void initState() {
     super.initState();
+    _audioPlayer.state;
   }
 
   @override
@@ -45,25 +50,39 @@ class _OverviewViewState extends State<OverviewView> {
             title: 'Learned Words',
             subTitle: 'English → Japanese',
           ),
+          actions: [
+            IconButton(
+              icon: Icon(Icons.sync),
+              onPressed: () {},
+            ),
+          ],
         ),
         body: Container(
           child: FutureBuilder(
             future: this._fetchLearnedWords(context: context),
             builder: (context, AsyncSnapshot snapshot) {
               if (!snapshot.hasData) {
-                return Center(child: CircularProgressIndicator());
+                return Center(
+                  child: Column(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    crossAxisAlignment: CrossAxisAlignment.center,
+                    children: [
+                      CircularProgressIndicator(),
+                      SizedBox(
+                        height: 10,
+                      ),
+                      Text('Loading...'),
+                    ],
+                  ),
+                );
               }
 
               final List<LearnedWord> learnedWords = snapshot.data;
 
               return ReorderableListView.builder(
                 itemCount: learnedWords.length,
-                onReorder: (oldIndex, newIndex) {
-                  if (oldIndex < newIndex) {
-                    newIndex -= 1;
-                  }
-
-                  this._swapSortOrder(
+                onReorder: (oldIndex, newIndex) async {
+                  await this._swapSortOrder(
                     learnedWords: learnedWords,
                     oldIndex: oldIndex,
                     newIndex: newIndex,
@@ -84,22 +103,22 @@ class _OverviewViewState extends State<OverviewView> {
                             children: [
                               this._createCardHeaderText(
                                   title: learnedWord.skillUrlTitle,
-                                  subtitle: 'Lesson'),
+                                  subTitle: 'Lesson'),
                               this._createCardHeaderText(
                                 title: '${learnedWord.strengthBars}',
-                                subtitle: 'Level',
+                                subTitle: 'Level',
                               ),
                               this._createCardHeaderText(
                                 title:
                                     '${(learnedWord.strength * 100.0).toStringAsFixed(2)} %',
-                                subtitle: 'Proficiency',
+                                subTitle: 'Proficiency',
                               ),
                               this._createCardHeaderText(
                                   title: this._datetimeFormat.format(
                                         DateTime.fromMillisecondsSinceEpoch(
                                             learnedWord.lastPracticedMs),
                                       ),
-                                  subtitle: 'Last practiced at'),
+                                  subTitle: 'Last practiced at'),
                             ],
                           ),
                           Divider(),
@@ -108,6 +127,18 @@ class _OverviewViewState extends State<OverviewView> {
                             children: [
                               Expanded(
                                 child: ListTile(
+                                  leading: IconButton(
+                                    icon: this._audioPlayer.state ==
+                                            PlayerState.PAUSED
+                                        ? const Icon(Icons.pause_circle)
+                                        : const Icon(Icons.play_circle),
+                                    onPressed: () async {
+                                      // this._audioPlayer.state ==
+                                      //         PlayerState.PLAYING
+                                      //     ? await this._audioPlayer.pause()
+                                      //     : await this._audioPlayer.play('');
+                                    },
+                                  ),
                                   title: Text(learnedWord.wordString),
                                   subtitle: this._createCardHintText(
                                     wordHints: learnedWord.wordHints,
@@ -123,11 +154,11 @@ class _OverviewViewState extends State<OverviewView> {
                                       !learnedWord.bookmarked;
                                   learnedWord.updatedAt = DateTime.now();
 
-                                  super.setState(() {});
-
-                                  await this._learnedWordService.update(
-                                        learnedWord,
-                                      );
+                                  super.setState(() async {
+                                    await this._learnedWordService.update(
+                                          learnedWord,
+                                        );
+                                  });
                                 },
                               ),
                             ],
@@ -138,17 +169,42 @@ class _OverviewViewState extends State<OverviewView> {
                             crossAxisAlignment: CrossAxisAlignment.end,
                             children: [
                               IconButton(
-                                icon: Icon(Icons.info),
-                                onPressed: () {},
+                                icon: Icon(Icons.more),
+                                onPressed: () => Navigator.push(
+                                  context,
+                                  MaterialPageRoute(
+                                    builder: (_) => LessonTipsView(
+                                        lessonName: learnedWord.skill,
+                                        html: ''),
+                                  ),
+                                ),
                               ),
                               IconButton(
                                 icon: Icon(Icons.done),
-                                onPressed: () {},
+                                onPressed: () {
+                                  learnedWord.completed = true;
+                                  learnedWord.updatedAt = DateTime.now();
+
+                                  super.setState(() {
+                                    this
+                                        ._learnedWordService
+                                        .update(learnedWord);
+                                  });
+                                },
                               ),
                               IconButton(
                                 icon: Icon(Icons.hide_source),
-                                onPressed: () {},
-                              )
+                                onPressed: () {
+                                  learnedWord.deleted = true;
+                                  learnedWord.updatedAt = DateTime.now();
+
+                                  super.setState(() {
+                                    this
+                                        ._learnedWordService
+                                        .update(learnedWord);
+                                  });
+                                },
+                              ),
                             ],
                           ),
                         ],
@@ -165,23 +221,41 @@ class _OverviewViewState extends State<OverviewView> {
   Future<List<LearnedWord>> _fetchLearnedWords({
     required BuildContext context,
   }) async {
-    await ApiAdapter.of(type: ApiAdapterType.login).execute(context: context);
-    await ApiAdapter.of(type: ApiAdapterType.overview)
-        .execute(context: context);
+    if (await this._canAutoSync()) {
+      await ApiAdapter.of(type: ApiAdapterType.login).execute(context: context);
+      await ApiAdapter.of(type: ApiAdapterType.overview)
+          .execute(context: context);
 
-    return await this._learnedWordService.findByUserIdAndNotDeleted(
+      await CommonSharedPreferencesKey.datetimeLastAutoSyncedOverview.setInt(
+        DateTime.now().millisecondsSinceEpoch,
+      );
+    }
+
+    return await this
+        ._learnedWordService
+        .findByUserIdAndNotCompletedAndNotDeleted(
           await CommonSharedPreferencesKey.userId.getString(),
         );
   }
 
+  Future<bool> _canAutoSync() async => (DateTime.now()
+          .difference(
+            DateTime.fromMillisecondsSinceEpoch(
+              await CommonSharedPreferencesKey.datetimeLastAutoSyncedOverview
+                  .getInt(),
+            ),
+          )
+          .inDays >=
+      7);
+
   Widget _createCardHeaderText({
     required String title,
-    required String subtitle,
+    required String subTitle,
   }) =>
       Column(
         children: [
           Text(
-            subtitle,
+            subTitle,
             style: TextStyle(
               color: Theme.of(context).accentColor,
               fontSize: 11,
@@ -211,21 +285,17 @@ class _OverviewViewState extends State<OverviewView> {
     );
   }
 
-  void _swapSortOrder({
+  Future<void> _swapSortOrder({
     required List<LearnedWord> learnedWords,
     required int oldIndex,
     required int newIndex,
   }) async {
-    final removedLearnedWord = learnedWords.removeAt(oldIndex);
-    learnedWords.insert(newIndex, removedLearnedWord);
+    learnedWords.insert(
+      oldIndex < newIndex ? newIndex - 1 : newIndex,
+      learnedWords.removeAt(oldIndex),
+    );
 
-    final learnedWord = learnedWords.elementAt(newIndex);
-
-    int oldSortOrder = removedLearnedWord.sortOrder;
-    removedLearnedWord.sortOrder = learnedWord.sortOrder;
-    learnedWord.sortOrder = oldSortOrder;
-
-    await this._learnedWordService.update(removedLearnedWord);
-    await this._learnedWordService.update(learnedWord);
+    // Update all sort orders
+    await this._learnedWordService.replaceSortOrdersByIds(learnedWords);
   }
 }

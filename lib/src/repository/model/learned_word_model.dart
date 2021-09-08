@@ -26,6 +26,7 @@ class LearnedWord {
   String skillUrlTitle;
   String gender;
   bool bookmarked;
+  bool completed;
   bool deleted;
   int sortOrder = -1;
   DateTime createdAt = DateTime.now();
@@ -59,6 +60,7 @@ class LearnedWord {
         this.skillUrlTitle = '',
         this.gender = '',
         this.bookmarked = false,
+        this.completed = false,
         this.deleted = false,
         this.sortOrder = -1;
 
@@ -84,6 +86,7 @@ class LearnedWord {
     required this.skillUrlTitle,
     required this.gender,
     required this.bookmarked,
+    required this.completed,
     required this.deleted,
     this.sortOrder = -1,
     required this.createdAt,
@@ -112,6 +115,7 @@ class LearnedWord {
         skillUrlTitle: map[_ColumnName.skillUrlTitle],
         gender: map[_ColumnName.gender],
         bookmarked: map[_ColumnName.bookmarked] == BooleanText.TRUE,
+        completed: map[_ColumnName.completed] == BooleanText.TRUE,
         deleted: map[_ColumnName.deleted] == BooleanText.TRUE,
         sortOrder: map[_ColumnName.sortOrder],
         createdAt: DateTime.fromMillisecondsSinceEpoch(
@@ -145,6 +149,8 @@ class LearnedWord {
     map[_ColumnName.gender] = this.gender;
     map[_ColumnName.bookmarked] =
         this.bookmarked ? BooleanText.TRUE : BooleanText.FALSE;
+    map[_ColumnName.completed] =
+        this.completed ? BooleanText.TRUE : BooleanText.FALSE;
     map[_ColumnName.deleted] =
         this.deleted ? BooleanText.TRUE : BooleanText.FALSE;
     map[_ColumnName.sortOrder] = this.sortOrder;
@@ -179,6 +185,7 @@ class _ColumnName {
   static const skillUrlTitle = 'SKILL_URL_TITLE';
   static const gender = 'GENDER';
   static const bookmarked = 'BOOKMARKED';
+  static const completed = 'COMPLETED';
   static const deleted = 'DELETED';
   static const sortOrder = 'SORT_ORDER';
   static const createdAt = 'CREATED_AT';

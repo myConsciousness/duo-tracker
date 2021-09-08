@@ -19,6 +19,9 @@ enum CommonSharedPreferencesKey {
 
   //! The Sync Config ↓
 
+  /// The datetime last auto synced overview
+  datetimeLastAutoSyncedOverview,
+
   //! The Sync Config ↑
 
   //! The Secutiry Config ↓
@@ -55,6 +58,8 @@ extension KeyFeature on CommonSharedPreferencesKey {
         return 'username';
       case CommonSharedPreferencesKey.password:
         return 'password';
+      case CommonSharedPreferencesKey.datetimeLastAutoSyncedOverview:
+        return 'datetime_last_auto_synced_overview';
       case CommonSharedPreferencesKey.usePasscodeLock:
         return 'use_passcode_lock';
       case CommonSharedPreferencesKey.useFingerprintRecognition:

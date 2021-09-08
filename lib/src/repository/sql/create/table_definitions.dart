@@ -27,6 +27,7 @@ class TableDefinitions {
           SKILL_URL_TITLE TEXT,
           GENDER TEXT,
           BOOKMARKED TEXT NOT NULL,
+          COMPLETED TEXT NOT NULL,
           DELETED TEXT NOT NULL,
           SORT_ORDER INTEGER,
           CREATED_AT INTEGER NOT NULL,
