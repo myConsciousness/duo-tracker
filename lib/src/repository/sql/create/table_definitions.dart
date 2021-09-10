@@ -4,6 +4,86 @@
 
 /// The class that manages table definitions.
 class TableDefinitions {
+  /// The user
+  static const user = '''
+        CREATE TABLE USER (
+          ID INTEGER PRIMARY KEY AUTOINCREMENT,
+          USER_ID TEXT NOT NULL UNIQUE,
+          NAME TEXT NOT NULL,
+          PLUS_STATUS TEXT NOT NULL,
+          INVITE_URL TEXT NOT NULL,
+          PICTURE_URL TEXT,
+          TIME_ZONE TEXT,
+          CURRENT_COURSE_ID TEXT NOT NULL,
+          LEARNING_LANGUAGE TEXT NOT NULL,
+          FROM_LANGUAGE TEXT NOT NULL,
+          CREATED_AT INTEGER NOT NULL,
+          UPDATED_AT INTEGER NOT NULL
+        )
+        ''';
+
+  /// The course
+  static const course = '''
+        CREATE TABLE USER (
+          ID INTEGER PRIMARY KEY AUTOINCREMENT,
+          USER_ID TEXT NOT NULL,
+          COURSE_ID TEXT NOT NULL,
+          TITLE TEXT NOT NULL,
+          LEARNING_LANGUAGE TEXT NOT NULL,
+          FROM_LANGUAGE TEXT NOT NULL,
+          XP INTEGER NOT NULL,
+          CROWNS INTEGER NOT NULL,
+          CREATED_AT INTEGER NOT NULL,
+          UPDATED_AT INTEGER NOT NULL
+        )
+        ''';
+
+  /// The skill
+  static const skill = '''
+        CREATE TABLE USER (
+          ID INTEGER PRIMARY KEY AUTOINCREMENT,
+          USER_ID TEXT NOT NULL,
+          SKILL_ID TEXT NOT NULL,
+          NAME TEXT NOT NULL,
+          SHORT_NAME NOT NULL,
+          URL_NAME TEXT NOT NULL,
+          ICON_ID INTEGER NOT NULL,
+          LESSONS INTEGER NOT NULL,
+          STRENGTH REAL NOT NULL,
+          LAST_LESSON_PERFECT TEXT NOT NULL,
+          FINISHED_LEVELS INTEGER NOT NULL,
+          LEVELS INTEGER NOT NULL,
+          TIPS_AND_NOTES TEXT,
+          CREATED_AT INTEGER NOT NULL,
+          UPDATED_AT INTEGER NOT NULL
+        )
+        ''';
+
+  /// The supported language
+  static const supportedLanguage = '''
+        CREATE TABLE SUPPORTED_LANGUAGE (
+          ID INTEGER PRIMARY KEY AUTOINCREMENT,
+          FROM_LANGUAGE TEXT NOT NULL,
+          LEARNING_LANGUAGE TEXT NOT NULL,
+          CREATED_AT INTEGER NOT NULL,
+          UPDATED_AT INTEGER NOT NULL
+        )
+        ''';
+
+  /// The voice configuration
+  static const voiceConfiguration = '''
+        CREATE TABLE VOICE_CONFIGURATION (
+          ID INTEGER PRIMARY KEY AUTOINCREMENT,
+          LANGUAGE TEXT NOT NULL,
+          VOICE_TYPE TEXT NOT NULL,
+          TTS_BASE_URL_HTTPS TEXT NOT NULL,
+          TTS_BASE_URL_HTTP TEXT NOT NULL,
+          PATH TEXT NOT NULL,
+          CREATED_AT INTEGER NOT NULL,
+          UPDATED_AT INTEGER NOT NULL
+        )
+        ''';
+
   /// The learned word
   static const learnedWord = '''
         CREATE TABLE LEARNED_WORD (

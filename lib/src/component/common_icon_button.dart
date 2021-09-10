@@ -5,16 +5,16 @@
 import 'package:flutter/material.dart';
 
 class CommonIconButton extends StatefulWidget {
-  final String tooltip;
-  final Icon icon;
-  final Function() onPressed;
-
   CommonIconButton({
     Key? key,
     required this.tooltip,
     required this.icon,
     required this.onPressed,
   }) : super(key: key);
+
+  final Function() onPressed;
+  final Icon icon;
+  final String tooltip;
 
   @override
   _CommonIconButtonState createState() => _CommonIconButtonState();

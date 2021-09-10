@@ -6,11 +6,11 @@ enum FromApi {
   ///The none
   none,
 
-  /// User meta
-  user_meta,
-
   /// Login
   login,
+
+  /// User
+  user,
 
   /// Overview
   learnedWord,
@@ -37,21 +37,21 @@ enum ErrorType {
 }
 
 class ApiResponse {
-  /// The from api
-  final FromApi fromApi;
-
-  /// The error type
-  final ErrorType errorType;
-
-  /// The message
-  final String message;
-
   /// Returns the new instance of [ApiResponse] based on [api], [errorType] and [message].
   ApiResponse.from({
     required this.fromApi,
     required this.errorType,
     this.message = '',
   });
+
+  /// The error type
+  final ErrorType errorType;
+
+  /// The from api
+  final FromApi fromApi;
+
+  /// The message
+  final String message;
 
   /// Checks if response has error. Returns [true] if reponse has error otherwise [false].
   bool get hasError => this.errorType != ErrorType.none;

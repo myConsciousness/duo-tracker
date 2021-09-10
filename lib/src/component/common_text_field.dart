@@ -6,17 +6,6 @@ import 'package:duovoc/src/security/text_mask.dart';
 import 'package:flutter/material.dart';
 
 class CommonTextField extends StatefulWidget {
-  final String? label;
-  final TextEditingController controller;
-  final String hintText;
-  final int? maxLength;
-  final Icon? prefixIcon;
-  final bool maskText;
-  final TextInputType keyboardType;
-  final int? maxLines;
-  final void Function(String text)? onChanged;
-  final void Function(String text)? onSubmitted;
-
   CommonTextField({
     Key? key,
     this.label,
@@ -31,6 +20,17 @@ class CommonTextField extends StatefulWidget {
     this.onSubmitted,
   }) : super(key: key);
 
+  final void Function(String text)? onChanged;
+  final void Function(String text)? onSubmitted;
+  final TextEditingController controller;
+  final String hintText;
+  final TextInputType keyboardType;
+  final String? label;
+  final bool maskText;
+  final int? maxLength;
+  final int? maxLines;
+  final Icon? prefixIcon;
+
   @override
   _CommonTextFieldState createState() => _CommonTextFieldState();
 }
@@ -39,15 +39,15 @@ class _CommonTextFieldState extends State<CommonTextField> {
   final _focusNode = FocusNode();
 
   @override
-  void initState() {
-    super.initState();
-    this._focusNode.addListener(this._onFocusChanged);
-  }
-
-  @override
   void dispose() {
     this._focusNode.dispose();
     super.dispose();
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    this._focusNode.addListener(this._onFocusChanged);
   }
 
   void _onFocusChanged() {

@@ -6,14 +6,14 @@ import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 
 class SizeConfig {
-  static MediaQueryData? _mediaQueryData;
-  static double screenWidth = 0.0;
-  static double screenHeight = 0.0;
   static double blockSizeHorizontal = 0.0;
   static double blockSizeVertical = 0.0;
-
   static double safeBlockHorizontal = 0.0;
   static double safeBlockVertical = 0.0;
+  static double screenHeight = 0.0;
+  static double screenWidth = 0.0;
+
+  static MediaQueryData? _mediaQueryData;
 
   void init(BuildContext context) {
     _mediaQueryData = MediaQuery.of(context);

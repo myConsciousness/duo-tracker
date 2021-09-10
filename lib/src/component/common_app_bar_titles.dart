@@ -5,14 +5,14 @@
 import 'package:flutter/material.dart';
 
 class CommonAppBarTitles extends StatefulWidget {
-  final String title;
-  final String subTitle;
-
   const CommonAppBarTitles({
     Key? key,
     required this.title,
     required this.subTitle,
   }) : super(key: key);
+
+  final String subTitle;
+  final String title;
 
   @override
   _CommonAppBarTitlesState createState() => _CommonAppBarTitlesState();

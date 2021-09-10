@@ -4,9 +4,9 @@
 
 /// The const class that manages boolean text.
 class BooleanText {
-  /// The true
-  static const String TRUE = 'T';
-
   /// The false
-  static const String FALSE = 'F';
+  static const FALSE = 'F';
+
+  /// The true
+  static const TRUE = 'T';
 }

@@ -5,11 +5,6 @@
 import 'package:flutter/material.dart';
 
 class CommonRadioListTile<T> extends StatefulWidget {
-  final String? label;
-  final Map<String, T> dataSource;
-  final T groupValue;
-  final Function(dynamic value) onChanged;
-
   CommonRadioListTile({
     Key? key,
     this.label,
@@ -17,6 +12,11 @@ class CommonRadioListTile<T> extends StatefulWidget {
     required this.groupValue,
     required this.onChanged,
   }) : super(key: key);
+
+  final Function(dynamic value) onChanged;
+  final Map<String, T> dataSource;
+  final T groupValue;
+  final String? label;
 
   @override
   _CommonRadioListTileState<T> createState() => _CommonRadioListTileState();

@@ -7,14 +7,14 @@ import 'package:flutter/material.dart';
 import 'package:flutter_html/flutter_html.dart';
 
 class LessonTipsView extends StatefulWidget {
-  final String lessonName;
-  final String html;
-
   LessonTipsView({
     Key? key,
     required this.lessonName,
     required this.html,
   }) : super(key: key);
+
+  final String html;
+  final String lessonName;
 
   @override
   _LessonTipsViewState createState() => _LessonTipsViewState();

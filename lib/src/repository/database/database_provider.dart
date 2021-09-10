@@ -7,21 +7,21 @@ import 'package:sqflite/sqflite.dart';
 import 'package:path/path.dart';
 
 class DatabaseProvider {
-  /// The singleton instance of [DatabaseProvider].
-  static final DatabaseProvider _singletonInstance =
-      DatabaseProvider._internal();
-
-  /// The database name
-  static const String _DATABASE_NAME = 'duovoc.db';
-
-  /// The database
-  late final Future<Database> _database;
-
   /// The internal constructor for singleton.
   DatabaseProvider._internal() : this._database = _getDatabase();
 
   /// Returns the singleton instance of [DatabaseProvider].
   factory DatabaseProvider.getInstance() => _singletonInstance;
+
+  /// The database name
+  static const _DATABASE_NAME = 'duovoc.db';
+
+  /// The singleton instance of [DatabaseProvider].
+  static final DatabaseProvider _singletonInstance =
+      DatabaseProvider._internal();
+
+  /// The database
+  late final Future<Database> _database;
 
   /// Returns the database.
   Future<Database> get database => this._database;

@@ -6,21 +6,20 @@ import 'package:duovoc/src/admob/duovoc_admob_unit_ids.dart';
 import 'package:google_mobile_ads/google_mobile_ads.dart';
 
 class InterstitialAdResolver {
-  /// The singleton instance of this [InterstitialAdResolver].
-  static final InterstitialAdResolver _singletonInstance =
-      InterstitialAdResolver._internal();
-
   /// The internal constructor.
   InterstitialAdResolver._internal();
 
   /// Returns the singleton instance of [InterstitialAdResolver].
   factory InterstitialAdResolver.getInstance() => _singletonInstance;
 
-  /// The interstitial ad
-  InterstitialAd? _interstitialAd;
+  /// The singleton instance of this [InterstitialAdResolver].
+  static final _singletonInstance = InterstitialAdResolver._internal();
 
   /// The count load attempt
   int _countLoadAttempt = 0;
+
+  /// The interstitial ad
+  InterstitialAd? _interstitialAd;
 
   void loadInterstitialAd() async => await InterstitialAd.load(
         adUnitId: DuovocAdmobUnitIds.getInstance().releaseInterstitial,

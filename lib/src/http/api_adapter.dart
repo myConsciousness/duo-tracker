@@ -46,11 +46,6 @@ abstract class ApiAdapter {
 }
 
 abstract class _ApiAdapter implements ApiAdapter {
-  Future<ApiResponse> doExecute({
-    required final BuildContext context,
-    final params = const <String, String>{},
-  });
-
   @override
   Future<void> execute({
     required final BuildContext context,
@@ -79,6 +74,11 @@ abstract class _ApiAdapter implements ApiAdapter {
       fromDialog: fromDialog,
     );
   }
+
+  Future<ApiResponse> doExecute({
+    required final BuildContext context,
+    final params = const <String, String>{},
+  });
 
   Future<void> _checkResponse({
     required final BuildContext context,
@@ -183,6 +183,9 @@ class _LoginApiAdapter extends _ApiAdapter {
       } else {
         await CommonSharedPreferencesKey.userId.setString(jsonMap['user_id']);
 
+        // Update user information
+        await _UserApiAdapter().execute(context: context);
+
         return ApiResponse.from(
           fromApi: FromApi.login,
           errorType: ErrorType.none,
@@ -203,6 +206,36 @@ class _LoginApiAdapter extends _ApiAdapter {
 
     return ApiResponse.from(
       fromApi: FromApi.login,
+      errorType: ErrorType.unknown,
+    );
+  }
+}
+
+class _UserApiAdapter extends _ApiAdapter {
+  @override
+  Future<ApiResponse> doExecute({
+    required BuildContext context,
+    final params = const <String, String>{},
+  }) async {
+    final userId = await CommonSharedPreferencesKey.userId.getString();
+    final response = await Api.user.request.send(params: {'userId': userId});
+    final httpStatus = _HttpStatus.from(code: response.statusCode);
+
+    if (httpStatus.isAccepted) {
+    } else if (httpStatus.isClientError) {
+      return ApiResponse.from(
+        fromApi: FromApi.user,
+        errorType: ErrorType.client,
+      );
+    } else if (httpStatus.isServerError) {
+      return ApiResponse.from(
+        fromApi: FromApi.user,
+        errorType: ErrorType.server,
+      );
+    }
+
+    return ApiResponse.from(
+      fromApi: FromApi.user,
       errorType: ErrorType.unknown,
     );
   }
@@ -474,15 +507,17 @@ class _Network {
 }
 
 class _HttpStatus {
-  /// The status code
-  final int code;
-
   /// Returns the new instance of [_HttpStatus] based on [code] passed as an argument.
   _HttpStatus.from({
     required this.code,
   });
 
+  /// The status code
+  final int code;
+
   bool get isAccepted => this.code == 200;
+
   bool get isClientError => 400 <= this.code && this.code < 500;
+
   bool get isServerError => 500 <= this.code && this.code < 600;
 }

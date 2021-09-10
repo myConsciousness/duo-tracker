@@ -5,11 +5,11 @@
 import 'package:flutter/material.dart';
 
 class WarnSnackbar {
-  /// The build context
-  final BuildContext _context;
-
   /// Returns the new instance of [WarnSnackbar] based on the [context] passed as an argument.
   WarnSnackbar.from({required context}) : this._context = context;
+
+  /// The build context
+  final BuildContext _context;
 
   void show({required String content}) {
     ScaffoldMessenger.of(this._context).showSnackBar(

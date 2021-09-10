@@ -16,6 +16,16 @@ class DuovocHomeView extends StatefulWidget {
 }
 
 class _DuovocHomeViewState extends State<DuovocHomeView> {
+  double getProportionHeight(double inputHeight) {
+    final screenHeight = SizeConfig.screenHeight;
+    return (inputHeight / 812.0) * screenHeight;
+  }
+
+  double getProportionWidth(double inputWidth) {
+    final screenWidth = SizeConfig.screenWidth;
+    return (inputWidth / 375.0) * screenWidth;
+  }
+
   @override
   Widget build(BuildContext context) => DefaultTabController(
         length: 4,
@@ -53,14 +63,4 @@ class _DuovocHomeViewState extends State<DuovocHomeView> {
           ),
         ),
       );
-
-  double getProportionHeight(double inputHeight) {
-    final screenHeight = SizeConfig.screenHeight;
-    return (inputHeight / 812.0) * screenHeight;
-  }
-
-  double getProportionWidth(double inputWidth) {
-    final screenWidth = SizeConfig.screenWidth;
-    return (inputWidth / 375.0) * screenWidth;
-  }
 }

@@ -30,11 +30,6 @@ class OverviewTabView extends StatefulWidget {
 
 class _OverviewTabViewState extends State<OverviewTabView> {
   @override
-  void initState() {
-    super.initState();
-  }
-
-  @override
   void didChangeDependencies() {
     super.didChangeDependencies();
   }
@@ -42,6 +37,30 @@ class _OverviewTabViewState extends State<OverviewTabView> {
   @override
   void dispose() {
     super.dispose();
+  }
+
+  @override
+  void initState() {
+    super.initState();
+  }
+
+  Widget _tabTitle(final String title) {
+    return Padding(
+      padding: EdgeInsets.symmetric(
+        horizontal: this.getProportionWidth(0.5),
+      ),
+      child: Tab(text: title),
+    );
+  }
+
+  double getProportionHeight(double inputHeight) {
+    final screenHeight = SizeConfig.screenHeight;
+    return (inputHeight / 812.0) * screenHeight;
+  }
+
+  double getProportionWidth(double inputWidth) {
+    final screenWidth = SizeConfig.screenWidth;
+    return (inputWidth / 375.0) * screenWidth;
   }
 
   @override
@@ -81,23 +100,4 @@ class _OverviewTabViewState extends State<OverviewTabView> {
           ),
         ),
       );
-
-  Widget _tabTitle(final String title) {
-    return Padding(
-      padding: EdgeInsets.symmetric(
-        horizontal: this.getProportionWidth(0.5),
-      ),
-      child: Tab(text: title),
-    );
-  }
-
-  double getProportionHeight(double inputHeight) {
-    final screenHeight = SizeConfig.screenHeight;
-    return (inputHeight / 812.0) * screenHeight;
-  }
-
-  double getProportionWidth(double inputWidth) {
-    final screenWidth = SizeConfig.screenWidth;
-    return (inputWidth / 375.0) * screenWidth;
-  }
 }

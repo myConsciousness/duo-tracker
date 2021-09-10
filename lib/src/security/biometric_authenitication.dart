@@ -5,9 +5,6 @@
 import 'package:local_auth/local_auth.dart';
 
 class BiometricAuthentication {
-  /// The singleton instance of this [BiometricAuthentication].
-  static final _singletonInstance = BiometricAuthentication._internal();
-
   /// The internal constructor.
   BiometricAuthentication._internal();
 
@@ -15,6 +12,9 @@ class BiometricAuthentication {
   factory BiometricAuthentication.getInstance() => _singletonInstance;
 
   static final _localAuthentication = LocalAuthentication();
+
+  /// The singleton instance of this [BiometricAuthentication].
+  static final _singletonInstance = BiometricAuthentication._internal();
 
   Future<bool> authenticate({required String reason}) async {
     if (await this.isBiometricSupported()) {

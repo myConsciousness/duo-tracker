@@ -14,11 +14,6 @@ class Duovoc extends StatefulWidget {
 
 class _DuovocState extends State<Duovoc> {
   @override
-  void initState() {
-    super.initState();
-  }
-
-  @override
   void didChangeDependencies() {
     super.didChangeDependencies();
   }
@@ -29,10 +24,16 @@ class _DuovocState extends State<Duovoc> {
   }
 
   @override
+  void initState() {
+    super.initState();
+  }
+
+  @override
   Widget build(BuildContext context) => MaterialApp(
         debugShowCheckedModeBanner: false,
-        theme: ThemeData.dark(),
+        theme: ThemeData.light(),
         darkTheme: ThemeData.dark(),
+        themeMode: ThemeMode.system,
         home: DuovocHomeView(),
       );
 }

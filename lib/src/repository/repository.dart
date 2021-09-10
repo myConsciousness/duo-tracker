@@ -8,7 +8,7 @@ import 'package:sqflite/sqlite_api.dart';
 
 abstract class Repository<T> {
   /// The database provider.
-  final Future<Database> database = DatabaseProvider.getInstance().database;
+  final database = DatabaseProvider.getInstance().database;
 
   /// Returns the table name.
   String get table;

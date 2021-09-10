@@ -7,15 +7,15 @@ import 'package:admob_unit_ids/admob_unit_ids.dart';
 
 /// The class that manages the AdMob unit ids of Mr.QR.
 class DuovocAdmobUnitIds extends AdmobUnitIDs {
-  /// The singleton instance of [DuovocAdmobUnitIds].
-  static final DuovocAdmobUnitIds _singletonInstance =
-      DuovocAdmobUnitIds._internal();
-
   /// The internal default constructor.
   DuovocAdmobUnitIds._internal();
 
   /// Returns the singleton instance of [DuovocAdmobUnitIds].
   factory DuovocAdmobUnitIds.getInstance() => _singletonInstance;
+
+  /// The singleton instance of [DuovocAdmobUnitIds].
+  static final DuovocAdmobUnitIds _singletonInstance =
+      DuovocAdmobUnitIds._internal();
 
   @override
   String get releaseAppOpen => throw UnimplementedError();

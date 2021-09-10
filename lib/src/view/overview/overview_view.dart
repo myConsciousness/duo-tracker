@@ -27,6 +27,8 @@ class OverviewView extends StatefulWidget {
 }
 
 class _OverviewViewState extends State<OverviewView> {
+  static const noneFieldValue = 'N/A';
+
   final _learnedWordService = LearnedWordService.getInstance();
 
   final _datetimeFormat = DateFormat('yyyy/MM/dd HH:mm:ss');
@@ -152,12 +154,12 @@ class _OverviewViewState extends State<OverviewView> {
     required LearnedWord learnedWord,
   }) =>
       Visibility(
-        key: Key(learnedWord.sortOrder.toString()),
+        key: Key('${learnedWord.sortOrder}'),
         visible: this._isCardVisible(learnedWord: learnedWord),
         child: Card(
           elevation: 2.0,
           child: Padding(
-            padding: EdgeInsets.all(10),
+            padding: const EdgeInsets.all(10),
             child: Column(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
@@ -185,6 +187,19 @@ class _OverviewViewState extends State<OverviewView> {
                 ),
                 Divider(),
                 Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  crossAxisAlignment: CrossAxisAlignment.center,
+                  children: [
+                    Text(
+                        'Pos: ${learnedWord.pos.isEmpty ? noneFieldValue : learnedWord.pos}'),
+                    Text(
+                        'Gender: ${learnedWord.gender.isEmpty ? noneFieldValue : learnedWord.gender}'),
+                    Text(
+                        'Infinitive: ${learnedWord.pos.isEmpty ? noneFieldValue : learnedWord.pos}'),
+                  ],
+                ),
+                Divider(),
+                Row(
                   mainAxisAlignment: MainAxisAlignment.start,
                   children: [
                     Expanded(
@@ -203,7 +218,9 @@ class _OverviewViewState extends State<OverviewView> {
                             //     : await this._audioPlayer.play('');
                           },
                         ),
-                        title: Text(learnedWord.wordString),
+                        title: this._createCardTitleText(
+                          learnedWord: learnedWord,
+                        ),
                         subtitle: this._createCardHintText(
                           wordHints: learnedWord.wordHints,
                         ),
@@ -236,7 +253,7 @@ class _OverviewViewState extends State<OverviewView> {
                   children: [
                     IconButton(
                       tooltip: 'Show Tips & Notes',
-                      icon: Icon(Icons.more),
+                      icon: const Icon(Icons.more),
                       onPressed: () => Navigator.push(
                         context,
                         MaterialPageRoute(
@@ -247,7 +264,7 @@ class _OverviewViewState extends State<OverviewView> {
                     ),
                     IconButton(
                       tooltip: 'Complete',
-                      icon: Icon(Icons.done),
+                      icon: const Icon(Icons.done),
                       onPressed: () async {
                         learnedWord.completed = true;
                         learnedWord.updatedAt = DateTime.now();
@@ -259,7 +276,7 @@ class _OverviewViewState extends State<OverviewView> {
                     ),
                     IconButton(
                       tooltip: 'Hide',
-                      icon: Icon(Icons.hide_source),
+                      icon: const Icon(Icons.hide_source),
                       onPressed: () async {
                         learnedWord.deleted = true;
                         learnedWord.updatedAt = DateTime.now();
@@ -298,6 +315,14 @@ class _OverviewViewState extends State<OverviewView> {
           ),
         ],
       );
+
+  Widget _createCardTitleText({
+    required LearnedWord learnedWord,
+  }) =>
+      Text(learnedWord.normalizedString.isEmpty ||
+              learnedWord.normalizedString.endsWith(' ')
+          ? learnedWord.wordString
+          : '${learnedWord.wordString} (${learnedWord.normalizedString})');
 
   Widget _createCardHintText({
     required List<WordHint> wordHints,
