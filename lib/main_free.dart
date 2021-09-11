@@ -19,6 +19,6 @@ void main() {
     },
   );
 
-  F.appFlavor = Flavor.FREE;
-  runApp(Duovoc());
+  F.appFlavor = Flavor.free;
+  runApp(const Duovoc());
 }

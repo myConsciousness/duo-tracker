@@ -73,8 +73,9 @@ abstract class Request {
     required Map<String, String> params,
     required String name,
   }) {
-    if (!params.containsKey(name))
+    if (!params.containsKey(name)) {
       throw FlutterError('The parameter key "$name" is required.');
+    }
   }
 }
 
@@ -92,10 +93,10 @@ class _Session {
   final _headers = <String, String>{};
 
   /// Returns cookie headers
-  Map<String, String> get headers => this._headers;
+  Map<String, String> get headers => _headers;
 
   http.Response updateCookie({required final http.Response response}) {
-    this._headers['cookie'] = response.headers['set-cookie'] ?? '';
+    _headers['cookie'] = response.headers['set-cookie'] ?? '';
     return response;
   }
 }

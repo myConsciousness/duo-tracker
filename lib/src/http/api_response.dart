@@ -37,7 +37,7 @@ enum ErrorType {
 }
 
 class ApiResponse {
-  /// Returns the new instance of [ApiResponse] based on [api], [errorType] and [message].
+  /// Returns the new instance of [ApiResponse] based on [fromApi], [errorType] and [message].
   ApiResponse.from({
     required this.fromApi,
     required this.errorType,
@@ -54,5 +54,5 @@ class ApiResponse {
   final String message;
 
   /// Checks if response has error. Returns [true] if reponse has error otherwise [false].
-  bool get hasError => this.errorType != ErrorType.none;
+  bool get hasError => errorType != ErrorType.none;
 }

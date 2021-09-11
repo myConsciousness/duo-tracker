@@ -8,13 +8,13 @@ import 'package:path/path.dart';
 
 class DatabaseProvider {
   /// The internal constructor for singleton.
-  DatabaseProvider._internal() : this._database = _getDatabase();
+  DatabaseProvider._internal() : _database = _getDatabase();
 
   /// Returns the singleton instance of [DatabaseProvider].
   factory DatabaseProvider.getInstance() => _singletonInstance;
 
   /// The database name
-  static const _DATABASE_NAME = 'duovoc.db';
+  static const _databaseName = 'duovoc.db';
 
   /// The singleton instance of [DatabaseProvider].
   static final DatabaseProvider _singletonInstance =
@@ -24,13 +24,13 @@ class DatabaseProvider {
   late final Future<Database> _database;
 
   /// Returns the database.
-  Future<Database> get database => this._database;
+  Future<Database> get database => _database;
 
   /// Returns the  instance of database.
   static Future<Database> _getDatabase() async => await openDatabase(
         join(
           await getDatabasesPath(),
-          _DATABASE_NAME,
+          _databaseName,
         ),
         onCreate: (Database database, int version) async {
           await database.execute(TableDefinitions.learnedWord);

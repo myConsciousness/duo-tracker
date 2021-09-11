@@ -5,7 +5,7 @@
 import 'package:flutter/material.dart';
 
 class CommonRadioListTile<T> extends StatefulWidget {
-  CommonRadioListTile({
+  const CommonRadioListTile({
     Key? key,
     this.label,
     required this.dataSource,
@@ -34,7 +34,7 @@ class _CommonRadioListTileState<T> extends State<CommonRadioListTile> {
             child: RadioListTile(
                 title: Text(
                   title,
-                  style: TextStyle(
+                  style: const TextStyle(
                     fontSize: 12,
                   ),
                 ),
@@ -52,10 +52,10 @@ class _CommonRadioListTileState<T> extends State<CommonRadioListTile> {
         if (widget.label != null)
           Text(
             widget.label!,
-            style: TextStyle(color: Theme.of(context).accentColor),
+            style: TextStyle(color: Theme.of(context).colorScheme.secondary),
           ),
         if (widget.label != null)
-          SizedBox(
+          const SizedBox(
             height: 5,
           ),
         Row(

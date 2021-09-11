@@ -6,7 +6,7 @@ import 'package:duovoc/src/security/text_mask.dart';
 import 'package:flutter/material.dart';
 
 class CommonTextField extends StatefulWidget {
-  CommonTextField({
+  const CommonTextField({
     Key? key,
     this.label,
     required this.controller,
@@ -40,19 +40,19 @@ class _CommonTextFieldState extends State<CommonTextField> {
 
   @override
   void dispose() {
-    this._focusNode.dispose();
+    _focusNode.dispose();
     super.dispose();
   }
 
   @override
   void initState() {
     super.initState();
-    this._focusNode.addListener(this._onFocusChanged);
+    _focusNode.addListener(_onFocusChanged);
   }
 
   void _onFocusChanged() {
     if (widget.maskText) {
-      if (!this._focusNode.hasFocus) {
+      if (!_focusNode.hasFocus) {
         super.setState(() {
           widget.controller.text = TextMask.apply(text: widget.controller.text);
         });
@@ -67,10 +67,10 @@ class _CommonTextFieldState extends State<CommonTextField> {
           if (widget.label != null)
             Text(
               widget.label!,
-              style: TextStyle(color: Theme.of(context).accentColor),
+              style: TextStyle(color: Theme.of(context).colorScheme.secondary),
             ),
           if (widget.label != null)
-            SizedBox(
+            const SizedBox(
               height: 10,
             ),
           TextField(
@@ -90,14 +90,14 @@ class _CommonTextFieldState extends State<CommonTextField> {
                   : '',
               enabledBorder: const OutlineInputBorder(
                 borderRadius: BorderRadius.all(Radius.circular(20.0)),
-                borderSide: const BorderSide(
+                borderSide: BorderSide(
                   color: Colors.grey,
                 ),
               ),
               focusedBorder: OutlineInputBorder(
-                borderRadius: BorderRadius.all(Radius.circular(10.0)),
+                borderRadius: const BorderRadius.all(Radius.circular(10.0)),
                 borderSide: BorderSide(
-                  color: Theme.of(context).accentColor,
+                  color: Theme.of(context).colorScheme.secondary,
                 ),
               ),
             ),
@@ -115,7 +115,7 @@ class _CommonTextFieldState extends State<CommonTextField> {
                 widget.controller.text = text;
               }
             },
-            focusNode: this._focusNode,
+            focusNode: _focusNode,
           )
         ],
       );

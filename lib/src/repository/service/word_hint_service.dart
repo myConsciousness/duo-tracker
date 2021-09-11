@@ -20,7 +20,7 @@ class WordHintService extends WordHintRepository {
 
   @override
   Future<List<WordHint>> findAll() async => await super.database.then(
-        (database) => database.query(this.table).then(
+        (database) => database.query(table).then(
               (v) => v
                   .map(
                     (e) =>
@@ -33,7 +33,7 @@ class WordHintService extends WordHintRepository {
   @override
   Future<WordHint> findById(int id) async => await super.database.then(
         (database) =>
-            database.query(this.table, where: 'ID = ?', whereArgs: [id]).then(
+            database.query(table, where: 'ID = ?', whereArgs: [id]).then(
           (entity) => entity.isNotEmpty
               ? WordHint.fromMap(entity[0])
               : WordHint.empty(),
@@ -41,46 +41,46 @@ class WordHintService extends WordHintRepository {
       );
 
   @override
-  Future<WordHint> insert(WordHint wordHint) async {
+  Future<WordHint> insert(WordHint model) async {
     await super.database.then(
           (database) => database
               .insert(
-                this.table,
-                wordHint.toMap(),
+                table,
+                model.toMap(),
               )
               .then(
-                (int id) async => wordHint.id = id,
+                (int id) async => model.id = id,
               ),
         );
 
-    return wordHint;
+    return model;
   }
 
   @override
-  Future<void> update(WordHint wordHint) async => await super.database.then(
+  Future<void> update(WordHint model) async => await super.database.then(
         (database) => database.update(
-          this.table,
-          wordHint.toMap(),
+          table,
+          model.toMap(),
           where: 'ID = ?',
           whereArgs: [
-            wordHint.id,
+            model.id,
           ],
         ),
       );
 
   @override
-  Future<void> delete(WordHint wordHint) async => await super.database.then(
+  Future<void> delete(WordHint model) async => await super.database.then(
         (database) => database.delete(
-          this.table,
+          table,
           where: 'ID = ?',
-          whereArgs: [wordHint.id],
+          whereArgs: [model.id],
         ),
       );
 
   @override
-  Future<WordHint> replace(WordHint wordHint) async {
-    await this.delete(wordHint);
-    return await this.insert(wordHint);
+  Future<WordHint> replace(WordHint model) async {
+    await delete(model);
+    return await insert(model);
   }
 
   @override
@@ -91,7 +91,7 @@ class WordHintService extends WordHintRepository {
       await super.database.then(
             (database) => database
                 .query(
-                  this.table,
+                  table,
                   where: 'WORD_ID = ? AND USER_ID = ?',
                   whereArgs: [
                     wordId,
@@ -115,7 +115,7 @@ class WordHintService extends WordHintRepository {
   ) async =>
       await super.database.then(
             (database) => database.delete(
-              this.table,
+              table,
               where: 'WORD_ID = ? AND USER_ID = ?',
               whereArgs: [
                 wordId,

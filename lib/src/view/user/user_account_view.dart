@@ -5,7 +5,7 @@
 import 'package:flutter/material.dart';
 
 class UserAccountView extends StatefulWidget {
-  UserAccountView({Key? key}) : super(key: key);
+  const UserAccountView({Key? key}) : super(key: key);
 
   @override
   _UserAccountViewState createState() => _UserAccountViewState();

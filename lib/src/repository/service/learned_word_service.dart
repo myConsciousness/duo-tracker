@@ -24,7 +24,7 @@ class LearnedWordService extends LearnedWordRepository {
 
   @override
   Future<List<LearnedWord>> findAll() async => await super.database.then(
-        (database) => database.query(this.table).then(
+        (database) => database.query(table).then(
               (v) => v
                   .map(
                     (e) => e.isNotEmpty
@@ -38,7 +38,7 @@ class LearnedWordService extends LearnedWordRepository {
   @override
   Future<LearnedWord> findById(int id) async => await super.database.then(
         (database) =>
-            database.query(this.table, where: 'ID = ?', whereArgs: [id]).then(
+            database.query(table, where: 'ID = ?', whereArgs: [id]).then(
           (entity) => entity.isNotEmpty
               ? LearnedWord.fromMap(entity[0])
               : LearnedWord.empty(),
@@ -46,48 +46,46 @@ class LearnedWordService extends LearnedWordRepository {
       );
 
   @override
-  Future<LearnedWord> insert(LearnedWord learnedWord) async {
+  Future<LearnedWord> insert(LearnedWord model) async {
     await super.database.then(
           (database) => database
               .insert(
-                this.table,
-                learnedWord.toMap(),
+                table,
+                model.toMap(),
               )
               .then(
-                (int id) async => learnedWord.id = id,
+                (int id) async => model.id = id,
               ),
         );
 
-    return learnedWord;
+    return model;
   }
 
   @override
-  Future<void> update(LearnedWord learnedWord) async =>
-      await super.database.then(
-            (database) => database.update(
-              this.table,
-              learnedWord.toMap(),
-              where: 'ID = ?',
-              whereArgs: [
-                learnedWord.id,
-              ],
-            ),
-          );
+  Future<void> update(LearnedWord model) async => await super.database.then(
+        (database) => database.update(
+          table,
+          model.toMap(),
+          where: 'ID = ?',
+          whereArgs: [
+            model.id,
+          ],
+        ),
+      );
 
   @override
-  Future<void> delete(LearnedWord learnedWord) async =>
-      await super.database.then(
-            (database) => database.delete(
-              this.table,
-              where: 'ID = ?',
-              whereArgs: [learnedWord.id],
-            ),
-          );
+  Future<void> delete(LearnedWord model) async => await super.database.then(
+        (database) => database.delete(
+          table,
+          where: 'ID = ?',
+          whereArgs: [model.id],
+        ),
+      );
 
   @override
-  Future<LearnedWord> replace(LearnedWord learnedWord) async {
-    await this.delete(learnedWord);
-    return await this.insert(learnedWord);
+  Future<LearnedWord> replace(LearnedWord model) async {
+    await delete(model);
+    return await insert(model);
   }
 
   @override
@@ -99,7 +97,7 @@ class LearnedWordService extends LearnedWordRepository {
     final learedWords = await super.database.then(
           (database) => database
               .query(
-                this.table,
+                table,
                 where:
                     'USER_ID = ? AND LEARNING_LANGUAGE = ? AND FROM_LANGUAGE = ?',
                 whereArgs: [
@@ -119,9 +117,8 @@ class LearnedWordService extends LearnedWordRepository {
         );
 
     for (final LearnedWord learnedWord in learedWords) {
-      learnedWord.wordHints = await this
-          ._wordHintService
-          .findByWordIdAndUserId(learnedWord.wordId, userId);
+      learnedWord.wordHints = await _wordHintService.findByWordIdAndUserId(
+          learnedWord.wordId, userId);
     }
 
     return learedWords;
@@ -134,7 +131,7 @@ class LearnedWordService extends LearnedWordRepository {
   ) async =>
       await super.database.then(
             (database) => database.delete(
-              this.table,
+              table,
               where: 'WORD_ID = ? AND USER_ID = ?',
               whereArgs: [
                 wordId,
@@ -148,7 +145,7 @@ class LearnedWordService extends LearnedWordRepository {
           String wordId, String userId) async =>
       await super.database.then(
             (database) => database.query(
-              this.table,
+              table,
               where: 'WORD_ID = ? AND USER_ID = ?',
               whereArgs: [
                 wordId,
@@ -163,17 +160,17 @@ class LearnedWordService extends LearnedWordRepository {
 
   @override
   Future<LearnedWord> replaceById(LearnedWord learnedWord) async {
-    LearnedWord storedLearnedWord = await this.findByWordIdAndUserId(
+    LearnedWord storedLearnedWord = await findByWordIdAndUserId(
       learnedWord.wordId,
       learnedWord.userId,
     );
 
     if (storedLearnedWord.isEmpty()) {
-      storedLearnedWord = await this.insert(learnedWord);
+      storedLearnedWord = await insert(learnedWord);
 
       // Update sort order as id
       storedLearnedWord.sortOrder = storedLearnedWord.id;
-      await this.update(storedLearnedWord);
+      await update(storedLearnedWord);
     } else {
       learnedWord.id = storedLearnedWord.id;
       learnedWord.bookmarked = storedLearnedWord.bookmarked;
@@ -182,7 +179,7 @@ class LearnedWordService extends LearnedWordRepository {
       learnedWord.sortOrder = storedLearnedWord.sortOrder;
       learnedWord.createdAt = storedLearnedWord.createdAt;
 
-      await this.update(learnedWord);
+      await update(learnedWord);
     }
 
     return storedLearnedWord;
@@ -191,7 +188,7 @@ class LearnedWordService extends LearnedWordRepository {
   @override
   Future<void> replaceSortOrdersByIds(List<LearnedWord> learnedWords) async {
     learnedWords.asMap().forEach((index, learnedWord) async {
-      LearnedWord storedLearnedWord = await this.findByWordIdAndUserId(
+      LearnedWord storedLearnedWord = await findByWordIdAndUserId(
         learnedWord.wordId,
         learnedWord.userId,
       );
@@ -199,7 +196,7 @@ class LearnedWordService extends LearnedWordRepository {
       storedLearnedWord.sortOrder = index;
       storedLearnedWord.updatedAt = DateTime.now();
 
-      this.update(storedLearnedWord);
+      update(storedLearnedWord);
     });
   }
 }

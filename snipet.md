@@ -1,8 +1,8 @@
-# 1. Duovoc に関するメモ
+# 1. Duo Tracker に関するメモ
 
 <!-- TOC -->
 
-- [1. Duovoc に関するメモ](#1-duovoc-に関するメモ)
+- [1. Duo Tracker に関するメモ](#1-duo-tracker-に関するメモ)
   - [1.1. 製品構成](#11-製品構成)
   - [1.2. Flavor の作り方](#12-flavor-の作り方)
   - [1.3. Flavor 毎にアプリアイコンを設定する方法](#13-flavor-毎にアプリアイコンを設定する方法)
@@ -20,10 +20,10 @@
 
 以下の製品を Flavor を使用して同じプロジェクト内で管理する。
 
-| 製品名 | 区分 | 最新バージョン |
-| ------ | ---- | -------------- |
-| Duovoc | Free | 1.0.0          |
-| Duovoc | Paid | 1.0.0          |
+| 製品名      | 区分 | 最新バージョン |
+| ----------- | ---- | -------------- |
+| Duo Tracker | Free | 1.0.0          |
+| Duo Tracker | Paid | 1.0.0          |
 
 ## 1.2. Flavor の作り方
 
@@ -45,32 +45,32 @@ flutter pub run flutter_launcher_icons:main
 
 ### 1.4.1. Free
 
-| コマンド                                        | 備考                |
-| ----------------------------------------------- | ------------------- |
-| flutter run --flavor free -t lib/main-free.dart | Duovoc のフリー版。 |
+| コマンド                                        | 備考                     |
+| ----------------------------------------------- | ------------------------ |
+| flutter run --flavor free -t lib/main_free.dart | Duo Tracker のフリー版。 |
 
 ### 1.4.2. Paid
 
-| コマンド                                        | 備考              |
-| ----------------------------------------------- | ----------------- |
-| flutter run --flavor paid -t lib/main-paid.dart | Duovoc の有料版。 |
+| コマンド                                        | 備考                   |
+| ----------------------------------------------- | ---------------------- |
+| flutter run --flavor paid -t lib/main_paid.dart | Duo Tracker の有料版。 |
 
 ## 1.5. リリースバンドルの作成方法
 
 ### 1.5.1. Free
 
-| コマンド                                                    | 備考                |
-| ----------------------------------------------------------- | ------------------- |
-| flutter build appbundle --flavor free -t lib/main-free.dart | Duovoc のフリー版。 |
+| コマンド                                                    | 備考                     |
+| ----------------------------------------------------------- | ------------------------ |
+| flutter build appbundle --flavor free -t lib/main_free.dart | Duo Tracker のフリー版。 |
 
 ### 1.5.2. Paid
 
-| コマンド                                                    | 備考              |
-| ----------------------------------------------------------- | ----------------- |
-| flutter build appbundle --flavor paid -t lib/main-paid.dart | Duovoc の有料版。 |
+| コマンド                                                    | 備考                   |
+| ----------------------------------------------------------- | ---------------------- |
+| flutter build appbundle --flavor paid -t lib/main_paid.dart | Duo Tracker の有料版。 |
 
 ## 1.6. AdMob アプリケーション ID
 
-| 製品   | アプリケーション ID |
-| ------ | ------------------- |
-| Duovoc | -                   |
+| 製品        | アプリケーション ID |
+| ----------- | ------------------- |
+| Duo Tracker | -                   |

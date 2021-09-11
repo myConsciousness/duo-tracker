@@ -11,7 +11,10 @@ class CommonAppBarTitles extends StatefulWidget {
     required this.subTitle,
   }) : super(key: key);
 
+  /// The subtitle
   final String subTitle;
+
+  /// The title
   final String title;
 
   @override
@@ -26,12 +29,12 @@ class _CommonAppBarTitlesState extends State<CommonAppBarTitles> {
             widget.subTitle,
             style: TextStyle(
               fontSize: 10,
-              color: Theme.of(context).accentColor,
+              color: Theme.of(context).colorScheme.secondary,
             ),
           ),
           Text(
             widget.title,
-            style: TextStyle(
+            style: const TextStyle(
               fontSize: 14,
             ),
           ),

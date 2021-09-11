@@ -7,6 +7,6 @@ import 'package:flutter/material.dart';
 import 'flavors.dart';
 
 void main() {
-  F.appFlavor = Flavor.PAID;
-  runApp(Duovoc());
+  F.appFlavor = Flavor.paid;
+  runApp(const Duovoc());
 }

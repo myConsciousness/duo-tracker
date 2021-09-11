@@ -5,7 +5,7 @@
 import 'package:flutter/material.dart';
 
 class CommonIconButton extends StatefulWidget {
-  CommonIconButton({
+  const CommonIconButton({
     Key? key,
     required this.tooltip,
     required this.icon,
@@ -26,6 +26,6 @@ class _CommonIconButtonState extends State<CommonIconButton> {
         tooltip: widget.tooltip,
         icon: widget.icon,
         onPressed: widget.onPressed,
-        color: Theme.of(context).accentColor,
+        color: Theme.of(context).colorScheme.secondary,
       );
 }

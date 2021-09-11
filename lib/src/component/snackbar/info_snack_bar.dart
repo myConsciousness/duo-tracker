@@ -6,22 +6,28 @@ import 'package:flutter/material.dart';
 
 class InfoSnackbar {
   /// Returns the new instance of [InfoSnackbar] based on the [context] passed as an argument.
-  InfoSnackbar.from({required context}) : this._context = context;
+  InfoSnackbar.from({
+    required this.context,
+  });
 
   /// The build context
-  final BuildContext _context;
+  final BuildContext context;
 
-  void show({required String content}) {
-    ScaffoldMessenger.of(this._context).showSnackBar(
+  void show({
+    required String content,
+  }) {
+    ScaffoldMessenger.of(context).showSnackBar(
       SnackBar(
         behavior: SnackBarBehavior.floating,
         content: Row(
           children: <Widget>[
             Icon(
               Icons.info,
-              color: Theme.of(this._context).primaryColor,
+              color: Theme.of(context).primaryColor,
             ),
-            SizedBox(width: 10),
+            const SizedBox(
+              width: 10,
+            ),
             Text(content),
           ],
         ),

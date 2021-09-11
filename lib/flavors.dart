@@ -3,8 +3,8 @@
 // BSD-style license that can be found in the LICENSE file.
 
 enum Flavor {
-  FREE,
-  PAID,
+  free,
+  paid,
 }
 
 class F {
@@ -12,9 +12,9 @@ class F {
 
   static String get title {
     switch (appFlavor) {
-      case Flavor.FREE:
+      case Flavor.free:
         return 'Duovoc';
-      case Flavor.PAID:
+      case Flavor.paid:
         return 'Duovoc';
       default:
         return 'title';

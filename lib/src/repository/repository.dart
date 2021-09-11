@@ -21,7 +21,7 @@ abstract class Repository<T> {
 
   /// Returns the count of records.
   Future<int?> count() async {
-    return Sqflite.firstIntValue(await this.database.then((Database database) =>
+    return Sqflite.firstIntValue(await database.then((Database database) =>
         database.rawQuery('SELECT COUNT(*) FROM $table;')));
   }
 

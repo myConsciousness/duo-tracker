@@ -18,13 +18,13 @@ class WordHint {
 
   /// Returns the empty instance of [WordHint].
   WordHint.empty()
-      : this._empty = true,
-        this.wordId = '',
-        this.userId = '',
-        this.learningLanguage = '',
-        this.fromLanguage = '',
-        this.value = '',
-        this.hint = '';
+      : _empty = true,
+        wordId = '',
+        userId = '',
+        learningLanguage = '',
+        fromLanguage = '',
+        value = '',
+        hint = '';
 
   /// Returns the new instance of [WordHint] based on the parameters.
   WordHint.from({
@@ -49,29 +49,29 @@ class WordHint {
         value: map[_ColumnName.value],
         hint: map[_ColumnName.hint],
         createdAt: DateTime.fromMillisecondsSinceEpoch(
-          map[_ColumnName.createdAt] == null ? 0 : map[_ColumnName.createdAt],
+          map[_ColumnName.createdAt] ?? 0,
         ),
         updatedAt: DateTime.fromMillisecondsSinceEpoch(
-          map[_ColumnName.updatedAt] == null ? 0 : map[_ColumnName.updatedAt],
+          map[_ColumnName.updatedAt] ?? 0,
         ),
       );
 
   /// Returns this [WordHint] model as [Map].
   Map<String, dynamic> toMap() {
-    final map = Map<String, dynamic>();
-    map[_ColumnName.wordId] = this.wordId;
-    map[_ColumnName.userId] = this.userId;
-    map[_ColumnName.learningLanguage] = this.learningLanguage;
-    map[_ColumnName.fromLanguage] = this.fromLanguage;
-    map[_ColumnName.value] = this.value;
-    map[_ColumnName.hint] = this.hint;
-    map[_ColumnName.createdAt] = this.createdAt.millisecondsSinceEpoch;
-    map[_ColumnName.updatedAt] = this.updatedAt.millisecondsSinceEpoch;
+    final map = <String, dynamic>{};
+    map[_ColumnName.wordId] = wordId;
+    map[_ColumnName.userId] = userId;
+    map[_ColumnName.learningLanguage] = learningLanguage;
+    map[_ColumnName.fromLanguage] = fromLanguage;
+    map[_ColumnName.value] = value;
+    map[_ColumnName.hint] = hint;
+    map[_ColumnName.createdAt] = createdAt.millisecondsSinceEpoch;
+    map[_ColumnName.updatedAt] = updatedAt.millisecondsSinceEpoch;
     return map;
   }
 
   /// Returns [true] if this model is empty, otherwise [false].
-  bool isEmpty() => this._empty;
+  bool isEmpty() => _empty;
 }
 
 /// The internal const class that manages the column name of [WordHint] repository.

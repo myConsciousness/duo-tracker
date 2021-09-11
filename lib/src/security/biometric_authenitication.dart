@@ -17,7 +17,7 @@ class BiometricAuthentication {
   static final _singletonInstance = BiometricAuthentication._internal();
 
   Future<bool> authenticate({required String reason}) async {
-    if (await this.isBiometricSupported()) {
+    if (await isBiometricSupported()) {
       final availableBiometricTypes =
           await _localAuthentication.getAvailableBiometrics();
 

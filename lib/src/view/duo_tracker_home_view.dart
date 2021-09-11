@@ -8,14 +8,14 @@ import 'package:duovoc/src/view/settings/settings_view.dart';
 import 'package:duovoc/src/view/user/user_account_view.dart';
 import 'package:flutter/material.dart';
 
-class DuovocHomeView extends StatefulWidget {
-  DuovocHomeView({Key? key}) : super(key: key);
+class DuoTrackerHomeView extends StatefulWidget {
+  const DuoTrackerHomeView({Key? key}) : super(key: key);
 
   @override
-  _DuovocHomeViewState createState() => _DuovocHomeViewState();
+  _DuoTrackerHomeViewState createState() => _DuoTrackerHomeViewState();
 }
 
-class _DuovocHomeViewState extends State<DuovocHomeView> {
+class _DuoTrackerHomeViewState extends State<DuoTrackerHomeView> {
   double getProportionHeight(double inputHeight) {
     final screenHeight = SizeConfig.screenHeight;
     return (inputHeight / 812.0) * screenHeight;
@@ -33,7 +33,7 @@ class _DuovocHomeViewState extends State<DuovocHomeView> {
           bottomNavigationBar: TabBar(
             isScrollable: false,
             unselectedLabelColor: Colors.white.withOpacity(0.3),
-            unselectedLabelStyle: TextStyle(fontSize: 11.0),
+            unselectedLabelStyle: const TextStyle(fontSize: 11.0),
             labelColor: Colors.white,
             labelStyle: const TextStyle(fontSize: 12.0),
             indicatorColor: Colors.white,
@@ -41,19 +41,19 @@ class _DuovocHomeViewState extends State<DuovocHomeView> {
             indicator: BoxDecoration(
               border: Border(
                 bottom: BorderSide(
-                  width: this.getProportionWidth(3),
-                  color: Theme.of(context).accentColor,
+                  width: getProportionWidth(3),
+                  color: Theme.of(context).colorScheme.secondary,
                 ),
               ),
             ),
-            tabs: [
+            tabs: const [
               Tab(icon: Icon(Icons.list_alt)),
               Tab(icon: Icon(Icons.bar_chart)),
               Tab(icon: Icon(Icons.account_circle)),
               Tab(icon: Icon(Icons.settings)),
             ],
           ),
-          body: TabBarView(
+          body: const TabBarView(
             children: [
               OverviewTabView(),
               OverviewTabView(),

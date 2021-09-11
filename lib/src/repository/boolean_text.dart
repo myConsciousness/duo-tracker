@@ -5,8 +5,8 @@
 /// The const class that manages boolean text.
 class BooleanText {
   /// The false
-  static const FALSE = 'F';
+  static const false_ = 'F';
 
   /// The true
-  static const TRUE = 'T';
+  static const true_ = 'T';
 }

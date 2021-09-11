@@ -18,32 +18,30 @@ Future<T?> showAlertDialog<T>({
     Navigator.of(context, rootNavigator: useRootNavigator).push<T>(
       DialogRoute<T>(
         context: context,
-        builder: (_) => Container(
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              AlertDialog(
-                title: Text(title),
-                content: SingleChildScrollView(
-                  child: ListBody(
-                    children: <Widget>[
-                      Text(content),
-                    ],
-                  ),
+        builder: (_) => Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            AlertDialog(
+              title: Text(title),
+              content: SingleChildScrollView(
+                child: ListBody(
+                  children: <Widget>[
+                    Text(content),
+                  ],
                 ),
-                actions: <Widget>[
-                  ElevatedButton(
-                    child: Text("Cancel"),
-                    onPressed: () => Navigator.pop(context),
-                  ),
-                  ElevatedButton(
-                    child: Text("OK"),
-                    onPressed: () => Navigator.pop(context),
-                  ),
-                ],
               ),
-            ],
-          ),
+              actions: <Widget>[
+                ElevatedButton(
+                  child: const Text("Cancel"),
+                  onPressed: () => Navigator.pop(context),
+                ),
+                ElevatedButton(
+                  child: const Text("OK"),
+                  onPressed: () => Navigator.pop(context),
+                ),
+              ],
+            ),
+          ],
         ),
         barrierColor: barrierColor,
         barrierDismissible: barrierDismissible,

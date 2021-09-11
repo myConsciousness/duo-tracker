@@ -22,7 +22,7 @@ enum OverviewTabType {
 }
 
 class OverviewTabView extends StatefulWidget {
-  OverviewTabView({Key? key}) : super(key: key);
+  const OverviewTabView({Key? key}) : super(key: key);
 
   @override
   _OverviewTabViewState createState() => _OverviewTabViewState();
@@ -47,7 +47,7 @@ class _OverviewTabViewState extends State<OverviewTabView> {
   Widget _tabTitle(final String title) {
     return Padding(
       padding: EdgeInsets.symmetric(
-        horizontal: this.getProportionWidth(0.5),
+        horizontal: getProportionWidth(0.5),
       ),
       child: Tab(text: title),
     );
@@ -70,7 +70,7 @@ class _OverviewTabViewState extends State<OverviewTabView> {
           bottomNavigationBar: TabBar(
             isScrollable: false,
             unselectedLabelColor: Colors.white.withOpacity(0.3),
-            unselectedLabelStyle: TextStyle(fontSize: 11.0),
+            unselectedLabelStyle: const TextStyle(fontSize: 11.0),
             labelColor: Colors.white,
             labelStyle: const TextStyle(fontSize: 12.0),
             indicatorColor: Colors.white,
@@ -78,19 +78,19 @@ class _OverviewTabViewState extends State<OverviewTabView> {
             indicator: BoxDecoration(
               border: Border(
                 bottom: BorderSide(
-                  width: this.getProportionWidth(3),
-                  color: Theme.of(context).accentColor,
+                  width: getProportionWidth(3),
+                  color: Theme.of(context).colorScheme.secondary,
                 ),
               ),
             ),
             tabs: [
-              this._tabTitle('All'),
-              this._tabTitle('Bookmarked'),
-              this._tabTitle('Completed'),
-              this._tabTitle('Hidden'),
+              _tabTitle('All'),
+              _tabTitle('Bookmarked'),
+              _tabTitle('Completed'),
+              _tabTitle('Hidden'),
             ],
           ),
-          body: TabBarView(
+          body: const TabBarView(
             children: [
               OverviewView(overviewTabType: OverviewTabType.all),
               OverviewView(overviewTabType: OverviewTabType.bookmarked),

@@ -23,29 +23,29 @@ class InterstitialAdResolver {
 
   void loadInterstitialAd() async => await InterstitialAd.load(
         adUnitId: DuovocAdmobUnitIds.getInstance().releaseInterstitial,
-        request: AdRequest(),
+        request: const AdRequest(),
         adLoadCallback: InterstitialAdLoadCallback(
           onAdLoaded: (final InterstitialAd interstitialAd) {
-            this._interstitialAd = interstitialAd;
-            this._countLoadAttempt = 0;
+            _interstitialAd = interstitialAd;
+            _countLoadAttempt = 0;
           },
           onAdFailedToLoad: (final LoadAdError loadAdError) {
-            this._interstitialAd = null;
-            this._countLoadAttempt++;
+            _interstitialAd = null;
+            _countLoadAttempt++;
 
-            if (this._countLoadAttempt <= 2) {
-              this.loadInterstitialAd();
+            if (_countLoadAttempt <= 2) {
+              loadInterstitialAd();
             }
           },
         ),
       );
 
   void showInterstitialAd() {
-    if (this._interstitialAd == null) {
+    if (_interstitialAd == null) {
       return;
     }
 
-    this._interstitialAd!.fullScreenContentCallback = FullScreenContentCallback(
+    _interstitialAd!.fullScreenContentCallback = FullScreenContentCallback(
       onAdShowedFullScreenContent: (final InterstitialAd interstitialAd) {},
       onAdDismissedFullScreenContent: (final InterstitialAd interstitialAd) {
         interstitialAd.dispose();
@@ -53,11 +53,11 @@ class InterstitialAdResolver {
       onAdFailedToShowFullScreenContent:
           (final InterstitialAd interstitialAd, final AdError adError) {
         interstitialAd.dispose();
-        this.loadInterstitialAd();
+        loadInterstitialAd();
       },
     );
 
-    this._interstitialAd!.show();
-    this._interstitialAd = null;
+    _interstitialAd!.show();
+    _interstitialAd = null;
   }
 }

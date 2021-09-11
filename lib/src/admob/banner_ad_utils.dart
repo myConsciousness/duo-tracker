@@ -7,7 +7,7 @@ import 'package:flutter/material.dart';
 import 'package:google_mobile_ads/google_mobile_ads.dart';
 
 class BannerAdUtils {
-  static Widget createBannerAdWidget(BannerAd bannerAd) => Container(
+  static Widget createBannerAdWidget(BannerAd bannerAd) => SizedBox(
         height: 50,
         child: AdWidget(ad: bannerAd),
       );
@@ -15,7 +15,7 @@ class BannerAdUtils {
   static BannerAd loadBannerAd() => BannerAd(
         size: AdSize.banner,
         adUnitId: DuovocAdmobUnitIds.getInstance().banner,
-        listener: BannerAdListener(),
-        request: AdRequest(),
+        listener: const BannerAdListener(),
+        request: const AdRequest(),
       )..load();
 }

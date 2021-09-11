@@ -2,11 +2,11 @@
 // Use of this source code is governed by a
 // BSD-style license that can be found in the LICENSE file.
 
-import 'package:duovoc/src/view/duovoc_home_view.dart';
+import 'package:duovoc/src/view/duo_tracker_home_view.dart';
 import 'package:flutter/material.dart';
 
 class Duovoc extends StatefulWidget {
-  Duovoc({Key? key}) : super(key: key);
+  const Duovoc({Key? key}) : super(key: key);
 
   @override
   _DuovocState createState() => _DuovocState();
@@ -34,6 +34,6 @@ class _DuovocState extends State<Duovoc> {
         theme: ThemeData.light(),
         darkTheme: ThemeData.dark(),
         themeMode: ThemeMode.system,
-        home: DuovocHomeView(),
+        home: const DuoTrackerHomeView(),
       );
 }

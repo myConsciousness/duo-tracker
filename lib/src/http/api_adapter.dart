@@ -53,7 +53,7 @@ abstract class _ApiAdapter implements ApiAdapter {
     final fromDialog = false,
   }) async {
     if (!await _Network.isConnected()) {
-      await this._checkResponse(
+      await _checkResponse(
         context: context,
         response: ApiResponse.from(
           fromApi: FromApi.none,
@@ -65,9 +65,9 @@ abstract class _ApiAdapter implements ApiAdapter {
       );
     }
 
-    await this._checkResponse(
+    await _checkResponse(
       context: context,
-      response: await this.doExecute(
+      response: await doExecute(
         context: context,
         params: params,
       ),
@@ -265,33 +265,33 @@ class _LearnedWordApiAdapter extends _ApiAdapter {
         final String wordId = overview['id'];
         final String wordString = overview['word_string'];
 
-        await this._learnedWordService.replaceById(
-              LearnedWord.from(
-                wordId: overview['id'],
-                userId: userId,
-                languageString: languageString,
-                learningLanguage: learningLanguage,
-                fromLanguage: fromLanguage,
-                lexemeId: overview['lexeme_id'] ?? '',
-                relatedLexemes: overview['related_lexemes'],
-                strengthBars: overview['strength_bars'] ?? -1,
-                infinitive: overview['infinitive'] ?? '',
-                wordString: wordString,
-                normalizedString: overview['normalized_string'] ?? '',
-                pos: overview['pos'] ?? '',
-                lastPracticedMs: overview['last_practiced_ms'] ?? -1,
-                skill: overview['skill'] ?? '',
-                lastPracticed: overview['last_practiced'] ?? '',
-                strength: overview['strength'] ?? 0.0,
-                skillUrlTitle: overview['skill_url_title'] ?? '',
-                gender: overview['gender'] ?? '',
-                bookmarked: false,
-                completed: false,
-                deleted: false,
-                createdAt: DateTime.now(),
-                updatedAt: DateTime.now(),
-              ),
-            );
+        await _learnedWordService.replaceById(
+          LearnedWord.from(
+            wordId: overview['id'],
+            userId: userId,
+            languageString: languageString,
+            learningLanguage: learningLanguage,
+            fromLanguage: fromLanguage,
+            lexemeId: overview['lexeme_id'] ?? '',
+            relatedLexemes: overview['related_lexemes'],
+            strengthBars: overview['strength_bars'] ?? -1,
+            infinitive: overview['infinitive'] ?? '',
+            wordString: wordString,
+            normalizedString: overview['normalized_string'] ?? '',
+            pos: overview['pos'] ?? '',
+            lastPracticedMs: overview['last_practiced_ms'] ?? -1,
+            skill: overview['skill'] ?? '',
+            lastPracticed: overview['last_practiced'] ?? '',
+            strength: overview['strength'] ?? 0.0,
+            skillUrlTitle: overview['skill_url_title'] ?? '',
+            gender: overview['gender'] ?? '',
+            bookmarked: false,
+            completed: false,
+            deleted: false,
+            createdAt: DateTime.now(),
+            updatedAt: DateTime.now(),
+          ),
+        );
 
         // Update word hint based on word id
         _WordHintApiAdapter().execute(
@@ -341,18 +341,19 @@ class _WordHintApiAdapter extends _ApiAdapter {
     required final BuildContext context,
     final params = const <String, String>{},
   }) async {
-    if (!params.containsKey(_paramWordId))
+    if (!params.containsKey(_paramWordId)) {
       throw FlutterError('The parameter "$_paramWordId" is required.');
+    }
 
     final response = await Api.wordHint.request.send(params: params);
     final httpStatus = _HttpStatus.from(code: response.statusCode);
 
     if (httpStatus.isAccepted) {
-      final hintsMatrix = this._createHintsMatrix(
+      final hintsMatrix = _createHintsMatrix(
         json: jsonDecode(response.body),
       );
 
-      await this._refreshWordHints(
+      await _refreshWordHints(
         params: params,
         hintsMatrix: hintsMatrix,
       );
@@ -388,7 +389,7 @@ class _WordHintApiAdapter extends _ApiAdapter {
     int colspan = -1;
 
     for (final Map<String, dynamic> token in json['tokens']) {
-      wordString = this._fetchWordString(token: token);
+      wordString = _fetchWordString(token: token);
 
       final hintTable = token['hint_table'];
       final hints = <String>[];
@@ -450,29 +451,27 @@ class _WordHintApiAdapter extends _ApiAdapter {
     final fromLanguage = params['fromLanguage']!;
 
     // Refresh word hint based on word id and user id
-    await this._wordHintService.deleteByWordIdAndUserId(
-          wordId,
-          userId,
-        );
+    await _wordHintService.deleteByWordIdAndUserId(
+      wordId,
+      userId,
+    );
 
     hintsMatrix.forEach(
       (String value, List<String> hints) {
-        hints.forEach(
-          (hint) async {
-            await this._wordHintService.insert(
-                  WordHint.from(
-                    wordId: wordId,
-                    userId: userId,
-                    learningLanguage: learningLanguage,
-                    fromLanguage: fromLanguage,
-                    value: value,
-                    hint: hint,
-                    createdAt: DateTime.now(),
-                    updatedAt: DateTime.now(),
-                  ),
-                );
-          },
-        );
+        for (var hint in hints) {
+          _wordHintService.insert(
+            WordHint.from(
+              wordId: wordId,
+              userId: userId,
+              learningLanguage: learningLanguage,
+              fromLanguage: fromLanguage,
+              value: value,
+              hint: hint,
+              createdAt: DateTime.now(),
+              updatedAt: DateTime.now(),
+            ),
+          );
+        }
       },
     );
   }
@@ -488,9 +487,7 @@ class _Network {
   static Future<bool> _isMobileConnected({
     ConnectivityResult? connectivity,
   }) async {
-    if (connectivity == null) {
-      connectivity = await (Connectivity().checkConnectivity());
-    }
+    connectivity ??= await (Connectivity().checkConnectivity());
 
     return connectivity == ConnectivityResult.mobile;
   }
@@ -498,9 +495,7 @@ class _Network {
   static Future<bool> _isWifiConnected({
     ConnectivityResult? connectivity,
   }) async {
-    if (connectivity == null) {
-      connectivity = await (Connectivity().checkConnectivity());
-    }
+    connectivity ??= await (Connectivity().checkConnectivity());
 
     return connectivity == ConnectivityResult.wifi;
   }
@@ -515,9 +510,9 @@ class _HttpStatus {
   /// The status code
   final int code;
 
-  bool get isAccepted => this.code == 200;
+  bool get isAccepted => code == 200;
 
-  bool get isClientError => 400 <= this.code && this.code < 500;
+  bool get isClientError => 400 <= code && code < 500;
 
-  bool get isServerError => 500 <= this.code && this.code < 600;
+  bool get isServerError => 500 <= code && code < 600;
 }

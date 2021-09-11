@@ -25,86 +25,83 @@ Future<T?> showAuthDialog<T>({
     Navigator.of(context, rootNavigator: useRootNavigator).push<T>(
       DialogRoute<T>(
         context: context,
-        builder: (_) => Container(
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              AlertDialog(
-                title: const Text('Authenticate Duolingo Account'),
-                content: SingleChildScrollView(
-                  child: ListBody(
-                    children: <Widget>[
-                      SizedBox(
-                        height: 10,
+        builder: (_) => Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            AlertDialog(
+              title: const Text('Authenticate Duolingo Account'),
+              content: SingleChildScrollView(
+                child: ListBody(
+                  children: <Widget>[
+                    const SizedBox(
+                      height: 10,
+                    ),
+                    CommonTextField(
+                      controller: _usernameController,
+                      hintText: 'Username or Email (required)',
+                      prefixIcon: Icon(
+                        Icons.person,
+                        color: Theme.of(context).colorScheme.secondary,
                       ),
-                      CommonTextField(
-                        controller: _usernameController,
-                        hintText: 'Username or Email (required)',
-                        prefixIcon: Icon(
-                          Icons.person,
-                          color: Theme.of(context).accentColor,
-                        ),
-                        onChanged: (text) {
-                          _usernameController.text = text;
-                        },
+                      onChanged: (text) {
+                        _usernameController.text = text;
+                      },
+                    ),
+                    const SizedBox(
+                      height: 20,
+                    ),
+                    CommonTextField(
+                      controller: _passwordController,
+                      hintText: 'Password (required)',
+                      maskText: true,
+                      prefixIcon: Icon(
+                        Icons.lock,
+                        color: Theme.of(context).colorScheme.secondary,
                       ),
-                      SizedBox(
-                        height: 20,
-                      ),
-                      CommonTextField(
-                        controller: _passwordController,
-                        hintText: 'Password (required)',
-                        maskText: true,
-                        prefixIcon: Icon(
-                          Icons.lock,
-                          color: Theme.of(context).accentColor,
-                        ),
-                        onChanged: (text) {
-                          _rawPassword = text;
-                        },
-                      ),
-                      SizedBox(
-                        height: 30,
-                      ),
-                      ElevatedButton(
-                        child: const Text('Login'),
-                        onPressed: () async {
-                          if (_usernameController.text.isEmpty) {
-                            WarnSnackbar.from(context: context).show(
-                                content:
-                                    'The username or email address is required.');
-                            return;
-                          }
+                      onChanged: (text) {
+                        _rawPassword = text;
+                      },
+                    ),
+                    const SizedBox(
+                      height: 30,
+                    ),
+                    ElevatedButton(
+                      child: const Text('Login'),
+                      onPressed: () async {
+                        if (_usernameController.text.isEmpty) {
+                          WarnSnackbar.from(context: context).show(
+                              content:
+                                  'The username or email address is required.');
+                          return;
+                        }
 
-                          if (_rawPassword.isEmpty) {
-                            WarnSnackbar.from(context: context)
-                                .show(content: 'The password is required.');
-                            return;
-                          }
+                        if (_rawPassword.isEmpty) {
+                          WarnSnackbar.from(context: context)
+                              .show(content: 'The password is required.');
+                          return;
+                        }
 
-                          /**
-                           * Since there is no user information in the common field when the application is first started,
-                           * the user name and password are temporarily stored so that they can be used in the authentication process.
-                           * The user ID will be stored when the authentication process with the API is completed.
-                           */
-                          CommonSharedPreferencesKey.username
-                              .setString(_usernameController.text);
-                          CommonSharedPreferencesKey.password.setString(
-                              Encryption.encode(value: _rawPassword));
+                        /**
+                         * Since there is no user information in the common field when the application is first started,
+                         * the user name and password are temporarily stored so that they can be used in the authentication process.
+                         * The user ID will be stored when the authentication process with the API is completed.
+                         */
+                        CommonSharedPreferencesKey.username
+                            .setString(_usernameController.text);
+                        CommonSharedPreferencesKey.password
+                            .setString(Encryption.encode(value: _rawPassword));
 
-                          await ApiAdapter.of(type: ApiAdapterType.login)
-                              .execute(
-                            context: context,
-                            fromDialog: true,
-                          );
-                        },
-                      ),
-                    ],
-                  ),
+                        await ApiAdapter.of(type: ApiAdapterType.login).execute(
+                          context: context,
+                          fromDialog: true,
+                        );
+                      },
+                    ),
+                  ],
                 ),
               ),
-            ],
-          ),
+            ),
+          ],
         ),
         barrierColor: barrierColor,
         barrierDismissible: barrierDismissible,
