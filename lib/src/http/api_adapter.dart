@@ -12,8 +12,10 @@ import 'package:duo_tracker/src/http/api_response.dart';
 import 'package:duo_tracker/src/http/duolingo_api.dart';
 import 'package:duo_tracker/src/preference/common_shared_preferences_key.dart';
 import 'package:duo_tracker/src/repository/model/learned_word_model.dart';
+import 'package:duo_tracker/src/repository/model/user_model.dart';
 import 'package:duo_tracker/src/repository/model/word_hint_model.dart';
 import 'package:duo_tracker/src/repository/service/learned_word_service.dart';
+import 'package:duo_tracker/src/repository/service/user_service.dart';
 import 'package:duo_tracker/src/repository/service/word_hint_service.dart';
 import 'package:duo_tracker/src/security/encryption.dart';
 import 'package:flutter/material.dart';
@@ -212,6 +214,9 @@ class _LoginApiAdapter extends _ApiAdapter {
 }
 
 class _UserApiAdapter extends _ApiAdapter {
+  /// The user service
+  final _userService = UserService.getInstance();
+
   @override
   Future<ApiResponse> doExecute({
     required BuildContext context,
@@ -222,7 +227,43 @@ class _UserApiAdapter extends _ApiAdapter {
     final httpStatus = _HttpStatus.from(code: response.statusCode);
 
     if (httpStatus.isAccepted) {
-      // final jsonMap = jsonDecode(response.body);
+      final jsonMap = jsonDecode(response.body);
+      final learningLanguage = jsonMap['learningLanguage'];
+      final fromLanguage = jsonMap['fromLanguage'];
+
+      await CommonSharedPreferencesKey.currentLearningLanguage
+          .setString(learningLanguage);
+      await CommonSharedPreferencesKey.currentFromLanguage
+          .setString(fromLanguage);
+
+      await _userService.replaceByUserId(
+        user: User.from(
+          userId: userId,
+          username: jsonMap['username'] ?? '',
+          name: jsonMap['name'] ?? '',
+          bio: jsonMap['bio'] ?? '',
+          email: jsonMap['email'] ?? '',
+          location: jsonMap['location'] ?? '',
+          profileCountry: jsonMap['profileCountry'] ?? '',
+          inviteUrl: jsonMap['inviteURL'] ?? '',
+          currentCourseId: jsonMap['currentCourseId'] ?? '',
+          learningLanguage: learningLanguage,
+          fromLanguage: fromLanguage,
+          timezone: jsonMap['timezone'] ?? '',
+          timezoneOffset: jsonMap['timezoneOffset'] ?? '',
+          pictureUrl: jsonMap['picture'] ?? '',
+          plusStatus: jsonMap['plusStatus'] ?? '',
+          lingots: jsonMap['lingots'],
+          totalXp: jsonMap['totalXp'],
+          xpGoal: jsonMap['xpGoal'],
+          weeklyXp: jsonMap['weeklyXp'],
+          monthlyXp: jsonMap['monthlyXp'],
+          xpGoalMetToday: jsonMap['xpGoalMetToday'],
+          streak: jsonMap['streak'],
+          createdAt: DateTime.now(),
+          updatedAt: DateTime.now(),
+        ),
+      );
 
       return ApiResponse.from(
         fromApi: FromApi.user,

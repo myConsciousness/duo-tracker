@@ -9,4 +9,12 @@ abstract class UserRepository extends Repository<User> {
   Future<User> findByUserId({
     required String userId,
   });
+
+  Future<void> updateByUserId({
+    required User user,
+  });
+
+  Future<void> replaceByUserId({
+    required User user,
+  });
 }

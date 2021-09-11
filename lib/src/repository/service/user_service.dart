@@ -77,6 +77,19 @@ class UserService extends UserRepository {
   }
 
   @override
+  Future<void> replaceByUserId({
+    required User user,
+  }) async {
+    final storedUser = await findByUserId(userId: user.userId);
+
+    if (storedUser.isEmpty()) {
+      await insert(user);
+    } else {
+      await updateByUserId(user: user);
+    }
+  }
+
+  @override
   String get table => 'USER';
 
   @override
@@ -90,4 +103,19 @@ class UserService extends UserRepository {
           ],
         ),
       );
+
+  @override
+  Future<void> updateByUserId({
+    required User user,
+  }) async =>
+      await super.database.then(
+            (database) => database.update(
+              table,
+              user.toMap(),
+              where: 'USER_ID = ?',
+              whereArgs: [
+                user.userId,
+              ],
+            ),
+          );
 }

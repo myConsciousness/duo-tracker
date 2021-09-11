@@ -15,12 +15,12 @@ import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 
 class OverviewView extends StatefulWidget {
-  final OverviewTabType overviewTabType;
-
   const OverviewView({
     Key? key,
     required this.overviewTabType,
   }) : super(key: key);
+
+  final OverviewTabType overviewTabType;
 
   @override
   _OverviewViewState createState() => _OverviewViewState();
@@ -29,16 +29,9 @@ class OverviewView extends StatefulWidget {
 class _OverviewViewState extends State<OverviewView> {
   static const noneFieldValue = 'N/A';
 
-  final _learnedWordService = LearnedWordService.getInstance();
-
-  final _datetimeFormat = DateFormat('yyyy/MM/dd HH:mm:ss');
-
   final _audioPlayer = AudioPlayer();
-
-  @override
-  void initState() {
-    super.initState();
-  }
+  final _datetimeFormat = DateFormat('yyyy/MM/dd HH:mm:ss');
+  final _learnedWordService = LearnedWordService.getInstance();
 
   @override
   void didChangeDependencies() {
@@ -51,63 +44,9 @@ class _OverviewViewState extends State<OverviewView> {
   }
 
   @override
-  Widget build(BuildContext context) => Scaffold(
-        appBar: AppBar(
-          title: const CommonAppBarTitles(
-            title: 'Learned Words',
-            subTitle: 'English → Japanese',
-          ),
-          actions: [
-            IconButton(
-              tooltip: 'Update Learned Words',
-              icon: const Icon(Icons.sync),
-              onPressed: () async {
-                await _syncOverview();
-                super.setState(() {});
-              },
-            ),
-          ],
-        ),
-        body: FutureBuilder(
-          future: _fetchDataSource(context: context),
-          builder: (context, AsyncSnapshot snapshot) {
-            if (!snapshot.hasData) {
-              return Center(
-                child: Column(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  crossAxisAlignment: CrossAxisAlignment.center,
-                  children: const [
-                    CircularProgressIndicator(),
-                    SizedBox(
-                      height: 10,
-                    ),
-                    Text('Loading...'),
-                  ],
-                ),
-              );
-            }
-
-            final List<LearnedWord> learnedWords = snapshot.data;
-
-            return RefreshIndicator(
-              onRefresh: () async {
-                super.setState(() {});
-              },
-              child: ReorderableListView.builder(
-                itemCount: learnedWords.length,
-                onReorder: (oldIndex, newIndex) async => await _sortCards(
-                  learnedWords: learnedWords,
-                  oldIndex: oldIndex,
-                  newIndex: newIndex,
-                ),
-                itemBuilder: (context, index) => _createLearnedWordCard(
-                  learnedWord: learnedWords[index],
-                ),
-              ),
-            );
-          },
-        ),
-      );
+  void initState() {
+    super.initState();
+  }
 
   Future<List<LearnedWord>> _fetchDataSource({
     required BuildContext context,
@@ -142,8 +81,8 @@ class _OverviewViewState extends State<OverviewView> {
   Future<List<LearnedWord>> _findLearnedWords() async =>
       await _learnedWordService.findByUserIdAndLearningLanguageAndFromLanguage(
         await CommonSharedPreferencesKey.userId.getString(),
-        'es',
-        'en',
+        await CommonSharedPreferencesKey.currentLearningLanguage.getString(),
+        await CommonSharedPreferencesKey.currentFromLanguage.getString(),
       );
 
   Widget _createLearnedWordCard({
@@ -314,11 +253,18 @@ class _OverviewViewState extends State<OverviewView> {
 
   Widget _createCardTitleText({
     required LearnedWord learnedWord,
-  }) =>
-      Text(learnedWord.normalizedString.isEmpty ||
-              learnedWord.normalizedString.endsWith(' ')
-          ? learnedWord.wordString
-          : '${learnedWord.wordString} (${learnedWord.normalizedString})');
+  }) {
+    if (learnedWord.normalizedString.isEmpty ||
+        learnedWord.normalizedString.endsWith(' ')) {
+      return Text(learnedWord.wordString);
+    }
+
+    if (learnedWord.wordString == learnedWord.normalizedString) {
+      return Text(learnedWord.wordString);
+    }
+
+    return Text('${learnedWord.wordString} (${learnedWord.normalizedString})');
+  }
 
   Widget _createCardHintText({
     required List<WordHint> wordHints,
@@ -362,4 +308,63 @@ class _OverviewViewState extends State<OverviewView> {
     // Update all sort orders
     await _learnedWordService.replaceSortOrdersByIds(learnedWords);
   }
+
+  @override
+  Widget build(BuildContext context) => Scaffold(
+        appBar: AppBar(
+          title: const CommonAppBarTitles(
+            title: 'Learned Words',
+            subTitle: 'English → Japanese',
+          ),
+          actions: [
+            IconButton(
+              tooltip: 'Update Learned Words',
+              icon: const Icon(Icons.sync),
+              onPressed: () async {
+                await _syncOverview();
+                super.setState(() {});
+              },
+            ),
+          ],
+        ),
+        body: FutureBuilder(
+          future: _fetchDataSource(context: context),
+          builder: (context, AsyncSnapshot snapshot) {
+            if (!snapshot.hasData) {
+              return Center(
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  crossAxisAlignment: CrossAxisAlignment.center,
+                  children: const [
+                    CircularProgressIndicator(),
+                    SizedBox(
+                      height: 10,
+                    ),
+                    Text('Loading...'),
+                  ],
+                ),
+              );
+            }
+
+            final List<LearnedWord> learnedWords = snapshot.data;
+
+            return RefreshIndicator(
+              onRefresh: () async {
+                super.setState(() {});
+              },
+              child: ReorderableListView.builder(
+                itemCount: learnedWords.length,
+                onReorder: (oldIndex, newIndex) async => await _sortCards(
+                  learnedWords: learnedWords,
+                  oldIndex: oldIndex,
+                  newIndex: newIndex,
+                ),
+                itemBuilder: (context, index) => _createLearnedWordCard(
+                  learnedWord: learnedWords[index],
+                ),
+              ),
+            );
+          },
+        ),
+      );
 }

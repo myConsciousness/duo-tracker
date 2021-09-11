@@ -9,15 +9,27 @@ class TableDefinitions {
         CREATE TABLE USER (
           ID INTEGER PRIMARY KEY AUTOINCREMENT,
           USER_ID TEXT NOT NULL UNIQUE,
+          USERNAME TEXT NOT NULL,
           NAME TEXT NOT NULL,
           BIO TEXT NOT NULL,
-          PLUS_STATUS TEXT NOT NULL,
+          EMAIL TEXT NOT NULL,
+          LOCATION TEXT,
+          PROFILE_COUNTRY TEXT,
           INVITE_URL TEXT NOT NULL,
-          PICTURE_URL TEXT,
-          TIME_ZONE TEXT,
           CURRENT_COURSE_ID TEXT NOT NULL,
           LEARNING_LANGUAGE TEXT NOT NULL,
           FROM_LANGUAGE TEXT NOT NULL,
+          TIMEZONE TEXT NOT NULL,
+          TIMEZONE_OFFSET TEXT NOT NULL,
+          PICTURE_URL TEXT NOT NULL,
+          PLUS_STATUS TEXT NOT NULL,
+          LINGOTS INTEGER NOT NULL,
+          TOTAL_XP INTEGER NOT NULL,
+          XP_GOAL INTEGER NOT NULL,
+          WEEKLY_XP INTEGER NOT NULL,
+          MONTHLY_XP INTEGER NOT NULL,
+          XP_GOAL_MET_TODAY INTEGER NOT NULL,
+          STREAK INTEGER NOT NULL,
           CREATED_AT INTEGER NOT NULL,
           UPDATED_AT INTEGER NOT NULL
         )
@@ -25,7 +37,7 @@ class TableDefinitions {
 
   /// The course
   static const course = '''
-        CREATE TABLE USER (
+        CREATE TABLE COURSE (
           ID INTEGER PRIMARY KEY AUTOINCREMENT,
           USER_ID TEXT NOT NULL,
           COURSE_ID TEXT NOT NULL,
@@ -41,7 +53,7 @@ class TableDefinitions {
 
   /// The skill
   static const skill = '''
-        CREATE TABLE USER (
+        CREATE TABLE SKILL (
           ID INTEGER PRIMARY KEY AUTOINCREMENT,
           USER_ID TEXT NOT NULL,
           SKILL_ID TEXT NOT NULL,
