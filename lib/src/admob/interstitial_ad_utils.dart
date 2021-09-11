@@ -2,8 +2,8 @@
 // Use of this source code is governed by a
 // BSD-style license that can be found in the LICENSE file.
 
-import 'package:duovoc/src/admob/interstitial_ad_resolver.dart';
-import 'package:duovoc/src/preference/interstitial_ad_shared_preferences_key.dart';
+import 'package:duo_tracker/src/admob/interstitial_ad_resolver.dart';
+import 'package:duo_tracker/src/preference/interstitial_ad_shared_preferences_key.dart';
 
 class InterstitialAdUtils {
   static void showInterstitialAd(

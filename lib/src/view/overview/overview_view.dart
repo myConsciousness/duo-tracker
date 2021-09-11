@@ -3,14 +3,14 @@
 // BSD-style license that can be found in the LICENSE file.
 
 import 'package:audioplayers/audioplayers.dart';
-import 'package:duovoc/src/component/common_app_bar_titles.dart';
-import 'package:duovoc/src/http/api_adapter.dart';
-import 'package:duovoc/src/preference/common_shared_preferences_key.dart';
-import 'package:duovoc/src/repository/model/learned_word_model.dart';
-import 'package:duovoc/src/repository/model/word_hint_model.dart';
-import 'package:duovoc/src/repository/service/learned_word_service.dart';
-import 'package:duovoc/src/view/lesson_tips_view.dart';
-import 'package:duovoc/src/view/overview/overview_tab_view.dart';
+import 'package:duo_tracker/src/component/common_app_bar_titles.dart';
+import 'package:duo_tracker/src/http/api_adapter.dart';
+import 'package:duo_tracker/src/preference/common_shared_preferences_key.dart';
+import 'package:duo_tracker/src/repository/model/learned_word_model.dart';
+import 'package:duo_tracker/src/repository/model/word_hint_model.dart';
+import 'package:duo_tracker/src/repository/service/learned_word_service.dart';
+import 'package:duo_tracker/src/view/lesson_tips_view.dart';
+import 'package:duo_tracker/src/view/overview/overview_tab_view.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 
@@ -142,7 +142,7 @@ class _OverviewViewState extends State<OverviewView> {
   Future<List<LearnedWord>> _findLearnedWords() async =>
       await _learnedWordService.findByUserIdAndLearningLanguageAndFromLanguage(
         await CommonSharedPreferencesKey.userId.getString(),
-        'ja',
+        'es',
         'en',
       );
 

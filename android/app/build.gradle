@@ -33,13 +33,13 @@ android {
     productFlavors {
         free {
             dimension "product_type"
-            applicationId "org.thinkit.free.duovoc"
-            resValue "string", "app_name", "Duovoc"
+            applicationId "org.thinkit.free.duotracker"
+            resValue "string", "app_name", "Duo Tracker"
         }
         paid {
             dimension "product_type"
-            applicationId "org.thinkit.paid.duovoc"
-            resValue "string", "app_name", "Duovoc"
+            applicationId "org.thinkit.paid.duotracker"
+            resValue "string", "app_name", "Duo Tracker"
         }
     }
 
@@ -52,7 +52,7 @@ android {
 
     defaultConfig {
         // TODO: Specify your own unique Application ID (https://developer.android.com/studio/build/application-id.html).
-        applicationId "org.thinkit.duovoc"
+        applicationId "org.thinkit.duotracker"
         minSdkVersion 21
         targetSdkVersion 30
         versionCode flutterVersionCode.toInteger()
@@ -75,4 +75,3 @@ flutter {
 dependencies {
     implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk7:$kotlin_version"
 }
-

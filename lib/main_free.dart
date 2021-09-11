@@ -2,7 +2,7 @@
 // Use of this source code is governed by a
 // BSD-style license that can be found in the LICENSE file.
 
-import 'package:duovoc/main.dart';
+import 'package:duo_tracker/main.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_flavor/flutter_flavor.dart';
 import 'package:google_mobile_ads/google_mobile_ads.dart';
@@ -20,5 +20,5 @@ void main() {
   );
 
   F.appFlavor = Flavor.free;
-  runApp(const Duovoc());
+  runApp(const DuoTracker());
 }

@@ -2,11 +2,11 @@
 // Use of this source code is governed by a
 // BSD-style license that can be found in the LICENSE file.
 
-import 'package:duovoc/src/component/common_text_field.dart';
-import 'package:duovoc/src/component/snackbar/warn_snack_bar.dart';
-import 'package:duovoc/src/http/api_adapter.dart';
-import 'package:duovoc/src/preference/common_shared_preferences_key.dart';
-import 'package:duovoc/src/security/encryption.dart';
+import 'package:duo_tracker/src/component/common_text_field.dart';
+import 'package:duo_tracker/src/component/snackbar/warn_snack_bar.dart';
+import 'package:duo_tracker/src/http/api_adapter.dart';
+import 'package:duo_tracker/src/preference/common_shared_preferences_key.dart';
+import 'package:duo_tracker/src/security/encryption.dart';
 import 'package:flutter/material.dart';
 
 final _usernameController = TextEditingController();

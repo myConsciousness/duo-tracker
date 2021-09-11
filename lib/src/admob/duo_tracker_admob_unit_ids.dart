@@ -5,17 +5,17 @@
 import 'dart:io';
 import 'package:admob_unit_ids/admob_unit_ids.dart';
 
-/// The class that manages the AdMob unit ids of Mr.QR.
-class DuovocAdmobUnitIds extends AdmobUnitIDs {
+/// The class that manages the AdMob unit ids of Duo Tracker.
+class DuoTrackerAdmobUnitIds extends AdmobUnitIDs {
   /// The internal default constructor.
-  DuovocAdmobUnitIds._internal();
+  DuoTrackerAdmobUnitIds._internal();
 
-  /// Returns the singleton instance of [DuovocAdmobUnitIds].
-  factory DuovocAdmobUnitIds.getInstance() => _singletonInstance;
+  /// Returns the singleton instance of [DuoTrackerAdmobUnitIds].
+  factory DuoTrackerAdmobUnitIds.getInstance() => _singletonInstance;
 
-  /// The singleton instance of [DuovocAdmobUnitIds].
-  static final DuovocAdmobUnitIds _singletonInstance =
-      DuovocAdmobUnitIds._internal();
+  /// The singleton instance of [DuoTrackerAdmobUnitIds].
+  static final DuoTrackerAdmobUnitIds _singletonInstance =
+      DuoTrackerAdmobUnitIds._internal();
 
   @override
   String get releaseAppOpen => throw UnimplementedError();

@@ -1,4 +1,4 @@
-name: duovoc
+name: duo_tracker
 description: A new Flutter project.
 
 # The following line prevents the package from being accidentally published to
@@ -76,23 +76,23 @@ flavorizr:
   flavors:
     free:
       app:
-        name: "Duovoc"
+        name: "Duo Tracker"
 
       android:
-        applicationId: "org.thinkit.free.duovoc"
+        applicationId: "org.thinkit.free.duotracker"
 
       ios:
-        bundleId: "org.thinkit.free.duovoc"
+        bundleId: "org.thinkit.free.duotracker"
 
     paid:
       app:
-        name: "Duovoc"
+        name: "Duo Tracker"
 
       android:
-        applicationId: "org.thinkit.paid.duovoc"
+        applicationId: "org.thinkit.paid.duotracker"
 
       ios:
-        bundleId: "org.thinkit.paid.duovoc"
+        bundleId: "org.thinkit.paid.duotracker"
 
   # To add assets to your application, add an assets section, like this:
   # assets:

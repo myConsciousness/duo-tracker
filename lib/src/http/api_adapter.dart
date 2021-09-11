@@ -5,17 +5,17 @@
 import 'dart:convert';
 
 import 'package:connectivity/connectivity.dart';
-import 'package:duovoc/src/component/dialog/alert_dialog.dart';
-import 'package:duovoc/src/component/dialog/auth_dialog.dart';
-import 'package:duovoc/src/component/snackbar/info_snack_bar.dart';
-import 'package:duovoc/src/http/api_response.dart';
-import 'package:duovoc/src/http/duolingo_api.dart';
-import 'package:duovoc/src/preference/common_shared_preferences_key.dart';
-import 'package:duovoc/src/repository/model/learned_word_model.dart';
-import 'package:duovoc/src/repository/model/word_hint_model.dart';
-import 'package:duovoc/src/repository/service/learned_word_service.dart';
-import 'package:duovoc/src/repository/service/word_hint_service.dart';
-import 'package:duovoc/src/security/encryption.dart';
+import 'package:duo_tracker/src/component/dialog/alert_dialog.dart';
+import 'package:duo_tracker/src/component/dialog/auth_dialog.dart';
+import 'package:duo_tracker/src/component/snackbar/info_snack_bar.dart';
+import 'package:duo_tracker/src/http/api_response.dart';
+import 'package:duo_tracker/src/http/duolingo_api.dart';
+import 'package:duo_tracker/src/preference/common_shared_preferences_key.dart';
+import 'package:duo_tracker/src/repository/model/learned_word_model.dart';
+import 'package:duo_tracker/src/repository/model/word_hint_model.dart';
+import 'package:duo_tracker/src/repository/service/learned_word_service.dart';
+import 'package:duo_tracker/src/repository/service/word_hint_service.dart';
+import 'package:duo_tracker/src/security/encryption.dart';
 import 'package:flutter/material.dart';
 import 'package:open_settings/open_settings.dart';
 
@@ -222,6 +222,12 @@ class _UserApiAdapter extends _ApiAdapter {
     final httpStatus = _HttpStatus.from(code: response.statusCode);
 
     if (httpStatus.isAccepted) {
+      // final jsonMap = jsonDecode(response.body);
+
+      return ApiResponse.from(
+        fromApi: FromApi.user,
+        errorType: ErrorType.none,
+      );
     } else if (httpStatus.isClientError) {
       return ApiResponse.from(
         fromApi: FromApi.user,
@@ -389,12 +395,16 @@ class _WordHintApiAdapter extends _ApiAdapter {
     int colspan = -1;
 
     for (final Map<String, dynamic> token in json['tokens']) {
+      if (token['hint_table'] == null) {
+        continue;
+      }
+
       wordString = _fetchWordString(token: token);
 
       final hintTable = token['hint_table'];
       final hints = <String>[];
 
-      for (Map<String, dynamic> row in hintTable['rows']) {
+      for (final Map<String, dynamic> row in hintTable['rows']) {
         for (final Map<String, dynamic> cell in row['cells']) {
           if (cell.isNotEmpty) {
             hints.add(cell['hint']);

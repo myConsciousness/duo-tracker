@@ -184,7 +184,7 @@ class _UserRequest extends Request {
   }) async {
     super.checkParameterKey(params: params, name: _paramUserId);
 
-    return await http.post(
+    return await http.get(
       Uri.parse('${Api.user.url}/${params[_paramUserId]}'),
       headers: _session.headers,
     );

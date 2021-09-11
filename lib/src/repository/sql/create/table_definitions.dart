@@ -10,6 +10,7 @@ class TableDefinitions {
           ID INTEGER PRIMARY KEY AUTOINCREMENT,
           USER_ID TEXT NOT NULL UNIQUE,
           NAME TEXT NOT NULL,
+          BIO TEXT NOT NULL,
           PLUS_STATUS TEXT NOT NULL,
           INVITE_URL TEXT NOT NULL,
           PICTURE_URL TEXT,

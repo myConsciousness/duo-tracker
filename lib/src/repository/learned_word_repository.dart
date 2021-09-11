@@ -2,8 +2,8 @@
 // Use of this source code is governed by a
 // BSD-style license that can be found in the LICENSE file.
 
-import 'package:duovoc/src/repository/model/learned_word_model.dart';
-import 'package:duovoc/src/repository/repository.dart';
+import 'package:duo_tracker/src/repository/model/learned_word_model.dart';
+import 'package:duo_tracker/src/repository/repository.dart';
 
 abstract class LearnedWordRepository extends Repository<LearnedWord> {
   Future<List<LearnedWord>> findByUserIdAndLearningLanguageAndFromLanguage(

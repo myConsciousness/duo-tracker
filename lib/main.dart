@@ -2,17 +2,17 @@
 // Use of this source code is governed by a
 // BSD-style license that can be found in the LICENSE file.
 
-import 'package:duovoc/src/view/duo_tracker_home_view.dart';
+import 'package:duo_tracker/src/view/duo_tracker_home_view.dart';
 import 'package:flutter/material.dart';
 
-class Duovoc extends StatefulWidget {
-  const Duovoc({Key? key}) : super(key: key);
+class DuoTracker extends StatefulWidget {
+  const DuoTracker({Key? key}) : super(key: key);
 
   @override
-  _DuovocState createState() => _DuovocState();
+  _DuoTrackerState createState() => _DuoTrackerState();
 }
 
-class _DuovocState extends State<Duovoc> {
+class _DuoTrackerState extends State<DuoTracker> {
   @override
   void didChangeDependencies() {
     super.didChangeDependencies();
@@ -31,9 +31,9 @@ class _DuovocState extends State<Duovoc> {
   @override
   Widget build(BuildContext context) => MaterialApp(
         debugShowCheckedModeBanner: false,
-        theme: ThemeData.light(),
+        theme: ThemeData.dark(),
         darkTheme: ThemeData.dark(),
-        themeMode: ThemeMode.system,
+        // themeMode: ThemeMode.system,
         home: const DuoTrackerHomeView(),
       );
 }

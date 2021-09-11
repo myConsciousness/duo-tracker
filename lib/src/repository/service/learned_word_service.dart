@@ -2,25 +2,47 @@
 // Use of this source code is governed by a
 // BSD-style license that can be found in the LICENSE file.
 
-import 'package:duovoc/src/repository/learned_word_repository.dart';
-import 'package:duovoc/src/repository/model/learned_word_model.dart';
-import 'package:duovoc/src/repository/service/word_hint_service.dart';
+import 'package:duo_tracker/src/repository/learned_word_repository.dart';
+import 'package:duo_tracker/src/repository/model/learned_word_model.dart';
+import 'package:duo_tracker/src/repository/service/word_hint_service.dart';
 
 class LearnedWordService extends LearnedWordRepository {
-  /// The singleton instance of this [LearnedWordService].
-  static final _singletonInstance = LearnedWordService._internal();
-
   /// The internal constructor.
   LearnedWordService._internal();
 
   /// Returns the singleton instance of [LearnedWordService].
   factory LearnedWordService.getInstance() => _singletonInstance;
 
+  /// The singleton instance of this [LearnedWordService].
+  static final _singletonInstance = LearnedWordService._internal();
+
   /// The word hint service
   final _wordHintService = WordHintService.getInstance();
 
   @override
-  String get table => 'LEARNED_WORD';
+  Future<void> delete(LearnedWord model) async => await super.database.then(
+        (database) => database.delete(
+          table,
+          where: 'ID = ?',
+          whereArgs: [model.id],
+        ),
+      );
+
+  @override
+  Future<void> deleteByWordIdAndUserId(
+    String wordId,
+    String userId,
+  ) async =>
+      await super.database.then(
+            (database) => database.delete(
+              table,
+              where: 'WORD_ID = ? AND USER_ID = ?',
+              whereArgs: [
+                wordId,
+                userId,
+              ],
+            ),
+          );
 
   @override
   Future<List<LearnedWord>> findAll() async => await super.database.then(
@@ -44,49 +66,6 @@ class LearnedWordService extends LearnedWordRepository {
               : LearnedWord.empty(),
         ),
       );
-
-  @override
-  Future<LearnedWord> insert(LearnedWord model) async {
-    await super.database.then(
-          (database) => database
-              .insert(
-                table,
-                model.toMap(),
-              )
-              .then(
-                (int id) async => model.id = id,
-              ),
-        );
-
-    return model;
-  }
-
-  @override
-  Future<void> update(LearnedWord model) async => await super.database.then(
-        (database) => database.update(
-          table,
-          model.toMap(),
-          where: 'ID = ?',
-          whereArgs: [
-            model.id,
-          ],
-        ),
-      );
-
-  @override
-  Future<void> delete(LearnedWord model) async => await super.database.then(
-        (database) => database.delete(
-          table,
-          where: 'ID = ?',
-          whereArgs: [model.id],
-        ),
-      );
-
-  @override
-  Future<LearnedWord> replace(LearnedWord model) async {
-    await delete(model);
-    return await insert(model);
-  }
 
   @override
   Future<List<LearnedWord>> findByUserIdAndLearningLanguageAndFromLanguage(
@@ -125,22 +104,6 @@ class LearnedWordService extends LearnedWordRepository {
   }
 
   @override
-  Future<void> deleteByWordIdAndUserId(
-    String wordId,
-    String userId,
-  ) async =>
-      await super.database.then(
-            (database) => database.delete(
-              table,
-              where: 'WORD_ID = ? AND USER_ID = ?',
-              whereArgs: [
-                wordId,
-                userId,
-              ],
-            ),
-          );
-
-  @override
   Future<LearnedWord> findByWordIdAndUserId(
           String wordId, String userId) async =>
       await super.database.then(
@@ -157,6 +120,28 @@ class LearnedWordService extends LearnedWordRepository {
                   : LearnedWord.empty(),
             ),
           );
+
+  @override
+  Future<LearnedWord> insert(LearnedWord model) async {
+    await super.database.then(
+          (database) => database
+              .insert(
+                table,
+                model.toMap(),
+              )
+              .then(
+                (int id) async => model.id = id,
+              ),
+        );
+
+    return model;
+  }
+
+  @override
+  Future<LearnedWord> replace(LearnedWord model) async {
+    await delete(model);
+    return await insert(model);
+  }
 
   @override
   Future<LearnedWord> replaceById(LearnedWord learnedWord) async {
@@ -199,4 +184,19 @@ class LearnedWordService extends LearnedWordRepository {
       update(storedLearnedWord);
     });
   }
+
+  @override
+  String get table => 'LEARNED_WORD';
+
+  @override
+  Future<void> update(LearnedWord model) async => await super.database.then(
+        (database) => database.update(
+          table,
+          model.toMap(),
+          where: 'ID = ?',
+          whereArgs: [
+            model.id,
+          ],
+        ),
+      );
 }

@@ -2,8 +2,8 @@
 // Use of this source code is governed by a
 // BSD-style license that can be found in the LICENSE file.
 
-import 'package:duovoc/src/utils/size_config.dart';
-import 'package:duovoc/src/view/overview/overview_view.dart';
+import 'package:duo_tracker/src/utils/size_config.dart';
+import 'package:duo_tracker/src/view/overview/overview_view.dart';
 import 'package:flutter/material.dart';
 
 /// The enum that represents overview tab type.

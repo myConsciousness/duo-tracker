@@ -2,21 +2,43 @@
 // Use of this source code is governed by a
 // BSD-style license that can be found in the LICENSE file.
 
-import 'package:duovoc/src/repository/model/word_hint_model.dart';
-import 'package:duovoc/src/repository/word_hint_repository.dart';
+import 'package:duo_tracker/src/repository/model/word_hint_model.dart';
+import 'package:duo_tracker/src/repository/word_hint_repository.dart';
 
 class WordHintService extends WordHintRepository {
-  /// The singleton instance of this [WordHintService].
-  static final _singletonInstance = WordHintService._internal();
-
   /// The internal constructor.
   WordHintService._internal();
 
   /// Returns the singleton instance of [WordHintService].
   factory WordHintService.getInstance() => _singletonInstance;
 
+  /// The singleton instance of this [WordHintService].
+  static final _singletonInstance = WordHintService._internal();
+
   @override
-  String get table => 'WORD_HINT';
+  Future<void> delete(WordHint model) async => await super.database.then(
+        (database) => database.delete(
+          table,
+          where: 'ID = ?',
+          whereArgs: [model.id],
+        ),
+      );
+
+  @override
+  Future<void> deleteByWordIdAndUserId(
+    String wordId,
+    String userId,
+  ) async =>
+      await super.database.then(
+            (database) => database.delete(
+              table,
+              where: 'WORD_ID = ? AND USER_ID = ?',
+              whereArgs: [
+                wordId,
+                userId,
+              ],
+            ),
+          );
 
   @override
   Future<List<WordHint>> findAll() async => await super.database.then(
@@ -39,49 +61,6 @@ class WordHintService extends WordHintRepository {
               : WordHint.empty(),
         ),
       );
-
-  @override
-  Future<WordHint> insert(WordHint model) async {
-    await super.database.then(
-          (database) => database
-              .insert(
-                table,
-                model.toMap(),
-              )
-              .then(
-                (int id) async => model.id = id,
-              ),
-        );
-
-    return model;
-  }
-
-  @override
-  Future<void> update(WordHint model) async => await super.database.then(
-        (database) => database.update(
-          table,
-          model.toMap(),
-          where: 'ID = ?',
-          whereArgs: [
-            model.id,
-          ],
-        ),
-      );
-
-  @override
-  Future<void> delete(WordHint model) async => await super.database.then(
-        (database) => database.delete(
-          table,
-          where: 'ID = ?',
-          whereArgs: [model.id],
-        ),
-      );
-
-  @override
-  Future<WordHint> replace(WordHint model) async {
-    await delete(model);
-    return await insert(model);
-  }
 
   @override
   Future<List<WordHint>> findByWordIdAndUserId(
@@ -109,18 +88,39 @@ class WordHintService extends WordHintRepository {
           );
 
   @override
-  Future<void> deleteByWordIdAndUserId(
-    String wordId,
-    String userId,
-  ) async =>
-      await super.database.then(
-            (database) => database.delete(
-              table,
-              where: 'WORD_ID = ? AND USER_ID = ?',
-              whereArgs: [
-                wordId,
-                userId,
-              ],
-            ),
-          );
+  Future<WordHint> insert(WordHint model) async {
+    await super.database.then(
+          (database) => database
+              .insert(
+                table,
+                model.toMap(),
+              )
+              .then(
+                (int id) async => model.id = id,
+              ),
+        );
+
+    return model;
+  }
+
+  @override
+  Future<WordHint> replace(WordHint model) async {
+    await delete(model);
+    return await insert(model);
+  }
+
+  @override
+  String get table => 'WORD_HINT';
+
+  @override
+  Future<void> update(WordHint model) async => await super.database.then(
+        (database) => database.update(
+          table,
+          model.toMap(),
+          where: 'ID = ?',
+          whereArgs: [
+            model.id,
+          ],
+        ),
+      );
 }

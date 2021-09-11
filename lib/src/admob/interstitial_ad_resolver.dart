@@ -2,7 +2,7 @@
 // Use of this source code is governed by a
 // BSD-style license that can be found in the LICENSE file.
 
-import 'package:duovoc/src/admob/duovoc_admob_unit_ids.dart';
+import 'package:duo_tracker/src/admob/duo_tracker_admob_unit_ids.dart';
 import 'package:google_mobile_ads/google_mobile_ads.dart';
 
 class InterstitialAdResolver {
@@ -22,7 +22,7 @@ class InterstitialAdResolver {
   InterstitialAd? _interstitialAd;
 
   void loadInterstitialAd() async => await InterstitialAd.load(
-        adUnitId: DuovocAdmobUnitIds.getInstance().releaseInterstitial,
+        adUnitId: DuoTrackerAdmobUnitIds.getInstance().releaseInterstitial,
         request: const AdRequest(),
         adLoadCallback: InterstitialAdLoadCallback(
           onAdLoaded: (final InterstitialAd interstitialAd) {
