@@ -198,17 +198,20 @@ class _OverviewViewState extends State<OverviewView> {
                   mainAxisAlignment: MainAxisAlignment.end,
                   crossAxisAlignment: CrossAxisAlignment.end,
                   children: [
-                    IconButton(
-                      tooltip: 'Show Tips & Notes',
-                      icon: const Icon(Icons.more),
-                      onPressed: () => Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                          builder: (_) => LessonTipsView(
-                              lessonName: learnedWord.skill, html: ''),
+                    if (learnedWord.tipsAndNotes.isNotEmpty)
+                      IconButton(
+                        tooltip: 'Show Tips & Notes',
+                        icon: const Icon(Icons.more),
+                        onPressed: () => Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder: (_) => LessonTipsView(
+                              lessonName: learnedWord.skill,
+                              html: learnedWord.tipsAndNotes,
+                            ),
+                          ),
                         ),
                       ),
-                    ),
                     IconButton(
                       tooltip: 'Complete',
                       icon: const Icon(Icons.done),

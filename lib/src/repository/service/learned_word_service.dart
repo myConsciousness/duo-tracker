@@ -4,6 +4,7 @@
 
 import 'package:duo_tracker/src/repository/learned_word_repository.dart';
 import 'package:duo_tracker/src/repository/model/learned_word_model.dart';
+import 'package:duo_tracker/src/repository/service/skill_serviced.dart';
 import 'package:duo_tracker/src/repository/service/voice_configuration_service.dart';
 import 'package:duo_tracker/src/repository/service/word_hint_service.dart';
 
@@ -22,6 +23,9 @@ class LearnedWordService extends LearnedWordRepository {
 
   /// The voice configuration service
   final _voiceConfigurationService = VoiceConfigurationService.getInstance();
+
+  /// The skill service
+  final _skillService = SkillService.getInstance();
 
   @override
   Future<void> delete(LearnedWord model) async => await super.database.then(
@@ -121,8 +125,12 @@ class LearnedWordService extends LearnedWordRepository {
         learnedWord.ttsVoiceUrls
             .add('$baseTtsVoiceUrl/${learnedWord.wordString}');
       }
+
       learnedWord.wordHints = await _wordHintService
           .findByWordIdAndUserIdAndSortBySortOrder(learnedWord.wordId, userId);
+
+      final skill = await _skillService.findByName(name: learnedWord.skill);
+      learnedWord.tipsAndNotes = skill.tipsAndNotes;
     }
 
     return learedWords;

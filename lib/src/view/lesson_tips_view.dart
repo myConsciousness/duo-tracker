@@ -36,26 +36,32 @@ class _LessonTipsViewState extends State<LessonTipsView> {
           child: Wrap(
             children: [
               Center(
-                  child: Html(
-                data: widget.html,
-                style: {
-                  // tables will have the below background color
-                  'h3': Style(
-                    color: Theme.of(context).colorScheme.secondary,
-                  ),
-                  'th': Style(
-                    padding: const EdgeInsets.all(10),
-                    border:
-                        Border.all(color: Theme.of(context).primaryColorLight),
-                  ),
-                  'td': Style(
-                    fontSize: const FontSize(12),
-                    padding: const EdgeInsets.all(10),
-                    border:
-                        Border.all(color: Theme.of(context).primaryColorLight),
-                  ),
-                },
-              )),
+                child: Html(
+                  data: widget.html,
+                  style: {
+                    'h3': Style(
+                      color: Theme.of(context).colorScheme.secondary,
+                    ),
+                    'h4': Style(
+                      color: Theme.of(context).colorScheme.secondary,
+                    ),
+                    'th': Style(
+                      padding: const EdgeInsets.all(10),
+                      border: Border.all(
+                          color: Theme.of(context).primaryColorLight),
+                    ),
+                    'td': Style(
+                      fontSize: const FontSize(12),
+                      padding: const EdgeInsets.all(10),
+                      border: Border.all(
+                          color: Theme.of(context).primaryColorLight),
+                    ),
+                    'li': Style(
+                      margin: const EdgeInsets.all(13),
+                    ),
+                  },
+                ),
+              ),
             ],
           ),
         ),

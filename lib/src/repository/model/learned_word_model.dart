@@ -38,6 +38,9 @@ class LearnedWord {
   /// The word hints from word hint repository
   List<WordHint> wordHints = [];
 
+  /// The tips and notes from skill repository
+  String tipsAndNotes = '';
+
   /// The flag that represents if this model is exist
   bool _empty = false;
 

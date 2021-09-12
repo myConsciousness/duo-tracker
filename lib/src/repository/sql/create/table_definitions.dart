@@ -39,7 +39,6 @@ class TableDefinitions {
   static const course = '''
         CREATE TABLE COURSE (
           ID INTEGER PRIMARY KEY AUTOINCREMENT,
-          USER_ID TEXT NOT NULL,
           COURSE_ID TEXT NOT NULL,
           TITLE TEXT NOT NULL,
           LEARNING_LANGUAGE TEXT NOT NULL,
@@ -55,7 +54,6 @@ class TableDefinitions {
   static const skill = '''
         CREATE TABLE SKILL (
           ID INTEGER PRIMARY KEY AUTOINCREMENT,
-          USER_ID TEXT NOT NULL,
           SKILL_ID TEXT NOT NULL,
           NAME TEXT NOT NULL,
           SHORT_NAME NOT NULL,
@@ -128,6 +126,7 @@ class TableDefinitions {
         )
         ''';
 
+  /// The word hint
   static const wordHint = '''
         CREATE TABLE WORD_HINT (
           ID INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT,

@@ -6,12 +6,12 @@ import 'package:duo_tracker/src/repository/model/voice_configuration_model.dart'
 import 'package:duo_tracker/src/repository/voice_configuration_repository.dart';
 
 class VoiceConfigurationService extends VoiceConfigurationRepository {
+  /// The internal constructor.
   VoiceConfigurationService._internal();
 
   /// Returns the singleton instance of [VoiceConfigurationService].
   factory VoiceConfigurationService.getInstance() => _singletonInstance;
 
-  /// The internal constructor.
   /// The singleton instance of this [VoiceConfigurationService].
   static final _singletonInstance = VoiceConfigurationService._internal();
 
