@@ -46,6 +46,27 @@ class SupportedLanguageService extends SupportedLanguageRepository {
       );
 
   @override
+  Future<List<SupportedLanguage>> findByFromLanguage(
+          {required String fromLanguage}) async =>
+      await super.database.then(
+            (database) => database.query(
+              table,
+              where: 'FROM_LANGUAGE = ?',
+              whereArgs: [
+                fromLanguage,
+              ],
+            ).then(
+              (v) => v
+                  .map(
+                    (e) => e.isNotEmpty
+                        ? SupportedLanguage.fromMap(e)
+                        : SupportedLanguage.empty(),
+                  )
+                  .toList(),
+            ),
+          );
+
+  @override
   Future<SupportedLanguage> findById(int id) async => await super.database.then(
         (database) =>
             database.query(table, where: 'ID = ?', whereArgs: [id]).then(

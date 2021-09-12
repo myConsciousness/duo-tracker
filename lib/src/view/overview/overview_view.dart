@@ -9,6 +9,7 @@ import 'package:duo_tracker/src/preference/common_shared_preferences_key.dart';
 import 'package:duo_tracker/src/repository/model/learned_word_model.dart';
 import 'package:duo_tracker/src/repository/model/word_hint_model.dart';
 import 'package:duo_tracker/src/repository/service/learned_word_service.dart';
+import 'package:duo_tracker/src/utils/language_converter.dart';
 import 'package:duo_tracker/src/view/lesson_tips_view.dart';
 import 'package:duo_tracker/src/view/overview/overview_tab_view.dart';
 import 'package:flutter/material.dart';
@@ -31,7 +32,11 @@ class _OverviewViewState extends State<OverviewView> {
 
   final _audioPlayer = AudioPlayer();
   final _datetimeFormat = DateFormat('yyyy/MM/dd HH:mm:ss');
+
+  /// The learned word service
   final _learnedWordService = LearnedWordService.getInstance();
+
+  String _appBarSubTitle = '';
 
   @override
   void didChangeDependencies() {
@@ -46,6 +51,7 @@ class _OverviewViewState extends State<OverviewView> {
   @override
   void initState() {
     super.initState();
+    _asyncInitState();
   }
 
   Future<List<LearnedWord>> _fetchDataSource({
@@ -76,6 +82,8 @@ class _OverviewViewState extends State<OverviewView> {
     await CommonSharedPreferencesKey.datetimeLastAutoSyncedOverview.setInt(
       DateTime.now().millisecondsSinceEpoch,
     );
+
+    await _createAppBarSubTitle();
   }
 
   Future<List<LearnedWord>> _findLearnedWords() async =>
@@ -330,9 +338,9 @@ class _OverviewViewState extends State<OverviewView> {
   @override
   Widget build(BuildContext context) => Scaffold(
         appBar: AppBar(
-          title: const CommonAppBarTitles(
+          title: CommonAppBarTitles(
             title: 'Learned Words',
-            subTitle: 'English → Japanese',
+            subTitle: _appBarSubTitle,
           ),
           actions: [
             IconButton(
@@ -385,4 +393,23 @@ class _OverviewViewState extends State<OverviewView> {
           },
         ),
       );
+
+  Future<void> _asyncInitState() async {
+    await _createAppBarSubTitle();
+  }
+
+  Future<void> _createAppBarSubTitle() async {
+    final fromLanguage =
+        await CommonSharedPreferencesKey.currentFromLanguage.getString();
+    final learningLanguage =
+        await CommonSharedPreferencesKey.currentLearningLanguage.getString();
+    final fromLanguageName =
+        LanguageConverter.from(languageCode: fromLanguage).execute();
+    final learningLanguageName =
+        LanguageConverter.from(languageCode: learningLanguage).execute();
+
+    super.setState(() {
+      _appBarSubTitle = '$fromLanguageName → $learningLanguageName';
+    });
+  }
 }

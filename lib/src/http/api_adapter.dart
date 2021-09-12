@@ -230,12 +230,19 @@ class _VersionInfoAdapter extends _ApiAdapter {
     final ttsBaseUrlHttp = json['tts_base_url_http'];
     final ttsVoiceConfiguration = json['tts_voice_configuration'];
 
-    jsonDecode(ttsVoiceConfiguration['voices']).forEach(
-      (language, voiceType) {
+    final supportedLanguages =
+        await _supportedLanguageService.findByFromLanguage(fromLanguage: 'en');
+    final Map<String, dynamic> ttsVoiceConfigurations =
+        jsonDecode(ttsVoiceConfiguration['voices']);
+
+    for (final SupportedLanguage supportedLanguage in supportedLanguages) {
+      final learningLanguage = supportedLanguage.learningLanguage;
+
+      if (ttsVoiceConfigurations.containsKey(learningLanguage)) {
         _voiceConfigurationService.insert(
           VoiceConfiguration.from(
-            language: language,
-            voiceType: voiceType,
+            language: learningLanguage,
+            voiceType: ttsVoiceConfigurations[learningLanguage],
             ttsBaseUrlHttps: ttsBaseUrlHttps,
             ttsBaseUrlHttp: ttsBaseUrlHttp,
             path: 'tts',
@@ -243,8 +250,20 @@ class _VersionInfoAdapter extends _ApiAdapter {
             updatedAt: DateTime.now(),
           ),
         );
-      },
-    );
+      } else {
+        _voiceConfigurationService.insert(
+          VoiceConfiguration.from(
+            language: learningLanguage,
+            voiceType: learningLanguage,
+            ttsBaseUrlHttps: ttsBaseUrlHttps,
+            ttsBaseUrlHttp: ttsBaseUrlHttp,
+            path: 'tts',
+            createdAt: DateTime.now(),
+            updatedAt: DateTime.now(),
+          ),
+        );
+      }
+    }
   }
 }
 
@@ -254,9 +273,6 @@ class _LoginApiAdapter extends _ApiAdapter {
     required final BuildContext context,
     final params = const <String, String>{},
   }) async {
-    // Update version information
-    await _VersionInfoAdapter().execute(context: context);
-
     final username = await CommonSharedPreferencesKey.username.getString();
     final password = await CommonSharedPreferencesKey.password.getString();
 
@@ -292,6 +308,8 @@ class _LoginApiAdapter extends _ApiAdapter {
 
         // Update user information
         await _UserApiAdapter().execute(context: context);
+        // Update version information
+        await _VersionInfoAdapter().execute(context: context);
 
         return ApiResponse.from(
           fromApi: FromApi.login,
@@ -333,7 +351,8 @@ class _UserApiAdapter extends _ApiAdapter {
 
     if (httpStatus.isAccepted) {
       final jsonMap = jsonDecode(response.body);
-      final learningLanguage = jsonMap['learningLanguage'];
+      final learningLanguage =
+          jsonMap['trackingProperties']['learning_language'];
       final fromLanguage = jsonMap['fromLanguage'];
 
       await CommonSharedPreferencesKey.currentLearningLanguage

@@ -6,4 +6,8 @@ import 'package:duo_tracker/src/repository/model/supported_language_model.dart';
 import 'package:duo_tracker/src/repository/repository.dart';
 
 abstract class SupportedLanguageRepository
-    extends Repository<SupportedLanguage> {}
+    extends Repository<SupportedLanguage> {
+  Future<List<SupportedLanguage>> findByFromLanguage({
+    required String fromLanguage,
+  });
+}
