@@ -137,6 +137,7 @@ class TableDefinitions {
           FROM_LANGUAGE TEXT NOT NULL,
           VALUE TEXT NOT NULL,
           HINT TEXT NOT NULL,
+          SORT_ORDER INTEGER NOT NULL,
           CREATED_AT INTEGER NOT NULL,
           UPDATED_AT INTEGER NOT NULL
         )

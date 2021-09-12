@@ -6,7 +6,7 @@ import 'package:duo_tracker/src/repository/model/word_hint_model.dart';
 import 'package:duo_tracker/src/repository/repository.dart';
 
 abstract class WordHintRepository extends Repository<WordHint> {
-  Future<List<WordHint>> findByWordIdAndUserId(
+  Future<List<WordHint>> findByWordIdAndUserIdAndSortBySortOrder(
     String wordId,
     String userId,
   );

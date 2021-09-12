@@ -32,6 +32,9 @@ class LearnedWord {
   DateTime createdAt = DateTime.now();
   DateTime updatedAt = DateTime.now();
 
+  /// The tts voice urls from voice configuration repository
+  List<String> ttsVoiceUrls = <String>[];
+
   /// The word hints from word hint repository
   List<WordHint> wordHints = [];
 

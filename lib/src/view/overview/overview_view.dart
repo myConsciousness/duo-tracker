@@ -121,17 +121,32 @@ class _OverviewViewState extends State<OverviewView> {
                   ],
                 ),
                 const Divider(),
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  crossAxisAlignment: CrossAxisAlignment.center,
-                  children: [
-                    Text(
-                        'Pos: ${learnedWord.pos.isEmpty ? noneFieldValue : learnedWord.pos}'),
-                    Text(
-                        'Gender: ${learnedWord.gender.isEmpty ? noneFieldValue : learnedWord.gender}'),
-                    Text(
-                        'Infinitive: ${learnedWord.pos.isEmpty ? noneFieldValue : learnedWord.pos}'),
-                  ],
+                Container(
+                  padding: const EdgeInsets.fromLTRB(20, 0, 20, 0),
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    crossAxisAlignment: CrossAxisAlignment.center,
+                    children: [
+                      _createCardHeaderText(
+                        title: learnedWord.pos.isEmpty
+                            ? noneFieldValue
+                            : learnedWord.pos,
+                        subTitle: 'Pos',
+                      ),
+                      _createCardHeaderText(
+                        title: learnedWord.infinitive.isEmpty
+                            ? noneFieldValue
+                            : learnedWord.infinitive,
+                        subTitle: 'Infinitive',
+                      ),
+                      _createCardHeaderText(
+                        title: learnedWord.gender.isEmpty
+                            ? noneFieldValue
+                            : learnedWord.gender,
+                        subTitle: 'Gender',
+                      ),
+                    ],
+                  ),
                 ),
                 const Divider(),
                 Row(
@@ -139,19 +154,8 @@ class _OverviewViewState extends State<OverviewView> {
                   children: [
                     Expanded(
                       child: ListTile(
-                        leading: IconButton(
-                          tooltip: _audioPlayer.state == PlayerState.PAUSED
-                              ? 'Pause Audio'
-                              : 'Play Audio',
-                          icon: _audioPlayer.state == PlayerState.PAUSED
-                              ? const Icon(Icons.pause_circle)
-                              : const Icon(Icons.play_circle),
-                          onPressed: () async {
-                            // this._audioPlayer.state ==
-                            //         PlayerState.PLAYING
-                            //     ? await this._audioPlayer.pause()
-                            //     : await this._audioPlayer.play('');
-                          },
+                        leading: _createCardLeading(
+                          learnedWord: learnedWord,
                         ),
                         title: _createCardTitleText(
                           learnedWord: learnedWord,
@@ -294,6 +298,20 @@ class _OverviewViewState extends State<OverviewView> {
 
     return !learnedWord.completed && !learnedWord.deleted;
   }
+
+  Widget _createCardLeading({
+    required LearnedWord learnedWord,
+  }) =>
+      IconButton(
+        tooltip: 'Play Audio',
+        icon: const Icon(Icons.play_circle),
+        onPressed: () async {
+          for (final ttsVoiceUrl in learnedWord.ttsVoiceUrls) {
+            await _audioPlayer.play(ttsVoiceUrl, volume: 2.0);
+            await Future.delayed(const Duration(seconds: 1), () {});
+          }
+        },
+      );
 
   Future<void> _sortCards({
     required List<LearnedWord> learnedWords,

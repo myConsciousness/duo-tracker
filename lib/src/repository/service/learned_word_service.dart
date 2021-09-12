@@ -4,6 +4,7 @@
 
 import 'package:duo_tracker/src/repository/learned_word_repository.dart';
 import 'package:duo_tracker/src/repository/model/learned_word_model.dart';
+import 'package:duo_tracker/src/repository/service/voice_configuration_service.dart';
 import 'package:duo_tracker/src/repository/service/word_hint_service.dart';
 
 class LearnedWordService extends LearnedWordRepository {
@@ -18,6 +19,9 @@ class LearnedWordService extends LearnedWordRepository {
 
   /// The word hint service
   final _wordHintService = WordHintService.getInstance();
+
+  /// The voice configuration service
+  final _voiceConfigurationService = VoiceConfigurationService.getInstance();
 
   @override
   Future<void> delete(LearnedWord model) async => await super.database.then(
@@ -102,9 +106,23 @@ class LearnedWordService extends LearnedWordRepository {
               ),
         );
 
+    final voiceConfiguration = await _voiceConfigurationService.findByLanguage(
+        language: learningLanguage);
+    final String baseTtsVoiceUrl =
+        '${voiceConfiguration.ttsBaseUrlHttps}${voiceConfiguration.path}/${voiceConfiguration.voiceType}/token';
+
     for (final LearnedWord learnedWord in learedWords) {
-      learnedWord.wordHints = await _wordHintService.findByWordIdAndUserId(
-          learnedWord.wordId, userId);
+      if (learnedWord.wordString.contains(' ')) {
+        final wordStrings = learnedWord.wordString.split(' ');
+        for (final String wordString in wordStrings) {
+          learnedWord.ttsVoiceUrls.add('$baseTtsVoiceUrl/$wordString');
+        }
+      } else {
+        learnedWord.ttsVoiceUrls
+            .add('$baseTtsVoiceUrl/${learnedWord.wordString}');
+      }
+      learnedWord.wordHints = await _wordHintService
+          .findByWordIdAndUserIdAndSortBySortOrder(learnedWord.wordId, userId);
     }
 
     return learedWords;

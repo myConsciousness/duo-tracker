@@ -14,10 +14,12 @@ import 'package:duo_tracker/src/preference/common_shared_preferences_key.dart';
 import 'package:duo_tracker/src/repository/model/learned_word_model.dart';
 import 'package:duo_tracker/src/repository/model/supported_language_model.dart';
 import 'package:duo_tracker/src/repository/model/user_model.dart';
+import 'package:duo_tracker/src/repository/model/voice_configuration_model.dart';
 import 'package:duo_tracker/src/repository/model/word_hint_model.dart';
 import 'package:duo_tracker/src/repository/service/learned_word_service.dart';
 import 'package:duo_tracker/src/repository/service/supported_language_service.dart';
 import 'package:duo_tracker/src/repository/service/user_service.dart';
+import 'package:duo_tracker/src/repository/service/voice_configuration_service.dart';
 import 'package:duo_tracker/src/repository/service/word_hint_service.dart';
 import 'package:duo_tracker/src/security/encryption.dart';
 import 'package:flutter/material.dart';
@@ -152,6 +154,9 @@ class _VersionInfoAdapter extends _ApiAdapter {
   /// The supported language service
   final _supportedLanguageService = SupportedLanguageService.getInstance();
 
+  /// The voice configuratio service
+  final _voiceConfigurationService = VoiceConfigurationService.getInstance();
+
   @override
   Future<ApiResponse> doExecute({
     required BuildContext context,
@@ -164,6 +169,10 @@ class _VersionInfoAdapter extends _ApiAdapter {
       final jsonMap = jsonDecode(response.body);
 
       await _refreshSupportedLanguage(
+        json: jsonMap,
+      );
+
+      await _refreshVoiceConfiguration(
         json: jsonMap,
       );
 
@@ -194,18 +203,48 @@ class _VersionInfoAdapter extends _ApiAdapter {
   }) async {
     _supportedLanguageService.deleteAll();
 
-    json.forEach((fromLanguage, learningLanguages) {
-      learningLanguages.forEach((learningLanguage) {
-        _supportedLanguageService.insert(
-          SupportedLanguage.from(
-            fromLanguage: fromLanguage,
-            learningLanguage: learningLanguage,
+    json['supported_directions'].forEach(
+      (fromLanguage, learningLanguages) {
+        learningLanguages.forEach(
+          (learningLanguage) {
+            _supportedLanguageService.insert(
+              SupportedLanguage.from(
+                fromLanguage: fromLanguage,
+                learningLanguage: learningLanguage,
+                createdAt: DateTime.now(),
+                updatedAt: DateTime.now(),
+              ),
+            );
+          },
+        );
+      },
+    );
+  }
+
+  Future<void> _refreshVoiceConfiguration({
+    required Map<String, dynamic> json,
+  }) async {
+    _voiceConfigurationService.deleteAll();
+
+    final ttsBaseUrlHttps = json['tts_base_url'];
+    final ttsBaseUrlHttp = json['tts_base_url_http'];
+    final ttsVoiceConfiguration = json['tts_voice_configuration'];
+
+    jsonDecode(ttsVoiceConfiguration['voices']).forEach(
+      (language, voiceType) {
+        _voiceConfigurationService.insert(
+          VoiceConfiguration.from(
+            language: language,
+            voiceType: voiceType,
+            ttsBaseUrlHttps: ttsBaseUrlHttps,
+            ttsBaseUrlHttp: ttsBaseUrlHttp,
+            path: 'tts',
             createdAt: DateTime.now(),
             updatedAt: DateTime.now(),
           ),
         );
-      });
-    });
+      },
+    );
   }
 }
 
@@ -498,42 +537,31 @@ class _WordHintApiAdapter extends _ApiAdapter {
   }) {
     final hintsMatrix = <String, List<String>>{};
 
-    String wordString = '';
-    int colspan = -1;
-
     for (final Map<String, dynamic> token in json['tokens']) {
       if (token['hint_table'] == null) {
         continue;
       }
 
-      wordString = _fetchWordString(token: token);
-
-      final hintTable = token['hint_table'];
-      final hints = <String>[];
-
-      for (final Map<String, dynamic> row in hintTable['rows']) {
+      for (final Map<String, dynamic> row in token['hint_table']['rows']) {
         for (final Map<String, dynamic> cell in row['cells']) {
           if (cell.isNotEmpty) {
-            hints.add(cell['hint']);
-            colspan = cell['colspan'] ?? -1;
+            final int colspan = cell['colspan'] ?? -1;
+            final String key = colspan > 0
+                ? _fetchWordString(token: token).substring(0, colspan)
+                : token['value'];
+
+            if (hintsMatrix.containsKey(key)) {
+              final List<String> hintsInternal = hintsMatrix[key]!;
+              final String hint = cell['hint'];
+
+              if (!hintsInternal.contains(hint)) {
+                hintsInternal.add(hint);
+              }
+            } else {
+              hintsMatrix[key] = [cell['hint']];
+            }
           }
         }
-      }
-
-      String key = colspan <= 0 ? wordString : wordString.substring(0, colspan);
-      colspan = -1;
-
-      if (hintsMatrix.containsKey(key)) {
-        // Merge hints to matrix
-        final List<String> hintsInternal = hintsMatrix[key]!;
-
-        for (String hint in hints) {
-          if (!hintsInternal.contains(hint)) {
-            hintsInternal.add(hint);
-          }
-        }
-      } else {
-        hintsMatrix[key] = hints;
       }
     }
 

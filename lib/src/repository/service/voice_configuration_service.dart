@@ -57,6 +57,17 @@ class VoiceConfigurationService extends VoiceConfigurationRepository {
           );
 
   @override
+  Future<VoiceConfiguration> findByLanguage({required String language}) async =>
+      await super.database.then(
+            (database) => database.query(table,
+                where: 'LANGUAGE = ?', whereArgs: [language]).then(
+              (entity) => entity.isNotEmpty
+                  ? VoiceConfiguration.fromMap(entity[0])
+                  : VoiceConfiguration.empty(),
+            ),
+          );
+
+  @override
   Future<VoiceConfiguration> insert(VoiceConfiguration model) async {
     await super.database.then(
           (database) => database

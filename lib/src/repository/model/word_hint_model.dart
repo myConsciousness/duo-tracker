@@ -10,6 +10,7 @@ class WordHint {
   String fromLanguage;
   String value;
   String hint;
+  int sortOrder;
   DateTime createdAt = DateTime.now();
   DateTime updatedAt = DateTime.now();
 
@@ -24,7 +25,8 @@ class WordHint {
         learningLanguage = '',
         fromLanguage = '',
         value = '',
-        hint = '';
+        hint = '',
+        sortOrder = -1;
 
   /// Returns the new instance of [WordHint] based on the parameters.
   WordHint.from({
@@ -35,6 +37,7 @@ class WordHint {
     required this.fromLanguage,
     required this.value,
     required this.hint,
+    this.sortOrder = -1,
     required this.createdAt,
     required this.updatedAt,
   });
@@ -48,6 +51,7 @@ class WordHint {
         fromLanguage: map[_ColumnName.fromLanguage],
         value: map[_ColumnName.value],
         hint: map[_ColumnName.hint],
+        sortOrder: map[_ColumnName.sortOrder],
         createdAt: DateTime.fromMillisecondsSinceEpoch(
           map[_ColumnName.createdAt] ?? 0,
         ),
@@ -65,6 +69,7 @@ class WordHint {
     map[_ColumnName.fromLanguage] = fromLanguage;
     map[_ColumnName.value] = value;
     map[_ColumnName.hint] = hint;
+    map[_ColumnName.sortOrder] = sortOrder;
     map[_ColumnName.createdAt] = createdAt.millisecondsSinceEpoch;
     map[_ColumnName.updatedAt] = updatedAt.millisecondsSinceEpoch;
     return map;
@@ -83,6 +88,7 @@ class _ColumnName {
   static const fromLanguage = 'FROM_LANGUAGE';
   static const value = 'VALUE';
   static const hint = 'HINT';
+  static const sortOrder = 'SORT_ORDER';
   static const createdAt = 'CREATED_AT';
   static const updatedAt = 'UPDATED_AT';
 }

@@ -70,7 +70,7 @@ class WordHintService extends WordHintRepository {
       );
 
   @override
-  Future<List<WordHint>> findByWordIdAndUserId(
+  Future<List<WordHint>> findByWordIdAndUserIdAndSortBySortOrder(
     String wordId,
     String userId,
   ) async =>
@@ -83,7 +83,7 @@ class WordHintService extends WordHintRepository {
                     wordId,
                     userId,
                   ],
-                  orderBy: 'CREATED_AT DESC',
+                  orderBy: 'SORT_ORDER',
                 )
                 .then(
                   (entities) => entities
@@ -96,7 +96,7 @@ class WordHintService extends WordHintRepository {
 
   @override
   Future<WordHint> insert(WordHint model) async {
-    await super.database.then(
+    final id = await super.database.then(
           (database) => database
               .insert(
                 table,
@@ -106,6 +106,9 @@ class WordHintService extends WordHintRepository {
                 (int id) async => model.id = id,
               ),
         );
+
+    model.sortOrder = id;
+    update(model);
 
     return model;
   }
