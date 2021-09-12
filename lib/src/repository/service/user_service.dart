@@ -25,6 +25,13 @@ class UserService extends UserRepository {
       );
 
   @override
+  Future<void> deleteAll() async => await super.database.then(
+        (database) => database.delete(
+          table,
+        ),
+      );
+
+  @override
   Future<List<User>> findAll() async => await super.database.then(
         (database) => database.query(table).then(
               (v) => v

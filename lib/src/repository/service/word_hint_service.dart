@@ -25,6 +25,13 @@ class WordHintService extends WordHintRepository {
       );
 
   @override
+  Future<void> deleteAll() async => await super.database.then(
+        (database) => database.delete(
+          table,
+        ),
+      );
+
+  @override
   Future<void> deleteByWordIdAndUserId(
     String wordId,
     String userId,

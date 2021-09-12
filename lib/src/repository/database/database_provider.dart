@@ -33,6 +33,8 @@ class DatabaseProvider {
           _databaseName,
         ),
         onCreate: (Database database, int version) async {
+          await database.execute(TableDefinitions.supportedLanguage);
+          await database.execute(TableDefinitions.voiceConfiguration);
           await database.execute(TableDefinitions.user);
           await database.execute(TableDefinitions.skill);
           await database.execute(TableDefinitions.course);

@@ -34,6 +34,9 @@ abstract class Repository<T> {
   /// Deletes the [model].
   void delete(T model);
 
+  /// Deletes all records.
+  Future<void> deleteAll();
+
   /// Replaces the [model] and returns the new [model] with autoincremented id.
   Future<T> replace(T model);
 }

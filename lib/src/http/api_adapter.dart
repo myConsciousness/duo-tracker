@@ -12,9 +12,11 @@ import 'package:duo_tracker/src/http/api_response.dart';
 import 'package:duo_tracker/src/http/duolingo_api.dart';
 import 'package:duo_tracker/src/preference/common_shared_preferences_key.dart';
 import 'package:duo_tracker/src/repository/model/learned_word_model.dart';
+import 'package:duo_tracker/src/repository/model/supported_language_model.dart';
 import 'package:duo_tracker/src/repository/model/user_model.dart';
 import 'package:duo_tracker/src/repository/model/word_hint_model.dart';
 import 'package:duo_tracker/src/repository/service/learned_word_service.dart';
+import 'package:duo_tracker/src/repository/service/supported_language_service.dart';
 import 'package:duo_tracker/src/repository/service/user_service.dart';
 import 'package:duo_tracker/src/repository/service/word_hint_service.dart';
 import 'package:duo_tracker/src/security/encryption.dart';
@@ -146,12 +148,76 @@ abstract class _ApiAdapter implements ApiAdapter {
   }
 }
 
+class _VersionInfoAdapter extends _ApiAdapter {
+  /// The supported language service
+  final _supportedLanguageService = SupportedLanguageService.getInstance();
+
+  @override
+  Future<ApiResponse> doExecute({
+    required BuildContext context,
+    params = const <String, String>{},
+  }) async {
+    final response = await Api.versionInfo.request.send();
+    final httpStatus = _HttpStatus.from(code: response.statusCode);
+
+    if (httpStatus.isAccepted) {
+      final jsonMap = jsonDecode(response.body);
+
+      await _refreshSupportedLanguage(
+        json: jsonMap,
+      );
+
+      return ApiResponse.from(
+        fromApi: FromApi.versionInfo,
+        errorType: ErrorType.none,
+      );
+    } else if (httpStatus.isClientError) {
+      return ApiResponse.from(
+        fromApi: FromApi.versionInfo,
+        errorType: ErrorType.client,
+      );
+    } else if (httpStatus.isServerError) {
+      return ApiResponse.from(
+        fromApi: FromApi.versionInfo,
+        errorType: ErrorType.server,
+      );
+    }
+
+    return ApiResponse.from(
+      fromApi: FromApi.versionInfo,
+      errorType: ErrorType.unknown,
+    );
+  }
+
+  Future<void> _refreshSupportedLanguage({
+    required Map<String, dynamic> json,
+  }) async {
+    _supportedLanguageService.deleteAll();
+
+    json.forEach((fromLanguage, learningLanguages) {
+      learningLanguages.forEach((learningLanguage) {
+        _supportedLanguageService.insert(
+          SupportedLanguage.from(
+            fromLanguage: fromLanguage,
+            learningLanguage: learningLanguage,
+            createdAt: DateTime.now(),
+            updatedAt: DateTime.now(),
+          ),
+        );
+      });
+    });
+  }
+}
+
 class _LoginApiAdapter extends _ApiAdapter {
   @override
   Future<ApiResponse> doExecute({
     required final BuildContext context,
     final params = const <String, String>{},
   }) async {
+    // Update version information
+    await _VersionInfoAdapter().execute(context: context);
+
     final username = await CommonSharedPreferencesKey.username.getString();
     final password = await CommonSharedPreferencesKey.password.getString();
 
