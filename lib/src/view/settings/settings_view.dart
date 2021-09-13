@@ -61,6 +61,43 @@ class _SettingsViewState extends State<SettingsView> {
     });
   }
 
+  Widget _createSettingTitle({
+    required String title,
+  }) =>
+      Text(
+        title,
+        style: TextStyle(
+          color: Theme.of(context).colorScheme.secondary,
+          fontSize: 20,
+        ),
+      );
+
+  Widget _createListTile({
+    required Icon icon,
+    required String title,
+    String subtitle = '',
+    GestureTapCallback? onTap,
+  }) =>
+      ListTile(
+        leading: icon,
+        title: Text(
+          title,
+          style: TextStyle(
+            color: Theme.of(context).colorScheme.onSurface,
+          ),
+        ),
+        subtitle: subtitle.isEmpty
+            ? null
+            : Text(
+                subtitle,
+                style: TextStyle(
+                  color:
+                      Theme.of(context).colorScheme.onSurface.withOpacity(0.7),
+                ),
+              ),
+        onTap: onTap,
+      );
+
   @override
   Widget build(BuildContext context) {
     final ThemeModeProvider themeModeProvider = Provider.of(context);
@@ -71,33 +108,18 @@ class _SettingsViewState extends State<SettingsView> {
             const SizedBox(
               height: 20,
             ),
-            Text(
-              'Theme',
-              style: TextStyle(
-                color: Theme.of(context).colorScheme.secondary,
-                fontSize: 20,
-              ),
+            _createSettingTitle(
+              title: 'Theme',
             ),
+            const SizedBox(height: 10),
             Row(
               children: [
                 Expanded(
-                  child: ListTile(
-                    leading: const Icon(Icons.dark_mode),
-                    title: Text(
-                      'Use Dark Mode',
-                      style: TextStyle(
-                        color: Theme.of(context).colorScheme.onSurface,
-                      ),
-                    ),
-                    subtitle: Text(
-                      'Restrict access using passcode to pages that may contain confidential information.',
-                      style: TextStyle(
-                        color: Theme.of(context)
-                            .colorScheme
-                            .onSurface
-                            .withOpacity(0.7),
-                      ),
-                    ),
+                  child: _createListTile(
+                    icon: const Icon(Icons.dark_mode),
+                    title: 'Use Dark Mode',
+                    subtitle:
+                        'Switch the theme of app to dark mode. Dark mode consumes less power and is less stressful on your eyes.',
                   ),
                 ),
                 Switch(
@@ -112,22 +134,18 @@ class _SettingsViewState extends State<SettingsView> {
             ),
             const Divider(),
             const SizedBox(height: 5),
-            Text(
-              'Security',
-              style: TextStyle(
-                color: Theme.of(context).colorScheme.secondary,
-                fontSize: 20,
-              ),
+            _createSettingTitle(
+              title: 'Security',
             ),
             const SizedBox(height: 10),
             Row(
               children: [
-                const Expanded(
-                  child: ListTile(
-                    leading: Icon(Icons.lock),
-                    title: Text('Use passcode'),
-                    subtitle: Text(
-                        'Restrict access using passcode to pages that may contain confidential information.'),
+                Expanded(
+                  child: _createListTile(
+                    icon: const Icon(Icons.lock),
+                    title: 'Use passcode',
+                    subtitle:
+                        'Restrict access using passcode to pages that may contain confidential information.',
                   ),
                 ),
                 Switch(
@@ -196,12 +214,12 @@ class _SettingsViewState extends State<SettingsView> {
             const SizedBox(height: 5),
             Row(
               children: [
-                const Expanded(
-                  child: ListTile(
-                    leading: Icon(Icons.fingerprint),
-                    title: Text('Use fingerprint recognition'),
-                    subtitle: Text(
-                        'Restrict access using fingerprint recognition to pages that may contain confidential information.'),
+                Expanded(
+                  child: _createListTile(
+                    icon: const Icon(Icons.fingerprint),
+                    title: 'Use fingerprint recognition',
+                    subtitle:
+                        'Restrict access using fingerprint recognition to pages that may contain confidential information.',
                   ),
                 ),
                 Switch(
@@ -239,16 +257,12 @@ The device does not support biometric feature.''');
             ),
             const Divider(),
             const SizedBox(height: 5),
-            Text(
-              'Misc',
-              style: TextStyle(
-                color: Theme.of(context).colorScheme.secondary,
-                fontSize: 20,
-              ),
+            _createSettingTitle(
+              title: 'Misc',
             ),
-            ListTile(
-              leading: const Icon(Icons.share),
-              title: const Text('Share App'),
+            _createListTile(
+              icon: const Icon(Icons.share),
+              title: 'Share App',
               onTap: () async {
                 final PackageInfo packageInfo =
                     await PackageInfo.fromPlatform();
@@ -264,9 +278,9 @@ https://play.google.com/store/apps/details?id=${packageInfo.packageName}
                 );
               },
             ),
-            ListTile(
-              leading: const Icon(Icons.rate_review),
-              title: const Text('Review App'),
+            _createListTile(
+              icon: const Icon(Icons.rate_review),
+              title: 'Review App',
               onTap: () async {
                 final PackageInfo packageInfo =
                     await PackageInfo.fromPlatform();
@@ -274,9 +288,9 @@ https://play.google.com/store/apps/details?id=${packageInfo.packageName}
                 LaunchReview.launch(androidAppId: packageInfo.packageName);
               },
             ),
-            ListTile(
-              leading: const Icon(Icons.info),
-              title: const Text('Show Licenses'),
+            _createListTile(
+              icon: const Icon(Icons.info),
+              title: 'Show Licenses',
               onTap: () async {
                 final PackageInfo packageInfo =
                     await PackageInfo.fromPlatform();

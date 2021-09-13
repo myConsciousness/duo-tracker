@@ -44,6 +44,14 @@ dependencies:
   flutter_html: ^2.1.2
   flutter_native_splash: ^1.2.3
   flutter_lints: ^1.0.4
+  package_info: ^2.0.2
+  launch_review: ^3.0.1
+  share: ^2.0.4
+  passcode_screen: ^2.0.0
+  google_fonts: ^2.1.0
+  clipboard: ^0.1.3
+  flutter_speed_dial: ^4.3.0
+  provider: ^6.0.0
 
 dev_dependencies:
   flutter_test:
@@ -66,6 +74,8 @@ flutter:
   generate: true
   assets:
     - assets/icon/bowie.png
+    - assets/icon/bowie_license.png
+    - assets/icon/mochi.png
 
 flavorizr:
   app:
