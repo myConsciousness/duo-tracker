@@ -27,15 +27,14 @@ class _CommonAppBarTitlesState extends State<CommonAppBarTitles> {
         children: [
           Text(
             widget.subTitle,
-            style: TextStyle(
-              fontSize: 10,
-              color: Theme.of(context).colorScheme.secondary,
+            style: const TextStyle(
+              fontSize: 12,
             ),
           ),
           Text(
             widget.title,
             style: const TextStyle(
-              fontSize: 14,
+              fontSize: 17,
             ),
           ),
         ],

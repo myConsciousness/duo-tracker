@@ -13,6 +13,7 @@ import 'package:duo_tracker/src/utils/language_converter.dart';
 import 'package:duo_tracker/src/view/lesson_tips_view.dart';
 import 'package:duo_tracker/src/view/overview/overview_tab_view.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_speed_dial/flutter_speed_dial.dart';
 import 'package:intl/intl.dart';
 
 class OverviewView extends StatefulWidget {
@@ -30,13 +31,12 @@ class OverviewView extends StatefulWidget {
 class _OverviewViewState extends State<OverviewView> {
   static const noneFieldValue = 'N/A';
 
+  String _appBarSubTitle = '';
   final _audioPlayer = AudioPlayer();
-  final _datetimeFormat = DateFormat('yyyy/MM/dd HH:mm:ss');
+  final _datetimeFormat = DateFormat('yyyy/MM/dd HH:mm');
 
   /// The learned word service
   final _learnedWordService = LearnedWordService.getInstance();
-
-  String _appBarSubTitle = '';
 
   @override
   void didChangeDependencies() {
@@ -241,6 +241,12 @@ class _OverviewViewState extends State<OverviewView> {
               ],
             ),
           ),
+          shape: const RoundedRectangleBorder(
+            borderRadius: BorderRadius.vertical(
+              top: Radius.circular(30),
+              bottom: Radius.circular(30),
+            ),
+          ),
         ),
       );
 
@@ -250,18 +256,13 @@ class _OverviewViewState extends State<OverviewView> {
   }) =>
       Column(
         children: [
-          Text(
-            subTitle,
-            style: TextStyle(
-              color: Theme.of(context).colorScheme.secondary,
-              fontSize: 11,
-            ),
+          _createTextSecondaryColor(
+            text: subTitle,
+            fontSize: 12,
           ),
-          Text(
-            title,
-            style: const TextStyle(
-              fontSize: 13,
-            ),
+          _createTextOnSurfaceColor(
+            text: title,
+            fontSize: 14,
           ),
         ],
       );
@@ -271,14 +272,23 @@ class _OverviewViewState extends State<OverviewView> {
   }) {
     if (learnedWord.normalizedString.isEmpty ||
         learnedWord.normalizedString.endsWith(' ')) {
-      return Text(learnedWord.wordString);
+      return _createTextOnSurfaceColor(
+        text: learnedWord.wordString,
+        fontSize: 18,
+      );
     }
 
     if (learnedWord.wordString == learnedWord.normalizedString) {
-      return Text(learnedWord.wordString);
+      return _createTextOnSurfaceColor(
+        text: learnedWord.wordString,
+        fontSize: 18,
+      );
     }
 
-    return Text('${learnedWord.wordString} (${learnedWord.normalizedString})');
+    return _createTextOnSurfaceColor(
+      text: '${learnedWord.wordString} (${learnedWord.normalizedString})',
+      fontSize: 18,
+    );
   }
 
   Widget _createCardHintText({
@@ -287,7 +297,13 @@ class _OverviewViewState extends State<OverviewView> {
     final hintTexts = <Text>[];
 
     for (final wordHint in wordHints) {
-      hintTexts.add(Text('${wordHint.value} : ${wordHint.hint}'));
+      hintTexts.add(
+        _createTextOnSurfaceColor(
+          text: '${wordHint.value} : ${wordHint.hint}',
+          fontSize: 13,
+          opacity: 0.7,
+        ),
+      );
     }
 
     return Column(
@@ -338,65 +354,6 @@ class _OverviewViewState extends State<OverviewView> {
     await _learnedWordService.replaceSortOrdersByIds(learnedWords);
   }
 
-  @override
-  Widget build(BuildContext context) => Scaffold(
-        appBar: AppBar(
-          title: CommonAppBarTitles(
-            title: 'Learned Words',
-            subTitle: _appBarSubTitle,
-          ),
-          actions: [
-            IconButton(
-              tooltip: 'Update Learned Words',
-              icon: const Icon(Icons.sync),
-              onPressed: () async {
-                await _syncOverview();
-                super.setState(() {});
-              },
-            ),
-          ],
-        ),
-        body: FutureBuilder(
-          future: _fetchDataSource(context: context),
-          builder: (context, AsyncSnapshot snapshot) {
-            if (!snapshot.hasData) {
-              return Center(
-                child: Column(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  crossAxisAlignment: CrossAxisAlignment.center,
-                  children: const [
-                    CircularProgressIndicator(),
-                    SizedBox(
-                      height: 10,
-                    ),
-                    Text('Loading...'),
-                  ],
-                ),
-              );
-            }
-
-            final List<LearnedWord> learnedWords = snapshot.data;
-
-            return RefreshIndicator(
-              onRefresh: () async {
-                super.setState(() {});
-              },
-              child: ReorderableListView.builder(
-                itemCount: learnedWords.length,
-                onReorder: (oldIndex, newIndex) async => await _sortCards(
-                  learnedWords: learnedWords,
-                  oldIndex: oldIndex,
-                  newIndex: newIndex,
-                ),
-                itemBuilder: (context, index) => _createLearnedWordCard(
-                  learnedWord: learnedWords[index],
-                ),
-              ),
-            );
-          },
-        ),
-      );
-
   Future<void> _asyncInitState() async {
     await _createAppBarSubTitle();
   }
@@ -415,4 +372,120 @@ class _OverviewViewState extends State<OverviewView> {
       _appBarSubTitle = '$fromLanguageName → $learningLanguageName';
     });
   }
+
+  Text _createTextOnSurfaceColor({
+    required String text,
+    required double fontSize,
+    double opacity = 1.0,
+  }) =>
+      Text(
+        text,
+        style: TextStyle(
+          color: Theme.of(context).colorScheme.onSurface.withOpacity(opacity),
+          fontSize: fontSize,
+        ),
+      );
+
+  Text _createTextSecondaryColor({
+    required String text,
+    required double fontSize,
+    double opacity = 1.0,
+  }) =>
+      Text(
+        text,
+        style: TextStyle(
+          color: Theme.of(context).colorScheme.secondary.withOpacity(opacity),
+          fontSize: fontSize,
+        ),
+      );
+
+  @override
+  Widget build(BuildContext context) => Scaffold(
+        floatingActionButton: SpeedDial(
+          animatedIcon: AnimatedIcons.menu_close,
+          children: [
+            SpeedDialChild(
+              child: const Icon(Icons.search),
+              label: 'Search',
+              labelStyle: TextStyle(
+                color: Theme.of(context).colorScheme.onSurface,
+              ),
+              labelBackgroundColor: Theme.of(context).colorScheme.background,
+              backgroundColor: Theme.of(context).colorScheme.background,
+              onTap: () {},
+            ),
+            SpeedDialChild(
+              child: const Icon(Icons.sync),
+              label: 'Sync Words',
+              labelStyle: TextStyle(
+                color: Theme.of(context).colorScheme.onSurface,
+              ),
+              labelBackgroundColor: Theme.of(context).colorScheme.background,
+              backgroundColor: Theme.of(context).colorScheme.background,
+              onTap: () async {
+                await _syncOverview();
+                super.setState(() {});
+              },
+            ),
+          ],
+        ),
+        body: NestedScrollView(
+          // floatHeaderSlivers: true,
+          headerSliverBuilder: (context, innerBoxIsScrolled) => [
+            SliverAppBar(
+              floating: true,
+              snap: true,
+              centerTitle: true,
+              title: CommonAppBarTitles(
+                title: 'Learned Words',
+                subTitle: _appBarSubTitle,
+              ),
+              shape: const RoundedRectangleBorder(
+                borderRadius: BorderRadius.vertical(
+                  bottom: Radius.circular(30),
+                ),
+              ),
+            )
+          ],
+          body: FutureBuilder(
+            future: _fetchDataSource(context: context),
+            builder: (context, AsyncSnapshot snapshot) {
+              if (!snapshot.hasData) {
+                return Center(
+                  child: Column(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    crossAxisAlignment: CrossAxisAlignment.center,
+                    children: const [
+                      CircularProgressIndicator(),
+                      SizedBox(
+                        height: 10,
+                      ),
+                      Text('Loading...'),
+                    ],
+                  ),
+                );
+              }
+
+              final List<LearnedWord> learnedWords = snapshot.data;
+
+              return RefreshIndicator(
+                onRefresh: () async {
+                  super.setState(() {});
+                },
+                child: ReorderableListView.builder(
+                  itemCount: learnedWords.length,
+                  onReorder: (oldIndex, newIndex) async => await _sortCards(
+                    learnedWords: learnedWords,
+                    oldIndex: oldIndex,
+                    newIndex: newIndex,
+                  ),
+                  itemBuilder: (context, index) => _createLearnedWordCard(
+                    learnedWord: learnedWords[index],
+                  ),
+                ),
+              );
+            },
+          ),
+        ),
+      );
 }

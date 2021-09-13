@@ -45,6 +45,9 @@ enum CommonSharedPreferencesKey {
   /// The use fingerprint recognition
   useFingerprintRecognition,
 
+  /// The apply darke theme
+  applyDarkTheme,
+
   //! The Settings Config ↑
 
   //! The Review Config ↓
@@ -76,6 +79,8 @@ extension KeyFeature on CommonSharedPreferencesKey {
         return 'use_fingerprint_recognition';
       case CommonSharedPreferencesKey.passcode:
         return 'passcode';
+      case CommonSharedPreferencesKey.applyDarkTheme:
+        return 'apply_dark_theme';
       case CommonSharedPreferencesKey.datetimeLastShowedAppReview:
         return 'datetime_last_showed_app_review';
     }

@@ -5,6 +5,7 @@
 import 'package:duo_tracker/src/utils/size_config.dart';
 import 'package:duo_tracker/src/view/overview/overview_tab_view.dart';
 import 'package:duo_tracker/src/view/settings/settings_view.dart';
+import 'package:duo_tracker/src/view/statistics/statistics_view.dart';
 import 'package:duo_tracker/src/view/user/user_account_view.dart';
 import 'package:flutter/material.dart';
 
@@ -32,11 +33,12 @@ class _DuoTrackerHomeViewState extends State<DuoTrackerHomeView> {
         child: Scaffold(
           bottomNavigationBar: TabBar(
             isScrollable: false,
-            unselectedLabelColor: Colors.white.withOpacity(0.3),
+            unselectedLabelColor:
+                Theme.of(context).colorScheme.secondary.withOpacity(0.5),
             unselectedLabelStyle: const TextStyle(fontSize: 11.0),
-            labelColor: Colors.white,
+            labelColor: Theme.of(context).colorScheme.secondary,
             labelStyle: const TextStyle(fontSize: 12.0),
-            indicatorColor: Colors.white,
+            indicatorColor: Theme.of(context).colorScheme.secondary,
             indicatorWeight: 2.0,
             indicator: BoxDecoration(
               border: Border(
@@ -56,7 +58,7 @@ class _DuoTrackerHomeViewState extends State<DuoTrackerHomeView> {
           body: const TabBarView(
             children: [
               OverviewTabView(),
-              OverviewTabView(),
+              StatisticsView(),
               UserAccountView(),
               SettingsView(),
             ],

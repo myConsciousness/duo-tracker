@@ -69,11 +69,12 @@ class _OverviewTabViewState extends State<OverviewTabView> {
         child: Scaffold(
           bottomNavigationBar: TabBar(
             isScrollable: false,
-            unselectedLabelColor: Colors.white.withOpacity(0.3),
+            unselectedLabelColor:
+                Theme.of(context).colorScheme.secondary.withOpacity(0.5),
             unselectedLabelStyle: const TextStyle(fontSize: 11.0),
-            labelColor: Colors.white,
-            labelStyle: const TextStyle(fontSize: 12.0),
-            indicatorColor: Colors.white,
+            labelColor: Theme.of(context).colorScheme.secondary,
+            labelStyle: const TextStyle(fontSize: 10.0),
+            indicatorColor: Theme.of(context).colorScheme.secondary,
             indicatorWeight: 2.0,
             indicator: BoxDecoration(
               border: Border(
