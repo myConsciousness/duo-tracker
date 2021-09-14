@@ -185,10 +185,6 @@ class LearnedWordService extends LearnedWordRepository {
 
     if (storedLearnedWord.isEmpty()) {
       storedLearnedWord = await insert(learnedWord);
-
-      // Update sort order as id
-      storedLearnedWord.sortOrder = storedLearnedWord.id;
-      await update(storedLearnedWord);
     } else {
       learnedWord.id = storedLearnedWord.id;
       learnedWord.bookmarked = storedLearnedWord.bookmarked;

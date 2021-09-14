@@ -15,6 +15,7 @@ import 'package:duo_tracker/src/view/overview/overview_tab_view.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_speed_dial/flutter_speed_dial.dart';
 import 'package:intl/intl.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 class OverviewView extends StatefulWidget {
   const OverviewView({
@@ -32,6 +33,7 @@ class _OverviewViewState extends State<OverviewView> {
   static const noneFieldValue = 'N/A';
 
   String _appBarSubTitle = '';
+  bool _alreadyAuthDialogOpened = false;
   final _audioPlayer = AudioPlayer();
   final _datetimeFormat = DateFormat('yyyy/MM/dd HH:mm');
 
@@ -75,15 +77,21 @@ class _OverviewViewState extends State<OverviewView> {
       7);
 
   Future<void> _syncOverview() async {
-    await ApiAdapter.of(type: ApiAdapterType.login).execute(context: context);
-    await ApiAdapter.of(type: ApiAdapterType.overview)
-        .execute(context: context);
+    if (!_alreadyAuthDialogOpened) {
+      _alreadyAuthDialogOpened = true;
 
-    await CommonSharedPreferencesKey.datetimeLastAutoSyncedOverview.setInt(
-      DateTime.now().millisecondsSinceEpoch,
-    );
+      await ApiAdapter.of(type: ApiAdapterType.login).execute(context: context);
+      await ApiAdapter.of(type: ApiAdapterType.overview)
+          .execute(context: context);
 
-    await _createAppBarSubTitle();
+      await CommonSharedPreferencesKey.datetimeLastAutoSyncedOverview.setInt(
+        DateTime.now().millisecondsSinceEpoch,
+      );
+
+      await _createAppBarSubTitle();
+
+      _alreadyAuthDialogOpened = false;
+    }
   }
 
   Future<List<LearnedWord>> _findLearnedWords() async =>
@@ -110,25 +118,27 @@ class _OverviewViewState extends State<OverviewView> {
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
                     _createCardHeaderText(
-                        title: learnedWord.skillUrlTitle, subTitle: 'Lesson'),
+                      title: '${learnedWord.sortOrder + 1}',
+                      subTitle: 'Index',
+                    ),
+                    _createCardHeaderText(
+                      title: learnedWord.skillUrlTitle,
+                      subTitle: 'Lesson',
+                    ),
                     _createCardHeaderText(
                       title: '${learnedWord.strengthBars}',
                       subTitle: 'Level',
                     ),
                     _createCardHeaderText(
-                      title:
-                          '${(learnedWord.strength * 100.0).toStringAsFixed(2)} %',
-                      subTitle: 'Proficiency',
+                      title: _datetimeFormat.format(
+                        DateTime.fromMillisecondsSinceEpoch(
+                            learnedWord.lastPracticedMs),
+                      ),
+                      subTitle: 'Last practiced at',
                     ),
-                    _createCardHeaderText(
-                        title: _datetimeFormat.format(
-                          DateTime.fromMillisecondsSinceEpoch(
-                              learnedWord.lastPracticedMs),
-                        ),
-                        subTitle: 'Last practiced at'),
                   ],
                 ),
-                const Divider(),
+                _divider,
                 Container(
                   padding: const EdgeInsets.fromLTRB(20, 0, 20, 0),
                   child: Row(
@@ -153,10 +163,15 @@ class _OverviewViewState extends State<OverviewView> {
                             : learnedWord.gender,
                         subTitle: 'Gender',
                       ),
+                      _createCardHeaderText(
+                        title:
+                            '${(learnedWord.strength * 100.0).toStringAsFixed(2)} %',
+                        subTitle: 'Proficiency',
+                      ),
                     ],
                   ),
                 ),
-                const Divider(),
+                _divider,
                 Row(
                   mainAxisAlignment: MainAxisAlignment.start,
                   children: [
@@ -193,9 +208,9 @@ class _OverviewViewState extends State<OverviewView> {
                     ),
                   ],
                 ),
-                const Divider(),
+                _divider,
                 Row(
-                  mainAxisAlignment: MainAxisAlignment.end,
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   crossAxisAlignment: CrossAxisAlignment.end,
                   children: _createCardActions(
                     learnedWord: learnedWord,
@@ -368,45 +383,63 @@ class _OverviewViewState extends State<OverviewView> {
     required LearnedWord learnedWord,
   }) =>
       <Widget>[
-        if (learnedWord.tipsAndNotes.isNotEmpty)
-          IconButton(
-            tooltip: 'Show Tips & Notes',
-            icon: const Icon(Icons.more),
-            onPressed: () => Navigator.push(
-              context,
-              MaterialPageRoute(
-                builder: (_) => LessonTipsView(
-                  lessonName: learnedWord.skill,
-                  html: learnedWord.tipsAndNotes,
+        Row(
+          mainAxisAlignment: MainAxisAlignment.start,
+          children: [
+            IconButton(
+              tooltip: learnedWord.completed ? 'Undo' : 'Complete',
+              icon: learnedWord.completed
+                  ? const Icon(Icons.undo)
+                  : const Icon(Icons.done),
+              onPressed: () async {
+                learnedWord.completed = !learnedWord.completed;
+                learnedWord.updatedAt = DateTime.now();
+
+                await _learnedWordService.update(learnedWord);
+                super.setState(() {});
+              },
+            ),
+            IconButton(
+              tooltip: learnedWord.deleted ? 'Restore' : 'Delete',
+              icon: learnedWord.deleted
+                  ? const Icon(Icons.restore_from_trash)
+                  : const Icon(Icons.delete),
+              onPressed: () async {
+                learnedWord.deleted = !learnedWord.deleted;
+                learnedWord.updatedAt = DateTime.now();
+
+                await _learnedWordService.update(learnedWord);
+                super.setState(() {});
+              },
+            ),
+          ],
+        ),
+        Row(
+          mainAxisAlignment: MainAxisAlignment.end,
+          children: [
+            if (learnedWord.tipsAndNotes.isNotEmpty)
+              IconButton(
+                tooltip: 'Show Tips & Notes',
+                icon: const Icon(Icons.more),
+                onPressed: () => Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (_) => LessonTipsView(
+                      lessonName: learnedWord.skill,
+                      html: learnedWord.tipsAndNotes,
+                    ),
+                  ),
                 ),
               ),
+            IconButton(
+              tooltip: 'Learn at Duolingo',
+              icon: const Icon(Icons.school),
+              onPressed: () async {
+                await launch(
+                    'https://www.duolingo.com/skill/${learnedWord.learningLanguage}/${learnedWord.skillUrlTitle}');
+              },
             ),
-          ),
-        IconButton(
-          tooltip: learnedWord.completed ? 'Undo' : 'Complete',
-          icon: learnedWord.completed
-              ? const Icon(Icons.undo)
-              : const Icon(Icons.done),
-          onPressed: () async {
-            learnedWord.completed = !learnedWord.completed;
-            learnedWord.updatedAt = DateTime.now();
-
-            await _learnedWordService.update(learnedWord);
-            super.setState(() {});
-          },
-        ),
-        IconButton(
-          tooltip: learnedWord.deleted ? 'Restore' : 'Delete',
-          icon: learnedWord.deleted
-              ? const Icon(Icons.restore_from_trash)
-              : const Icon(Icons.delete),
-          onPressed: () async {
-            learnedWord.deleted = !learnedWord.deleted;
-            learnedWord.updatedAt = DateTime.now();
-
-            await _learnedWordService.update(learnedWord);
-            super.setState(() {});
-          },
+          ],
         ),
       ];
 
@@ -423,9 +456,14 @@ class _OverviewViewState extends State<OverviewView> {
     }
   }
 
+  Divider get _divider => Divider(
+        color: Theme.of(context).colorScheme.onSurface.withOpacity(0.3),
+      );
+
   @override
   Widget build(BuildContext context) => Scaffold(
         floatingActionButton: SpeedDial(
+          tooltip: 'Show Actions',
           animatedIcon: AnimatedIcons.menu_close,
           children: [
             SpeedDialChild(
@@ -441,6 +479,19 @@ class _OverviewViewState extends State<OverviewView> {
             SpeedDialChild(
               child: const Icon(Icons.sync),
               label: 'Sync Words',
+              labelStyle: TextStyle(
+                color: Theme.of(context).colorScheme.onSurface,
+              ),
+              labelBackgroundColor: Theme.of(context).colorScheme.background,
+              backgroundColor: Theme.of(context).colorScheme.background,
+              onTap: () async {
+                await _syncOverview();
+                super.setState(() {});
+              },
+            ),
+            SpeedDialChild(
+              child: const Icon(Icons.language),
+              label: 'Switch Language',
               labelStyle: TextStyle(
                 color: Theme.of(context).colorScheme.onSurface,
               ),

@@ -107,6 +107,13 @@ abstract class _ApiAdapter implements ApiAdapter {
           Navigator.pop(context);
         }
 
+        if (response.fromApi == FromApi.login) {
+          // Update user information
+          await _UserApiAdapter().execute(context: context);
+          // Update version information
+          await _VersionInfoAdapter().execute(context: context);
+        }
+
         break;
       case ErrorType.network:
         await OpenSettings.openNetworkOperatorSetting();
@@ -310,11 +317,6 @@ class _LoginApiAdapter extends _ApiAdapter {
       } else {
         await CommonSharedPreferencesKey.userId.setString(jsonMap['user_id']);
 
-        // Update user information
-        await _UserApiAdapter().execute(context: context);
-        // Update version information
-        await _VersionInfoAdapter().execute(context: context);
-
         return ApiResponse.from(
           fromApi: FromApi.login,
           errorType: ErrorType.none,
@@ -501,6 +503,7 @@ class _LearnedWordApiAdapter extends _ApiAdapter {
 
       final userId = await CommonSharedPreferencesKey.userId.getString();
 
+      int sortOrder = 0;
       for (final Map<String, dynamic> overview in jsonMap['vocab_overview']) {
         final String wordId = overview['id'];
         final String wordString = overview['word_string'];
@@ -528,6 +531,7 @@ class _LearnedWordApiAdapter extends _ApiAdapter {
             bookmarked: false,
             completed: false,
             deleted: false,
+            sortOrder: sortOrder++,
             createdAt: DateTime.now(),
             updatedAt: DateTime.now(),
           ),

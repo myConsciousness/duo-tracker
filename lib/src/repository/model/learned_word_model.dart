@@ -28,7 +28,7 @@ class LearnedWord {
   bool bookmarked;
   bool completed;
   bool deleted;
-  int sortOrder = -1;
+  int sortOrder;
   DateTime createdAt = DateTime.now();
   DateTime updatedAt = DateTime.now();
 
@@ -94,7 +94,7 @@ class LearnedWord {
     required this.bookmarked,
     required this.completed,
     required this.deleted,
-    this.sortOrder = -1,
+    required this.sortOrder,
     required this.createdAt,
     required this.updatedAt,
   });
