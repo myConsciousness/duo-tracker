@@ -5,12 +5,12 @@
 import 'dart:convert';
 
 import 'package:awesome_dialog/awesome_dialog.dart';
-import 'package:connectivity/connectivity.dart';
 import 'package:duo_tracker/src/component/dialog/awesome_dialog.dart';
 import 'package:duo_tracker/src/component/dialog/auth_dialog.dart';
 import 'package:duo_tracker/src/component/snackbar/info_snack_bar.dart';
 import 'package:duo_tracker/src/http/api_response.dart';
 import 'package:duo_tracker/src/http/duolingo_api.dart';
+import 'package:duo_tracker/src/http/network.dart';
 import 'package:duo_tracker/src/preference/common_shared_preferences_key.dart';
 import 'package:duo_tracker/src/repository/model/course_model.dart';
 import 'package:duo_tracker/src/repository/model/learned_word_model.dart';
@@ -68,7 +68,7 @@ abstract class _ApiAdapter implements ApiAdapter {
     final params = const <String, String>{},
     final AwesomeDialog? dialog,
   }) async {
-    if (!await _Network.isConnected()) {
+    if (!await Network.isConnected()) {
       return await _checkResponse(
         context: context,
         response: ApiResponse.from(
@@ -108,9 +108,14 @@ abstract class _ApiAdapter implements ApiAdapter {
 
         if (response.fromApi == FromApi.login) {
           // Update user information
-          await _UserApiAdapter().execute(context: context);
+          if (!await _UserApiAdapter().execute(context: context)) {
+            return false;
+          }
+
           // Update version information
-          await _VersionInfoAdapter().execute(context: context);
+          if (!await _VersionInfoAdapter().execute(context: context)) {
+            return false;
+          }
         }
 
         return true;
@@ -727,30 +732,6 @@ class _WordHintApiAdapter extends _ApiAdapter {
         }
       },
     );
-  }
-}
-
-class _Network {
-  static Future<bool> isConnected() async {
-    final connectivity = await (Connectivity().checkConnectivity());
-    return await _isMobileConnected(connectivity: connectivity) ||
-        await _isWifiConnected(connectivity: connectivity);
-  }
-
-  static Future<bool> _isMobileConnected({
-    ConnectivityResult? connectivity,
-  }) async {
-    connectivity ??= await (Connectivity().checkConnectivity());
-
-    return connectivity == ConnectivityResult.mobile;
-  }
-
-  static Future<bool> _isWifiConnected({
-    ConnectivityResult? connectivity,
-  }) async {
-    connectivity ??= await (Connectivity().checkConnectivity());
-
-    return connectivity == ConnectivityResult.wifi;
   }
 }
 

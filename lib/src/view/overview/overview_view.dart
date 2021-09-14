@@ -3,8 +3,11 @@
 // BSD-style license that can be found in the LICENSE file.
 
 import 'package:audioplayers/audioplayers.dart';
+import 'package:awesome_dialog/awesome_dialog.dart';
 import 'package:duo_tracker/src/component/common_app_bar_titles.dart';
+import 'package:duo_tracker/src/component/dialog/awesome_dialog.dart';
 import 'package:duo_tracker/src/http/api_adapter.dart';
+import 'package:duo_tracker/src/http/network.dart';
 import 'package:duo_tracker/src/preference/common_shared_preferences_key.dart';
 import 'package:duo_tracker/src/repository/model/learned_word_model.dart';
 import 'package:duo_tracker/src/repository/model/word_hint_model.dart';
@@ -86,16 +89,20 @@ class _OverviewViewState extends State<OverviewView> {
       final password = Encryption.decode(
           value: await CommonSharedPreferencesKey.password.getString());
 
-      await ApiAdapter.of(type: ApiAdapterType.login).execute(
-        context: context,
-        params: {
-          'username': username,
-          'password': password,
-        },
-      );
+      final loginApi = ApiAdapter.of(type: ApiAdapterType.login);
 
-      await ApiAdapter.of(type: ApiAdapterType.overview)
-          .execute(context: context);
+      if (!await loginApi.execute(context: context, params: {
+        'username': username,
+        'password': password,
+      })) {
+        return;
+      }
+
+      final overviewApi = ApiAdapter.of(type: ApiAdapterType.overview);
+
+      if (!await overviewApi.execute(context: context)) {
+        return;
+      }
 
       await CommonSharedPreferencesKey.datetimeLastAutoSyncedOverview.setInt(
         DateTime.now().millisecondsSinceEpoch,
@@ -450,6 +457,18 @@ class _OverviewViewState extends State<OverviewView> {
               tooltip: 'Learn at Duolingo',
               icon: const Icon(Icons.school),
               onPressed: () async {
+                if (!await Network.isConnected()) {
+                  showAwesomeDialog(
+                    context: context,
+                    title: 'Network Error',
+                    content:
+                        'Could not detect a valid network. Please check the network environment and the network settings of the device.',
+                    dialogType: DialogType.WARNING,
+                  );
+
+                  return;
+                }
+
                 await launch(
                     'https://www.duolingo.com/skill/${learnedWord.learningLanguage}/${learnedWord.skillUrlTitle}');
               },
@@ -522,8 +541,17 @@ class _OverviewViewState extends State<OverviewView> {
               labelBackgroundColor: Theme.of(context).colorScheme.background,
               backgroundColor: Theme.of(context).colorScheme.background,
               onTap: () async {
-                await _syncOverview();
-                super.setState(() {});
+                if (!await Network.isConnected()) {
+                  showAwesomeDialog(
+                    context: context,
+                    title: 'Network Error',
+                    content:
+                        'Could not detect a valid network. Please check the network environment and the network settings of the device.',
+                    dialogType: DialogType.WARNING,
+                  );
+
+                  return;
+                }
               },
             ),
           ],

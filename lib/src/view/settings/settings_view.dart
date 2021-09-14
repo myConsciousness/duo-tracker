@@ -268,10 +268,10 @@ The device does not support biometric feature.''');
                     await PackageInfo.fromPlatform();
 
                 await Share.share(
-                  // TODO Share時のメッセージ
-                  '''${packageInfo.appName} is the most beautiful, easy and intuitive application about QR Code!
+                  '''Duo Tracker is the best app to support your learning with Duolingo!
+Your language learning will be accelerated with this app!
 
-#MrQR #QRCodeScanner #QRCodeGenerator #QRCode #app #android
+#Duolingo #DuoTracker #Tracker #Learn #App #Android #DL
 https://play.google.com/store/apps/details?id=${packageInfo.packageName}
                       ''',
                   subject: 'This is ${packageInfo.appName}!',
@@ -301,7 +301,17 @@ https://play.google.com/store/apps/details?id=${packageInfo.packageName}
                     applicationVersion: packageInfo.version,
                     applicationIcon: ClipRRect(
                       borderRadius: BorderRadius.circular(100.0),
-                      child: Image.asset('assets/icon/bowie_license.png'),
+                      child: Container(
+                        width: 250.0,
+                        height: 250.0,
+                        alignment: Alignment.center,
+                        decoration: const BoxDecoration(
+                          image: DecorationImage(
+                              image:
+                                  AssetImage('assets/icon/bowie_license.png'),
+                              fit: BoxFit.cover),
+                        ),
+                      ),
                     ),
                     applicationLegalese:
                         '''Copyright 2021 Kato Shinya, Kato Melissa. All rights reserved.
