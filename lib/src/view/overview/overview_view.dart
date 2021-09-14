@@ -197,46 +197,9 @@ class _OverviewViewState extends State<OverviewView> {
                 Row(
                   mainAxisAlignment: MainAxisAlignment.end,
                   crossAxisAlignment: CrossAxisAlignment.end,
-                  children: [
-                    if (learnedWord.tipsAndNotes.isNotEmpty)
-                      IconButton(
-                        tooltip: 'Show Tips & Notes',
-                        icon: const Icon(Icons.more),
-                        onPressed: () => Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                            builder: (_) => LessonTipsView(
-                              lessonName: learnedWord.skill,
-                              html: learnedWord.tipsAndNotes,
-                            ),
-                          ),
-                        ),
-                      ),
-                    IconButton(
-                      tooltip: 'Complete',
-                      icon: const Icon(Icons.done),
-                      onPressed: () async {
-                        learnedWord.completed = true;
-                        learnedWord.updatedAt = DateTime.now();
-
-                        await _learnedWordService.update(learnedWord);
-
-                        super.setState(() {});
-                      },
-                    ),
-                    IconButton(
-                      tooltip: 'Hide',
-                      icon: const Icon(Icons.hide_source),
-                      onPressed: () async {
-                        learnedWord.deleted = true;
-                        learnedWord.updatedAt = DateTime.now();
-
-                        await _learnedWordService.update(learnedWord);
-
-                        super.setState(() {});
-                      },
-                    ),
-                  ],
+                  children: _createCardActions(
+                    learnedWord: learnedWord,
+                  ),
                 ),
               ],
             ),
@@ -316,10 +279,12 @@ class _OverviewViewState extends State<OverviewView> {
     required LearnedWord learnedWord,
   }) {
     if (widget.overviewTabType == OverviewTabType.bookmarked) {
-      return learnedWord.bookmarked && !learnedWord.deleted;
+      return learnedWord.bookmarked &&
+          !learnedWord.completed &&
+          !learnedWord.deleted;
     } else if (widget.overviewTabType == OverviewTabType.completed) {
       return learnedWord.completed && !learnedWord.deleted;
-    } else if (widget.overviewTabType == OverviewTabType.hidden) {
+    } else if (widget.overviewTabType == OverviewTabType.trash) {
       return learnedWord.deleted;
     }
 
@@ -399,6 +364,65 @@ class _OverviewViewState extends State<OverviewView> {
         ),
       );
 
+  List<Widget> _createCardActions({
+    required LearnedWord learnedWord,
+  }) =>
+      <Widget>[
+        if (learnedWord.tipsAndNotes.isNotEmpty)
+          IconButton(
+            tooltip: 'Show Tips & Notes',
+            icon: const Icon(Icons.more),
+            onPressed: () => Navigator.push(
+              context,
+              MaterialPageRoute(
+                builder: (_) => LessonTipsView(
+                  lessonName: learnedWord.skill,
+                  html: learnedWord.tipsAndNotes,
+                ),
+              ),
+            ),
+          ),
+        IconButton(
+          tooltip: learnedWord.completed ? 'Undo' : 'Complete',
+          icon: learnedWord.completed
+              ? const Icon(Icons.undo)
+              : const Icon(Icons.done),
+          onPressed: () async {
+            learnedWord.completed = !learnedWord.completed;
+            learnedWord.updatedAt = DateTime.now();
+
+            await _learnedWordService.update(learnedWord);
+            super.setState(() {});
+          },
+        ),
+        IconButton(
+          tooltip: learnedWord.deleted ? 'Restore' : 'Delete',
+          icon: learnedWord.deleted
+              ? const Icon(Icons.restore_from_trash)
+              : const Icon(Icons.delete),
+          onPressed: () async {
+            learnedWord.deleted = !learnedWord.deleted;
+            learnedWord.updatedAt = DateTime.now();
+
+            await _learnedWordService.update(learnedWord);
+            super.setState(() {});
+          },
+        ),
+      ];
+
+  String get _appBarTitle {
+    switch (widget.overviewTabType) {
+      case OverviewTabType.all:
+        return 'All Learned Words';
+      case OverviewTabType.bookmarked:
+        return 'Bookmarked Learned Words';
+      case OverviewTabType.completed:
+        return 'Completed Learned Words';
+      case OverviewTabType.trash:
+        return 'Trashed Learned Words';
+    }
+  }
+
   @override
   Widget build(BuildContext context) => Scaffold(
         floatingActionButton: SpeedDial(
@@ -437,7 +461,7 @@ class _OverviewViewState extends State<OverviewView> {
               snap: true,
               centerTitle: true,
               title: CommonAppBarTitles(
-                title: 'Learned Words',
+                title: _appBarTitle,
                 subTitle: _appBarSubTitle,
               ),
               shape: const RoundedRectangleBorder(
@@ -455,12 +479,17 @@ class _OverviewViewState extends State<OverviewView> {
                   child: Column(
                     mainAxisAlignment: MainAxisAlignment.center,
                     crossAxisAlignment: CrossAxisAlignment.center,
-                    children: const [
-                      CircularProgressIndicator(),
-                      SizedBox(
+                    children: [
+                      const CircularProgressIndicator(),
+                      const SizedBox(
                         height: 10,
                       ),
-                      Text('Loading...'),
+                      Text(
+                        'Loading...',
+                        style: TextStyle(
+                          color: Theme.of(context).colorScheme.onSurface,
+                        ),
+                      ),
                     ],
                   ),
                 );

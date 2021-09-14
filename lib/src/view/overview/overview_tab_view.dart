@@ -17,8 +17,8 @@ enum OverviewTabType {
   /// Completed
   completed,
 
-  /// Hidden
-  hidden,
+  /// Trash
+  trash,
 }
 
 class OverviewTabView extends StatefulWidget {
@@ -88,7 +88,7 @@ class _OverviewTabViewState extends State<OverviewTabView> {
               _tabTitle('All'),
               _tabTitle('Bookmarked'),
               _tabTitle('Completed'),
-              _tabTitle('Hidden'),
+              _tabTitle('Trash'),
             ],
           ),
           body: const TabBarView(
@@ -96,7 +96,7 @@ class _OverviewTabViewState extends State<OverviewTabView> {
               OverviewView(overviewTabType: OverviewTabType.all),
               OverviewView(overviewTabType: OverviewTabType.bookmarked),
               OverviewView(overviewTabType: OverviewTabType.completed),
-              OverviewView(overviewTabType: OverviewTabType.hidden),
+              OverviewView(overviewTabType: OverviewTabType.trash),
             ],
           ),
         ),

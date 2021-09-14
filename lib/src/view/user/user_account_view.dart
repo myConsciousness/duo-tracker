@@ -19,13 +19,13 @@ class _UserAccountViewState extends State<UserAccountView> {
         child: Column(
           children: <Widget>[
             Container(
-              decoration: const BoxDecoration(
+              decoration: BoxDecoration(
                 gradient: LinearGradient(
                   begin: Alignment.topCenter,
                   end: Alignment.bottomCenter,
                   colors: [
-                    Colors.redAccent,
-                    Colors.pinkAccent,
+                    Theme.of(context).colorScheme.secondary,
+                    Colors.black,
                   ],
                 ),
               ),
@@ -53,6 +53,18 @@ class _UserAccountViewState extends State<UserAccountView> {
                       ),
                       const SizedBox(
                         height: 10.0,
+                      ),
+                      Row(
+                        children: const [
+                          Icon(Icons.location_pin),
+                          Text(
+                            "Tokyo",
+                            style: TextStyle(
+                              fontSize: 22.0,
+                              color: Colors.white,
+                            ),
+                          ),
+                        ],
                       ),
                       Card(
                         margin: const EdgeInsets.symmetric(
