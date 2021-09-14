@@ -92,6 +92,7 @@ class _OverviewViewState extends State<OverviewView> {
           'password': password,
         },
       );
+
       await ApiAdapter.of(type: ApiAdapterType.overview)
           .execute(context: context);
 

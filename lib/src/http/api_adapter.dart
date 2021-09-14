@@ -33,6 +33,8 @@ import 'package:open_settings/open_settings.dart';
 /// The enum that manages API adapter type.
 enum ApiAdapterType {
   login,
+  user,
+  versionInfo,
   overview,
 }
 
@@ -44,27 +46,30 @@ abstract class ApiAdapter {
     switch (type) {
       case ApiAdapterType.login:
         return _LoginApiAdapter();
+      case ApiAdapterType.user:
+        return _UserApiAdapter();
+      case ApiAdapterType.versionInfo:
+        return _VersionInfoAdapter();
       case ApiAdapterType.overview:
         return _LearnedWordApiAdapter();
     }
   }
 
-  Future<void> execute({
+  Future<bool> execute({
     required final BuildContext context,
     final params = const <String, String>{},
-    final fromDialog = false,
   });
 }
 
 abstract class _ApiAdapter implements ApiAdapter {
   @override
-  Future<void> execute({
+  Future<bool> execute({
     required final BuildContext context,
     final params = const <String, String>{},
-    final fromDialog = false,
+    final AwesomeDialog? dialog,
   }) async {
     if (!await _Network.isConnected()) {
-      await _checkResponse(
+      return await _checkResponse(
         context: context,
         response: ApiResponse.from(
           fromApi: FromApi.none,
@@ -72,17 +77,15 @@ abstract class _ApiAdapter implements ApiAdapter {
           message:
               'Could not detect a valid network. Please check the network environment and the network settings of the device.',
         ),
-        fromDialog: fromDialog,
       );
     }
 
-    await _checkResponse(
+    return await _checkResponse(
       context: context,
       response: await doExecute(
         context: context,
         params: params,
       ),
-      fromDialog: fromDialog,
     );
   }
 
@@ -91,10 +94,9 @@ abstract class _ApiAdapter implements ApiAdapter {
     final params = const <String, String>{},
   });
 
-  Future<void> _checkResponse({
+  Future<bool> _checkResponse({
     required final BuildContext context,
     required ApiResponse response,
-    required bool fromDialog,
   }) async {
     switch (response.errorType) {
       case ErrorType.none:
@@ -104,10 +106,6 @@ abstract class _ApiAdapter implements ApiAdapter {
           );
         }
 
-        if (fromDialog) {
-          Navigator.pop(context);
-        }
-
         if (response.fromApi == FromApi.login) {
           // Update user information
           await _UserApiAdapter().execute(context: context);
@@ -115,23 +113,25 @@ abstract class _ApiAdapter implements ApiAdapter {
           await _VersionInfoAdapter().execute(context: context);
         }
 
-        break;
+        return true;
       case ErrorType.network:
         await OpenSettings.openNetworkOperatorSetting();
-        break;
+        return false;
       case ErrorType.noUserRegistered:
         await showAuthDialog(
           context: context,
           barrierDismissible: false,
         );
-        break;
+
+        return false;
       case ErrorType.authentication:
         showAwesomeDialog(
             context: context,
             title: 'Authentication failure',
             dialogType: DialogType.WARNING,
             content: response.message);
-        break;
+
+        return false;
       case ErrorType.client:
         showAwesomeDialog(
           context: context,
@@ -141,7 +141,8 @@ abstract class _ApiAdapter implements ApiAdapter {
               ? 'An error occurred while communicating with the Duolingo API. Please try again.'
               : response.message,
         );
-        break;
+
+        return false;
       case ErrorType.server:
         showAwesomeDialog(
           context: context,
@@ -151,7 +152,8 @@ abstract class _ApiAdapter implements ApiAdapter {
               ? 'A server error occurred while communicating with the Duolingo API. Please try again later.'
               : response.message,
         );
-        break;
+
+        return false;
       case ErrorType.unknown:
         showAwesomeDialog(
           context: context,
@@ -161,7 +163,8 @@ abstract class _ApiAdapter implements ApiAdapter {
               ? 'An unknown error occurred while communicating with the Duolingo API. Please try again.'
               : response.message,
         );
-        break;
+
+        return false;
     }
   }
 }
@@ -284,11 +287,11 @@ class _VersionInfoAdapter extends _ApiAdapter {
 }
 
 class _LoginApiAdapter extends _ApiAdapter {
-  /// The required parameter for username
-  static const _paramUsername = 'username';
-
   /// The required parameter for password
   static const _paramPassword = 'password';
+
+  /// The required parameter for username
+  static const _paramUsername = 'username';
 
   @override
   Future<ApiResponse> doExecute({
@@ -356,14 +359,14 @@ class _LoginApiAdapter extends _ApiAdapter {
 }
 
 class _UserApiAdapter extends _ApiAdapter {
-  /// The user service
-  final _userService = UserService.getInstance();
-
   /// The course service
   final _courseService = CourseService.getInstance();
 
   /// The skill service
   final _skillService = SkillService.getInstance();
+
+  /// The user service
+  final _userService = UserService.getInstance();
 
   @override
   Future<ApiResponse> doExecute({
