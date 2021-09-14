@@ -9,6 +9,7 @@ import 'package:duo_tracker/src/preference/common_shared_preferences_key.dart';
 import 'package:duo_tracker/src/repository/model/learned_word_model.dart';
 import 'package:duo_tracker/src/repository/model/word_hint_model.dart';
 import 'package:duo_tracker/src/repository/service/learned_word_service.dart';
+import 'package:duo_tracker/src/security/encryption.dart';
 import 'package:duo_tracker/src/utils/language_converter.dart';
 import 'package:duo_tracker/src/view/lesson_tips_view.dart';
 import 'package:duo_tracker/src/view/overview/overview_tab_view.dart';
@@ -80,7 +81,17 @@ class _OverviewViewState extends State<OverviewView> {
     if (!_alreadyAuthDialogOpened) {
       _alreadyAuthDialogOpened = true;
 
-      await ApiAdapter.of(type: ApiAdapterType.login).execute(context: context);
+      final username = await CommonSharedPreferencesKey.username.getString();
+      final password = Encryption.decode(
+          value: await CommonSharedPreferencesKey.password.getString());
+
+      await ApiAdapter.of(type: ApiAdapterType.login).execute(
+        context: context,
+        params: {
+          'username': username,
+          'password': password,
+        },
+      );
       await ApiAdapter.of(type: ApiAdapterType.overview)
           .execute(context: context);
 

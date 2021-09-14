@@ -2,7 +2,9 @@
 // Use of this source code is governed by a
 // BSD-style license that can be found in the LICENSE file.
 
+import 'package:awesome_dialog/awesome_dialog.dart';
 import 'package:duo_tracker/src/component/common_text_field.dart';
+import 'package:duo_tracker/src/component/dialog/awesome_dialog.dart';
 import 'package:duo_tracker/src/component/snackbar/warn_snack_bar.dart';
 import 'package:duo_tracker/src/http/api_adapter.dart';
 import 'package:duo_tracker/src/preference/common_shared_preferences_key.dart';
@@ -69,30 +71,32 @@ Future<T?> showAuthDialog<T>({
                       child: const Text('Login'),
                       onPressed: () async {
                         if (_usernameController.text.isEmpty) {
-                          WarnSnackbar.from(context: context).show(
-                              content:
-                                  'The username or email address is required.');
+                          showAwesomeDialog(
+                            context: context,
+                            title: 'Input Error',
+                            content:
+                                'The username or email address is required.',
+                            dialogType: DialogType.WARNING,
+                          );
                           return;
                         }
 
                         if (_rawPassword.isEmpty) {
-                          WarnSnackbar.from(context: context)
-                              .show(content: 'The password is required.');
+                          showAwesomeDialog(
+                            context: context,
+                            title: 'Input Error',
+                            content: 'The password is required.',
+                            dialogType: DialogType.WARNING,
+                          );
                           return;
                         }
 
-                        /**
-                         * Since there is no user information in the common field when the application is first started,
-                         * the user name and password are temporarily stored so that they can be used in the authentication process.
-                         * The user ID will be stored when the authentication process with the API is completed.
-                         */
-                        CommonSharedPreferencesKey.username
-                            .setString(_usernameController.text);
-                        CommonSharedPreferencesKey.password
-                            .setString(Encryption.encode(value: _rawPassword));
-
                         await ApiAdapter.of(type: ApiAdapterType.login).execute(
                           context: context,
+                          params: {
+                            'username': _usernameController.text,
+                            'password': _rawPassword,
+                          },
                           fromDialog: true,
                         );
                       },

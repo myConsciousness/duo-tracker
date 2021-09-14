@@ -4,8 +4,9 @@
 
 import 'dart:convert';
 
+import 'package:awesome_dialog/awesome_dialog.dart';
 import 'package:connectivity/connectivity.dart';
-import 'package:duo_tracker/src/component/dialog/alert_dialog.dart';
+import 'package:duo_tracker/src/component/dialog/awesome_dialog.dart';
 import 'package:duo_tracker/src/component/dialog/auth_dialog.dart';
 import 'package:duo_tracker/src/component/snackbar/info_snack_bar.dart';
 import 'package:duo_tracker/src/http/api_response.dart';
@@ -125,33 +126,37 @@ abstract class _ApiAdapter implements ApiAdapter {
         );
         break;
       case ErrorType.authentication:
-        await showAlertDialog(
+        showAwesomeDialog(
             context: context,
             title: 'Authentication failure',
+            dialogType: DialogType.WARNING,
             content: response.message);
         break;
       case ErrorType.client:
-        await showAlertDialog(
+        showAwesomeDialog(
           context: context,
           title: 'Client error',
+          dialogType: DialogType.WARNING,
           content: response.message.isEmpty
               ? 'An error occurred while communicating with the Duolingo API. Please try again.'
               : response.message,
         );
         break;
       case ErrorType.server:
-        await showAlertDialog(
+        showAwesomeDialog(
           context: context,
           title: 'Server error',
+          dialogType: DialogType.WARNING,
           content: response.message.isEmpty
               ? 'A server error occurred while communicating with the Duolingo API. Please try again later.'
               : response.message,
         );
         break;
       case ErrorType.unknown:
-        await showAlertDialog(
+        showAwesomeDialog(
           context: context,
           title: 'Unknown error',
+          dialogType: DialogType.WARNING,
           content: response.message.isEmpty
               ? 'An unknown error occurred while communicating with the Duolingo API. Please try again.'
               : response.message,
@@ -279,13 +284,19 @@ class _VersionInfoAdapter extends _ApiAdapter {
 }
 
 class _LoginApiAdapter extends _ApiAdapter {
+  /// The required parameter for username
+  static const _paramUsername = 'username';
+
+  /// The required parameter for password
+  static const _paramPassword = 'password';
+
   @override
   Future<ApiResponse> doExecute({
     required final BuildContext context,
     final params = const <String, String>{},
   }) async {
-    final username = await CommonSharedPreferencesKey.username.getString();
-    final password = await CommonSharedPreferencesKey.password.getString();
+    final username = params[_paramUsername];
+    final password = params[_paramPassword];
 
     if (username.isEmpty || password.isEmpty) {
       /// Enter this block at first time
@@ -298,9 +309,7 @@ class _LoginApiAdapter extends _ApiAdapter {
     final response = await Api.login.request.send(
       params: {
         'login': username,
-        'password': Encryption.decode(
-          value: password,
-        ),
+        'password': password,
       },
     );
 
@@ -315,6 +324,10 @@ class _LoginApiAdapter extends _ApiAdapter {
             errorType: ErrorType.authentication,
             message: 'The username or password was wrong.');
       } else {
+        await CommonSharedPreferencesKey.username
+            .setString(params[_paramUsername]);
+        await CommonSharedPreferencesKey.password
+            .setString(Encryption.encode(value: params[_paramPassword]));
         await CommonSharedPreferencesKey.userId.setString(jsonMap['user_id']);
 
         return ApiResponse.from(
