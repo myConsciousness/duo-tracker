@@ -15,6 +15,7 @@ import 'package:duo_tracker/src/view/lesson_tips_view.dart';
 import 'package:duo_tracker/src/view/overview/overview_tab_view.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_speed_dial/flutter_speed_dial.dart';
+import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:intl/intl.dart';
 import 'package:url_launcher/url_launcher.dart';
 
@@ -33,8 +34,8 @@ class OverviewView extends StatefulWidget {
 class _OverviewViewState extends State<OverviewView> {
   static const noneFieldValue = 'N/A';
 
-  String _appBarSubTitle = '';
   bool _alreadyAuthDialogOpened = false;
+  String _appBarSubTitle = '';
   final _audioPlayer = AudioPlayer();
   final _datetimeFormat = DateFormat('yyyy/MM/dd HH:mm');
 
@@ -200,24 +201,25 @@ class _OverviewViewState extends State<OverviewView> {
                         ),
                       ),
                     ),
-                    IconButton(
-                      tooltip: learnedWord.bookmarked
-                          ? 'Remove Bookmark'
-                          : 'Add Bookmark',
-                      icon: learnedWord.bookmarked
-                          ? const Icon(Icons.bookmark_added)
-                          : const Icon(Icons.bookmark_add),
-                      onPressed: () async {
-                        learnedWord.bookmarked = !learnedWord.bookmarked;
-                        learnedWord.updatedAt = DateTime.now();
+                    if (!learnedWord.deleted)
+                      IconButton(
+                        tooltip: learnedWord.bookmarked
+                            ? 'Remove Bookmark'
+                            : 'Add Bookmark',
+                        icon: learnedWord.bookmarked
+                            ? const Icon(Icons.bookmark_added)
+                            : const Icon(Icons.bookmark_add),
+                        onPressed: () async {
+                          learnedWord.bookmarked = !learnedWord.bookmarked;
+                          learnedWord.updatedAt = DateTime.now();
 
-                        await _learnedWordService.update(
-                          learnedWord,
-                        );
+                          await _learnedWordService.update(
+                            learnedWord,
+                          );
 
-                        super.setState(() {});
-                      },
-                    ),
+                          super.setState(() {});
+                        },
+                      ),
                   ],
                 ),
                 _divider,
@@ -399,19 +401,6 @@ class _OverviewViewState extends State<OverviewView> {
           mainAxisAlignment: MainAxisAlignment.start,
           children: [
             IconButton(
-              tooltip: learnedWord.completed ? 'Undo' : 'Complete',
-              icon: learnedWord.completed
-                  ? const Icon(Icons.undo)
-                  : const Icon(Icons.done),
-              onPressed: () async {
-                learnedWord.completed = !learnedWord.completed;
-                learnedWord.updatedAt = DateTime.now();
-
-                await _learnedWordService.update(learnedWord);
-                super.setState(() {});
-              },
-            ),
-            IconButton(
               tooltip: learnedWord.deleted ? 'Restore' : 'Delete',
               icon: learnedWord.deleted
                   ? const Icon(Icons.restore_from_trash)
@@ -424,6 +413,20 @@ class _OverviewViewState extends State<OverviewView> {
                 super.setState(() {});
               },
             ),
+            if (!learnedWord.deleted)
+              IconButton(
+                tooltip: learnedWord.completed ? 'Undo' : 'Complete',
+                icon: learnedWord.completed
+                    ? const Icon(Icons.undo)
+                    : const Icon(Icons.done),
+                onPressed: () async {
+                  learnedWord.completed = !learnedWord.completed;
+                  learnedWord.updatedAt = DateTime.now();
+
+                  await _learnedWordService.update(learnedWord);
+                  super.setState(() {});
+                },
+              ),
           ],
         ),
         Row(
@@ -479,7 +482,10 @@ class _OverviewViewState extends State<OverviewView> {
           animatedIcon: AnimatedIcons.menu_close,
           children: [
             SpeedDialChild(
-              child: const Icon(Icons.search),
+              child: const Icon(
+                FontAwesomeIcons.searchPlus,
+                size: 19,
+              ),
               label: 'Search',
               labelStyle: TextStyle(
                 color: Theme.of(context).colorScheme.onSurface,
@@ -489,7 +495,10 @@ class _OverviewViewState extends State<OverviewView> {
               onTap: () {},
             ),
             SpeedDialChild(
-              child: const Icon(Icons.sync),
+              child: const Icon(
+                FontAwesomeIcons.sync,
+                size: 19,
+              ),
               label: 'Sync Words',
               labelStyle: TextStyle(
                 color: Theme.of(context).colorScheme.onSurface,
@@ -502,7 +511,10 @@ class _OverviewViewState extends State<OverviewView> {
               },
             ),
             SpeedDialChild(
-              child: const Icon(Icons.language),
+              child: const Icon(
+                FontAwesomeIcons.language,
+                size: 19,
+              ),
               label: 'Switch Language',
               labelStyle: TextStyle(
                 color: Theme.of(context).colorScheme.onSurface,
