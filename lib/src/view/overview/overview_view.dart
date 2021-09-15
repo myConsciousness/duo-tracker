@@ -53,8 +53,8 @@ class _OverviewViewState extends State<OverviewView> {
 
   List<DropdownMenuItem> _selectableFromLanguageItems = [];
   List<DropdownMenuItem> _selectableLearningLanguageItems = [];
-  dynamic _selectedFromLanguage;
-  dynamic _selectedLearningLanguage;
+  dynamic _selectedFromLanguage = '';
+  dynamic _selectedLearningLanguage = '';
 
   /// The supported language service
   final _supportedLanguageService = SupportedLanguageService.getInstance();
@@ -65,7 +65,7 @@ class _OverviewViewState extends State<OverviewView> {
   @override
   void didChangeDependencies() {
     super.didChangeDependencies();
-    _asyncDidChangeDependencies();
+    _ayncDidChangeDependencies();
   }
 
   @override
@@ -77,6 +77,10 @@ class _OverviewViewState extends State<OverviewView> {
   void initState() {
     super.initState();
     _asyncInitState();
+  }
+
+  Future<void> _ayncDidChangeDependencies() async {
+    // _switchLanguageDialog = await _createSwitchLanguageDialog();
   }
 
   Future<List<LearnedWord>> _fetchDataSource({
@@ -548,22 +552,12 @@ class _OverviewViewState extends State<OverviewView> {
 
   List<DropdownMenuItem> _createDropdownItems({
     required List<String> languages,
-    String excludeLanguage = '',
-  }) {
-    final items = <DropdownMenuItem>[];
-    for (final language in languages) {
-      if (language != excludeLanguage) {
-        items.add(
-          DropdownMenuItem(
-            value: language,
-            child: Text(LanguageConverter.execute(languageCode: language)),
-          ),
-        );
-      }
-    }
-
-    return items;
-  }
+  }) =>
+      languages
+          .map((language) => DropdownMenuItem(
+              value: language,
+              child: Text(LanguageConverter.execute(languageCode: language))))
+          .toList();
 
   Widget _createDropdownBelow({
     required String title,
@@ -613,148 +607,169 @@ class _OverviewViewState extends State<OverviewView> {
         ],
       );
 
+  Future<void> _refreshAvailableFromLanguages() async {
+    final availableFromLanguages =
+        await _supportedLanguageService.findDistinctFromLanguages();
+    _selectableFromLanguageItems =
+        _createDropdownItems(languages: availableFromLanguages);
+  }
+
+  Future<String> _refreshAvailableLearningLanguages({
+    required String fromLanguage,
+  }) async {
+    final availableLearningLanguage = await _supportedLanguageService
+        .findDistinctLearningLanguagesByFromLanguage(
+      fromLanguage: fromLanguage,
+    );
+    _selectableLearningLanguageItems = _createDropdownItems(
+      languages: availableLearningLanguage,
+    );
+
+    return availableLearningLanguage[0];
+  }
+
   Future<AwesomeDialog> _createSwitchLanguageDialog() async {
     final currentFromLanguage =
         await CommonSharedPreferencesKey.currentFromLanguage.getString();
     final currentLearningLanguage =
         await CommonSharedPreferencesKey.currentLearningLanguage.getString();
 
-    _selectedFromLanguage = currentFromLanguage;
+    if (_selectedFromLanguage.isEmpty) {
+      _selectedFromLanguage = currentFromLanguage;
+    }
 
-    final availableFromLanguages =
-        await _supportedLanguageService.findDistinctFromLanguages();
-    final availableLearningLanguage = await _supportedLanguageService
-        .findDistinctLearningLanguagesByFromLanguage(
-            fromLanguage: _selectedFromLanguage);
+    if (_selectedLearningLanguage.isEmpty) {
+      _selectedLearningLanguage = currentLearningLanguage;
+    }
 
-    _selectableFromLanguageItems =
-        _createDropdownItems(languages: availableFromLanguages);
-    _selectableLearningLanguageItems = _createDropdownItems(
-      languages: availableLearningLanguage,
-      excludeLanguage: currentLearningLanguage,
-    );
+    await _refreshAvailableFromLanguages();
+    await _refreshAvailableLearningLanguages(fromLanguage: currentFromLanguage);
 
     return AwesomeDialog(
       context: context,
       animType: AnimType.SCALE,
       dialogType: DialogType.QUESTION,
       btnOkColor: Theme.of(context).colorScheme.secondary,
-      body: Container(
-        padding: const EdgeInsets.all(13),
-        child: Center(
-          child: SingleChildScrollView(
-            child: ListBody(
-              children: <Widget>[
-                const Center(
-                  child: Text(
-                    'Select Language',
-                    style: TextStyle(
-                      fontSize: 20,
-                      fontWeight: FontWeight.bold,
+      body: StatefulBuilder(
+        builder: (BuildContext context, setState) => Container(
+          padding: const EdgeInsets.all(13),
+          child: Center(
+            child: SingleChildScrollView(
+              child: ListBody(
+                children: <Widget>[
+                  const Center(
+                    child: Text(
+                      'Select Language',
+                      style: TextStyle(
+                        fontSize: 20,
+                        fontWeight: FontWeight.bold,
+                      ),
                     ),
                   ),
-                ),
-                const SizedBox(
-                  height: 30,
-                ),
-                Column(
-                  children: [
-                    _createDropdownBelow(
-                      title: 'I Speak ...',
-                      value: _selectedFromLanguage,
-                      items: _selectableFromLanguageItems,
-                      hint: LanguageConverter.execute(
-                          languageCode: currentFromLanguage),
-                      onChanged: (selectedItem) {
-                        super.setState(() {
+                  const SizedBox(
+                    height: 30,
+                  ),
+                  Column(
+                    children: [
+                      _createDropdownBelow(
+                        title: 'I Speak ...',
+                        value: _selectedFromLanguage,
+                        items: _selectableFromLanguageItems,
+                        hint: LanguageConverter.execute(
+                            languageCode: _selectedFromLanguage),
+                        onChanged: (selectedItem) async {
                           _selectedFromLanguage = selectedItem;
-                        });
-                      },
-                    ),
-                    const SizedBox(
-                      height: 15,
-                    ),
-                    _createDropdownBelow(
-                      title: 'I Learn ...',
-                      value: _selectedLearningLanguage,
-                      items: _selectableLearningLanguageItems,
-                      hint: LanguageConverter.execute(
-                          languageCode: currentLearningLanguage),
-                      onChanged: (selectedItem) {
-                        super.setState(() {
-                          _selectedLearningLanguage = selectedItem;
-                        });
-                      },
-                    ),
-                  ],
-                ),
-                const SizedBox(
-                  height: 25,
-                ),
-                AnimatedButton(
-                  isFixedHeight: false,
-                  text: 'Submit',
-                  color: Theme.of(context).colorScheme.secondary,
-                  pressEvent: () async {
-                    if (_switchingLanguage) {
-                      // Prevents multiple presses.
-                      return;
-                    }
+                          _selectedLearningLanguage =
+                              await _refreshAvailableLearningLanguages(
+                            fromLanguage: selectedItem,
+                          );
 
-                    _switchingLanguage = true;
+                          setState(() {});
+                        },
+                      ),
+                      const SizedBox(
+                        height: 15,
+                      ),
+                      _createDropdownBelow(
+                        title: 'I Learn ...',
+                        value: _selectedLearningLanguage,
+                        items: _selectableLearningLanguageItems,
+                        hint: LanguageConverter.execute(
+                            languageCode: currentLearningLanguage),
+                        onChanged: (selectedItem) {
+                          setState(() {
+                            _selectedLearningLanguage = selectedItem;
+                          });
+                        },
+                      ),
+                    ],
+                  ),
+                  const SizedBox(
+                    height: 25,
+                  ),
+                  AnimatedButton(
+                    isFixedHeight: false,
+                    text: 'Submit',
+                    color: Theme.of(context).colorScheme.secondary,
+                    pressEvent: () async {
+                      if (_switchingLanguage) {
+                        // Prevents multiple presses.
+                        return;
+                      }
 
-                    if (!await _authenticateAccount()) {
-                      _switchingLanguage = false;
-                      return;
-                    }
+                      _switchingLanguage = true;
 
-                    final success =
-                        await ApiAdapter.of(type: ApiAdapterType.switchLanguage)
-                            .execute(
-                      context: context,
-                      params: {
-                        'fromLanguage': _selectedFromLanguage,
-                        'learningLanguage': _selectedLearningLanguage,
-                      },
-                    );
+                      if (!await _authenticateAccount()) {
+                        _switchingLanguage = false;
+                        return;
+                      }
 
-                    if (!success) {
-                      _switchingLanguage = false;
-                      return;
-                    }
+                      final success = await ApiAdapter.of(
+                              type: ApiAdapterType.switchLanguage)
+                          .execute(
+                        context: context,
+                        params: {
+                          'fromLanguage': _selectedFromLanguage as String,
+                          'learningLanguage':
+                              _selectedLearningLanguage as String,
+                        },
+                      );
 
-                    _switchLanguageDialog!.dismiss();
+                      if (!success) {
+                        _switchingLanguage = false;
+                        return;
+                      }
 
-                    final fromLanguageName = LanguageConverter.execute(
-                        languageCode: _selectedFromLanguage);
-                    final learningLanguageName = LanguageConverter.execute(
-                        languageCode: _selectedLearningLanguage);
+                      _switchLanguageDialog!.dismiss();
 
-                    InfoSnackbar.from(context: context).show(
-                        content:
-                            'Now you are learning "$learningLanguageName" from "$fromLanguageName".');
+                      final fromLanguageName = LanguageConverter.execute(
+                          languageCode: _selectedFromLanguage);
+                      final learningLanguageName = LanguageConverter.execute(
+                          languageCode: _selectedLearningLanguage);
 
-                    await _syncOverview();
-                    await _findLearnedWords();
+                      InfoSnackbar.from(context: context).show(
+                          content:
+                              'Now you are learning "$learningLanguageName" from "$fromLanguageName".');
 
-                    super.setState(() {
-                      _switchingLanguage = false;
-                    });
-                  },
-                ),
-                const SizedBox(
-                  height: 30,
-                ),
-              ],
+                      await _syncOverview();
+                      await _findLearnedWords();
+
+                      super.setState(() {
+                        _createAppBarSubTitle();
+                        _switchingLanguage = false;
+                      });
+                    },
+                  ),
+                  const SizedBox(
+                    height: 30,
+                  ),
+                ],
+              ),
             ),
           ),
         ),
       ),
     );
-  }
-
-  Future<void> _asyncDidChangeDependencies() async {
-    _switchLanguageDialog = await _createSwitchLanguageDialog();
   }
 
   @override
@@ -816,6 +831,7 @@ class _OverviewViewState extends State<OverviewView> {
                   return;
                 }
 
+                _switchLanguageDialog = await _createSwitchLanguageDialog();
                 await _switchLanguageDialog!.show();
               },
             ),
