@@ -3,92 +3,90 @@
 // BSD-style license that can be found in the LICENSE file.
 
 class LanguageConverter {
-  const LanguageConverter.from({
-    required this.languageCode,
-  });
-
-  final String languageCode;
-
-  String execute() {
+  static String execute({
+    required String languageCode,
+  }) {
     switch (languageCode) {
       case 'en':
         return 'English';
       case 'es':
-        return 'Spanish';
+        return 'Spanish (Español)';
       case 'fr':
-        return 'French';
+        return 'French (Français)';
       case 'de':
-        return 'German';
+        return 'German (Deutsch)';
       case 'it':
-        return 'Italian';
+        return 'Italian (Italiano)';
       case 'ja':
-        return 'Japanese';
+        return 'Japanese (日本語)';
       case 'zs':
-        return 'Chinese';
+        return 'Chinese (中文)';
       case 'ru':
-        return 'Russian';
+        return 'Russian (Ру́сский)';
       case 'ko':
-        return 'Korean';
+        return 'Korean (한국어)';
       case 'pt':
-        return 'Portuguese';
+        return 'Portuguese (Português)';
       case 'ar':
-        return 'Arabic';
+        return 'Arabic (اَلْعَرَبِيَّةُ)';
       case 'dn':
-        return 'Dutch';
+        return 'Dutch (Nederlands)';
       case 'sv':
-        return 'Swedish';
+        return 'Swedish (Svenska)';
       case 'nb':
         return 'Norwegian (Bokmål)';
       case 'tr':
-        return 'Turkish';
+        return 'Turkish (Türkçe)';
       case 'pl':
-        return 'Polish';
+        return 'Polish (Polski)';
       case 'ga':
         return 'Irish';
       case 'el':
-        return 'Greek';
+        return 'Greek (Ελληνικά)';
       case 'he':
-        return 'Hebrew';
+        return 'Hebrew (עברית)';
       case 'da':
-        return 'Danish';
+        return 'Danish (Dansk)';
       case 'hi':
-        return 'Hindi';
+        return 'Hindi (हिंदी)';
       case 'cs':
-        return 'Czech';
+        return 'Czech (Čeština)';
       case 'eo':
         return 'Esperanto';
       case 'uk':
-        return 'Ukrainian';
+        return 'Ukrainian (Українська)';
       case 'cy':
         return 'Welsh';
       case 'vi':
-        return 'Vietnamese';
+        return 'Vietnamese (Việt)';
       case 'hu':
-        return 'Hungarian';
+        return 'Hungarian (Magyar)';
       case 'sw':
-        return 'Swahili';
+        return 'Swahili (Kiswahili)';
       case 'ro':
-        return 'Romanian';
+        return 'Romanian (Română)';
       case 'id':
-        return 'Indonesian';
+        return 'Indonesian (Indonesia)';
       case 'hw':
-        return 'Hawaiian';
+        return 'Hawaiian (Hawaiʻi)';
       case 'nv':
-        return 'Navajo';
+        return 'Navajo (Naabeehó)';
       case 'kl':
         return 'Klingon';
       case 'hv':
         return 'High Valyrian';
       case 'la':
-        return 'Latin';
+        return 'Latin (Latīnum)';
       case 'gd':
-        return 'Scottish Gaelic';
+        return 'Scottish Gaelic (Gàidhlig)';
       case 'fi':
-        return 'Finnish';
+        return 'Finnish (Suomi)';
       case 'yi':
-        return 'Yiddish';
+        return 'Yiddish (ייִדיש‎)';
+      case 'th':
+        return 'Thai (ภาษาไทย)';
       default:
-        return 'N/A';
+        return 'N/A ($languageCode)';
     }
   }
 }

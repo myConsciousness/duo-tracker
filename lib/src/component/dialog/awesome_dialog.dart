@@ -10,12 +10,6 @@ void showAwesomeDialog<T>({
   required String title,
   required String content,
   required DialogType dialogType,
-  bool barrierDismissible = true,
-  Color? barrierColor = Colors.black54,
-  String? barrierLabel,
-  bool useSafeArea = true,
-  bool useRootNavigator = true,
-  RouteSettings? routeSettings,
 }) {
   AwesomeDialog(
     context: context,

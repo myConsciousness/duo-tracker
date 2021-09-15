@@ -10,4 +10,10 @@ abstract class SupportedLanguageRepository
   Future<List<SupportedLanguage>> findByFromLanguage({
     required String fromLanguage,
   });
+
+  Future<List<String>> findDistinctFromLanguages();
+
+  Future<List<String>> findDistinctLearningLanguagesByFromLanguage({
+    required String fromLanguage,
+  });
 }

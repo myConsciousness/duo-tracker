@@ -113,4 +113,47 @@ class SupportedLanguageService extends SupportedLanguageRepository {
               ],
             ),
           );
+
+  @override
+  Future<List<String>> findDistinctFromLanguages() async =>
+      await super.database.then(
+            (database) => database.rawQuery('''
+            select distinct
+              FROM_LANGUAGE
+            from
+              $table
+            ;
+            ''').then(
+              (entities) => entities
+                  .map(
+                    (entity) => entity['FROM_LANGUAGE'] as String,
+                  )
+                  .toList(),
+            ),
+          );
+
+  @override
+  Future<List<String>> findDistinctLearningLanguagesByFromLanguage({
+    required String fromLanguage,
+  }) async =>
+      await super.database.then(
+            (database) => database.rawQuery(
+              '''
+            select distinct
+              LEARNING_LANGUAGE
+            from
+              $table
+            where
+              FROM_LANGUAGE = ?
+            ;
+            ''',
+              [fromLanguage],
+            ).then(
+              (entities) => entities
+                  .map(
+                    (entity) => entity['LEARNING_LANGUAGE'] as String,
+                  )
+                  .toList(),
+            ),
+          );
 }

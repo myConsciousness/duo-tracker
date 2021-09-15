@@ -258,14 +258,17 @@ class _WordHintRequest extends Request {
 }
 
 class _SwitchLanguageRequest extends Request {
+  /// The required parameter for from language
+  static const _paramFromLanguage = 'fromLanguage';
+
+  /// The required parameter for learning language
+  static const _paramLearningLanguage = 'learningLanguage';
+
   /// The internal constructor for singleton.
   _SwitchLanguageRequest._internal();
 
   /// Returns the singleton instance of [_SwitchLanguageRequest].
   factory _SwitchLanguageRequest.getInstance() => _singletonInstance;
-
-  /// The API uri
-  static final _apiUri = Uri.parse(Api.switchLanguage.url);
 
   /// The session
   static final _session = _Session.getInstance();
@@ -276,9 +279,19 @@ class _SwitchLanguageRequest extends Request {
   @override
   Future<http.Response> send({
     final params = const <String, String>{},
-  }) async =>
-      await http.post(
-        _apiUri,
-        headers: _session.headers,
-      );
+  }) async {
+    super.checkParameterKey(params: params, name: _paramFromLanguage);
+    super.checkParameterKey(params: params, name: _paramLearningLanguage);
+
+    return await http.post(
+      Uri.parse(
+        Api.switchLanguage.url,
+      ),
+      headers: _session.headers,
+      body: {
+        'from_language': '${params[_paramFromLanguage]}',
+        'learning_language': '${params[_paramLearningLanguage]}',
+      },
+    );
+  }
 }

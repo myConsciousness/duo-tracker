@@ -15,12 +15,6 @@ var _rawPassword = '';
 
 Future<T?> showAuthDialog<T>({
   required BuildContext context,
-  bool barrierDismissible = true,
-  Color? barrierColor = Colors.black54,
-  String? barrierLabel,
-  bool useSafeArea = true,
-  bool useRootNavigator = true,
-  RouteSettings? routeSettings,
 }) async {
   _dialog = AwesomeDialog(
     context: context,

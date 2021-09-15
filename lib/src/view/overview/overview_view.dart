@@ -4,19 +4,25 @@
 
 import 'package:audioplayers/audioplayers.dart';
 import 'package:awesome_dialog/awesome_dialog.dart';
+import 'package:clipboard/clipboard.dart';
+import 'package:dropdown_below/dropdown_below.dart';
 import 'package:duo_tracker/src/component/common_app_bar_titles.dart';
 import 'package:duo_tracker/src/component/dialog/awesome_dialog.dart';
+import 'package:duo_tracker/src/component/snackbar/info_snack_bar.dart';
 import 'package:duo_tracker/src/http/api_adapter.dart';
 import 'package:duo_tracker/src/http/network.dart';
 import 'package:duo_tracker/src/preference/common_shared_preferences_key.dart';
 import 'package:duo_tracker/src/repository/model/learned_word_model.dart';
 import 'package:duo_tracker/src/repository/model/word_hint_model.dart';
 import 'package:duo_tracker/src/repository/service/learned_word_service.dart';
+import 'package:duo_tracker/src/repository/service/supported_language_service.dart';
 import 'package:duo_tracker/src/security/encryption.dart';
 import 'package:duo_tracker/src/utils/language_converter.dart';
 import 'package:duo_tracker/src/view/lesson_tips_view.dart';
 import 'package:duo_tracker/src/view/overview/overview_tab_view.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/painting.dart';
+import 'package:flutter/widgets.dart';
 import 'package:flutter_speed_dial/flutter_speed_dial.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:intl/intl.dart';
@@ -35,7 +41,7 @@ class OverviewView extends StatefulWidget {
 }
 
 class _OverviewViewState extends State<OverviewView> {
-  static const noneFieldValue = 'N/A';
+  static const unavailableText = 'N/A';
 
   bool _alreadyAuthDialogOpened = false;
   String _appBarSubTitle = '';
@@ -45,9 +51,21 @@ class _OverviewViewState extends State<OverviewView> {
   /// The learned word service
   final _learnedWordService = LearnedWordService.getInstance();
 
+  List<DropdownMenuItem> _selectableFromLanguageItems = [];
+  List<DropdownMenuItem> _selectableLearningLanguageItems = [];
+  dynamic _selectedFromLanguage;
+  dynamic _selectedLearningLanguage;
+
+  /// The supported language service
+  final _supportedLanguageService = SupportedLanguageService.getInstance();
+
+  AwesomeDialog? _switchLanguageDialog;
+  bool _switchingLanguage = false;
+
   @override
   void didChangeDependencies() {
     super.didChangeDependencies();
+    _asyncDidChangeDependencies();
   }
 
   @override
@@ -65,7 +83,7 @@ class _OverviewViewState extends State<OverviewView> {
     required BuildContext context,
   }) async {
     if (await _canAutoSync()) {
-      await _syncOverview();
+      await _syncLearnedWords();
     }
 
     return _findLearnedWords();
@@ -81,26 +99,35 @@ class _OverviewViewState extends State<OverviewView> {
           .inDays >=
       7);
 
-  Future<void> _syncOverview() async {
+  Future<bool> _authenticateAccount() async {
+    final username = await CommonSharedPreferencesKey.username.getString();
+    final password = Encryption.decode(
+        value: await CommonSharedPreferencesKey.password.getString());
+
+    final loginApi = ApiAdapter.of(type: ApiAdapterType.login);
+
+    return await loginApi.execute(
+      context: context,
+      params: {
+        'username': username,
+        'password': password,
+      },
+    );
+  }
+
+  Future<bool> _syncOverview() async =>
+      await ApiAdapter.of(type: ApiAdapterType.overview)
+          .execute(context: context);
+
+  Future<void> _syncLearnedWords() async {
     if (!_alreadyAuthDialogOpened) {
       _alreadyAuthDialogOpened = true;
 
-      final username = await CommonSharedPreferencesKey.username.getString();
-      final password = Encryption.decode(
-          value: await CommonSharedPreferencesKey.password.getString());
-
-      final loginApi = ApiAdapter.of(type: ApiAdapterType.login);
-
-      if (!await loginApi.execute(context: context, params: {
-        'username': username,
-        'password': password,
-      })) {
+      if (!await _authenticateAccount()) {
         return;
       }
 
-      final overviewApi = ApiAdapter.of(type: ApiAdapterType.overview);
-
-      if (!await overviewApi.execute(context: context)) {
+      if (!await _syncOverview()) {
         return;
       }
 
@@ -167,19 +194,19 @@ class _OverviewViewState extends State<OverviewView> {
                     children: [
                       _createCardHeaderText(
                         title: learnedWord.pos.isEmpty
-                            ? noneFieldValue
+                            ? unavailableText
                             : learnedWord.pos,
                         subTitle: 'Pos',
                       ),
                       _createCardHeaderText(
                         title: learnedWord.infinitive.isEmpty
-                            ? noneFieldValue
+                            ? unavailableText
                             : learnedWord.infinitive,
                         subTitle: 'Infinitive',
                       ),
                       _createCardHeaderText(
                         title: learnedWord.gender.isEmpty
-                            ? noneFieldValue
+                            ? unavailableText
                             : learnedWord.gender,
                         subTitle: 'Gender',
                       ),
@@ -200,8 +227,23 @@ class _OverviewViewState extends State<OverviewView> {
                         leading: _createCardLeading(
                           learnedWord: learnedWord,
                         ),
-                        title: _createCardTitleText(
-                          learnedWord: learnedWord,
+                        title: Row(
+                          children: [
+                            _createCardTitleText(
+                              learnedWord: learnedWord,
+                            ),
+                            IconButton(
+                              tooltip: 'Copy Word',
+                              icon: const Icon(Icons.copy_all, size: 20),
+                              onPressed: () async {
+                                await FlutterClipboard.copy(
+                                    learnedWord.wordString);
+                                InfoSnackbar.from(context: context).show(
+                                    content:
+                                        'Copied "${learnedWord.wordString}" to clipboard.');
+                              },
+                            )
+                          ],
                         ),
                         subtitle: _createCardHintText(
                           wordHints: learnedWord.wordHints,
@@ -274,6 +316,7 @@ class _OverviewViewState extends State<OverviewView> {
       return _createTextOnSurfaceColor(
         text: learnedWord.wordString,
         fontSize: 18,
+        boldText: true,
       );
     }
 
@@ -281,12 +324,14 @@ class _OverviewViewState extends State<OverviewView> {
       return _createTextOnSurfaceColor(
         text: learnedWord.wordString,
         fontSize: 18,
+        boldText: true,
       );
     }
 
     return _createTextOnSurfaceColor(
       text: '${learnedWord.wordString} (${learnedWord.normalizedString})',
       fontSize: 18,
+      boldText: true,
     );
   }
 
@@ -332,9 +377,14 @@ class _OverviewViewState extends State<OverviewView> {
   }) =>
       IconButton(
         tooltip: 'Play Audio',
-        icon: const Icon(Icons.play_circle),
+        icon: Icon(
+          Icons.play_circle,
+          color: Theme.of(context).colorScheme.secondary,
+        ),
         onPressed: () async {
           for (final ttsVoiceUrl in learnedWord.ttsVoiceUrls) {
+            // Play all voices.
+            // Requires a time to wait for each word to play.
             await _audioPlayer.play(ttsVoiceUrl, volume: 2.0);
             await Future.delayed(const Duration(seconds: 1), () {});
           }
@@ -365,9 +415,9 @@ class _OverviewViewState extends State<OverviewView> {
     final learningLanguage =
         await CommonSharedPreferencesKey.currentLearningLanguage.getString();
     final fromLanguageName =
-        LanguageConverter.from(languageCode: fromLanguage).execute();
+        LanguageConverter.execute(languageCode: fromLanguage);
     final learningLanguageName =
-        LanguageConverter.from(languageCode: learningLanguage).execute();
+        LanguageConverter.execute(languageCode: learningLanguage);
 
     super.setState(() {
       _appBarSubTitle = '$fromLanguageName → $learningLanguageName';
@@ -378,12 +428,14 @@ class _OverviewViewState extends State<OverviewView> {
     required String text,
     required double fontSize,
     double opacity = 1.0,
+    bool boldText = false,
   }) =>
       Text(
         text,
         style: TextStyle(
           color: Theme.of(context).colorScheme.onSurface.withOpacity(opacity),
           fontSize: fontSize,
+          fontWeight: boldText ? FontWeight.bold : FontWeight.normal,
         ),
       );
 
@@ -494,6 +546,217 @@ class _OverviewViewState extends State<OverviewView> {
         color: Theme.of(context).colorScheme.onSurface.withOpacity(0.3),
       );
 
+  List<DropdownMenuItem> _createDropdownItems({
+    required List<String> languages,
+    String excludeLanguage = '',
+  }) {
+    final items = <DropdownMenuItem>[];
+    for (final language in languages) {
+      if (language != excludeLanguage) {
+        items.add(
+          DropdownMenuItem(
+            value: language,
+            child: Text(LanguageConverter.execute(languageCode: language)),
+          ),
+        );
+      }
+    }
+
+    return items;
+  }
+
+  Widget _createDropdownBelow({
+    required String title,
+    required dynamic value,
+    required List<DropdownMenuItem<dynamic>> items,
+    required String hint,
+    required ValueChanged<dynamic> onChanged,
+  }) =>
+      Column(
+        children: [
+          Text(
+            title,
+            style: TextStyle(
+              color: Theme.of(context).colorScheme.secondary,
+              fontSize: 16,
+            ),
+          ),
+          const SizedBox(
+            height: 10,
+          ),
+          DropdownBelow(
+            icon: const Icon(Icons.arrow_drop_down),
+            itemWidth: 200,
+            itemTextstyle: const TextStyle(
+              fontSize: 14,
+              fontWeight: FontWeight.w400,
+              color: Colors.black,
+            ),
+            boxTextstyle: TextStyle(
+              fontSize: 14,
+              fontWeight: FontWeight.w400,
+              color: Theme.of(context).colorScheme.onSurface,
+            ),
+            boxDecoration: BoxDecoration(
+              border: Border.all(
+                color: Theme.of(context).colorScheme.secondary,
+                width: 2,
+              ),
+              borderRadius: BorderRadius.circular(10),
+            ),
+            boxPadding: const EdgeInsets.fromLTRB(10, 0, 10, 0),
+            hint: Text(hint),
+            value: value,
+            items: items,
+            onChanged: onChanged,
+          ),
+        ],
+      );
+
+  Future<AwesomeDialog> _createSwitchLanguageDialog() async {
+    final currentFromLanguage =
+        await CommonSharedPreferencesKey.currentFromLanguage.getString();
+    final currentLearningLanguage =
+        await CommonSharedPreferencesKey.currentLearningLanguage.getString();
+
+    _selectedFromLanguage = currentFromLanguage;
+
+    final availableFromLanguages =
+        await _supportedLanguageService.findDistinctFromLanguages();
+    final availableLearningLanguage = await _supportedLanguageService
+        .findDistinctLearningLanguagesByFromLanguage(
+            fromLanguage: _selectedFromLanguage);
+
+    _selectableFromLanguageItems =
+        _createDropdownItems(languages: availableFromLanguages);
+    _selectableLearningLanguageItems = _createDropdownItems(
+      languages: availableLearningLanguage,
+      excludeLanguage: currentLearningLanguage,
+    );
+
+    return AwesomeDialog(
+      context: context,
+      animType: AnimType.SCALE,
+      dialogType: DialogType.QUESTION,
+      btnOkColor: Theme.of(context).colorScheme.secondary,
+      body: Container(
+        padding: const EdgeInsets.all(13),
+        child: Center(
+          child: SingleChildScrollView(
+            child: ListBody(
+              children: <Widget>[
+                const Center(
+                  child: Text(
+                    'Select Language',
+                    style: TextStyle(
+                      fontSize: 20,
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
+                ),
+                const SizedBox(
+                  height: 30,
+                ),
+                Column(
+                  children: [
+                    _createDropdownBelow(
+                      title: 'I Speak ...',
+                      value: _selectedFromLanguage,
+                      items: _selectableFromLanguageItems,
+                      hint: LanguageConverter.execute(
+                          languageCode: currentFromLanguage),
+                      onChanged: (selectedItem) {
+                        super.setState(() {
+                          _selectedFromLanguage = selectedItem;
+                        });
+                      },
+                    ),
+                    const SizedBox(
+                      height: 15,
+                    ),
+                    _createDropdownBelow(
+                      title: 'I Learn ...',
+                      value: _selectedLearningLanguage,
+                      items: _selectableLearningLanguageItems,
+                      hint: LanguageConverter.execute(
+                          languageCode: currentLearningLanguage),
+                      onChanged: (selectedItem) {
+                        super.setState(() {
+                          _selectedLearningLanguage = selectedItem;
+                        });
+                      },
+                    ),
+                  ],
+                ),
+                const SizedBox(
+                  height: 25,
+                ),
+                AnimatedButton(
+                  isFixedHeight: false,
+                  text: 'Submit',
+                  color: Theme.of(context).colorScheme.secondary,
+                  pressEvent: () async {
+                    if (_switchingLanguage) {
+                      // Prevents multiple presses.
+                      return;
+                    }
+
+                    _switchingLanguage = true;
+
+                    if (!await _authenticateAccount()) {
+                      _switchingLanguage = false;
+                      return;
+                    }
+
+                    final success =
+                        await ApiAdapter.of(type: ApiAdapterType.switchLanguage)
+                            .execute(
+                      context: context,
+                      params: {
+                        'fromLanguage': _selectedFromLanguage,
+                        'learningLanguage': _selectedLearningLanguage,
+                      },
+                    );
+
+                    if (!success) {
+                      _switchingLanguage = false;
+                      return;
+                    }
+
+                    _switchLanguageDialog!.dismiss();
+
+                    final fromLanguageName = LanguageConverter.execute(
+                        languageCode: _selectedFromLanguage);
+                    final learningLanguageName = LanguageConverter.execute(
+                        languageCode: _selectedLearningLanguage);
+
+                    InfoSnackbar.from(context: context).show(
+                        content:
+                            'Now you are learning "$learningLanguageName" from "$fromLanguageName".');
+
+                    await _syncOverview();
+                    await _findLearnedWords();
+
+                    super.setState(() {
+                      _switchingLanguage = false;
+                    });
+                  },
+                ),
+                const SizedBox(
+                  height: 30,
+                ),
+              ],
+            ),
+          ),
+        ),
+      ),
+    );
+  }
+
+  Future<void> _asyncDidChangeDependencies() async {
+    _switchLanguageDialog = await _createSwitchLanguageDialog();
+  }
+
   @override
   Widget build(BuildContext context) => Scaffold(
         floatingActionButton: SpeedDial(
@@ -525,7 +788,7 @@ class _OverviewViewState extends State<OverviewView> {
               labelBackgroundColor: Theme.of(context).colorScheme.background,
               backgroundColor: Theme.of(context).colorScheme.background,
               onTap: () async {
-                await _syncOverview();
+                await _syncLearnedWords();
                 super.setState(() {});
               },
             ),
@@ -552,6 +815,8 @@ class _OverviewViewState extends State<OverviewView> {
 
                   return;
                 }
+
+                await _switchLanguageDialog!.show();
               },
             ),
           ],

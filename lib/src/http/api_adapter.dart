@@ -33,9 +33,8 @@ import 'package:open_settings/open_settings.dart';
 /// The enum that manages API adapter type.
 enum ApiAdapterType {
   login,
-  user,
-  versionInfo,
   overview,
+  switchLanguage,
 }
 
 abstract class ApiAdapter {
@@ -46,12 +45,10 @@ abstract class ApiAdapter {
     switch (type) {
       case ApiAdapterType.login:
         return _LoginApiAdapter();
-      case ApiAdapterType.user:
-        return _UserApiAdapter();
-      case ApiAdapterType.versionInfo:
-        return _VersionInfoAdapter();
       case ApiAdapterType.overview:
         return _LearnedWordApiAdapter();
+      case ApiAdapterType.switchLanguage:
+        return _SwitchLanguageApiAdapter();
     }
   }
 
@@ -125,14 +122,13 @@ abstract class _ApiAdapter implements ApiAdapter {
       case ErrorType.noUserRegistered:
         await showAuthDialog(
           context: context,
-          barrierDismissible: false,
         );
 
         return false;
       case ErrorType.authentication:
         showAwesomeDialog(
             context: context,
-            title: 'Authentication failure',
+            title: 'Authentication Failure',
             dialogType: DialogType.WARNING,
             content: response.message);
 
@@ -140,7 +136,7 @@ abstract class _ApiAdapter implements ApiAdapter {
       case ErrorType.client:
         showAwesomeDialog(
           context: context,
-          title: 'Client error',
+          title: 'Client Error',
           dialogType: DialogType.WARNING,
           content: response.message.isEmpty
               ? 'An error occurred while communicating with the Duolingo API. Please try again.'
@@ -151,7 +147,7 @@ abstract class _ApiAdapter implements ApiAdapter {
       case ErrorType.server:
         showAwesomeDialog(
           context: context,
-          title: 'Server error',
+          title: 'Server Error',
           dialogType: DialogType.WARNING,
           content: response.message.isEmpty
               ? 'A server error occurred while communicating with the Duolingo API. Please try again later.'
@@ -162,7 +158,7 @@ abstract class _ApiAdapter implements ApiAdapter {
       case ErrorType.unknown:
         showAwesomeDialog(
           context: context,
-          title: 'Unknown error',
+          title: 'Unknown Error',
           dialogType: DialogType.WARNING,
           content: response.message.isEmpty
               ? 'An unknown error occurred while communicating with the Duolingo API. Please try again.'
@@ -731,6 +727,44 @@ class _WordHintApiAdapter extends _ApiAdapter {
           );
         }
       },
+    );
+  }
+}
+
+class _SwitchLanguageApiAdapter extends _ApiAdapter {
+  @override
+  Future<ApiResponse> doExecute({
+    required BuildContext context,
+    final params = const <String, String>{},
+  }) async {
+    final response = await Api.switchLanguage.request.send(params: params);
+    final httpStatus = _HttpStatus.from(code: response.statusCode);
+
+    if (httpStatus.isAccepted) {
+      await CommonSharedPreferencesKey.currentFromLanguage
+          .setString(params['fromLanguage']);
+      await CommonSharedPreferencesKey.currentLearningLanguage
+          .setString(params['learningLanguage']);
+
+      return ApiResponse.from(
+        fromApi: FromApi.switchLanguage,
+        errorType: ErrorType.none,
+      );
+    } else if (httpStatus.isClientError) {
+      return ApiResponse.from(
+        fromApi: FromApi.switchLanguage,
+        errorType: ErrorType.client,
+      );
+    } else if (httpStatus.isServerError) {
+      return ApiResponse.from(
+        fromApi: FromApi.switchLanguage,
+        errorType: ErrorType.server,
+      );
+    }
+
+    return ApiResponse.from(
+      fromApi: FromApi.switchLanguage,
+      errorType: ErrorType.unknown,
     );
   }
 }

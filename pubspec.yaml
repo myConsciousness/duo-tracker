@@ -55,6 +55,7 @@ dependencies:
   url_launcher: ^6.0.10
   awesome_dialog: ^2.1.1
   font_awesome_flutter: ^9.1.0
+  dropdown_below: ^1.0.0
 
 dev_dependencies:
   flutter_test:
