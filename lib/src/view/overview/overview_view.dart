@@ -20,9 +20,12 @@ import 'package:duo_tracker/src/security/encryption.dart';
 import 'package:duo_tracker/src/utils/language_converter.dart';
 import 'package:duo_tracker/src/view/lesson_tips_view.dart';
 import 'package:duo_tracker/src/view/overview/overview_tab_view.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/painting.dart';
+import 'package:flutter/rendering.dart';
 import 'package:flutter/widgets.dart';
+import 'package:flutter_flavorizr/processors/ide/vscode/models/launch.dart';
 import 'package:flutter_speed_dial/flutter_speed_dial.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:intl/intl.dart';
@@ -419,9 +422,9 @@ class _OverviewViewState extends State<OverviewView> {
     final learningLanguage =
         await CommonSharedPreferencesKey.currentLearningLanguage.getString();
     final fromLanguageName =
-        LanguageConverter.execute(languageCode: fromLanguage);
+        LanguageConverter.toName(languageCode: fromLanguage);
     final learningLanguageName =
-        LanguageConverter.execute(languageCode: learningLanguage);
+        LanguageConverter.toName(languageCode: learningLanguage);
 
     super.setState(() {
       _appBarSubTitle = '$fromLanguageName → $learningLanguageName';
@@ -556,7 +559,9 @@ class _OverviewViewState extends State<OverviewView> {
       languages
           .map((language) => DropdownMenuItem(
               value: language,
-              child: Text(LanguageConverter.execute(languageCode: language))))
+              child: Text(
+                LanguageConverter.toNameWithFormal(languageCode: language),
+              )))
           .toList();
 
   Widget _createDropdownBelow({
@@ -657,10 +662,11 @@ class _OverviewViewState extends State<OverviewView> {
             child: SingleChildScrollView(
               child: ListBody(
                 children: <Widget>[
-                  const Center(
+                  Center(
                     child: Text(
                       'Select Language',
                       style: TextStyle(
+                        color: Theme.of(context).colorScheme.onSurface,
                         fontSize: 20,
                         fontWeight: FontWeight.bold,
                       ),
@@ -675,7 +681,7 @@ class _OverviewViewState extends State<OverviewView> {
                         title: 'I Speak ...',
                         value: _selectedFromLanguage,
                         items: _selectableFromLanguageItems,
-                        hint: LanguageConverter.execute(
+                        hint: LanguageConverter.toNameWithFormal(
                             languageCode: _selectedFromLanguage),
                         onChanged: (selectedItem) async {
                           _selectedFromLanguage = selectedItem;
@@ -694,7 +700,7 @@ class _OverviewViewState extends State<OverviewView> {
                         title: 'I Learn ...',
                         value: _selectedLearningLanguage,
                         items: _selectableLearningLanguageItems,
-                        hint: LanguageConverter.execute(
+                        hint: LanguageConverter.toNameWithFormal(
                             languageCode: currentLearningLanguage),
                         onChanged: (selectedItem) {
                           setState(() {
@@ -710,6 +716,12 @@ class _OverviewViewState extends State<OverviewView> {
                   AnimatedButton(
                     isFixedHeight: false,
                     text: 'Submit',
+                    buttonTextStyle: TextStyle(
+                      color: Theme.of(context).brightness == Brightness.light
+                          ? Theme.of(context).colorScheme.onSurface
+                          : Colors.black,
+                      fontWeight: FontWeight.bold,
+                    ),
                     color: Theme.of(context).colorScheme.secondary,
                     pressEvent: () async {
                       if (_switchingLanguage) {
@@ -742,9 +754,9 @@ class _OverviewViewState extends State<OverviewView> {
 
                       _switchLanguageDialog!.dismiss();
 
-                      final fromLanguageName = LanguageConverter.execute(
+                      final fromLanguageName = LanguageConverter.toName(
                           languageCode: _selectedFromLanguage);
-                      final learningLanguageName = LanguageConverter.execute(
+                      final learningLanguageName = LanguageConverter.toName(
                           languageCode: _selectedLearningLanguage);
 
                       InfoSnackbar.from(context: context).show(
@@ -761,8 +773,66 @@ class _OverviewViewState extends State<OverviewView> {
                     },
                   ),
                   const SizedBox(
-                    height: 30,
+                    height: 20,
                   ),
+                  Row(
+                    children: <Widget>[
+                      Expanded(
+                        child: Container(
+                          margin:
+                              const EdgeInsets.only(left: 10.0, right: 20.0),
+                          child: Divider(
+                            color: Theme.of(context).colorScheme.onSurface,
+                            height: 36,
+                          ),
+                        ),
+                      ),
+                      Text(
+                        'OR',
+                        style: TextStyle(
+                          color: Theme.of(context).colorScheme.onSurface,
+                        ),
+                      ),
+                      Expanded(
+                        child: Container(
+                          margin:
+                              const EdgeInsets.only(left: 20.0, right: 10.0),
+                          child: Divider(
+                            color: Theme.of(context).colorScheme.onSurface,
+                            height: 36,
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
+                  const SizedBox(
+                    height: 10,
+                  ),
+                  TextButton(
+                    child: Text(
+                      'Select on Duolingo!',
+                      style: TextStyle(
+                        color: Theme.of(context).colorScheme.secondary,
+                        fontWeight: FontWeight.bold,
+                        fontStyle: FontStyle.italic,
+                      ),
+                    ),
+                    onPressed: () async {
+                      if (!await Network.isConnected()) {
+                        showAwesomeDialog(
+                          context: context,
+                          title: 'Network Error',
+                          content:
+                              'Could not detect a valid network. Please check the network environment and the network settings of the device.',
+                          dialogType: DialogType.WARNING,
+                        );
+
+                        return;
+                      }
+
+                      launch('https://www.duolingo.com/courses');
+                    },
+                  )
                 ],
               ),
             ),

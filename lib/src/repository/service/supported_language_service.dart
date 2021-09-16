@@ -2,6 +2,7 @@
 // Use of this source code is governed by a
 // BSD-style license that can be found in the LICENSE file.
 
+import 'package:duo_tracker/src/preference/common_shared_preferences_key.dart';
 import 'package:duo_tracker/src/repository/model/supported_language_model.dart';
 import 'package:duo_tracker/src/repository/supported_language_repository.dart';
 
@@ -115,45 +116,62 @@ class SupportedLanguageService extends SupportedLanguageRepository {
           );
 
   @override
-  Future<List<String>> findDistinctFromLanguages() async =>
-      await super.database.then(
-            (database) => database.rawQuery('''
+  Future<List<String>> findDistinctFromLanguages() async {
+    final userId = await CommonSharedPreferencesKey.userId.getString();
+    return await super.database.then(
+          (database) => database.rawQuery(
+            '''
             select distinct
-              FROM_LANGUAGE
+              SL.FROM_LANGUAGE
             from
-              $table
+              $table SL inner join LEARNED_WORD LW
+              on SL.FROM_LANGUAGE = LW.FROM_LANGUAGE AND SL.LEARNING_LANGUAGE = LW.LEARNING_LANGUAGE
+            where
+              LW.USER_ID = ?
             ;
-            ''').then(
-              (entities) => entities
-                  .map(
-                    (entity) => entity['FROM_LANGUAGE'] as String,
-                  )
-                  .toList(),
-            ),
-          );
+            ''',
+            [
+              userId,
+            ],
+          ).then(
+            (entities) => entities
+                .map(
+                  (entity) => entity['FROM_LANGUAGE'] as String,
+                )
+                .toList(),
+          ),
+        );
+  }
 
   @override
   Future<List<String>> findDistinctLearningLanguagesByFromLanguage({
     required String fromLanguage,
-  }) async =>
-      await super.database.then(
-            (database) => database.rawQuery(
-              '''
+  }) async {
+    final userId = await CommonSharedPreferencesKey.userId.getString();
+    return await super.database.then(
+          (database) => database.rawQuery(
+            '''
             select distinct
-              LEARNING_LANGUAGE
+              SL.LEARNING_LANGUAGE
             from
-              $table
+              $table SL inner join LEARNED_WORD LW
+              on SL.FROM_LANGUAGE = LW.FROM_LANGUAGE AND SL.LEARNING_LANGUAGE = LW.LEARNING_LANGUAGE
             where
-              FROM_LANGUAGE = ?
+              SL.FROM_LANGUAGE = ?
+              AND LW.USER_ID = ?
             ;
             ''',
-              [fromLanguage],
-            ).then(
-              (entities) => entities
-                  .map(
-                    (entity) => entity['LEARNING_LANGUAGE'] as String,
-                  )
-                  .toList(),
-            ),
-          );
+            [
+              fromLanguage,
+              userId,
+            ],
+          ).then(
+            (entities) => entities
+                .map(
+                  (entity) => entity['LEARNING_LANGUAGE'] as String,
+                )
+                .toList(),
+          ),
+        );
+  }
 }
