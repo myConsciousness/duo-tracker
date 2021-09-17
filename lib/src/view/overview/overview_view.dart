@@ -64,6 +64,8 @@ class _OverviewViewState extends State<OverviewView> {
   AwesomeDialog? _switchLanguageDialog;
   bool _switchingLanguage = false;
 
+  bool _searching = false;
+
   @override
   void didChangeDependencies() {
     super.didChangeDependencies();
@@ -334,10 +336,12 @@ class _OverviewViewState extends State<OverviewView> {
       );
     }
 
-    return _createTextOnSurfaceColor(
-      text: '${learnedWord.wordString} (${learnedWord.normalizedString})',
-      fontSize: 18,
-      boldText: true,
+    return Flexible(
+      child: _createTextOnSurfaceColor(
+        text: '${learnedWord.wordString} (${learnedWord.normalizedString})',
+        fontSize: 18,
+        boldText: true,
+      ),
     );
   }
 
@@ -653,7 +657,6 @@ class _OverviewViewState extends State<OverviewView> {
       context: context,
       animType: AnimType.SCALE,
       dialogType: DialogType.QUESTION,
-      btnOkColor: Theme.of(context).colorScheme.secondary,
       body: StatefulBuilder(
         builder: (BuildContext context, setState) => Container(
           padding: const EdgeInsets.all(13),
@@ -715,13 +718,7 @@ class _OverviewViewState extends State<OverviewView> {
                   AnimatedButton(
                     isFixedHeight: false,
                     text: 'Submit',
-                    buttonTextStyle: TextStyle(
-                      color: Theme.of(context).brightness == Brightness.light
-                          ? Theme.of(context).colorScheme.onSurface
-                          : Colors.black,
-                      fontWeight: FontWeight.bold,
-                    ),
-                    color: Theme.of(context).colorScheme.secondary,
+                    color: Theme.of(context).colorScheme.secondaryVariant,
                     pressEvent: () async {
                       if (_switchingLanguage) {
                         // Prevents multiple presses.
@@ -760,9 +757,12 @@ class _OverviewViewState extends State<OverviewView> {
 
                       InfoSnackbar.from(context: context).show(
                           content:
-                              'Now you are learning "$learningLanguageName" from "$fromLanguageName".');
+                              'Learning "$learningLanguageName" from "$fromLanguageName".');
 
-                      await _syncOverview();
+                      if (!await _syncOverview()) {
+                        return;
+                      }
+
                       await _findLearnedWords();
 
                       super.setState(() {
@@ -849,19 +849,6 @@ class _OverviewViewState extends State<OverviewView> {
           children: [
             SpeedDialChild(
               child: const Icon(
-                FontAwesomeIcons.searchPlus,
-                size: 19,
-              ),
-              label: 'Search',
-              labelStyle: TextStyle(
-                color: Theme.of(context).colorScheme.onSurface,
-              ),
-              labelBackgroundColor: Theme.of(context).colorScheme.background,
-              backgroundColor: Theme.of(context).colorScheme.background,
-              onTap: () {},
-            ),
-            SpeedDialChild(
-              child: const Icon(
                 FontAwesomeIcons.sync,
                 size: 19,
               ),
@@ -913,15 +900,28 @@ class _OverviewViewState extends State<OverviewView> {
               floating: true,
               snap: true,
               centerTitle: true,
-              title: CommonAppBarTitles(
-                title: _appBarTitle,
-                subTitle: _appBarSubTitle,
-              ),
+              title: _searching
+                  ? _createSearchBar()
+                  : CommonAppBarTitles(
+                      title: _appBarTitle,
+                      subTitle: _appBarSubTitle,
+                    ),
               shape: const RoundedRectangleBorder(
                 borderRadius: BorderRadius.vertical(
                   bottom: Radius.circular(30),
                 ),
               ),
+              actions: [
+                if (!_searching)
+                  IconButton(
+                    icon: const Icon(Icons.search),
+                    onPressed: () {
+                      super.setState(() {
+                        _searching = true;
+                      });
+                    },
+                  ),
+              ],
             )
           ],
           body: FutureBuilder(
@@ -933,7 +933,9 @@ class _OverviewViewState extends State<OverviewView> {
                     mainAxisAlignment: MainAxisAlignment.center,
                     crossAxisAlignment: CrossAxisAlignment.center,
                     children: [
-                      const CircularProgressIndicator(),
+                      CircularProgressIndicator(
+                        color: Theme.of(context).colorScheme.secondary,
+                      ),
                       const SizedBox(
                         height: 10,
                       ),
@@ -967,6 +969,20 @@ class _OverviewViewState extends State<OverviewView> {
                 ),
               );
             },
+          ),
+        ),
+      );
+
+  Widget _createSearchBar() => Padding(
+        padding: const EdgeInsets.all(50),
+        child: TextField(
+          style: TextStyle(
+            color: Theme.of(context).colorScheme.onSurface,
+          ),
+          decoration: const InputDecoration(
+            prefixIcon: Icon(Icons.search),
+            hintText: 'Search word here ...',
+            border: InputBorder.none,
           ),
         ),
       );

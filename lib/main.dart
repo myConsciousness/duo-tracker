@@ -46,6 +46,7 @@ class _DuoTrackerState extends State<DuoTracker> {
               brightness: _themeModeProvider.appliedDarkTheme
                   ? Brightness.dark
                   : Brightness.light,
+              typography: Typography.material2018(),
               textTheme: GoogleFonts.latoTextTheme(
                 Theme.of(context).textTheme,
               ),
