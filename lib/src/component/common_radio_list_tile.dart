@@ -32,37 +32,43 @@ class _CommonRadioListTileState<T> extends State<CommonRadioListTile> {
         flexibleRadioListTiles.add(
           Flexible(
             child: RadioListTile(
-                title: Text(
-                  title,
-                  style: const TextStyle(
-                    fontSize: 12,
-                  ),
+              title: Text(
+                title,
+                style: TextStyle(
+                  fontSize: 15,
+                  color: Theme.of(context).colorScheme.onSurface,
                 ),
-                value: value,
-                groupValue: widget.groupValue,
-                onChanged: widget.onChanged),
+              ),
+              value: value,
+              groupValue: widget.groupValue,
+              onChanged: widget.onChanged,
+            ),
           ),
         );
       },
     );
 
-    return Column(
-      mainAxisAlignment: MainAxisAlignment.center,
-      children: [
-        if (widget.label != null)
-          Text(
-            widget.label!,
-            style: TextStyle(color: Theme.of(context).colorScheme.secondary),
+    return Padding(
+      padding: const EdgeInsets.fromLTRB(25, 0, 25, 0),
+      child: Column(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          if (widget.label != null)
+            Text(
+              widget.label!,
+              style: TextStyle(color: Theme.of(context).colorScheme.secondary),
+            ),
+          if (widget.label != null)
+            const SizedBox(
+              height: 5,
+            ),
+          Column(
+            mainAxisSize: MainAxisSize.min,
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: flexibleRadioListTiles,
           ),
-        if (widget.label != null)
-          const SizedBox(
-            height: 5,
-          ),
-        Row(
-          mainAxisSize: MainAxisSize.min,
-          children: flexibleRadioListTiles,
-        ),
-      ],
+        ],
+      ),
     );
   }
 }

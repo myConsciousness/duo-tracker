@@ -13,6 +13,8 @@ final _usernameController = TextEditingController();
 final _passwordController = TextEditingController();
 String _rawPassword = '';
 
+bool _authenticating = false;
+
 Future<T?> showAuthDialog<T>({
   required BuildContext context,
 }) async {
@@ -71,12 +73,20 @@ Future<T?> showAuthDialog<T>({
                 text: 'Login',
                 color: Theme.of(context).colorScheme.secondary,
                 pressEvent: () async {
+                  if (_authenticating) {
+                    // Prevents multiple presses.
+                    return;
+                  }
+
+                  _authenticating = true;
+
                   if (_usernameController.text.isEmpty) {
                     showInputErrorDialog(
                       context: context,
                       content: 'The username or email address is required.',
                     );
 
+                    _authenticating = false;
                     return;
                   }
 
@@ -86,14 +96,20 @@ Future<T?> showAuthDialog<T>({
                       content: 'The password is required.',
                     );
 
+                    _authenticating = false;
                     return;
                   }
 
-                  if (await DuolingoApiUtils.authenticateAccount(
+                  if (!await DuolingoApiUtils.authenticateAccount(
                     context: context,
+                    username: _usernameController.text,
+                    password: _rawPassword,
                   )) {
-                    await _dialog!.dismiss();
+                    _authenticating = false;
+                    return;
                   }
+
+                  await _dialog!.dismiss();
                 },
               ),
               const SizedBox(

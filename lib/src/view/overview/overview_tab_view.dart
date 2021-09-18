@@ -4,6 +4,7 @@
 
 import 'package:duo_tracker/src/view/overview/overview_view.dart';
 import 'package:flutter/material.dart';
+import 'package:tab_indicator_styler/tab_indicator_styler.dart';
 
 /// The enum that represents overview tab type.
 enum OverviewTabType {
@@ -63,13 +64,11 @@ class _OverviewTabViewState extends State<OverviewTabView> {
             labelStyle: const TextStyle(fontSize: 10.0),
             indicatorColor: Theme.of(context).colorScheme.secondary,
             indicatorWeight: 2.0,
-            indicator: BoxDecoration(
-              border: Border(
-                bottom: BorderSide(
-                  width: 0.5,
-                  color: Theme.of(context).colorScheme.secondary,
-                ),
-              ),
+            indicator: DotIndicator(
+              color: Theme.of(context).colorScheme.secondary,
+              distanceFromCenter: 16,
+              radius: 3,
+              paintingStyle: PaintingStyle.fill,
             ),
             tabs: [
               _tabTitle('All'),

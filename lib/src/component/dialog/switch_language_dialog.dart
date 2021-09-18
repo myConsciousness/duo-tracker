@@ -4,6 +4,7 @@
 
 import 'package:awesome_dialog/awesome_dialog.dart';
 import 'package:dropdown_below/dropdown_below.dart';
+import 'package:duo_tracker/src/component/dialog/input_error_dialog.dart';
 import 'package:duo_tracker/src/component/dialog/network_error_dialog.dart';
 import 'package:duo_tracker/src/component/snackbar/info_snack_bar.dart';
 import 'package:duo_tracker/src/component/text_with_horizontal_divider.dart';
@@ -121,6 +122,17 @@ Future<T?> showSwitchLanguageDialog<T>({
                   pressEvent: () async {
                     if (_switchingLanguage) {
                       // Prevents multiple presses.
+                      return;
+                    }
+
+                    if (_selectedFromLanguage == currentFromLanguage &&
+                        _selectedLearningLanguage == currentLearningLanguage) {
+                      showInputErrorDialog(
+                        context: context,
+                        content:
+                            'The selected settings have already been applied.',
+                      );
+
                       return;
                     }
 

@@ -86,7 +86,7 @@ class LanguageConverter {
       case 'th':
         return 'Thai';
       default:
-        return 'N/A ($languageCode)';
+        return 'N/A';
     }
   }
 

@@ -16,18 +16,24 @@ class DuolingoApiUtils {
 
   static Future<bool> authenticateAccount({
     required BuildContext context,
+    String username = '',
+    String password = '',
   }) async {
-    final username = await CommonSharedPreferencesKey.username.getString();
-    final password = Encryption.decode(
-        value: await CommonSharedPreferencesKey.password.getString());
+    final usernameInternal = username.isEmpty
+        ? await CommonSharedPreferencesKey.username.getString()
+        : username;
+    final passwordInternal = password.isEmpty
+        ? Encryption.decode(
+            value: await CommonSharedPreferencesKey.password.getString())
+        : password;
 
     final loginApi = ApiAdapter.of(type: ApiAdapterType.login);
 
     return await loginApi.execute(
       context: context,
       params: {
-        'username': username,
-        'password': password,
+        'username': usernameInternal,
+        'password': passwordInternal,
       },
     );
   }

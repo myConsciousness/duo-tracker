@@ -23,6 +23,13 @@ enum CommonSharedPreferencesKey {
 
   //! The User Information ↑
 
+  //! The Search Config ↓
+
+  /// The match pattern
+  matchPattern,
+
+  //! The Search Config ↑
+
   //! The Sync Config ↓
 
   /// The datetime last auto synced overview
@@ -67,6 +74,8 @@ extension KeyFeature on CommonSharedPreferencesKey {
         return 'username';
       case CommonSharedPreferencesKey.password:
         return 'password';
+      case CommonSharedPreferencesKey.matchPattern:
+        return 'matchPattern';
       case CommonSharedPreferencesKey.currentLearningLanguage:
         return 'current_learning_language';
       case CommonSharedPreferencesKey.currentFromLanguage:

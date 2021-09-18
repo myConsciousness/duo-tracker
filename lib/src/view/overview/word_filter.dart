@@ -47,7 +47,12 @@ class WordFilter {
     required String searchWord,
   }) {
     if (searching && searchWord.isNotEmpty) {
-      return learnedWord.wordString.contains(searchWord);
+      return learnedWord.wordString
+              .toLowerCase()
+              .contains(searchWord.toLowerCase()) ||
+          learnedWord.normalizedString
+              .toLowerCase()
+              .contains(searchWord.toLowerCase());
     }
 
     return true;

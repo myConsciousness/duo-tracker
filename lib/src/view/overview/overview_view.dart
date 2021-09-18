@@ -6,6 +6,7 @@ import 'package:audioplayers/audioplayers.dart';
 import 'package:clipboard/clipboard.dart';
 import 'package:duo_tracker/src/component/common_app_bar_titles.dart';
 import 'package:duo_tracker/src/component/dialog/network_error_dialog.dart';
+import 'package:duo_tracker/src/component/dialog/select_search_method_dialog.dart';
 import 'package:duo_tracker/src/component/dialog/switch_language_dialog.dart';
 import 'package:duo_tracker/src/component/snackbar/info_snack_bar.dart';
 import 'package:duo_tracker/src/http/network.dart';
@@ -98,9 +99,7 @@ class _OverviewViewState extends State<OverviewView> {
         return;
       }
 
-      if (!await DuolingoApiUtils.authenticateAccount(context: context)) {
-        return;
-      }
+      await DuolingoApiUtils.authenticateAccount(context: context);
 
       if (!await DuolingoApiUtils.refreshUser(context: context)) {
         return;
@@ -158,7 +157,7 @@ class _OverviewViewState extends State<OverviewView> {
                     ),
                     _buildCardHeaderText(
                       title: '${learnedWord.strengthBars}',
-                      subTitle: 'Level',
+                      subTitle: 'Strength',
                     ),
                     _buildCardHeaderText(
                       title: _datetimeFormat.format(
@@ -510,15 +509,31 @@ class _OverviewViewState extends State<OverviewView> {
       );
 
   Widget _buildSearchBar() => Padding(
-        padding: const EdgeInsets.all(30),
+        padding: const EdgeInsets.fromLTRB(30, 10, 20, 10),
         child: TextField(
           style: TextStyle(
             color: Theme.of(context).colorScheme.onSurface,
           ),
-          decoration: const InputDecoration(
-            prefixIcon: Icon(Icons.search),
+          decoration: InputDecoration(
+            prefixIcon: const Icon(Icons.search),
+            suffixIcon: IconButton(
+              icon: const Icon(Icons.filter_list_alt),
+              onPressed: () async {
+                await showSelectSearchMethodDialog(context: context);
+                await _searchLearnedWords();
+              },
+            ),
             hintText: 'Search Word',
-            border: InputBorder.none,
+            filled: true,
+            fillColor:
+                Theme.of(context).colorScheme.background.withOpacity(0.5),
+            border: OutlineInputBorder(
+              borderRadius: BorderRadius.circular(50),
+              borderSide: const BorderSide(
+                width: 0,
+                style: BorderStyle.none,
+              ),
+            ),
           ),
           onChanged: (searchWord) {
             super.setState(() {
@@ -531,10 +546,6 @@ class _OverviewViewState extends State<OverviewView> {
   List<Widget> _buildActions() {
     if (_searching) {
       return [
-        IconButton(
-            tooltip: 'Change Search Method',
-            icon: const Icon(Icons.filter_list_alt),
-            onPressed: () {}),
         IconButton(
           tooltip: 'Clear Search Result',
           icon: const Icon(Icons.clear),
@@ -561,39 +572,47 @@ class _OverviewViewState extends State<OverviewView> {
     ];
   }
 
+  SpeedDialChild _buildSpeedDialChild({
+    required IconData icon,
+    required String label,
+    required Function() onTap,
+  }) =>
+      SpeedDialChild(
+        child: Icon(
+          icon,
+          size: 19,
+        ),
+        label: label,
+        labelStyle: TextStyle(
+          color: Theme.of(context).colorScheme.onSurface,
+        ),
+        labelBackgroundColor: Theme.of(context).colorScheme.background,
+        backgroundColor: Theme.of(context).colorScheme.background,
+        onTap: onTap,
+      );
+
   @override
   Widget build(BuildContext context) => Scaffold(
         floatingActionButton: SpeedDial(
           tooltip: 'Show Actions',
           animatedIcon: AnimatedIcons.menu_close,
           children: [
-            SpeedDialChild(
-              child: const Icon(
-                FontAwesomeIcons.sync,
-                size: 19,
-              ),
+            _buildSpeedDialChild(
+              icon: FontAwesomeIcons.sort,
+              label: 'Sort',
+              onTap: () async {},
+            ),
+            _buildSpeedDialChild(
+              icon: FontAwesomeIcons.sync,
               label: 'Sync Words',
-              labelStyle: TextStyle(
-                color: Theme.of(context).colorScheme.onSurface,
-              ),
-              labelBackgroundColor: Theme.of(context).colorScheme.background,
-              backgroundColor: Theme.of(context).colorScheme.background,
               onTap: () async {
                 await _syncLearnedWords();
                 super.setState(() {});
               },
             ),
-            SpeedDialChild(
-              child: const Icon(
-                FontAwesomeIcons.language,
-                size: 19,
-              ),
+            _buildSpeedDialChild(
+              icon: FontAwesomeIcons.language,
               label: 'Switch Language',
-              labelStyle: TextStyle(
-                color: Theme.of(context).colorScheme.onSurface,
-              ),
-              labelBackgroundColor: Theme.of(context).colorScheme.background,
-              backgroundColor: Theme.of(context).colorScheme.background,
               onTap: () async {
                 if (!await Network.isConnected()) {
                   showNetworkErrorDialog(context: context);
@@ -632,7 +651,7 @@ class _OverviewViewState extends State<OverviewView> {
                 ),
               ),
               actions: _buildActions(),
-            )
+            ),
           ],
           body: FutureBuilder(
             future: _fetchDataSource(context: context),

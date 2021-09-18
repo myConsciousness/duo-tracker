@@ -4,10 +4,9 @@
 
 import 'package:duo_tracker/src/view/overview/overview_tab_view.dart';
 import 'package:duo_tracker/src/view/settings/settings_view.dart';
-import 'package:duo_tracker/src/view/statistics/statistics_view.dart';
-import 'package:duo_tracker/src/view/user/user_account_view.dart';
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+import 'package:tab_indicator_styler/tab_indicator_styler.dart';
 
 class DuoTrackerHomeView extends StatefulWidget {
   const DuoTrackerHomeView({Key? key}) : super(key: key);
@@ -19,7 +18,7 @@ class DuoTrackerHomeView extends StatefulWidget {
 class _DuoTrackerHomeViewState extends State<DuoTrackerHomeView> {
   @override
   Widget build(BuildContext context) => DefaultTabController(
-        length: 4,
+        length: 2,
         child: Scaffold(
           bottomNavigationBar: TabBar(
             isScrollable: false,
@@ -30,13 +29,11 @@ class _DuoTrackerHomeViewState extends State<DuoTrackerHomeView> {
             labelStyle: const TextStyle(fontSize: 12.0),
             indicatorColor: Theme.of(context).colorScheme.secondary,
             indicatorWeight: 2.0,
-            indicator: BoxDecoration(
-              border: Border(
-                bottom: BorderSide(
-                  width: 0.5,
-                  color: Theme.of(context).colorScheme.secondary,
-                ),
-              ),
+            indicator: DotIndicator(
+              color: Theme.of(context).colorScheme.secondary,
+              distanceFromCenter: 16,
+              radius: 3,
+              paintingStyle: PaintingStyle.fill,
             ),
             tabs: const [
               Tab(
@@ -45,18 +42,18 @@ class _DuoTrackerHomeViewState extends State<DuoTrackerHomeView> {
                   size: 16,
                 ),
               ),
-              Tab(
-                icon: Icon(
-                  FontAwesomeIcons.chartPie,
-                  size: 16,
-                ),
-              ),
-              Tab(
-                icon: Icon(
-                  FontAwesomeIcons.userAlt,
-                  size: 16,
-                ),
-              ),
+              // Tab(
+              //   icon: Icon(
+              //     FontAwesomeIcons.chartPie,
+              //     size: 16,
+              //   ),
+              // ),
+              // Tab(
+              //   icon: Icon(
+              //     FontAwesomeIcons.userAlt,
+              //     size: 16,
+              //   ),
+              // ),
               Tab(
                 icon: Icon(Icons.settings),
               ),
@@ -65,8 +62,8 @@ class _DuoTrackerHomeViewState extends State<DuoTrackerHomeView> {
           body: const TabBarView(
             children: [
               OverviewTabView(),
-              StatisticsView(),
-              UserAccountView(),
+              // StatisticsView(),
+              // UserAccountView(),
               SettingsView(),
             ],
           ),
