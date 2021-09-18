@@ -17,8 +17,8 @@ class Skill {
   int finishedLevels;
   int levels;
   String tipsAndNotes;
-  DateTime createdAt = DateTime.now();
-  DateTime updatedAt = DateTime.now();
+  DateTime createdAt;
+  DateTime updatedAt;
 
   /// The flag that represents if this model is exist
   bool _empty = false;
@@ -36,7 +36,9 @@ class Skill {
         lastLessonPerfect = false,
         finishedLevels = 0,
         levels = 0,
-        tipsAndNotes = '';
+        tipsAndNotes = '',
+        createdAt = DateTime.now(),
+        updatedAt = DateTime.now();
 
   /// Returns the new instance of [Skill] based on the parameters.
   Skill.from({

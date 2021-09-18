@@ -3,23 +3,21 @@
 // BSD-style license that can be found in the LICENSE file.
 
 import 'package:audioplayers/audioplayers.dart';
-import 'package:awesome_dialog/awesome_dialog.dart';
 import 'package:clipboard/clipboard.dart';
-import 'package:dropdown_below/dropdown_below.dart';
 import 'package:duo_tracker/src/component/common_app_bar_titles.dart';
-import 'package:duo_tracker/src/component/dialog/awesome_dialog.dart';
+import 'package:duo_tracker/src/component/dialog/network_error_dialog.dart';
+import 'package:duo_tracker/src/component/dialog/switch_language_dialog.dart';
 import 'package:duo_tracker/src/component/snackbar/info_snack_bar.dart';
-import 'package:duo_tracker/src/http/api_adapter.dart';
 import 'package:duo_tracker/src/http/network.dart';
 import 'package:duo_tracker/src/preference/common_shared_preferences_key.dart';
 import 'package:duo_tracker/src/repository/model/learned_word_model.dart';
 import 'package:duo_tracker/src/repository/model/word_hint_model.dart';
 import 'package:duo_tracker/src/repository/service/learned_word_service.dart';
-import 'package:duo_tracker/src/repository/service/supported_language_service.dart';
-import 'package:duo_tracker/src/security/encryption.dart';
+import 'package:duo_tracker/src/utils/duolingo_api_utils.dart';
 import 'package:duo_tracker/src/utils/language_converter.dart';
 import 'package:duo_tracker/src/view/lesson_tips_view.dart';
 import 'package:duo_tracker/src/view/overview/overview_tab_view.dart';
+import 'package:duo_tracker/src/view/overview/word_filter.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/painting.dart';
@@ -47,29 +45,19 @@ class _OverviewViewState extends State<OverviewView> {
 
   bool _alreadyAuthDialogOpened = false;
   String _appBarSubTitle = '';
+
   final _audioPlayer = AudioPlayer();
   final _datetimeFormat = DateFormat('yyyy/MM/dd HH:mm');
 
   /// The learned word service
   final _learnedWordService = LearnedWordService.getInstance();
 
-  List<DropdownMenuItem> _selectableFromLanguageItems = [];
-  List<DropdownMenuItem> _selectableLearningLanguageItems = [];
-  dynamic _selectedFromLanguage = '';
-  dynamic _selectedLearningLanguage = '';
-
-  /// The supported language service
-  final _supportedLanguageService = SupportedLanguageService.getInstance();
-
-  AwesomeDialog? _switchLanguageDialog;
-  bool _switchingLanguage = false;
-
   bool _searching = false;
+  String _searchWord = '';
 
   @override
   void didChangeDependencies() {
     super.didChangeDependencies();
-    _ayncDidChangeDependencies();
   }
 
   @override
@@ -83,10 +71,6 @@ class _OverviewViewState extends State<OverviewView> {
     _asyncInitState();
   }
 
-  Future<void> _ayncDidChangeDependencies() async {
-    // _switchLanguageDialog = await _createSwitchLanguageDialog();
-  }
-
   Future<List<LearnedWord>> _fetchDataSource({
     required BuildContext context,
   }) async {
@@ -94,7 +78,7 @@ class _OverviewViewState extends State<OverviewView> {
       await _syncLearnedWords();
     }
 
-    return _findLearnedWords();
+    return _searchLearnedWords();
   }
 
   Future<bool> _canAutoSync() async => (DateTime.now()
@@ -107,35 +91,15 @@ class _OverviewViewState extends State<OverviewView> {
           .inDays >=
       7);
 
-  Future<bool> _authenticateAccount() async {
-    final username = await CommonSharedPreferencesKey.username.getString();
-    final password = Encryption.decode(
-        value: await CommonSharedPreferencesKey.password.getString());
-
-    final loginApi = ApiAdapter.of(type: ApiAdapterType.login);
-
-    return await loginApi.execute(
-      context: context,
-      params: {
-        'username': username,
-        'password': password,
-      },
-    );
-  }
-
-  Future<bool> _syncOverview() async =>
-      await ApiAdapter.of(type: ApiAdapterType.overview)
-          .execute(context: context);
-
   Future<void> _syncLearnedWords() async {
     if (!_alreadyAuthDialogOpened) {
       _alreadyAuthDialogOpened = true;
 
-      if (!await _authenticateAccount()) {
+      if (!await DuolingoApiUtils.authenticateAccount(context: context)) {
         return;
       }
 
-      if (!await _syncOverview()) {
+      if (!await DuolingoApiUtils.synchronizeLearnedWords(context: context)) {
         return;
       }
 
@@ -143,25 +107,30 @@ class _OverviewViewState extends State<OverviewView> {
         DateTime.now().millisecondsSinceEpoch,
       );
 
-      await _createAppBarSubTitle();
+      await _buildAppBarSubTitle();
 
       _alreadyAuthDialogOpened = false;
     }
   }
 
-  Future<List<LearnedWord>> _findLearnedWords() async =>
+  Future<List<LearnedWord>> _searchLearnedWords() async =>
       await _learnedWordService.findByUserIdAndLearningLanguageAndFromLanguage(
         await CommonSharedPreferencesKey.userId.getString(),
         await CommonSharedPreferencesKey.currentLearningLanguage.getString(),
         await CommonSharedPreferencesKey.currentFromLanguage.getString(),
       );
 
-  Widget _createLearnedWordCard({
+  Widget _buildLearnedWordCard({
     required LearnedWord learnedWord,
   }) =>
       Visibility(
         key: Key('${learnedWord.sortOrder}'),
-        visible: _isCardVisible(learnedWord: learnedWord),
+        visible: WordFilter.execute(
+          overviewTabType: widget.overviewTabType,
+          learnedWord: learnedWord,
+          searching: _searching,
+          searchWord: _searchWord,
+        ),
         child: Card(
           elevation: 2.0,
           child: Padding(
@@ -172,19 +141,19 @@ class _OverviewViewState extends State<OverviewView> {
                 Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
-                    _createCardHeaderText(
+                    _buildCardHeaderText(
                       title: '${learnedWord.sortOrder + 1}',
                       subTitle: 'Index',
                     ),
-                    _createCardHeaderText(
+                    _buildCardHeaderText(
                       title: learnedWord.skillUrlTitle,
                       subTitle: 'Lesson',
                     ),
-                    _createCardHeaderText(
+                    _buildCardHeaderText(
                       title: '${learnedWord.strengthBars}',
                       subTitle: 'Level',
                     ),
-                    _createCardHeaderText(
+                    _buildCardHeaderText(
                       title: _datetimeFormat.format(
                         DateTime.fromMillisecondsSinceEpoch(
                             learnedWord.lastPracticedMs),
@@ -200,25 +169,25 @@ class _OverviewViewState extends State<OverviewView> {
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     crossAxisAlignment: CrossAxisAlignment.center,
                     children: [
-                      _createCardHeaderText(
+                      _buildCardHeaderText(
                         title: learnedWord.pos.isEmpty
                             ? unavailableText
                             : learnedWord.pos,
                         subTitle: 'Pos',
                       ),
-                      _createCardHeaderText(
+                      _buildCardHeaderText(
                         title: learnedWord.infinitive.isEmpty
                             ? unavailableText
                             : learnedWord.infinitive,
                         subTitle: 'Infinitive',
                       ),
-                      _createCardHeaderText(
+                      _buildCardHeaderText(
                         title: learnedWord.gender.isEmpty
                             ? unavailableText
                             : learnedWord.gender,
                         subTitle: 'Gender',
                       ),
-                      _createCardHeaderText(
+                      _buildCardHeaderText(
                         title:
                             '${(learnedWord.strength * 100.0).toStringAsFixed(2)} %',
                         subTitle: 'Proficiency',
@@ -232,12 +201,12 @@ class _OverviewViewState extends State<OverviewView> {
                   children: [
                     Expanded(
                       child: ListTile(
-                        leading: _createCardLeading(
+                        leading: _buildCardLeading(
                           learnedWord: learnedWord,
                         ),
                         title: Row(
                           children: [
-                            _createCardTitleText(
+                            _buildCardTitleText(
                               learnedWord: learnedWord,
                             ),
                             IconButton(
@@ -253,7 +222,7 @@ class _OverviewViewState extends State<OverviewView> {
                             )
                           ],
                         ),
-                        subtitle: _createCardHintText(
+                        subtitle: _buildCardHintText(
                           wordHints: learnedWord.wordHints,
                         ),
                       ),
@@ -299,29 +268,29 @@ class _OverviewViewState extends State<OverviewView> {
         ),
       );
 
-  Widget _createCardHeaderText({
+  Widget _buildCardHeaderText({
     required String title,
     required String subTitle,
   }) =>
       Column(
         children: [
-          _createTextSecondaryColor(
+          _buildTextSecondaryColor(
             text: subTitle,
             fontSize: 12,
           ),
-          _createTextOnSurfaceColor(
+          _buildTextOnSurfaceColor(
             text: title,
             fontSize: 14,
           ),
         ],
       );
 
-  Widget _createCardTitleText({
+  Widget _buildCardTitleText({
     required LearnedWord learnedWord,
   }) {
     if (learnedWord.normalizedString.isEmpty ||
         learnedWord.normalizedString.endsWith(' ')) {
-      return _createTextOnSurfaceColor(
+      return _buildTextOnSurfaceColor(
         text: learnedWord.wordString,
         fontSize: 18,
         boldText: true,
@@ -329,7 +298,7 @@ class _OverviewViewState extends State<OverviewView> {
     }
 
     if (learnedWord.wordString == learnedWord.normalizedString) {
-      return _createTextOnSurfaceColor(
+      return _buildTextOnSurfaceColor(
         text: learnedWord.wordString,
         fontSize: 18,
         boldText: true,
@@ -337,7 +306,7 @@ class _OverviewViewState extends State<OverviewView> {
     }
 
     return Flexible(
-      child: _createTextOnSurfaceColor(
+      child: _buildTextOnSurfaceColor(
         text: '${learnedWord.wordString} (${learnedWord.normalizedString})',
         fontSize: 18,
         boldText: true,
@@ -345,14 +314,14 @@ class _OverviewViewState extends State<OverviewView> {
     );
   }
 
-  Widget _createCardHintText({
+  Widget _buildCardHintText({
     required List<WordHint> wordHints,
   }) {
     final hintTexts = <Text>[];
 
     for (final wordHint in wordHints) {
       hintTexts.add(
-        _createTextOnSurfaceColor(
+        _buildTextOnSurfaceColor(
           text: '${wordHint.value} : ${wordHint.hint}',
           fontSize: 13,
           opacity: 0.7,
@@ -366,23 +335,7 @@ class _OverviewViewState extends State<OverviewView> {
     );
   }
 
-  bool _isCardVisible({
-    required LearnedWord learnedWord,
-  }) {
-    if (widget.overviewTabType == OverviewTabType.bookmarked) {
-      return learnedWord.bookmarked &&
-          !learnedWord.completed &&
-          !learnedWord.deleted;
-    } else if (widget.overviewTabType == OverviewTabType.completed) {
-      return learnedWord.completed && !learnedWord.deleted;
-    } else if (widget.overviewTabType == OverviewTabType.trash) {
-      return learnedWord.deleted;
-    }
-
-    return !learnedWord.completed && !learnedWord.deleted;
-  }
-
-  Widget _createCardLeading({
+  Widget _buildCardLeading({
     required LearnedWord learnedWord,
   }) =>
       IconButton(
@@ -416,10 +369,10 @@ class _OverviewViewState extends State<OverviewView> {
   }
 
   Future<void> _asyncInitState() async {
-    await _createAppBarSubTitle();
+    await _buildAppBarSubTitle();
   }
 
-  Future<void> _createAppBarSubTitle() async {
+  Future<void> _buildAppBarSubTitle() async {
     final fromLanguage =
         await CommonSharedPreferencesKey.currentFromLanguage.getString();
     final learningLanguage =
@@ -434,7 +387,7 @@ class _OverviewViewState extends State<OverviewView> {
     });
   }
 
-  Text _createTextOnSurfaceColor({
+  Text _buildTextOnSurfaceColor({
     required String text,
     required double fontSize,
     double opacity = 1.0,
@@ -449,7 +402,7 @@ class _OverviewViewState extends State<OverviewView> {
         ),
       );
 
-  Text _createTextSecondaryColor({
+  Text _buildTextSecondaryColor({
     required String text,
     required double fontSize,
     double opacity = 1.0,
@@ -520,14 +473,7 @@ class _OverviewViewState extends State<OverviewView> {
               icon: const Icon(Icons.school),
               onPressed: () async {
                 if (!await Network.isConnected()) {
-                  showAwesomeDialog(
-                    context: context,
-                    title: 'Network Error',
-                    content:
-                        'Could not detect a valid network. Please check the network environment and the network settings of the device.',
-                    dialogType: DialogType.WARNING,
-                  );
-
+                  showNetworkErrorDialog(context: context);
                   return;
                 }
 
@@ -556,290 +502,24 @@ class _OverviewViewState extends State<OverviewView> {
         color: Theme.of(context).colorScheme.onSurface.withOpacity(0.3),
       );
 
-  List<DropdownMenuItem> _createDropdownItems({
-    required List<String> languages,
-  }) =>
-      languages
-          .map((language) => DropdownMenuItem(
-              value: language,
-              child: Text(
-                LanguageConverter.toNameWithFormal(languageCode: language),
-              )))
-          .toList();
-
-  Widget _createDropdownBelow({
-    required String title,
-    required dynamic value,
-    required List<DropdownMenuItem<dynamic>> items,
-    required String hint,
-    required ValueChanged<dynamic> onChanged,
-  }) =>
-      Column(
-        children: [
-          Text(
-            title,
-            style: TextStyle(
-              color: Theme.of(context).colorScheme.secondary,
-              fontSize: 16,
-            ),
+  Widget _buildSearchBar() => Padding(
+        padding: const EdgeInsets.all(30),
+        child: TextField(
+          style: TextStyle(
+            color: Theme.of(context).colorScheme.onSurface,
           ),
-          const SizedBox(
-            height: 10,
+          decoration: const InputDecoration(
+            prefixIcon: Icon(Icons.search),
+            hintText: 'Search Word',
+            border: InputBorder.none,
           ),
-          DropdownBelow(
-            icon: const Icon(Icons.arrow_drop_down),
-            itemWidth: 200,
-            itemTextstyle: const TextStyle(
-              fontSize: 14,
-              fontWeight: FontWeight.w400,
-              color: Colors.black,
-            ),
-            boxTextstyle: TextStyle(
-              fontSize: 14,
-              fontWeight: FontWeight.w400,
-              color: Theme.of(context).colorScheme.onSurface,
-            ),
-            boxDecoration: BoxDecoration(
-              border: Border.all(
-                color: Theme.of(context).colorScheme.secondary,
-                width: 2,
-              ),
-              borderRadius: BorderRadius.circular(10),
-            ),
-            boxPadding: const EdgeInsets.fromLTRB(10, 0, 10, 0),
-            hint: Text(hint),
-            value: value,
-            items: items,
-            onChanged: onChanged,
-          ),
-        ],
-      );
-
-  Future<void> _refreshAvailableFromLanguages() async {
-    final availableFromLanguages =
-        await _supportedLanguageService.findDistinctFromLanguages();
-    _selectableFromLanguageItems =
-        _createDropdownItems(languages: availableFromLanguages);
-  }
-
-  Future<String> _refreshAvailableLearningLanguages({
-    required String fromLanguage,
-  }) async {
-    final availableLearningLanguage = await _supportedLanguageService
-        .findDistinctLearningLanguagesByFromLanguage(
-      fromLanguage: fromLanguage,
-    );
-    _selectableLearningLanguageItems = _createDropdownItems(
-      languages: availableLearningLanguage,
-    );
-
-    return availableLearningLanguage[0];
-  }
-
-  Future<AwesomeDialog> _createSwitchLanguageDialog() async {
-    final currentFromLanguage =
-        await CommonSharedPreferencesKey.currentFromLanguage.getString();
-    final currentLearningLanguage =
-        await CommonSharedPreferencesKey.currentLearningLanguage.getString();
-
-    if (_selectedFromLanguage.isEmpty) {
-      _selectedFromLanguage = currentFromLanguage;
-    }
-
-    if (_selectedLearningLanguage.isEmpty) {
-      _selectedLearningLanguage = currentLearningLanguage;
-    }
-
-    await _refreshAvailableFromLanguages();
-    await _refreshAvailableLearningLanguages(fromLanguage: currentFromLanguage);
-
-    return AwesomeDialog(
-      context: context,
-      animType: AnimType.SCALE,
-      dialogType: DialogType.QUESTION,
-      body: StatefulBuilder(
-        builder: (BuildContext context, setState) => Container(
-          padding: const EdgeInsets.all(13),
-          child: Center(
-            child: SingleChildScrollView(
-              child: ListBody(
-                children: <Widget>[
-                  Center(
-                    child: Text(
-                      'Select Language',
-                      style: TextStyle(
-                        color: Theme.of(context).colorScheme.onSurface,
-                        fontSize: 20,
-                        fontWeight: FontWeight.bold,
-                      ),
-                    ),
-                  ),
-                  const SizedBox(
-                    height: 30,
-                  ),
-                  Column(
-                    children: [
-                      _createDropdownBelow(
-                        title: 'I Speak ...',
-                        value: _selectedFromLanguage,
-                        items: _selectableFromLanguageItems,
-                        hint: LanguageConverter.toNameWithFormal(
-                            languageCode: _selectedFromLanguage),
-                        onChanged: (selectedItem) async {
-                          _selectedFromLanguage = selectedItem;
-                          _selectedLearningLanguage =
-                              await _refreshAvailableLearningLanguages(
-                            fromLanguage: selectedItem,
-                          );
-
-                          setState(() {});
-                        },
-                      ),
-                      const SizedBox(
-                        height: 15,
-                      ),
-                      _createDropdownBelow(
-                        title: 'I Learn ...',
-                        value: _selectedLearningLanguage,
-                        items: _selectableLearningLanguageItems,
-                        hint: LanguageConverter.toNameWithFormal(
-                            languageCode: currentLearningLanguage),
-                        onChanged: (selectedItem) {
-                          setState(() {
-                            _selectedLearningLanguage = selectedItem;
-                          });
-                        },
-                      ),
-                    ],
-                  ),
-                  const SizedBox(
-                    height: 25,
-                  ),
-                  AnimatedButton(
-                    isFixedHeight: false,
-                    text: 'Submit',
-                    color: Theme.of(context).colorScheme.secondaryVariant,
-                    pressEvent: () async {
-                      if (_switchingLanguage) {
-                        // Prevents multiple presses.
-                        return;
-                      }
-
-                      _switchingLanguage = true;
-
-                      if (!await _authenticateAccount()) {
-                        _switchingLanguage = false;
-                        return;
-                      }
-
-                      final success = await ApiAdapter.of(
-                              type: ApiAdapterType.switchLanguage)
-                          .execute(
-                        context: context,
-                        params: {
-                          'fromLanguage': _selectedFromLanguage as String,
-                          'learningLanguage':
-                              _selectedLearningLanguage as String,
-                        },
-                      );
-
-                      if (!success) {
-                        _switchingLanguage = false;
-                        return;
-                      }
-
-                      _switchLanguageDialog!.dismiss();
-
-                      final fromLanguageName = LanguageConverter.toName(
-                          languageCode: _selectedFromLanguage);
-                      final learningLanguageName = LanguageConverter.toName(
-                          languageCode: _selectedLearningLanguage);
-
-                      InfoSnackbar.from(context: context).show(
-                          content:
-                              'Learning "$learningLanguageName" from "$fromLanguageName".');
-
-                      if (!await _syncOverview()) {
-                        return;
-                      }
-
-                      await _findLearnedWords();
-
-                      super.setState(() {
-                        _createAppBarSubTitle();
-                        _switchingLanguage = false;
-                      });
-                    },
-                  ),
-                  const SizedBox(
-                    height: 20,
-                  ),
-                  Row(
-                    children: <Widget>[
-                      Expanded(
-                        child: Container(
-                          margin:
-                              const EdgeInsets.only(left: 10.0, right: 20.0),
-                          child: Divider(
-                            color: Theme.of(context).colorScheme.onSurface,
-                            height: 36,
-                          ),
-                        ),
-                      ),
-                      Text(
-                        'OR',
-                        style: TextStyle(
-                          color: Theme.of(context).colorScheme.onSurface,
-                        ),
-                      ),
-                      Expanded(
-                        child: Container(
-                          margin:
-                              const EdgeInsets.only(left: 20.0, right: 10.0),
-                          child: Divider(
-                            color: Theme.of(context).colorScheme.onSurface,
-                            height: 36,
-                          ),
-                        ),
-                      ),
-                    ],
-                  ),
-                  const SizedBox(
-                    height: 10,
-                  ),
-                  TextButton(
-                    child: Text(
-                      'Select on Duolingo!',
-                      style: TextStyle(
-                        color: Theme.of(context).colorScheme.secondary,
-                        fontWeight: FontWeight.bold,
-                        fontStyle: FontStyle.italic,
-                      ),
-                    ),
-                    onPressed: () async {
-                      if (!await Network.isConnected()) {
-                        showAwesomeDialog(
-                          context: context,
-                          title: 'Network Error',
-                          content:
-                              'Could not detect a valid network. Please check the network environment and the network settings of the device.',
-                          dialogType: DialogType.WARNING,
-                        );
-
-                        return;
-                      }
-
-                      launch('https://www.duolingo.com/courses');
-                    },
-                  )
-                ],
-              ),
-            ),
-          ),
+          onChanged: (searchWord) {
+            super.setState(() {
+              _searchWord = searchWord;
+            });
+          },
         ),
-      ),
-    );
-  }
+      );
 
   @override
   Widget build(BuildContext context) => Scaffold(
@@ -876,32 +556,32 @@ class _OverviewViewState extends State<OverviewView> {
               backgroundColor: Theme.of(context).colorScheme.background,
               onTap: () async {
                 if (!await Network.isConnected()) {
-                  showAwesomeDialog(
-                    context: context,
-                    title: 'Network Error',
-                    content:
-                        'Could not detect a valid network. Please check the network environment and the network settings of the device.',
-                    dialogType: DialogType.WARNING,
-                  );
-
+                  showNetworkErrorDialog(context: context);
                   return;
                 }
 
-                _switchLanguageDialog = await _createSwitchLanguageDialog();
-                await _switchLanguageDialog!.show();
+                showSwitchLanguageDialog(
+                  context: context,
+                  onSubmitted: (fromLanguage, learningLanguage) async {
+                    await _searchLearnedWords();
+
+                    super.setState(() {
+                      _buildAppBarSubTitle();
+                    });
+                  },
+                );
               },
             ),
           ],
         ),
         body: NestedScrollView(
-          // floatHeaderSlivers: true,
           headerSliverBuilder: (context, innerBoxIsScrolled) => [
             SliverAppBar(
               floating: true,
               snap: true,
               centerTitle: true,
               title: _searching
-                  ? _createSearchBar()
+                  ? _buildSearchBar()
                   : CommonAppBarTitles(
                       title: _appBarTitle,
                       subTitle: _appBarSubTitle,
@@ -911,17 +591,7 @@ class _OverviewViewState extends State<OverviewView> {
                   bottom: Radius.circular(30),
                 ),
               ),
-              actions: [
-                if (!_searching)
-                  IconButton(
-                    icon: const Icon(Icons.search),
-                    onPressed: () {
-                      super.setState(() {
-                        _searching = true;
-                      });
-                    },
-                  ),
-              ],
+              actions: _buildActions(),
             )
           ],
           body: FutureBuilder(
@@ -963,7 +633,7 @@ class _OverviewViewState extends State<OverviewView> {
                     oldIndex: oldIndex,
                     newIndex: newIndex,
                   ),
-                  itemBuilder: (context, index) => _createLearnedWordCard(
+                  itemBuilder: (context, index) => _buildLearnedWordCard(
                     learnedWord: learnedWords[index],
                   ),
                 ),
@@ -973,17 +643,34 @@ class _OverviewViewState extends State<OverviewView> {
         ),
       );
 
-  Widget _createSearchBar() => Padding(
-        padding: const EdgeInsets.all(50),
-        child: TextField(
-          style: TextStyle(
-            color: Theme.of(context).colorScheme.onSurface,
-          ),
-          decoration: const InputDecoration(
-            prefixIcon: Icon(Icons.search),
-            hintText: 'Search word here ...',
-            border: InputBorder.none,
-          ),
-        ),
-      );
+  List<Widget> _buildActions() {
+    if (_searching) {
+      return [
+        IconButton(
+            tooltip: 'Change Search Method',
+            icon: const Icon(Icons.filter_list_alt),
+            onPressed: () {}),
+        IconButton(
+            tooltip: 'Hide Search Bar',
+            icon: const Icon(Icons.cancel),
+            onPressed: () {
+              super.setState(() {
+                _searching = false;
+              });
+            }),
+      ];
+    }
+
+    return [
+      IconButton(
+        tooltip: 'Show Search Bar',
+        icon: const Icon(Icons.search),
+        onPressed: () {
+          super.setState(() {
+            _searching = true;
+          });
+        },
+      ),
+    ];
+  }
 }

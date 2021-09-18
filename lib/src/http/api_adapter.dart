@@ -5,8 +5,9 @@
 import 'dart:convert';
 
 import 'package:awesome_dialog/awesome_dialog.dart';
-import 'package:duo_tracker/src/component/dialog/awesome_dialog.dart';
 import 'package:duo_tracker/src/component/dialog/auth_dialog.dart';
+import 'package:duo_tracker/src/component/dialog/error_dialog.dart';
+import 'package:duo_tracker/src/component/dialog/input_error_dialog.dart';
 import 'package:duo_tracker/src/component/snackbar/info_snack_bar.dart';
 import 'package:duo_tracker/src/http/api_response.dart';
 import 'package:duo_tracker/src/http/duolingo_api.dart';
@@ -126,18 +127,13 @@ abstract class _ApiAdapter implements ApiAdapter {
 
         return false;
       case ErrorType.authentication:
-        showAwesomeDialog(
-            context: context,
-            title: 'Authentication Failure',
-            dialogType: DialogType.WARNING,
-            content: response.message);
+        showInputErrorDialog(context: context, content: response.message);
 
         return false;
       case ErrorType.client:
-        showAwesomeDialog(
+        showErrorDialog(
           context: context,
           title: 'Client Error',
-          dialogType: DialogType.WARNING,
           content: response.message.isEmpty
               ? 'An error occurred while communicating with the Duolingo API. Please try again.'
               : response.message,
@@ -145,10 +141,9 @@ abstract class _ApiAdapter implements ApiAdapter {
 
         return false;
       case ErrorType.server:
-        showAwesomeDialog(
+        showErrorDialog(
           context: context,
           title: 'Server Error',
-          dialogType: DialogType.WARNING,
           content: response.message.isEmpty
               ? 'A server error occurred while communicating with the Duolingo API. Please try again later.'
               : response.message,
@@ -156,10 +151,9 @@ abstract class _ApiAdapter implements ApiAdapter {
 
         return false;
       case ErrorType.unknown:
-        showAwesomeDialog(
+        showErrorDialog(
           context: context,
           title: 'Unknown Error',
-          dialogType: DialogType.WARNING,
           content: response.message.isEmpty
               ? 'An unknown error occurred while communicating with the Duolingo API. Please try again.'
               : response.message,
@@ -255,6 +249,7 @@ class _VersionInfoAdapter extends _ApiAdapter {
     final Map<String, dynamic> ttsVoiceConfigurations =
         jsonDecode(ttsVoiceConfiguration['voices']);
 
+    final now = DateTime.now();
     for (final SupportedLanguage supportedLanguage in supportedLanguages) {
       final learningLanguage = supportedLanguage.learningLanguage;
 
@@ -266,8 +261,8 @@ class _VersionInfoAdapter extends _ApiAdapter {
             ttsBaseUrlHttps: ttsBaseUrlHttps,
             ttsBaseUrlHttp: ttsBaseUrlHttp,
             path: 'tts',
-            createdAt: DateTime.now(),
-            updatedAt: DateTime.now(),
+            createdAt: now,
+            updatedAt: now,
           ),
         );
       } else {
@@ -278,8 +273,8 @@ class _VersionInfoAdapter extends _ApiAdapter {
             ttsBaseUrlHttps: ttsBaseUrlHttps,
             ttsBaseUrlHttp: ttsBaseUrlHttp,
             path: 'tts',
-            createdAt: DateTime.now(),
-            updatedAt: DateTime.now(),
+            createdAt: now,
+            updatedAt: now,
           ),
         );
       }
@@ -414,6 +409,7 @@ class _UserApiAdapter extends _ApiAdapter {
     final learningLanguage = json['trackingProperties']['learning_language'];
     final fromLanguage = json['fromLanguage'];
 
+    final now = DateTime.now();
     await _userService.replaceByUserId(
       user: User.from(
         userId: userId,
@@ -438,8 +434,8 @@ class _UserApiAdapter extends _ApiAdapter {
         monthlyXp: json['monthlyXp'],
         xpGoalMetToday: json['xpGoalMetToday'],
         streak: json['streak'],
-        createdAt: DateTime.now(),
-        updatedAt: DateTime.now(),
+        createdAt: now,
+        updatedAt: now,
       ),
     );
 
@@ -454,6 +450,7 @@ class _UserApiAdapter extends _ApiAdapter {
   }) async {
     _courseService.deleteAll();
 
+    final now = DateTime.now();
     for (final Map<String, dynamic> course in json['courses']) {
       _courseService.insert(
         Course.from(
@@ -463,8 +460,8 @@ class _UserApiAdapter extends _ApiAdapter {
           fromLanguage: course['fromLanguage'],
           xp: course['xp'],
           crowns: course['crowns'],
-          createdAt: DateTime.now(),
-          updatedAt: DateTime.now(),
+          createdAt: now,
+          updatedAt: now,
         ),
       );
     }
@@ -475,6 +472,7 @@ class _UserApiAdapter extends _ApiAdapter {
   }) async {
     _skillService.deleteAll();
 
+    final now = DateTime.now();
     for (final List<dynamic> skillsInternal in json['currentCourse']
         ['skills']) {
       for (final Map<String, dynamic> skill in skillsInternal) {
@@ -491,8 +489,8 @@ class _UserApiAdapter extends _ApiAdapter {
             finishedLevels: skill['finishedLevels'],
             levels: skill['levels'],
             tipsAndNotes: skill['tipsAndNotes'] ?? '',
-            createdAt: DateTime.now(),
-            updatedAt: DateTime.now(),
+            createdAt: now,
+            updatedAt: now,
           ),
         );
       }
@@ -521,6 +519,7 @@ class _LearnedWordApiAdapter extends _ApiAdapter {
       final userId = await CommonSharedPreferencesKey.userId.getString();
 
       int sortOrder = 0;
+      final now = DateTime.now();
       for (final Map<String, dynamic> overview in jsonMap['vocab_overview']) {
         final String wordId = overview['id'];
         final String wordString = overview['word_string'];
@@ -549,8 +548,8 @@ class _LearnedWordApiAdapter extends _ApiAdapter {
             completed: false,
             deleted: false,
             sortOrder: sortOrder++,
-            createdAt: DateTime.now(),
-            updatedAt: DateTime.now(),
+            createdAt: now,
+            updatedAt: now,
           ),
         );
 
@@ -710,9 +709,10 @@ class _WordHintApiAdapter extends _ApiAdapter {
       userId,
     );
 
+    final now = DateTime.now();
     hintsMatrix.forEach(
-      (String value, List<String> hints) {
-        for (var hint in hints) {
+      (final String value, final List<String> hints) {
+        for (final String hint in hints) {
           _wordHintService.insert(
             WordHint.from(
               wordId: wordId,
@@ -721,8 +721,8 @@ class _WordHintApiAdapter extends _ApiAdapter {
               fromLanguage: fromLanguage,
               value: value,
               hint: hint,
-              createdAt: DateTime.now(),
-              updatedAt: DateTime.now(),
+              createdAt: now,
+              updatedAt: now,
             ),
           );
         }

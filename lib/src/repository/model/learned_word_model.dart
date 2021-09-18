@@ -29,8 +29,8 @@ class LearnedWord {
   bool completed;
   bool deleted;
   int sortOrder;
-  DateTime createdAt = DateTime.now();
-  DateTime updatedAt = DateTime.now();
+  DateTime createdAt;
+  DateTime updatedAt;
 
   /// The tts voice urls from voice configuration repository
   List<String> ttsVoiceUrls = <String>[];
@@ -68,7 +68,9 @@ class LearnedWord {
         bookmarked = false,
         completed = false,
         deleted = false,
-        sortOrder = -1;
+        sortOrder = -1,
+        createdAt = DateTime.now(),
+        updatedAt = DateTime.now();
 
   /// Returns the new instance of [LearnedWord] based on the parameters.
   LearnedWord.from({

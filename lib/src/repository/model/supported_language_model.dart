@@ -6,8 +6,8 @@ class SupportedLanguage {
   int id = -1;
   String fromLanguage;
   String learningLanguage;
-  DateTime createdAt = DateTime.now();
-  DateTime updatedAt = DateTime.now();
+  DateTime createdAt;
+  DateTime updatedAt;
 
   /// The flag that represents if this model is exist
   bool _empty = false;
@@ -16,7 +16,9 @@ class SupportedLanguage {
   SupportedLanguage.empty()
       : _empty = true,
         fromLanguage = '',
-        learningLanguage = '';
+        learningLanguage = '',
+        createdAt = DateTime.now(),
+        updatedAt = DateTime.now();
 
   /// Returns the new instance of [SupportedLanguage] based on the parameters.
   SupportedLanguage.from({

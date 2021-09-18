@@ -2,7 +2,6 @@
 // Use of this source code is governed by a
 // BSD-style license that can be found in the LICENSE file.
 
-import 'package:duo_tracker/src/utils/size_config.dart';
 import 'package:duo_tracker/src/view/overview/overview_tab_view.dart';
 import 'package:duo_tracker/src/view/settings/settings_view.dart';
 import 'package:duo_tracker/src/view/statistics/statistics_view.dart';
@@ -18,16 +17,6 @@ class DuoTrackerHomeView extends StatefulWidget {
 }
 
 class _DuoTrackerHomeViewState extends State<DuoTrackerHomeView> {
-  double getProportionHeight(double inputHeight) {
-    final screenHeight = SizeConfig.screenHeight;
-    return (inputHeight / 812.0) * screenHeight;
-  }
-
-  double getProportionWidth(double inputWidth) {
-    final screenWidth = SizeConfig.screenWidth;
-    return (inputWidth / 375.0) * screenWidth;
-  }
-
   @override
   Widget build(BuildContext context) => DefaultTabController(
         length: 4,
@@ -44,7 +33,7 @@ class _DuoTrackerHomeViewState extends State<DuoTrackerHomeView> {
             indicator: BoxDecoration(
               border: Border(
                 bottom: BorderSide(
-                  width: getProportionWidth(3),
+                  width: 0.5,
                   color: Theme.of(context).colorScheme.secondary,
                 ),
               ),

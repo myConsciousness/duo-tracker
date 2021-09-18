@@ -11,8 +11,8 @@ class WordHint {
   String value;
   String hint;
   int sortOrder;
-  DateTime createdAt = DateTime.now();
-  DateTime updatedAt = DateTime.now();
+  DateTime createdAt;
+  DateTime updatedAt;
 
   /// The flag that represents if this model is exist
   bool _empty = false;
@@ -26,7 +26,9 @@ class WordHint {
         fromLanguage = '',
         value = '',
         hint = '',
-        sortOrder = -1;
+        sortOrder = -1,
+        createdAt = DateTime.now(),
+        updatedAt = DateTime.now();
 
   /// Returns the new instance of [WordHint] based on the parameters.
   WordHint.from({

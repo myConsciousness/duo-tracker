@@ -9,8 +9,8 @@ class VoiceConfiguration {
   String ttsBaseUrlHttps;
   String ttsBaseUrlHttp;
   String path;
-  DateTime createdAt = DateTime.now();
-  DateTime updatedAt = DateTime.now();
+  DateTime createdAt;
+  DateTime updatedAt;
 
   /// The flag that represents if this model is exist
   bool _empty = false;
@@ -22,7 +22,9 @@ class VoiceConfiguration {
         voiceType = '',
         ttsBaseUrlHttps = '',
         ttsBaseUrlHttp = '',
-        path = '';
+        path = '',
+        createdAt = DateTime.now(),
+        updatedAt = DateTime.now();
 
   /// Returns the new instance of [VoiceConfiguration] based on the parameters.
   VoiceConfiguration.from({

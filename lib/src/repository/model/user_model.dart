@@ -28,8 +28,8 @@ class User {
   int monthlyXp;
   bool xpGoalMetToday;
   int streak;
-  DateTime createdAt = DateTime.now();
-  DateTime updatedAt = DateTime.now();
+  DateTime createdAt;
+  DateTime updatedAt;
 
   /// The flag that represents if this model is exist
   bool _empty = false;
@@ -58,7 +58,9 @@ class User {
         weeklyXp = 0,
         monthlyXp = 0,
         xpGoalMetToday = false,
-        streak = 0;
+        streak = 0,
+        createdAt = DateTime.now(),
+        updatedAt = DateTime.now();
 
   /// Returns the new instance of [User] based on the parameters.
   User.from({

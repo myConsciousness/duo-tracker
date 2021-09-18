@@ -4,14 +4,14 @@
 
 import 'package:awesome_dialog/awesome_dialog.dart';
 import 'package:duo_tracker/src/component/common_text_field.dart';
-import 'package:duo_tracker/src/component/dialog/awesome_dialog.dart';
-import 'package:duo_tracker/src/http/api_adapter.dart';
+import 'package:duo_tracker/src/component/dialog/input_error_dialog.dart';
+import 'package:duo_tracker/src/utils/duolingo_api_utils.dart';
 import 'package:flutter/material.dart';
 
 AwesomeDialog? _dialog;
 final _usernameController = TextEditingController();
 final _passwordController = TextEditingController();
-var _rawPassword = '';
+String _rawPassword = '';
 
 Future<T?> showAuthDialog<T>({
   required BuildContext context,
@@ -68,42 +68,33 @@ Future<T?> showAuthDialog<T>({
               ),
               AnimatedButton(
                 isFixedHeight: false,
+                text: 'Login',
+                color: Theme.of(context).colorScheme.secondary,
                 pressEvent: () async {
                   if (_usernameController.text.isEmpty) {
-                    showAwesomeDialog(
+                    showInputErrorDialog(
                       context: context,
-                      title: 'Input Error',
                       content: 'The username or email address is required.',
-                      dialogType: DialogType.WARNING,
                     );
+
                     return;
                   }
 
                   if (_rawPassword.isEmpty) {
-                    showAwesomeDialog(
+                    showInputErrorDialog(
                       context: context,
-                      title: 'Input Error',
                       content: 'The password is required.',
-                      dialogType: DialogType.WARNING,
                     );
+
                     return;
                   }
 
-                  final authenticated =
-                      await ApiAdapter.of(type: ApiAdapterType.login).execute(
+                  if (await DuolingoApiUtils.authenticateAccount(
                     context: context,
-                    params: {
-                      'username': _usernameController.text,
-                      'password': _rawPassword,
-                    },
-                  );
-
-                  if (authenticated) {
+                  )) {
                     await _dialog!.dismiss();
                   }
                 },
-                text: 'Login',
-                color: Theme.of(context).colorScheme.secondary,
               ),
               const SizedBox(
                 height: 30,

@@ -10,8 +10,8 @@ class Course {
   String fromLanguage;
   int xp;
   int crowns;
-  DateTime createdAt = DateTime.now();
-  DateTime updatedAt = DateTime.now();
+  DateTime createdAt;
+  DateTime updatedAt;
 
   /// The flag that represents if this model is exist
   bool _empty = false;
@@ -24,7 +24,9 @@ class Course {
         learningLanguage = '',
         fromLanguage = '',
         xp = 0,
-        crowns = 0;
+        crowns = 0,
+        createdAt = DateTime.now(),
+        updatedAt = DateTime.now();
 
   /// Returns the new instance of [Course] based on the parameters.
   Course.from({
