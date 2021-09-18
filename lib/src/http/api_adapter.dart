@@ -33,7 +33,9 @@ import 'package:open_settings/open_settings.dart';
 
 /// The enum that manages API adapter type.
 enum ApiAdapterType {
+  versionInfo,
   login,
+  user,
   overview,
   switchLanguage,
 }
@@ -44,8 +46,12 @@ abstract class ApiAdapter {
     required ApiAdapterType type,
   }) {
     switch (type) {
+      case ApiAdapterType.versionInfo:
+        return _VersionInfoAdapter();
       case ApiAdapterType.login:
         return _LoginApiAdapter();
+      case ApiAdapterType.user:
+        return _UserApiAdapter();
       case ApiAdapterType.overview:
         return _LearnedWordApiAdapter();
       case ApiAdapterType.switchLanguage:
@@ -102,18 +108,6 @@ abstract class _ApiAdapter implements ApiAdapter {
           InfoSnackbar.from(context: context).show(
             content: response.message,
           );
-        }
-
-        if (response.fromApi == FromApi.login) {
-          // Update user information
-          if (!await _UserApiAdapter().execute(context: context)) {
-            return false;
-          }
-
-          // Update version information
-          if (!await _VersionInfoAdapter().execute(context: context)) {
-            return false;
-          }
         }
 
         return true;
@@ -448,7 +442,7 @@ class _UserApiAdapter extends _ApiAdapter {
   Future<void> _refreshCourse({
     required Map<String, dynamic> json,
   }) async {
-    _courseService.deleteAll();
+    await _courseService.deleteAll();
 
     final now = DateTime.now();
     for (final Map<String, dynamic> course in json['courses']) {
@@ -470,7 +464,7 @@ class _UserApiAdapter extends _ApiAdapter {
   Future<void> _refreshSkill({
     required Map<String, dynamic> json,
   }) async {
-    _skillService.deleteAll();
+    await _skillService.deleteAll();
 
     final now = DateTime.now();
     for (final List<dynamic> skillsInternal in json['currentCourse']

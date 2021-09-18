@@ -45,15 +45,14 @@ class _OverviewViewState extends State<OverviewView> {
 
   bool _alreadyAuthDialogOpened = false;
   String _appBarSubTitle = '';
-
   final _audioPlayer = AudioPlayer();
   final _datetimeFormat = DateFormat('yyyy/MM/dd HH:mm');
 
   /// The learned word service
   final _learnedWordService = LearnedWordService.getInstance();
 
-  bool _searching = false;
   String _searchWord = '';
+  bool _searching = false;
 
   @override
   void didChangeDependencies() {
@@ -78,7 +77,7 @@ class _OverviewViewState extends State<OverviewView> {
       await _syncLearnedWords();
     }
 
-    return _searchLearnedWords();
+    return await _searchLearnedWords();
   }
 
   Future<bool> _canAutoSync() async => (DateTime.now()
@@ -95,7 +94,15 @@ class _OverviewViewState extends State<OverviewView> {
     if (!_alreadyAuthDialogOpened) {
       _alreadyAuthDialogOpened = true;
 
+      if (!await DuolingoApiUtils.refreshVersionInfo(context: context)) {
+        return;
+      }
+
       if (!await DuolingoApiUtils.authenticateAccount(context: context)) {
+        return;
+      }
+
+      if (!await DuolingoApiUtils.refreshUser(context: context)) {
         return;
       }
 
@@ -521,6 +528,39 @@ class _OverviewViewState extends State<OverviewView> {
         ),
       );
 
+  List<Widget> _buildActions() {
+    if (_searching) {
+      return [
+        IconButton(
+            tooltip: 'Change Search Method',
+            icon: const Icon(Icons.filter_list_alt),
+            onPressed: () {}),
+        IconButton(
+          tooltip: 'Clear Search Result',
+          icon: const Icon(Icons.clear),
+          onPressed: () {
+            super.setState(() {
+              _searching = false;
+              _searchWord = '';
+            });
+          },
+        ),
+      ];
+    }
+
+    return [
+      IconButton(
+        tooltip: 'Show Search Bar',
+        icon: const Icon(Icons.search),
+        onPressed: () {
+          super.setState(() {
+            _searching = true;
+          });
+        },
+      ),
+    ];
+  }
+
   @override
   Widget build(BuildContext context) => Scaffold(
         floatingActionButton: SpeedDial(
@@ -642,35 +682,4 @@ class _OverviewViewState extends State<OverviewView> {
           ),
         ),
       );
-
-  List<Widget> _buildActions() {
-    if (_searching) {
-      return [
-        IconButton(
-            tooltip: 'Change Search Method',
-            icon: const Icon(Icons.filter_list_alt),
-            onPressed: () {}),
-        IconButton(
-            tooltip: 'Hide Search Bar',
-            icon: const Icon(Icons.cancel),
-            onPressed: () {
-              super.setState(() {
-                _searching = false;
-              });
-            }),
-      ];
-    }
-
-    return [
-      IconButton(
-        tooltip: 'Show Search Bar',
-        icon: const Icon(Icons.search),
-        onPressed: () {
-          super.setState(() {
-            _searching = true;
-          });
-        },
-      ),
-    ];
-  }
 }

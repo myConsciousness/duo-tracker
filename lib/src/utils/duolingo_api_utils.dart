@@ -8,6 +8,12 @@ import 'package:duo_tracker/src/security/encryption.dart';
 import 'package:flutter/material.dart';
 
 class DuolingoApiUtils {
+  static Future<bool> refreshVersionInfo({
+    required BuildContext context,
+  }) async =>
+      await ApiAdapter.of(type: ApiAdapterType.versionInfo)
+          .execute(context: context);
+
   static Future<bool> authenticateAccount({
     required BuildContext context,
   }) async {
@@ -25,6 +31,11 @@ class DuolingoApiUtils {
       },
     );
   }
+
+  static Future<bool> refreshUser({
+    required BuildContext context,
+  }) async =>
+      await ApiAdapter.of(type: ApiAdapterType.user).execute(context: context);
 
   static Future<bool> synchronizeLearnedWords({
     required BuildContext context,

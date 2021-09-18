@@ -126,6 +126,12 @@ Future<T?> showSwitchLanguageDialog<T>({
 
                     _switchingLanguage = true;
 
+                    if (!await DuolingoApiUtils.refreshVersionInfo(
+                        context: context)) {
+                      _switchingLanguage = false;
+                      return;
+                    }
+
                     if (!await DuolingoApiUtils.authenticateAccount(
                       context: context,
                     )) {
@@ -142,7 +148,12 @@ Future<T?> showSwitchLanguageDialog<T>({
                       return;
                     }
 
-                    _dialog!.dismiss();
+                    if (!await DuolingoApiUtils.refreshUser(context: context)) {
+                      _switchingLanguage = false;
+                      return;
+                    }
+
+                    await _dialog!.dismiss();
 
                     final fromLanguageName = LanguageConverter.toName(
                         languageCode: _selectedFromLanguage);
@@ -192,7 +203,7 @@ Future<T?> showSwitchLanguageDialog<T>({
                       return;
                     }
 
-                    launch('https://www.duolingo.com/courses');
+                    await launch('https://www.duolingo.com/courses');
                   },
                 )
               ],
@@ -203,7 +214,7 @@ Future<T?> showSwitchLanguageDialog<T>({
     ),
   );
 
-  _dialog!.show();
+  await _dialog!.show();
 }
 
 Widget _createDropdownBelow({
