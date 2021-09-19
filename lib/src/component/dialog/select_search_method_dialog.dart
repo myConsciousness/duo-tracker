@@ -40,12 +40,11 @@ Future<T?> showSelectSearchMethodDialog<T>({
           child: SingleChildScrollView(
             child: ListBody(
               children: <Widget>[
-                Center(
+                const Center(
                   child: Text(
                     'Search Options',
                     style: TextStyle(
                       fontSize: 20,
-                      color: Theme.of(context).colorScheme.onSurface,
                     ),
                   ),
                 ),

@@ -33,7 +33,6 @@ class _DuoTrackerState extends State<DuoTracker> {
   @override
   void initState() {
     super.initState();
-    SystemChrome.setEnabledSystemUIMode(SystemUiMode.immersiveSticky);
   }
 
   @override
@@ -48,7 +47,9 @@ class _DuoTrackerState extends State<DuoTracker> {
                   : Brightness.light,
               typography: Typography.material2018(),
               textTheme: GoogleFonts.latoTextTheme(
-                Theme.of(context).textTheme,
+                _themeModeProvider.appliedDarkTheme
+                    ? Typography.whiteMountainView
+                    : Typography.blackMountainView,
               ),
             ),
             home: const DuoTrackerHomeView(),

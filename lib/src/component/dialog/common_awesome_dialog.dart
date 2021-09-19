@@ -26,8 +26,7 @@ Future<void> showCommonAwesomeDialog<T>({
               Center(
                 child: Text(
                   title,
-                  style: TextStyle(
-                    color: Theme.of(context).colorScheme.onSurface,
+                  style: const TextStyle(
                     fontSize: 20,
                     fontWeight: FontWeight.bold,
                   ),
@@ -39,8 +38,7 @@ Future<void> showCommonAwesomeDialog<T>({
               Center(
                 child: Text(
                   content,
-                  style: TextStyle(
-                    color: Theme.of(context).colorScheme.onSurface,
+                  style: const TextStyle(
                     fontSize: 15,
                   ),
                 ),

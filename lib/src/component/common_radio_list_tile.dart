@@ -34,9 +34,8 @@ class _CommonRadioListTileState<T> extends State<CommonRadioListTile> {
             child: RadioListTile(
               title: Text(
                 title,
-                style: TextStyle(
+                style: const TextStyle(
                   fontSize: 15,
-                  color: Theme.of(context).colorScheme.onSurface,
                 ),
               ),
               value: value,
@@ -56,7 +55,9 @@ class _CommonRadioListTileState<T> extends State<CommonRadioListTile> {
           if (widget.label != null)
             Text(
               widget.label!,
-              style: TextStyle(color: Theme.of(context).colorScheme.secondary),
+              style: TextStyle(
+                color: Theme.of(context).colorScheme.secondary,
+              ),
             ),
           if (widget.label != null)
             const SizedBox(

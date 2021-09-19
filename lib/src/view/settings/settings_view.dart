@@ -8,6 +8,7 @@ import 'package:duo_tracker/src/provider/theme_mode_provider.dart';
 import 'package:duo_tracker/src/security/biometric_authenitication.dart';
 import 'package:duo_tracker/src/security/encryption.dart';
 import 'package:duo_tracker/src/view/passcode_view.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:launch_review/launch_review.dart';
 import 'package:package_info/package_info.dart';
@@ -296,27 +297,27 @@ https://play.google.com/store/apps/details?id=${packageInfo.packageName}
                     await PackageInfo.fromPlatform();
 
                 showLicensePage(
-                    context: context,
-                    applicationName: packageInfo.appName,
-                    applicationVersion: packageInfo.version,
-                    applicationIcon: ClipRRect(
-                      borderRadius: BorderRadius.circular(100.0),
-                      child: Container(
-                        width: 250.0,
-                        height: 250.0,
-                        alignment: Alignment.center,
-                        decoration: const BoxDecoration(
-                          image: DecorationImage(
-                              image:
-                                  AssetImage('assets/icon/bowie_license.png'),
-                              fit: BoxFit.cover),
-                        ),
+                  context: context,
+                  applicationName: packageInfo.appName,
+                  applicationVersion: packageInfo.version,
+                  applicationIcon: ClipRRect(
+                    borderRadius: BorderRadius.circular(100.0),
+                    child: Container(
+                      width: 250.0,
+                      height: 250.0,
+                      alignment: Alignment.center,
+                      decoration: const BoxDecoration(
+                        image: DecorationImage(
+                            image: AssetImage('assets/icon/bowie_license.png'),
+                            fit: BoxFit.cover),
                       ),
                     ),
-                    applicationLegalese:
-                        '''Copyright 2021 Kato Shinya, Kato Melissa. All rights reserved.
+                  ),
+                  applicationLegalese:
+                      '''Copyright 2021 Kato Shinya, Kato Melissa. All rights reserved.
 
-THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT HOLDER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.''');
+THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT HOLDER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.''',
+                );
               },
             ),
           ],

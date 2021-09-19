@@ -21,9 +21,8 @@ class InfoSnackbar {
         behavior: SnackBarBehavior.floating,
         content: Row(
           children: <Widget>[
-            Icon(
+            const Icon(
               Icons.info,
-              color: Theme.of(context).primaryColor,
             ),
             const SizedBox(
               width: 10,

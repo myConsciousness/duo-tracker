@@ -284,7 +284,7 @@ class _OverviewViewState extends State<OverviewView> {
             text: subTitle,
             fontSize: 12,
           ),
-          _buildTextOnSurfaceColor(
+          _buildText(
             text: title,
             fontSize: 14,
           ),
@@ -296,7 +296,7 @@ class _OverviewViewState extends State<OverviewView> {
   }) {
     if (learnedWord.normalizedString.isEmpty ||
         learnedWord.normalizedString.endsWith(' ')) {
-      return _buildTextOnSurfaceColor(
+      return _buildText(
         text: learnedWord.wordString,
         fontSize: 18,
         boldText: true,
@@ -304,7 +304,7 @@ class _OverviewViewState extends State<OverviewView> {
     }
 
     if (learnedWord.wordString == learnedWord.normalizedString) {
-      return _buildTextOnSurfaceColor(
+      return _buildText(
         text: learnedWord.wordString,
         fontSize: 18,
         boldText: true,
@@ -312,7 +312,7 @@ class _OverviewViewState extends State<OverviewView> {
     }
 
     return Flexible(
-      child: _buildTextOnSurfaceColor(
+      child: _buildText(
         text: '${learnedWord.wordString} (${learnedWord.normalizedString})',
         fontSize: 18,
         boldText: true,
@@ -327,7 +327,7 @@ class _OverviewViewState extends State<OverviewView> {
 
     for (final wordHint in wordHints) {
       hintTexts.add(
-        _buildTextOnSurfaceColor(
+        _buildText(
           text: '${wordHint.value} : ${wordHint.hint}',
           fontSize: 13,
           opacity: 0.7,
@@ -393,7 +393,7 @@ class _OverviewViewState extends State<OverviewView> {
     });
   }
 
-  Text _buildTextOnSurfaceColor({
+  Text _buildText({
     required String text,
     required double fontSize,
     double opacity = 1.0,
@@ -511,9 +511,6 @@ class _OverviewViewState extends State<OverviewView> {
   Widget _buildSearchBar() => Padding(
         padding: const EdgeInsets.fromLTRB(30, 10, 20, 10),
         child: TextField(
-          style: TextStyle(
-            color: Theme.of(context).colorScheme.onSurface,
-          ),
           decoration: InputDecoration(
             prefixIcon: const Icon(Icons.search),
             suffixIcon: IconButton(
@@ -583,9 +580,6 @@ class _OverviewViewState extends State<OverviewView> {
           size: 19,
         ),
         label: label,
-        labelStyle: TextStyle(
-          color: Theme.of(context).colorScheme.onSurface,
-        ),
         labelBackgroundColor: Theme.of(context).colorScheme.background,
         backgroundColor: Theme.of(context).colorScheme.background,
         onTap: onTap,
@@ -633,71 +627,70 @@ class _OverviewViewState extends State<OverviewView> {
             ),
           ],
         ),
-        body: NestedScrollView(
-          headerSliverBuilder: (context, innerBoxIsScrolled) => [
-            SliverAppBar(
-              floating: true,
-              snap: true,
-              centerTitle: true,
-              title: _searching
-                  ? _buildSearchBar()
-                  : CommonAppBarTitles(
-                      title: _appBarTitle,
-                      subTitle: _appBarSubTitle,
-                    ),
-              shape: const RoundedRectangleBorder(
-                borderRadius: BorderRadius.vertical(
-                  bottom: Radius.circular(30),
+        body: SafeArea(
+          child: NestedScrollView(
+            headerSliverBuilder: (context, innerBoxIsScrolled) => [
+              SliverAppBar(
+                floating: true,
+                snap: true,
+                centerTitle: true,
+                title: _searching
+                    ? _buildSearchBar()
+                    : CommonAppBarTitles(
+                        title: _appBarTitle,
+                        subTitle: _appBarSubTitle,
+                      ),
+                shape: const RoundedRectangleBorder(
+                  borderRadius: BorderRadius.vertical(
+                    bottom: Radius.circular(30),
+                  ),
                 ),
+                actions: _buildActions(),
               ),
-              actions: _buildActions(),
-            ),
-          ],
-          body: FutureBuilder(
-            future: _fetchDataSource(context: context),
-            builder: (context, AsyncSnapshot snapshot) {
-              if (!snapshot.hasData) {
-                return Center(
-                  child: Column(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    crossAxisAlignment: CrossAxisAlignment.center,
-                    children: [
-                      CircularProgressIndicator(
-                        color: Theme.of(context).colorScheme.secondary,
-                      ),
-                      const SizedBox(
-                        height: 10,
-                      ),
-                      Text(
-                        'Loading...',
-                        style: TextStyle(
-                          color: Theme.of(context).colorScheme.onSurface,
+            ],
+            body: FutureBuilder(
+              future: _fetchDataSource(context: context),
+              builder: (context, AsyncSnapshot snapshot) {
+                if (!snapshot.hasData) {
+                  return Center(
+                    child: Column(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      crossAxisAlignment: CrossAxisAlignment.center,
+                      children: [
+                        CircularProgressIndicator(
+                          color: Theme.of(context).colorScheme.secondary,
                         ),
-                      ),
-                    ],
+                        const SizedBox(
+                          height: 10,
+                        ),
+                        const Text(
+                          'Loading...',
+                        ),
+                      ],
+                    ),
+                  );
+                }
+
+                final List<LearnedWord> learnedWords = snapshot.data;
+
+                return RefreshIndicator(
+                  onRefresh: () async {
+                    super.setState(() {});
+                  },
+                  child: ReorderableListView.builder(
+                    itemCount: learnedWords.length,
+                    onReorder: (oldIndex, newIndex) async => await _sortCards(
+                      learnedWords: learnedWords,
+                      oldIndex: oldIndex,
+                      newIndex: newIndex,
+                    ),
+                    itemBuilder: (context, index) => _buildLearnedWordCard(
+                      learnedWord: learnedWords[index],
+                    ),
                   ),
                 );
-              }
-
-              final List<LearnedWord> learnedWords = snapshot.data;
-
-              return RefreshIndicator(
-                onRefresh: () async {
-                  super.setState(() {});
-                },
-                child: ReorderableListView.builder(
-                  itemCount: learnedWords.length,
-                  onReorder: (oldIndex, newIndex) async => await _sortCards(
-                    learnedWords: learnedWords,
-                    oldIndex: oldIndex,
-                    newIndex: newIndex,
-                  ),
-                  itemBuilder: (context, index) => _buildLearnedWordCard(
-                    learnedWord: learnedWords[index],
-                  ),
-                ),
-              );
-            },
+              },
+            ),
           ),
         ),
       );

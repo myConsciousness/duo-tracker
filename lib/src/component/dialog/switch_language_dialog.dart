@@ -62,11 +62,10 @@ Future<T?> showSwitchLanguageDialog<T>({
           child: SingleChildScrollView(
             child: ListBody(
               children: <Widget>[
-                Center(
+                const Center(
                   child: Text(
                     'Select Language',
                     style: TextStyle(
-                      color: Theme.of(context).colorScheme.onSurface,
                       fontSize: 20,
                       fontWeight: FontWeight.bold,
                     ),
