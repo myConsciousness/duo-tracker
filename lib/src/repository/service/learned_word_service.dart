@@ -103,6 +103,8 @@ class LearnedWordService extends LearnedWordRepository {
         return 'GENDER';
       case SortItem.proficiency:
         return 'STRENGTH_BARS';
+      case SortItem.lastPracticed:
+        return 'LAST_PRACTICED_MS';
     }
   }
 

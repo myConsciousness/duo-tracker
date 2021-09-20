@@ -3,7 +3,7 @@
 // BSD-style license that can be found in the LICENSE file.
 
 import 'package:awesome_dialog/awesome_dialog.dart';
-import 'package:duo_tracker/src/component/common_radio_list_tile.dart';
+import 'package:duo_tracker/src/component/common_two_grids_radio_list_tile.dart';
 import 'package:duo_tracker/src/preference/common_shared_preferences_key.dart';
 import 'package:flutter/material.dart';
 
@@ -43,42 +43,42 @@ Future<T?> showSelectSortMethodDialog<T>({
                 const SizedBox(
                   height: 25,
                 ),
-                Row(
+                Column(
                   children: [
-                    Expanded(
-                      child: CommonRadioListTile(
-                        label: 'Sort Item',
-                        dataSource: const {
-                          'Index': SortItem.defaultIndex,
-                          'Lesson': SortItem.lesson,
-                          'Strength': SortItem.strength,
-                          'Pos': SortItem.pos,
-                          'Infinitive': SortItem.infinitive,
-                          'Genger': SortItem.gender,
-                          'Proficiency': SortItem.proficiency,
-                        },
-                        groupValue: _sortItem,
-                        onChanged: (value) {
-                          setState(() {
-                            _sortItem = value;
-                          });
-                        },
-                      ),
+                    CommonTwoGridsRadioListTile(
+                      label: 'Sort Item',
+                      dataSource: const {
+                        'Index': SortItem.defaultIndex,
+                        'Proficiency': SortItem.proficiency,
+                        'Strength': SortItem.strength,
+                        'Lesson': SortItem.lesson,
+                        'Pos': SortItem.pos,
+                        'Infinitive': SortItem.infinitive,
+                        'Gender': SortItem.gender,
+                        'Last Practiced': SortItem.lastPracticed,
+                      },
+                      groupValue: _sortItem,
+                      onChanged: (value) {
+                        setState(() {
+                          _sortItem = value;
+                        });
+                      },
                     ),
-                    Expanded(
-                      child: CommonRadioListTile(
-                        label: 'Sort Pattern',
-                        dataSource: const {
-                          'Asc': SortPattern.asc,
-                          'Desc': SortPattern.desc,
-                        },
-                        groupValue: _sortPattern,
-                        onChanged: (value) {
-                          setState(() {
-                            _sortPattern = value;
-                          });
-                        },
-                      ),
+                    const SizedBox(
+                      height: 10,
+                    ),
+                    CommonTwoGridsRadioListTile(
+                      label: 'Sort Pattern',
+                      dataSource: const {
+                        'Asc': SortPattern.asc,
+                        'Desc': SortPattern.desc,
+                      },
+                      groupValue: _sortPattern,
+                      onChanged: (value) {
+                        setState(() {
+                          _sortPattern = value;
+                        });
+                      },
                     ),
                   ],
                 ),
@@ -121,6 +121,7 @@ enum SortItem {
   infinitive,
   gender,
   proficiency,
+  lastPracticed,
 }
 
 /// The enum that represents sort pattern.
@@ -146,6 +147,8 @@ extension SortItemExt on SortItem {
         return 5;
       case SortItem.proficiency:
         return 6;
+      case SortItem.lastPracticed:
+        return 7;
     }
   }
 
