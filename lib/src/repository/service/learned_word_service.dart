@@ -20,14 +20,14 @@ class LearnedWordService extends LearnedWordRepository {
   /// The singleton instance of this [LearnedWordService].
   static final _singletonInstance = LearnedWordService._internal();
 
-  /// The word hint service
-  final _wordHintService = WordHintService.getInstance();
+  /// The skill service
+  final _skillService = SkillService.getInstance();
 
   /// The voice configuration service
   final _voiceConfigurationService = VoiceConfigurationService.getInstance();
 
-  /// The skill service
-  final _skillService = SkillService.getInstance();
+  /// The word hint service
+  final _wordHintService = WordHintService.getInstance();
 
   @override
   Future<void> delete(LearnedWord model) async => await super.database.then(
@@ -83,43 +83,6 @@ class LearnedWordService extends LearnedWordRepository {
               : LearnedWord.empty(),
         ),
       );
-
-  Future<String> get _sortItemName async {
-    final sortItemCode = await CommonSharedPreferencesKey.sortItem.getInt();
-    final sortItem = SortItemExt.toEnum(code: sortItemCode);
-
-    switch (sortItem) {
-      case SortItem.defaultIndex:
-        return 'SORT_ORDER';
-      case SortItem.lesson:
-        return 'SKILL_URL_TITLE';
-      case SortItem.strength:
-        return 'STRENGTH';
-      case SortItem.pos:
-        return 'POS';
-      case SortItem.infinitive:
-        return 'INFINITIVE';
-      case SortItem.gender:
-        return 'GENDER';
-      case SortItem.proficiency:
-        return 'STRENGTH_BARS';
-      case SortItem.lastPracticed:
-        return 'LAST_PRACTICED_MS';
-    }
-  }
-
-  Future<String> get _sortPattern async {
-    final sortPatternCode =
-        await CommonSharedPreferencesKey.sortPattern.getInt();
-    final sortPattern = SortPatternExt.toEnum(code: sortPatternCode);
-
-    switch (sortPattern) {
-      case SortPattern.asc:
-        return 'ASC';
-      case SortPattern.desc:
-        return 'DESC';
-    }
-  }
 
   @override
   Future<List<LearnedWord>> findByUserIdAndLearningLanguageAndFromLanguage(
@@ -270,4 +233,41 @@ class LearnedWordService extends LearnedWordRepository {
           ],
         ),
       );
+
+  Future<String> get _sortItemName async {
+    final sortItemCode = await CommonSharedPreferencesKey.sortItem.getInt();
+    final sortItem = SortItemExt.toEnum(code: sortItemCode);
+
+    switch (sortItem) {
+      case SortItem.defaultIndex:
+        return 'SORT_ORDER';
+      case SortItem.lesson:
+        return 'SKILL_URL_TITLE';
+      case SortItem.strength:
+        return 'STRENGTH';
+      case SortItem.pos:
+        return 'POS';
+      case SortItem.infinitive:
+        return 'INFINITIVE';
+      case SortItem.gender:
+        return 'GENDER';
+      case SortItem.proficiency:
+        return 'STRENGTH_BARS';
+      case SortItem.lastPracticed:
+        return 'LAST_PRACTICED_MS';
+    }
+  }
+
+  Future<String> get _sortPattern async {
+    final sortPatternCode =
+        await CommonSharedPreferencesKey.sortPattern.getInt();
+    final sortPattern = SortPatternExt.toEnum(code: sortPatternCode);
+
+    switch (sortPattern) {
+      case SortPattern.asc:
+        return 'ASC';
+      case SortPattern.desc:
+        return 'DESC';
+    }
+  }
 }

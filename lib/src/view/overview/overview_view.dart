@@ -21,6 +21,7 @@ import 'package:duo_tracker/src/utils/language_converter.dart';
 import 'package:duo_tracker/src/view/lesson_tips_view.dart';
 import 'package:duo_tracker/src/view/overview/overview_tab_view.dart';
 import 'package:duo_tracker/src/view/overview/word_filter.dart';
+import 'package:filter_list/filter_list.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/painting.dart';
@@ -28,6 +29,7 @@ import 'package:flutter/rendering.dart';
 import 'package:flutter/widgets.dart';
 import 'package:flutter_speed_dial/flutter_speed_dial.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+import 'package:future_progress_dialog/future_progress_dialog.dart';
 import 'package:intl/intl.dart';
 import 'package:url_launcher/url_launcher.dart';
 
@@ -46,7 +48,6 @@ class OverviewView extends StatefulWidget {
 class _OverviewViewState extends State<OverviewView> {
   static const unavailableText = 'N/A';
 
-  bool _alreadyAuthDialogOpened = false;
   String _appBarSubTitle = '';
   final _audioPlayer = AudioPlayer();
   final _datetimeFormat = DateFormat('yyyy/MM/dd HH:mm');
@@ -95,31 +96,25 @@ class _OverviewViewState extends State<OverviewView> {
       7);
 
   Future<void> _syncLearnedWords() async {
-    if (!_alreadyAuthDialogOpened) {
-      _alreadyAuthDialogOpened = true;
-
-      if (!await DuolingoApiUtils.refreshVersionInfo(context: context)) {
-        return;
-      }
-
-      await DuolingoApiUtils.authenticateAccount(context: context);
-
-      if (!await DuolingoApiUtils.refreshUser(context: context)) {
-        return;
-      }
-
-      if (!await DuolingoApiUtils.synchronizeLearnedWords(context: context)) {
-        return;
-      }
-
-      await CommonSharedPreferencesKey.datetimeLastAutoSyncedOverview.setInt(
-        DateTime.now().millisecondsSinceEpoch,
-      );
-
-      await _buildAppBarSubTitle();
-
-      _alreadyAuthDialogOpened = false;
+    if (!await DuolingoApiUtils.refreshVersionInfo(context: context)) {
+      return;
     }
+
+    await DuolingoApiUtils.authenticateAccount(context: context);
+
+    if (!await DuolingoApiUtils.refreshUser(context: context)) {
+      return;
+    }
+
+    if (!await DuolingoApiUtils.synchronizeLearnedWords(context: context)) {
+      return;
+    }
+
+    await CommonSharedPreferencesKey.datetimeLastAutoSyncedOverview.setInt(
+      DateTime.now().millisecondsSinceEpoch,
+    );
+
+    await _buildAppBarSubTitle();
   }
 
   Future<List<LearnedWord>> _searchLearnedWords() async =>
@@ -513,8 +508,7 @@ class _OverviewViewState extends State<OverviewView> {
       );
 
   Widget _buildSearchBar() => Container(
-        padding: const EdgeInsets.fromLTRB(45, 0, 45, 0),
-        margin: const EdgeInsets.fromLTRB(0, 4, 0, 4),
+        margin: const EdgeInsets.fromLTRB(40, 5, 40, 5),
         child: TextField(
           decoration: InputDecoration(
             prefixIcon: const Icon(Icons.search),
@@ -607,10 +601,49 @@ class _OverviewViewState extends State<OverviewView> {
             },
           ),
           _buildSpeedDialChild(
+            icon: FontAwesomeIcons.filter,
+            label: 'Filter',
+            onTap: () async {
+              FilterListDialog.display<String>(
+                context,
+                listData: ['test', 'test2'],
+                choiceChipLabel: (item) {
+                  return item;
+                },
+                validateSelectedItem: (options, selectedItem) {
+                  return true;
+                },
+                onItemSearch: (options, selectedItem) {
+                  return [];
+                },
+                onApplyButtonClick: (options) {},
+              );
+            },
+          ),
+          _buildSpeedDialChild(
             icon: FontAwesomeIcons.sync,
             label: 'Sync Words',
             onTap: () async {
-              await _syncLearnedWords();
+              showDialog(
+                context: context,
+                builder: (context) => FutureProgressDialog(
+                  _syncLearnedWords(),
+                  message: Column(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: const [
+                      Text(
+                        'Updating words list',
+                        style: TextStyle(color: Colors.black),
+                      ),
+                      Text(
+                        'Please wait a moment...',
+                        style: TextStyle(color: Colors.black),
+                      )
+                    ],
+                  ),
+                ),
+              );
+
               super.setState(() {});
             },
           ),

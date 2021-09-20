@@ -211,6 +211,13 @@ packages:
       url: "https://pub.dartlang.org"
     source: hosted
     version: "6.1.2"
+  filter_list:
+    dependency: "direct main"
+    description:
+      name: filter_list
+      url: "https://pub.dartlang.org"
+    source: hosted
+    version: "1.0.0"
   flare_flutter:
     dependency: transitive
     description:
@@ -317,6 +324,13 @@ packages:
       url: "https://pub.dartlang.org"
     source: hosted
     version: "9.1.0"
+  future_progress_dialog:
+    dependency: "direct main"
+    description:
+      name: future_progress_dialog
+      url: "https://pub.dartlang.org"
+    source: hosted
+    version: "0.2.0"
   google_fonts:
     dependency: "direct main"
     description:

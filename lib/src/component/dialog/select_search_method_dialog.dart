@@ -107,6 +107,14 @@ Future<T?> showSelectSearchMethodDialog<T>({
                     _dialog.dismiss();
                   },
                 ),
+                AnimatedButton(
+                  isFixedHeight: false,
+                  text: 'Cancel',
+                  color: Theme.of(context).colorScheme.error,
+                  pressEvent: () {
+                    _dialog.dismiss();
+                  },
+                ),
                 const SizedBox(
                   height: 30,
                 ),
