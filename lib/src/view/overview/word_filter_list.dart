@@ -3,6 +3,7 @@
 // BSD-style license that can be found in the LICENSE file.
 
 import 'package:awesome_dialog/awesome_dialog.dart';
+import 'package:duo_tracker/src/component/common_two_grids_radio_list_tile.dart';
 import 'package:flutter/material.dart';
 
 typedef ValidateSelectedItem<T> = bool Function(List<T>? list, T item);
@@ -11,6 +12,23 @@ typedef ChoiceChipBuilder<T> = Widget Function(
     BuildContext context, T? item, bool? iselected);
 typedef LabelDelegate<T> = String? Function(T?);
 typedef ValidateRemoveItem<T> = List<T> Function(List<T>? list, T item);
+
+enum FilterItem {
+  /// The lesson
+  lesson,
+
+  /// The strength
+  strength,
+
+  /// The pos
+  pos,
+
+  /// The infinitive
+  infinitive,
+
+  /// The gender
+  gender,
+}
 
 class WordFilterList<T> extends StatefulWidget {
   const WordFilterList({
@@ -21,7 +39,6 @@ class WordFilterList<T> extends StatefulWidget {
     required this.choiceChipLabel,
     required this.onApplyButtonClick,
     this.validateRemoveItem,
-    this.selectedItemsText = 'selected items',
     this.wrapAlignment = WrapAlignment.start,
     this.wrapCrossAxisAlignment = WrapCrossAlignment.start,
     this.wrapSpacing = 0.0,
@@ -35,9 +52,6 @@ class WordFilterList<T> extends StatefulWidget {
 
   /// The `onApplyButtonClick` is a callback which return list of all selected items on apply button click.  if no item is selected then it will return empty list.
   final OnApplyButtonClick<T>? onApplyButtonClick;
-
-  /// Selected items count text
-  final String? selectedItemsText;
 
   /// The [selectedListData] is used to preselect the choice chips.
   /// It takes list of object and this list should be subset og [listData]
@@ -72,15 +86,35 @@ class _WordFilterListState<T> extends State<WordFilterList<T>> {
     super.initState();
   }
 
+  FilterItem _filterItem = FilterItem.lesson;
+
   Widget _body() => Column(
         children: <Widget>[
-          Padding(
-            padding: const EdgeInsets.only(top: 5),
-            child: Text(
-              '${_selectedListData.length} ${widget.selectedItemsText}',
-              style: Theme.of(context).textTheme.caption,
+          const SizedBox(height: 25),
+          CommonTwoGridsRadioListTile(
+            label: 'Filter Pattern',
+            dataSource: const {
+              'Lesson': FilterItem.lesson,
+              'Pos': FilterItem.pos,
+              'Infinitive': FilterItem.infinitive,
+              'Gender': FilterItem.gender,
+              'Strength': FilterItem.strength,
+            },
+            groupValue: _filterItem,
+            onChanged: (value) {
+              super.setState(() {
+                _filterItem = value;
+              });
+            },
+          ),
+          const SizedBox(height: 20),
+          Text(
+            'Filter Item',
+            style: TextStyle(
+              color: Theme.of(context).colorScheme.secondary,
             ),
           ),
+          const SizedBox(height: 5),
           Expanded(
             child: Container(
               padding:
@@ -93,6 +127,13 @@ class _WordFilterListState<T> extends State<WordFilterList<T>> {
                   children: _buildChoiceList(),
                 ),
               ),
+            ),
+          ),
+          Padding(
+            padding: const EdgeInsets.only(top: 5),
+            child: Text(
+              'selected ${_selectedListData.length} items',
+              style: Theme.of(context).textTheme.caption,
             ),
           ),
           _buildButtons()

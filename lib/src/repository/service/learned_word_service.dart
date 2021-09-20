@@ -244,7 +244,7 @@ class LearnedWordService extends LearnedWordRepository {
       case SortItem.lesson:
         return 'SKILL_URL_TITLE';
       case SortItem.strength:
-        return 'STRENGTH';
+        return 'STRENGTH_BARS';
       case SortItem.pos:
         return 'POS';
       case SortItem.infinitive:
@@ -252,7 +252,7 @@ class LearnedWordService extends LearnedWordRepository {
       case SortItem.gender:
         return 'GENDER';
       case SortItem.proficiency:
-        return 'STRENGTH_BARS';
+        return 'STRENGTH';
       case SortItem.lastPracticed:
         return 'LAST_PRACTICED_MS';
     }

@@ -23,7 +23,7 @@ class DuoTrackerAdmobUnitIds extends AdmobUnitIDs {
   @override
   String get releaseBanner {
     if (Platform.isAndroid) {
-      return 'ca-app-pub-7168775731316469/7261516225';
+      return 'ca-app-pub-7168775731316469/3113896382';
     }
 
     throw UnimplementedError();
@@ -32,7 +32,7 @@ class DuoTrackerAdmobUnitIds extends AdmobUnitIDs {
   @override
   String get releaseInterstitial {
     if (Platform.isAndroid) {
-      return 'ca-app-pub-7168775731316469/3809356370';
+      return 'ca-app-pub-7168775731316469/7983079689';
     }
 
     throw UnimplementedError();
@@ -48,8 +48,20 @@ class DuoTrackerAdmobUnitIds extends AdmobUnitIDs {
   String get releaseNativeAdvancedVideo => throw UnimplementedError();
 
   @override
-  String get releaseRewarded => throw UnimplementedError();
+  String get releaseRewarded {
+    if (Platform.isAndroid) {
+      return 'ca-app-pub-7168775731316469/3386193275';
+    }
+
+    throw UnimplementedError();
+  }
 
   @override
-  String get releaseRewardedInterstitial => throw UnimplementedError();
+  String get releaseRewardedInterstitial {
+    if (Platform.isAndroid) {
+      return 'ca-app-pub-7168775731316469/6359840978';
+    }
+
+    throw UnimplementedError();
+  }
 }
