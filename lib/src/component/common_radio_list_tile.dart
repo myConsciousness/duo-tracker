@@ -35,7 +35,7 @@ class _CommonRadioListTileState<T> extends State<CommonRadioListTile> {
               title: Text(
                 title,
                 style: const TextStyle(
-                  fontSize: 15,
+                  fontSize: 11,
                 ),
               ),
               value: value,
@@ -47,29 +47,27 @@ class _CommonRadioListTileState<T> extends State<CommonRadioListTile> {
       },
     );
 
-    return Padding(
-      padding: const EdgeInsets.fromLTRB(25, 0, 25, 0),
-      child: Column(
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: [
-          if (widget.label != null)
-            Text(
-              widget.label!,
-              style: TextStyle(
-                color: Theme.of(context).colorScheme.secondary,
-              ),
+    return Column(
+      mainAxisAlignment: MainAxisAlignment.start,
+      crossAxisAlignment: CrossAxisAlignment.center,
+      children: [
+        if (widget.label != null)
+          Text(
+            widget.label!,
+            style: TextStyle(
+              color: Theme.of(context).colorScheme.secondary,
             ),
-          if (widget.label != null)
-            const SizedBox(
-              height: 5,
-            ),
-          Column(
-            mainAxisSize: MainAxisSize.min,
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: flexibleRadioListTiles,
           ),
-        ],
-      ),
+        if (widget.label != null)
+          const SizedBox(
+            height: 5,
+          ),
+        Column(
+          mainAxisSize: MainAxisSize.min,
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: flexibleRadioListTiles,
+        ),
+      ],
     );
   }
 }

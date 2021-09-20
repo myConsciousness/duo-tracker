@@ -28,6 +28,12 @@ enum CommonSharedPreferencesKey {
   /// The match pattern
   matchPattern,
 
+  /// The sort item
+  sortItem,
+
+  /// The sort pattern
+  sortPattern,
+
   //! The Search Config ↑
 
   //! The Sync Config ↓
@@ -75,7 +81,11 @@ extension KeyFeature on CommonSharedPreferencesKey {
       case CommonSharedPreferencesKey.password:
         return 'password';
       case CommonSharedPreferencesKey.matchPattern:
-        return 'matchPattern';
+        return 'match_pattern';
+      case CommonSharedPreferencesKey.sortItem:
+        return 'sort_item';
+      case CommonSharedPreferencesKey.sortPattern:
+        return 'sort_pattern';
       case CommonSharedPreferencesKey.currentLearningLanguage:
         return 'current_learning_language';
       case CommonSharedPreferencesKey.currentFromLanguage:

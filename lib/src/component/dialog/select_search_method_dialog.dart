@@ -82,7 +82,7 @@ Future<T?> showSelectSearchMethodDialog<T>({
                 CommonRadioListTile(
                   label: 'Match Pattern',
                   dataSource: const {
-                    'Partial (Default)': MatchPattern.partial,
+                    'Partial': MatchPattern.partial,
                     'Exact': MatchPattern.exact,
                     'Prefix': MatchPattern.prefix,
                     'Suffix': MatchPattern.suffix,

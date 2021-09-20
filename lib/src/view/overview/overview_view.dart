@@ -9,6 +9,7 @@ import 'package:duo_tracker/src/component/common_nested_scroll_view.dart';
 import 'package:duo_tracker/src/component/dialog/network_error_dialog.dart';
 import 'package:duo_tracker/src/component/dialog/select_search_method_dialog.dart';
 import 'package:duo_tracker/src/component/dialog/switch_language_dialog.dart';
+import 'package:duo_tracker/src/component/dialog/select_sort_method_dialog.dart';
 import 'package:duo_tracker/src/component/snackbar/info_snack_bar.dart';
 import 'package:duo_tracker/src/http/network.dart';
 import 'package:duo_tracker/src/preference/common_shared_preferences_key.dart';
@@ -599,7 +600,11 @@ class _OverviewViewState extends State<OverviewView> {
           _buildSpeedDialChild(
             icon: FontAwesomeIcons.sort,
             label: 'Sort',
-            onTap: () async {},
+            onTap: () async {
+              await showSelectSortMethodDialog(context: context);
+              await _searchLearnedWords();
+              super.setState(() {});
+            },
           ),
           _buildSpeedDialChild(
             icon: FontAwesomeIcons.sync,

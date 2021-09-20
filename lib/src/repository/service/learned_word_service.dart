@@ -2,6 +2,8 @@
 // Use of this source code is governed by a
 // BSD-style license that can be found in the LICENSE file.
 
+import 'package:duo_tracker/src/component/dialog/select_sort_method_dialog.dart';
+import 'package:duo_tracker/src/preference/common_shared_preferences_key.dart';
 import 'package:duo_tracker/src/repository/learned_word_repository.dart';
 import 'package:duo_tracker/src/repository/model/learned_word_model.dart';
 import 'package:duo_tracker/src/repository/service/skill_serviced.dart';
@@ -82,12 +84,50 @@ class LearnedWordService extends LearnedWordRepository {
         ),
       );
 
+  Future<String> get _sortItemName async {
+    final sortItemCode = await CommonSharedPreferencesKey.sortItem.getInt();
+    final sortItem = SortItemExt.toEnum(code: sortItemCode);
+
+    switch (sortItem) {
+      case SortItem.defaultIndex:
+        return 'SORT_ORDER';
+      case SortItem.lesson:
+        return 'SKILL_URL_TITLE';
+      case SortItem.strength:
+        return 'STRENGTH';
+      case SortItem.pos:
+        return 'POS';
+      case SortItem.infinitive:
+        return 'INFINITIVE';
+      case SortItem.gender:
+        return 'GENDER';
+      case SortItem.proficiency:
+        return 'STRENGTH_BARS';
+    }
+  }
+
+  Future<String> get _sortPattern async {
+    final sortPatternCode =
+        await CommonSharedPreferencesKey.sortPattern.getInt();
+    final sortPattern = SortPatternExt.toEnum(code: sortPatternCode);
+
+    switch (sortPattern) {
+      case SortPattern.asc:
+        return 'ASC';
+      case SortPattern.desc:
+        return 'DESC';
+    }
+  }
+
   @override
   Future<List<LearnedWord>> findByUserIdAndLearningLanguageAndFromLanguage(
     String userId,
     String learningLanguage,
     String fromLanguage,
   ) async {
+    final sortItemName = await _sortItemName;
+    final sortPattern = await _sortPattern;
+
     final learedWords = await super.database.then(
           (database) => database
               .query(
@@ -99,7 +139,7 @@ class LearnedWordService extends LearnedWordRepository {
                   learningLanguage,
                   fromLanguage,
                 ],
-                orderBy: 'SORT_ORDER',
+                orderBy: '$sortItemName $sortPattern',
               )
               .then(
                 (entities) => entities
