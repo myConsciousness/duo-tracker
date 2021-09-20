@@ -29,8 +29,8 @@ class OverviewTabView extends StatelessWidget {
   @override
   Widget build(BuildContext context) => const CommonDefaultTabController(
         length: 4,
-        labelFontSize: 11.0,
-        unselectedLabelFontSize: 10.0,
+        labelFontSize: 12.0,
+        unselectedLabelFontSize: 11.0,
         tabs: [
           Tab(text: 'All'),
           Tab(text: 'Bookmarked'),

@@ -4,7 +4,7 @@
 
 import 'package:awesome_dialog/awesome_dialog.dart';
 import 'package:duo_tracker/src/component/common_two_grids_radio_list_tile.dart';
-import 'package:duo_tracker/src/preference/common_shared_preferences_key.dart';
+import 'package:duo_tracker/src/repository/preference/common_shared_preferences_key.dart';
 import 'package:flutter/material.dart';
 
 late AwesomeDialog _dialog;

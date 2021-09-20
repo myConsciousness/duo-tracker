@@ -2,7 +2,7 @@
 // Use of this source code is governed by a
 // BSD-style license that can be found in the LICENSE file.
 
-import 'package:duo_tracker/src/preference/common_shared_preferences_key.dart';
+import 'package:duo_tracker/src/repository/preference/common_shared_preferences_key.dart';
 import 'package:flutter/material.dart';
 
 class ThemeModeProvider with ChangeNotifier {

@@ -3,7 +3,7 @@
 // BSD-style license that can be found in the LICENSE file.
 
 import 'package:duo_tracker/src/admob/interstitial_ad_resolver.dart';
-import 'package:duo_tracker/src/preference/interstitial_ad_shared_preferences_key.dart';
+import 'package:duo_tracker/src/repository/preference/interstitial_ad_shared_preferences_key.dart';
 
 class InterstitialAdUtils {
   static void showInterstitialAd(

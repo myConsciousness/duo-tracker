@@ -9,7 +9,7 @@ import 'package:duo_tracker/src/component/dialog/network_error_dialog.dart';
 import 'package:duo_tracker/src/component/snackbar/info_snack_bar.dart';
 import 'package:duo_tracker/src/component/text_with_horizontal_divider.dart';
 import 'package:duo_tracker/src/http/network.dart';
-import 'package:duo_tracker/src/preference/common_shared_preferences_key.dart';
+import 'package:duo_tracker/src/repository/preference/common_shared_preferences_key.dart';
 import 'package:duo_tracker/src/repository/service/supported_language_service.dart';
 import 'package:duo_tracker/src/utils/duolingo_api_utils.dart';
 import 'package:duo_tracker/src/utils/language_converter.dart';

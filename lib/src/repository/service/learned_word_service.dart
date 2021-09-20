@@ -3,9 +3,9 @@
 // BSD-style license that can be found in the LICENSE file.
 
 import 'package:duo_tracker/src/component/dialog/select_sort_method_dialog.dart';
-import 'package:duo_tracker/src/preference/common_shared_preferences_key.dart';
 import 'package:duo_tracker/src/repository/learned_word_repository.dart';
 import 'package:duo_tracker/src/repository/model/learned_word_model.dart';
+import 'package:duo_tracker/src/repository/preference/common_shared_preferences_key.dart';
 import 'package:duo_tracker/src/repository/service/skill_serviced.dart';
 import 'package:duo_tracker/src/repository/service/voice_configuration_service.dart';
 import 'package:duo_tracker/src/repository/service/word_hint_service.dart';

@@ -3,8 +3,8 @@
 // BSD-style license that can be found in the LICENSE file.
 
 import 'package:duo_tracker/src/component/snackbar/info_snack_bar.dart';
-import 'package:duo_tracker/src/preference/common_shared_preferences_key.dart';
 import 'package:duo_tracker/src/provider/theme_mode_provider.dart';
+import 'package:duo_tracker/src/repository/preference/common_shared_preferences_key.dart';
 import 'package:duo_tracker/src/security/biometric_authenitication.dart';
 import 'package:duo_tracker/src/security/encryption.dart';
 import 'package:duo_tracker/src/view/passcode_view.dart';
