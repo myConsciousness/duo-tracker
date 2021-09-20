@@ -495,7 +495,9 @@ class _OverviewViewState extends State<OverviewView> {
                 }
 
                 await launch(
-                    'https://www.duolingo.com/skill/${learnedWord.learningLanguage}/${learnedWord.skillUrlTitle}');
+                  'https://www.duolingo.com/skill/${learnedWord.learningLanguage}/${learnedWord.skillUrlTitle}',
+                  forceWebView: true,
+                );
               },
             ),
           ],
