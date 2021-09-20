@@ -42,7 +42,7 @@ extension MatchPatternExt on MatchPattern {
       }
     }
 
-    return MatchPattern.prefix;
+    return MatchPattern.partial;
   }
 }
 
