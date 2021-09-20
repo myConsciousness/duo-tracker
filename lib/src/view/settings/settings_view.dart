@@ -125,7 +125,7 @@ class _SettingsViewState extends State<SettingsView> {
                 ),
                 Switch(
                   value: themeModeProvider.appliedDarkTheme,
-                  onChanged: (value) {
+                  onChanged: (value) async {
                     super.setState(() {
                       themeModeProvider.notify(appliedDarkTheme: value);
                     });

@@ -33,27 +33,52 @@ class _DuoTrackerState extends State<DuoTracker> {
   @override
   void initState() {
     super.initState();
+
+    SystemChrome.setEnabledSystemUIMode(SystemUiMode.immersiveSticky);
+
+    // Fix app orientation
+    SystemChrome.setPreferredOrientations([
+      DeviceOrientation.portraitUp,
+      DeviceOrientation.portraitDown,
+    ]);
   }
 
   @override
   Widget build(BuildContext context) => ChangeNotifierProvider(
         create: (_) => _themeModeProvider,
         child: Consumer<ThemeModeProvider>(
-          builder: (context, _, __) => MaterialApp(
-            debugShowCheckedModeBanner: false,
-            theme: ThemeData(
-              brightness: _themeModeProvider.appliedDarkTheme
-                  ? Brightness.dark
-                  : Brightness.light,
-              typography: Typography.material2018(),
-              textTheme: GoogleFonts.latoTextTheme(
-                _themeModeProvider.appliedDarkTheme
-                    ? Typography.whiteMountainView
-                    : Typography.blackMountainView,
+          builder: (context, _, __) {
+            SystemChrome.setSystemUIOverlayStyle(
+              SystemUiOverlayStyle(
+                statusBarColor: _themeModeProvider.appliedDarkTheme
+                    ? Colors.grey[800]!
+                    : Colors.blue,
+                systemNavigationBarColor: _themeModeProvider.appliedDarkTheme
+                    ? Colors.grey[850]!
+                    : Colors.white,
+                systemNavigationBarIconBrightness:
+                    _themeModeProvider.appliedDarkTheme
+                        ? Brightness.dark
+                        : Brightness.dark,
               ),
-            ),
-            home: const DuoTrackerHomeView(),
-          ),
+            );
+
+            return MaterialApp(
+              debugShowCheckedModeBanner: false,
+              theme: ThemeData(
+                brightness: _themeModeProvider.appliedDarkTheme
+                    ? Brightness.dark
+                    : Brightness.light,
+                typography: Typography.material2018(),
+                textTheme: GoogleFonts.latoTextTheme(
+                  _themeModeProvider.appliedDarkTheme
+                      ? Typography.whiteMountainView
+                      : Typography.blackMountainView,
+                ),
+              ),
+              home: const DuoTrackerHomeView(),
+            );
+          },
         ),
       );
 }

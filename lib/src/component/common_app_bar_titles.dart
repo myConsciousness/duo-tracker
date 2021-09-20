@@ -25,16 +25,21 @@ class _CommonAppBarTitlesState extends State<CommonAppBarTitles> {
   @override
   Widget build(BuildContext context) => Column(
         children: [
+          const SizedBox(
+            height: 10,
+          ),
           Text(
             widget.subTitle,
             style: const TextStyle(
               fontSize: 12,
+              color: Colors.white,
             ),
           ),
           Text(
             widget.title,
             style: const TextStyle(
               fontSize: 17,
+              color: Colors.white,
             ),
           ),
         ],

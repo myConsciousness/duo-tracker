@@ -2,9 +2,9 @@
 // Use of this source code is governed by a
 // BSD-style license that can be found in the LICENSE file.
 
+import 'package:duo_tracker/src/component/common_default_tab_controller.dart';
 import 'package:duo_tracker/src/view/overview/overview_view.dart';
 import 'package:flutter/material.dart';
-import 'package:tab_indicator_styler/tab_indicator_styler.dart';
 
 /// The enum that represents overview tab type.
 enum OverviewTabType {
@@ -21,70 +21,27 @@ enum OverviewTabType {
   trash,
 }
 
-class OverviewTabView extends StatefulWidget {
-  const OverviewTabView({Key? key}) : super(key: key);
+class OverviewTabView extends StatelessWidget {
+  const OverviewTabView({
+    Key? key,
+  }) : super(key: key);
 
   @override
-  _OverviewTabViewState createState() => _OverviewTabViewState();
-}
-
-class _OverviewTabViewState extends State<OverviewTabView> {
-  @override
-  void didChangeDependencies() {
-    super.didChangeDependencies();
-  }
-
-  @override
-  void dispose() {
-    super.dispose();
-  }
-
-  @override
-  void initState() {
-    super.initState();
-  }
-
-  Widget _tabTitle(final String title) {
-    return Padding(
-      padding: const EdgeInsets.symmetric(),
-      child: Tab(text: title),
-    );
-  }
-
-  @override
-  Widget build(BuildContext context) => DefaultTabController(
+  Widget build(BuildContext context) => const CommonDefaultTabController(
         length: 4,
-        child: Scaffold(
-          bottomNavigationBar: TabBar(
-            isScrollable: false,
-            unselectedLabelColor:
-                Theme.of(context).colorScheme.secondary.withOpacity(0.5),
-            unselectedLabelStyle: const TextStyle(fontSize: 11.0),
-            labelColor: Theme.of(context).colorScheme.secondary,
-            labelStyle: const TextStyle(fontSize: 10.0),
-            indicatorColor: Theme.of(context).colorScheme.secondary,
-            indicatorWeight: 2.0,
-            indicator: DotIndicator(
-              color: Theme.of(context).colorScheme.secondary,
-              distanceFromCenter: 16,
-              radius: 3,
-              paintingStyle: PaintingStyle.fill,
-            ),
-            tabs: [
-              _tabTitle('All'),
-              _tabTitle('Bookmarked'),
-              _tabTitle('Completed'),
-              _tabTitle('Trash'),
-            ],
-          ),
-          body: const TabBarView(
-            children: [
-              OverviewView(overviewTabType: OverviewTabType.all),
-              OverviewView(overviewTabType: OverviewTabType.bookmarked),
-              OverviewView(overviewTabType: OverviewTabType.completed),
-              OverviewView(overviewTabType: OverviewTabType.trash),
-            ],
-          ),
-        ),
+        labelFontSize: 11.0,
+        unselectedLabelFontSize: 10.0,
+        tabs: [
+          Tab(text: 'All'),
+          Tab(text: 'Bookmarked'),
+          Tab(text: 'Completed'),
+          Tab(text: 'Trash'),
+        ],
+        body: [
+          OverviewView(overviewTabType: OverviewTabType.all),
+          OverviewView(overviewTabType: OverviewTabType.bookmarked),
+          OverviewView(overviewTabType: OverviewTabType.completed),
+          OverviewView(overviewTabType: OverviewTabType.trash),
+        ],
       );
 }

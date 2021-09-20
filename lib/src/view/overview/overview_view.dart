@@ -508,8 +508,9 @@ class _OverviewViewState extends State<OverviewView> {
         color: Theme.of(context).colorScheme.onSurface.withOpacity(0.3),
       );
 
-  Widget _buildSearchBar() => Padding(
-        padding: const EdgeInsets.fromLTRB(30, 10, 20, 10),
+  Widget _buildSearchBar() => Container(
+        padding: const EdgeInsets.fromLTRB(45, 0, 45, 0),
+        margin: const EdgeInsets.fromLTRB(0, 4, 0, 4),
         child: TextField(
           decoration: InputDecoration(
             prefixIcon: const Icon(Icons.search),
@@ -634,7 +635,7 @@ class _OverviewViewState extends State<OverviewView> {
                 floating: true,
                 snap: true,
                 centerTitle: true,
-                title: _searching
+                flexibleSpace: _searching
                     ? _buildSearchBar()
                     : CommonAppBarTitles(
                         title: _appBarTitle,
