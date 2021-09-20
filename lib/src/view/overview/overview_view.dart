@@ -5,6 +5,7 @@
 import 'package:audioplayers/audioplayers.dart';
 import 'package:clipboard/clipboard.dart';
 import 'package:duo_tracker/src/component/common_app_bar_titles.dart';
+import 'package:duo_tracker/src/component/common_nested_scroll_view.dart';
 import 'package:duo_tracker/src/component/dialog/network_error_dialog.dart';
 import 'package:duo_tracker/src/component/dialog/select_search_method_dialog.dart';
 import 'package:duo_tracker/src/component/dialog/switch_language_dialog.dart';
@@ -52,8 +53,9 @@ class _OverviewViewState extends State<OverviewView> {
   /// The learned word service
   final _learnedWordService = LearnedWordService.getInstance();
 
-  String _searchWord = '';
   bool _searching = false;
+  String _searchWord = '';
+  MatchPattern _matchPattern = MatchPattern.partial;
 
   @override
   void didChangeDependencies() {
@@ -136,6 +138,7 @@ class _OverviewViewState extends State<OverviewView> {
           learnedWord: learnedWord,
           searching: _searching,
           searchWord: _searchWord,
+          matchPattern: _matchPattern,
         ),
         child: Card(
           elevation: 2.0,
@@ -518,7 +521,6 @@ class _OverviewViewState extends State<OverviewView> {
               icon: const Icon(Icons.filter_list_alt),
               onPressed: () async {
                 await showSelectSearchMethodDialog(context: context);
-                await _searchLearnedWords();
               },
             ),
             hintText: 'Search Word',
@@ -533,9 +535,13 @@ class _OverviewViewState extends State<OverviewView> {
               ),
             ),
           ),
-          onChanged: (searchWord) {
+          onChanged: (searchWord) async {
+            final matchPatternCode =
+                await CommonSharedPreferencesKey.matchPattern.getInt();
+
             super.setState(() {
               _searchWord = searchWord;
+              _matchPattern = MatchPatternExt.toEnum(code: matchPatternCode);
             });
           },
         ),
@@ -581,118 +587,101 @@ class _OverviewViewState extends State<OverviewView> {
           size: 19,
         ),
         label: label,
-        labelBackgroundColor: Theme.of(context).colorScheme.background,
-        backgroundColor: Theme.of(context).colorScheme.background,
         onTap: onTap,
       );
 
   @override
   Widget build(BuildContext context) => Scaffold(
-        floatingActionButton: SpeedDial(
-          tooltip: 'Show Actions',
-          animatedIcon: AnimatedIcons.menu_close,
-          children: [
-            _buildSpeedDialChild(
-              icon: FontAwesomeIcons.sort,
-              label: 'Sort',
-              onTap: () async {},
-            ),
-            _buildSpeedDialChild(
-              icon: FontAwesomeIcons.sync,
-              label: 'Sync Words',
-              onTap: () async {
-                await _syncLearnedWords();
+      floatingActionButton: SpeedDial(
+        tooltip: 'Show Actions',
+        animatedIcon: AnimatedIcons.menu_close,
+        children: [
+          _buildSpeedDialChild(
+            icon: FontAwesomeIcons.sort,
+            label: 'Sort',
+            onTap: () async {},
+          ),
+          _buildSpeedDialChild(
+            icon: FontAwesomeIcons.sync,
+            label: 'Sync Words',
+            onTap: () async {
+              await _syncLearnedWords();
+              super.setState(() {});
+            },
+          ),
+          _buildSpeedDialChild(
+            icon: FontAwesomeIcons.language,
+            label: 'Switch Language',
+            onTap: () async {
+              if (!await Network.isConnected()) {
+                showNetworkErrorDialog(context: context);
+                return;
+              }
+
+              await showSwitchLanguageDialog(
+                context: context,
+                onSubmitted: (fromLanguage, learningLanguage) async {
+                  await _searchLearnedWords();
+
+                  super.setState(() {
+                    _buildAppBarSubTitle();
+                  });
+                },
+              );
+            },
+          ),
+        ],
+      ),
+      body: CommonNestesScrollView(
+        title: _searching
+            ? _buildSearchBar()
+            : CommonAppBarTitles(
+                title: _appBarTitle,
+                subTitle: _appBarSubTitle,
+              ),
+        actions: _buildActions(),
+        body: FutureBuilder(
+          future: _fetchDataSource(context: context),
+          builder: (context, AsyncSnapshot snapshot) {
+            if (!snapshot.hasData) {
+              return Center(
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  crossAxisAlignment: CrossAxisAlignment.center,
+                  children: [
+                    CircularProgressIndicator(
+                      color: Theme.of(context).colorScheme.secondary,
+                    ),
+                    const SizedBox(
+                      height: 10,
+                    ),
+                    const Text(
+                      'Loading...',
+                    ),
+                  ],
+                ),
+              );
+            }
+
+            final List<LearnedWord> learnedWords = snapshot.data;
+
+            return RefreshIndicator(
+              onRefresh: () async {
                 super.setState(() {});
               },
-            ),
-            _buildSpeedDialChild(
-              icon: FontAwesomeIcons.language,
-              label: 'Switch Language',
-              onTap: () async {
-                if (!await Network.isConnected()) {
-                  showNetworkErrorDialog(context: context);
-                  return;
-                }
-
-                showSwitchLanguageDialog(
-                  context: context,
-                  onSubmitted: (fromLanguage, learningLanguage) async {
-                    await _searchLearnedWords();
-
-                    super.setState(() {
-                      _buildAppBarSubTitle();
-                    });
-                  },
-                );
-              },
-            ),
-          ],
-        ),
-        body: SafeArea(
-          child: NestedScrollView(
-            headerSliverBuilder: (context, innerBoxIsScrolled) => [
-              SliverAppBar(
-                floating: true,
-                snap: true,
-                centerTitle: true,
-                flexibleSpace: _searching
-                    ? _buildSearchBar()
-                    : CommonAppBarTitles(
-                        title: _appBarTitle,
-                        subTitle: _appBarSubTitle,
-                      ),
-                shape: const RoundedRectangleBorder(
-                  borderRadius: BorderRadius.vertical(
-                    bottom: Radius.circular(30),
-                  ),
+              child: ReorderableListView.builder(
+                itemCount: learnedWords.length,
+                onReorder: (oldIndex, newIndex) async => await _sortCards(
+                  learnedWords: learnedWords,
+                  oldIndex: oldIndex,
+                  newIndex: newIndex,
                 ),
-                actions: _buildActions(),
+                itemBuilder: (context, index) => _buildLearnedWordCard(
+                  learnedWord: learnedWords[index],
+                ),
               ),
-            ],
-            body: FutureBuilder(
-              future: _fetchDataSource(context: context),
-              builder: (context, AsyncSnapshot snapshot) {
-                if (!snapshot.hasData) {
-                  return Center(
-                    child: Column(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      crossAxisAlignment: CrossAxisAlignment.center,
-                      children: [
-                        CircularProgressIndicator(
-                          color: Theme.of(context).colorScheme.secondary,
-                        ),
-                        const SizedBox(
-                          height: 10,
-                        ),
-                        const Text(
-                          'Loading...',
-                        ),
-                      ],
-                    ),
-                  );
-                }
-
-                final List<LearnedWord> learnedWords = snapshot.data;
-
-                return RefreshIndicator(
-                  onRefresh: () async {
-                    super.setState(() {});
-                  },
-                  child: ReorderableListView.builder(
-                    itemCount: learnedWords.length,
-                    onReorder: (oldIndex, newIndex) async => await _sortCards(
-                      learnedWords: learnedWords,
-                      oldIndex: oldIndex,
-                      newIndex: newIndex,
-                    ),
-                    itemBuilder: (context, index) => _buildLearnedWordCard(
-                      learnedWord: learnedWords[index],
-                    ),
-                  ),
-                );
-              },
-            ),
-          ),
+            );
+          },
         ),
-      );
+      ));
 }

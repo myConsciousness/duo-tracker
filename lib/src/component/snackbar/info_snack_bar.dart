@@ -23,6 +23,7 @@ class InfoSnackbar {
           children: <Widget>[
             const Icon(
               Icons.info,
+              color: Colors.blue,
             ),
             const SizedBox(
               width: 10,

@@ -5,11 +5,7 @@
 import 'package:awesome_dialog/awesome_dialog.dart';
 import 'package:duo_tracker/src/component/common_radio_list_tile.dart';
 import 'package:duo_tracker/src/preference/common_shared_preferences_key.dart';
-import 'package:enum_to_string/enum_to_string.dart';
 import 'package:flutter/material.dart';
-
-AwesomeDialog? _dialog;
-MatchPattern _matchPattern = MatchPattern.partial;
 
 enum MatchPattern {
   /// Partial match
@@ -25,9 +21,41 @@ enum MatchPattern {
   suffix,
 }
 
+extension MatchPatternExt on MatchPattern {
+  int get code {
+    switch (this) {
+      case MatchPattern.partial:
+        return 0;
+      case MatchPattern.exact:
+        return 1;
+      case MatchPattern.prefix:
+        return 2;
+      case MatchPattern.suffix:
+        return 3;
+    }
+  }
+
+  static MatchPattern toEnum({required final int code}) {
+    for (final MatchPattern matchPattern in MatchPattern.values) {
+      if (code == matchPattern.code) {
+        return matchPattern;
+      }
+    }
+
+    return MatchPattern.prefix;
+  }
+}
+
+late AwesomeDialog _dialog;
+late MatchPattern _matchPattern;
+
 Future<T?> showSelectSearchMethodDialog<T>({
   required BuildContext context,
 }) async {
+  final matchPatternCode =
+      await CommonSharedPreferencesKey.matchPattern.getInt();
+  _matchPattern = MatchPatternExt.toEnum(code: matchPatternCode);
+
   _dialog = AwesomeDialog(
     context: context,
     animType: AnimType.LEFTSLIDE,
@@ -54,7 +82,7 @@ Future<T?> showSelectSearchMethodDialog<T>({
                 CommonRadioListTile(
                   label: 'Match Pattern',
                   dataSource: const {
-                    'Partial': MatchPattern.partial,
+                    'Partial (Default)': MatchPattern.partial,
                     'Exact': MatchPattern.exact,
                     'Prefix': MatchPattern.prefix,
                     'Suffix': MatchPattern.suffix,
@@ -75,8 +103,8 @@ Future<T?> showSelectSearchMethodDialog<T>({
                   color: Theme.of(context).colorScheme.secondaryVariant,
                   pressEvent: () async {
                     await CommonSharedPreferencesKey.matchPattern
-                        .setString(EnumToString.convertToString(_matchPattern));
-                    _dialog!.dismiss();
+                        .setInt(_matchPattern.code);
+                    _dialog.dismiss();
                   },
                 ),
                 const SizedBox(
@@ -90,5 +118,5 @@ Future<T?> showSelectSearchMethodDialog<T>({
     ),
   );
 
-  await _dialog!.show();
+  await _dialog.show();
 }

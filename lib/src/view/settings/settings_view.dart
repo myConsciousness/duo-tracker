@@ -107,7 +107,7 @@ class _SettingsViewState extends State<SettingsView> {
         child: Column(
           children: [
             const SizedBox(
-              height: 20,
+              height: 40,
             ),
             _createSettingTitle(
               title: 'Theme',

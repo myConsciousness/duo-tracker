@@ -34,8 +34,6 @@ class _DuoTrackerState extends State<DuoTracker> {
   void initState() {
     super.initState();
 
-    SystemChrome.setEnabledSystemUIMode(SystemUiMode.immersiveSticky);
-
     // Fix app orientation
     SystemChrome.setPreferredOrientations([
       DeviceOrientation.portraitUp,
