@@ -11,6 +11,7 @@ import 'package:duo_tracker/src/component/dialog/network_error_dialog.dart';
 import 'package:duo_tracker/src/component/dialog/select_search_method_dialog.dart';
 import 'package:duo_tracker/src/component/dialog/switch_language_dialog.dart';
 import 'package:duo_tracker/src/component/dialog/select_sort_method_dialog.dart';
+import 'package:duo_tracker/src/view/overview/word_filter_list.dart';
 import 'package:duo_tracker/src/component/snackbar/info_snack_bar.dart';
 import 'package:duo_tracker/src/http/network.dart';
 import 'package:duo_tracker/src/preference/common_shared_preferences_key.dart';
@@ -22,7 +23,6 @@ import 'package:duo_tracker/src/utils/language_converter.dart';
 import 'package:duo_tracker/src/view/lesson_tips_view.dart';
 import 'package:duo_tracker/src/view/overview/overview_tab_view.dart';
 import 'package:duo_tracker/src/view/overview/word_filter.dart';
-import 'package:filter_list/filter_list.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/painting.dart';
@@ -597,6 +597,9 @@ class _OverviewViewState extends State<OverviewView> {
         onTap: onTap,
       );
 
+  final test = ['test', 'test2'];
+  final selected = <String>[];
+
   @override
   Widget build(BuildContext context) => Scaffold(
         floatingActionButton: SpeedDial(
@@ -616,19 +619,26 @@ class _OverviewViewState extends State<OverviewView> {
               icon: FontAwesomeIcons.filter,
               label: 'Filter',
               onTap: () async {
-                FilterListDialog.display<String>(
-                  context,
-                  listData: ['test', 'test2'],
-                  choiceChipLabel: (item) {
-                    return item;
-                  },
-                  validateSelectedItem: (options, selectedItem) {
-                    return true;
-                  },
-                  onItemSearch: (options, selectedItem) {
-                    return [];
-                  },
-                  onApplyButtonClick: (options) {},
+                showDialog(
+                  context: context,
+                  builder: (BuildContext context) => Dialog(
+                    elevation: 0,
+                    backgroundColor: Colors.transparent,
+                    child: Container(
+                      color: Colors.transparent,
+                      child: WordFilterList<String>(
+                        listData: test,
+                        selectedListData: selected,
+                        choiceChipLabel: (item) {
+                          return item;
+                        },
+                        validateSelectedItem: (list, val) {
+                          return list!.contains(val);
+                        },
+                        onApplyButtonClick: (options) {},
+                      ),
+                    ),
+                  ),
                 );
               },
             ),
