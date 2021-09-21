@@ -151,7 +151,7 @@ class _OverviewViewState extends State<OverviewView> {
         child: Card(
           elevation: 2.0,
           child: Padding(
-            padding: const EdgeInsets.all(10),
+            padding: const EdgeInsets.fromLTRB(20, 10, 20, 10),
             child: Column(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
@@ -624,8 +624,6 @@ class _OverviewViewState extends State<OverviewView> {
                 showDialog(
                   context: context,
                   builder: (BuildContext context) => Dialog(
-                    elevation: 0,
-                    backgroundColor: Colors.transparent,
                     child: Container(
                       color: Colors.transparent,
                       child: WordFilterList<String>(
