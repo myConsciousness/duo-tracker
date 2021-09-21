@@ -60,6 +60,9 @@ class _OverviewViewState extends State<OverviewView> {
   String _searchWord = '';
   bool _searching = false;
 
+  FilterItem _filterItem = FilterItem.none;
+  List<String> _selectedFilterItems = [];
+
   @override
   void didChangeDependencies() {
     super.didChangeDependencies();
@@ -146,6 +149,8 @@ class _OverviewViewState extends State<OverviewView> {
           searching: _searching,
           searchWord: _searchWord,
           matchPattern: _matchPattern,
+          filterItem: _filterItem,
+          selectedFilterItems: _selectedFilterItems,
         ),
         child: Card(
           elevation: 2.0,
@@ -617,7 +622,15 @@ class _OverviewViewState extends State<OverviewView> {
               icon: FontAwesomeIcons.filter,
               label: 'Filter',
               onTap: () async {
-                await showSelectFilterMethodDialog(context: context);
+                await showSelectFilterMethodDialog(
+                  context: context,
+                  onPressedOk: (filterItem, selectedItems) {
+                    super.setState(() {
+                      _filterItem = filterItem;
+                      _selectedFilterItems = List.from(selectedItems);
+                    });
+                  },
+                );
               },
             ),
             _buildSpeedDialChild(

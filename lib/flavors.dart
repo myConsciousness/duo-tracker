@@ -13,11 +13,14 @@ class F {
   static String get title {
     switch (appFlavor) {
       case Flavor.free:
-        return 'Duovoc';
+        return 'Duo Tracker';
       case Flavor.paid:
-        return 'Duovoc';
+        return 'Duo Tracker';
       default:
         return 'title';
     }
   }
+
+  static bool get isFreeBuild => appFlavor == Flavor.free;
+  static bool get isPaidBuild => appFlavor == Flavor.paid;
 }

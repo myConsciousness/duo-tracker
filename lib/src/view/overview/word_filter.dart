@@ -2,6 +2,7 @@
 // Use of this source code is governed by a
 // BSD-style license that can be found in the LICENSE file.
 
+import 'package:duo_tracker/src/component/dialog/select_filter_method_dialog.dart';
 import 'package:duo_tracker/src/component/dialog/select_search_method_dialog.dart';
 import 'package:duo_tracker/src/repository/model/learned_word_model.dart';
 import 'package:duo_tracker/src/view/overview/overview_tab_view.dart';
@@ -14,6 +15,8 @@ class WordFilter {
     required bool searching,
     required String searchWord,
     required MatchPattern matchPattern,
+    required FilterItem filterItem,
+    required List<String> selectedFilterItems,
   }) =>
       _checkOverviewTabType(
         overviewTabType: overviewTabType,
@@ -24,6 +27,11 @@ class WordFilter {
         searching: searching,
         searchWord: searchWord,
         matchPattern: matchPattern,
+      ) &&
+      _checkSelectedFilter(
+        learnedWord: learnedWord,
+        filterItem: filterItem,
+        selectedFilterItems: selectedFilterItems,
       );
 
   static bool _checkOverviewTabType({
@@ -68,6 +76,28 @@ class WordFilter {
     }
 
     return true;
+  }
+
+  static bool _checkSelectedFilter({
+    required LearnedWord learnedWord,
+    required FilterItem filterItem,
+    required List<String> selectedFilterItems,
+  }) {
+    switch (filterItem) {
+      case FilterItem.none:
+        // No filter was applied
+        return true;
+      case FilterItem.lesson:
+        return selectedFilterItems.contains(learnedWord.skillUrlTitle);
+      case FilterItem.strength:
+        return selectedFilterItems.contains('${learnedWord.strengthBars}');
+      case FilterItem.pos:
+        return selectedFilterItems.contains(learnedWord.pos);
+      case FilterItem.infinitive:
+        return selectedFilterItems.contains(learnedWord.infinitive);
+      case FilterItem.gender:
+        return selectedFilterItems.contains(learnedWord.gender);
+    }
   }
 
   static bool _checkPartialPattern({

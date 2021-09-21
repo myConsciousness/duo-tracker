@@ -4,6 +4,7 @@
 
 import 'package:awesome_dialog/awesome_dialog.dart';
 import 'package:duo_tracker/src/component/common_two_grids_radio_list_tile.dart';
+import 'package:duo_tracker/src/component/dialog/warning_dialog.dart';
 import 'package:flutter/material.dart';
 
 late AwesomeDialog _dialog;
@@ -11,7 +12,7 @@ late AwesomeDialog _dialog;
 FilterItem _filterItem = FilterItem.lesson;
 
 var test = [
-  'test',
+  'Hiragana-3',
   'test2',
   'test3',
   'test4',
@@ -20,20 +21,14 @@ var test = [
   'test7',
   'test8',
   'test9',
-  'test',
-  'test2',
-  'test3',
-  'test4',
-  'test5',
-  'test6',
-  'test7',
-  'test8',
-  'test9'
 ];
-var selected = <String>[];
+
+List<String> _selectedItems = <String>[];
 
 Future<T?> showSelectFilterMethodDialog<T>({
   required BuildContext context,
+  required Function(FilterItem filterItem, List<String> selectedItems)
+      onPressedOk,
 }) async {
   _dialog = AwesomeDialog(
     context: context,
@@ -66,6 +61,7 @@ Future<T?> showSelectFilterMethodDialog<T>({
                     'Infinitive': FilterItem.infinitive,
                     'Gender': FilterItem.gender,
                     'Strength': FilterItem.strength,
+                    'None': FilterItem.none,
                   },
                   groupValue: _filterItem,
                   onChanged: (value) {
@@ -105,7 +101,7 @@ Future<T?> showSelectFilterMethodDialog<T>({
                 ),
                 Center(
                   child: Text(
-                    'selected ${selected.length} items',
+                    'selected ${_selectedItems.length} items',
                     style: Theme.of(context).textTheme.caption,
                   ),
                 ),
@@ -119,7 +115,7 @@ Future<T?> showSelectFilterMethodDialog<T>({
                         TextButton(
                           onPressed: () {
                             setState(() {
-                              selected = List.from(test);
+                              _selectedItems = List.from(test);
                             });
                           },
                           child: const Text('All'),
@@ -127,7 +123,7 @@ Future<T?> showSelectFilterMethodDialog<T>({
                         TextButton(
                           onPressed: () {
                             setState(() {
-                              selected.clear();
+                              _selectedItems.clear();
                             });
                           },
                           child: const Text('Reset'),
@@ -141,6 +137,18 @@ Future<T?> showSelectFilterMethodDialog<T>({
                         text: 'Apply',
                         color: Theme.of(context).colorScheme.secondaryVariant,
                         pressEvent: () {
+                          if (_filterItem != FilterItem.none &&
+                              _selectedItems.isEmpty) {
+                            showWarningDialog(
+                              context: context,
+                              title: 'Input Error',
+                              content: 'Select at least one filter item.',
+                            );
+
+                            return;
+                          }
+
+                          onPressedOk.call(_filterItem, _selectedItems);
                           _dialog.dismiss();
                         },
                       ),
@@ -159,6 +167,9 @@ Future<T?> showSelectFilterMethodDialog<T>({
 }
 
 enum FilterItem {
+  // The none
+  none,
+
   /// The lesson
   lesson,
 
@@ -177,24 +188,24 @@ enum FilterItem {
 
 List<Widget> _buildChoiceList({
   required BuildContext context,
-  required void Function(void Function()) setState,
+  required Function(void Function()) setState,
 }) {
   final List<Widget> choices = [];
-  for (var item in test) {
-    var selectedText = selected.contains(item);
+  for (final String item in test) {
+    bool alreadySelected = _selectedItems.contains(item);
     choices.add(
       _ChoiceChipWidget(
         item: item,
         onSelected: (value) {
           setState(() {
-            if (selectedText) {
-              selected.remove(item);
+            if (alreadySelected) {
+              _selectedItems.remove(item);
             } else {
-              selected.add(item);
+              _selectedItems.add(item);
             }
           });
         },
-        selected: selectedText,
+        selected: alreadySelected,
         text: item,
       ),
     );
