@@ -50,12 +50,12 @@ class WordFilterList<T> extends StatefulWidget {
   /// Pass list containing all data which neeeds to filter
   final List<T>? listData;
 
-  /// The `onApplyButtonClick` is a callback which return list of all selected items on apply button click.  if no item is selected then it will return empty list.
-  final OnApplyButtonClick<T>? onApplyButtonClick;
-
   /// The [selectedListData] is used to preselect the choice chips.
   /// It takes list of object and this list should be subset og [listData]
   final List<T>? selectedListData;
+
+  /// The `onApplyButtonClick` is a callback which return list of all selected items on apply button click.  if no item is selected then it will return empty list.
+  final OnApplyButtonClick<T>? onApplyButtonClick;
 
   /// The `validateRemoveItem` identifies if a item should be remove or not and returns the list filtered.
   final ValidateRemoveItem<T>? validateRemoveItem;

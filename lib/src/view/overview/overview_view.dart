@@ -8,11 +8,11 @@ import 'package:duo_tracker/src/component/common_app_bar_titles.dart';
 import 'package:duo_tracker/src/component/common_nested_scroll_view.dart';
 import 'package:duo_tracker/src/component/dialog/loading_dialog.dart';
 import 'package:duo_tracker/src/component/dialog/network_error_dialog.dart';
+import 'package:duo_tracker/src/component/dialog/select_filter_method_dialog.dart';
 import 'package:duo_tracker/src/component/dialog/select_search_method_dialog.dart';
 import 'package:duo_tracker/src/component/dialog/switch_language_dialog.dart';
 import 'package:duo_tracker/src/component/dialog/select_sort_method_dialog.dart';
 import 'package:duo_tracker/src/repository/preference/common_shared_preferences_key.dart';
-import 'package:duo_tracker/src/view/overview/word_filter_list.dart';
 import 'package:duo_tracker/src/component/snackbar/info_snack_bar.dart';
 import 'package:duo_tracker/src/http/network.dart';
 import 'package:duo_tracker/src/repository/model/learned_word_model.dart';
@@ -49,7 +49,6 @@ class _OverviewViewState extends State<OverviewView> {
   static const unavailableText = 'N/A';
 
   bool _alreadyAuthDialogOpened = false;
-
   String _appBarSubTitle = '';
   final _audioPlayer = AudioPlayer();
   final _datetimeFormat = DateFormat('yyyy/MM/dd HH:mm');
@@ -599,9 +598,6 @@ class _OverviewViewState extends State<OverviewView> {
         onTap: onTap,
       );
 
-  final test = ['test', 'test2'];
-  final selected = <String>[];
-
   @override
   Widget build(BuildContext context) => Scaffold(
         floatingActionButton: SpeedDial(
@@ -621,25 +617,7 @@ class _OverviewViewState extends State<OverviewView> {
               icon: FontAwesomeIcons.filter,
               label: 'Filter',
               onTap: () async {
-                showDialog(
-                  context: context,
-                  builder: (BuildContext context) => Dialog(
-                    child: Container(
-                      color: Colors.transparent,
-                      child: WordFilterList<String>(
-                        listData: test,
-                        selectedListData: selected,
-                        choiceChipLabel: (item) {
-                          return item;
-                        },
-                        validateSelectedItem: (list, val) {
-                          return list!.contains(val);
-                        },
-                        onApplyButtonClick: (options) {},
-                      ),
-                    ),
-                  ),
-                );
+                await showSelectFilterMethodDialog(context: context);
               },
             ),
             _buildSpeedDialChild(
