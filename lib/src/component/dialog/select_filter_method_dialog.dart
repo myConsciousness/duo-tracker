@@ -5,25 +5,17 @@
 import 'package:awesome_dialog/awesome_dialog.dart';
 import 'package:duo_tracker/src/component/common_two_grids_radio_list_tile.dart';
 import 'package:duo_tracker/src/component/dialog/warning_dialog.dart';
+import 'package:duo_tracker/src/repository/service/learned_word_service.dart';
 import 'package:flutter/material.dart';
 
 late AwesomeDialog _dialog;
 
 FilterItem _filterItem = FilterItem.lesson;
-
-var test = [
-  'Hiragana-3',
-  'test2',
-  'test3',
-  'test4',
-  'test5',
-  'test6',
-  'test7',
-  'test8',
-  'test9',
-];
-
+List<String> _dataSource = [];
 List<String> _selectedItems = <String>[];
+
+/// The learned word service
+final _learnedWordService = LearnedWordService.getInstance();
 
 Future<T?> showSelectFilterMethodDialog<T>({
   required BuildContext context,
@@ -44,7 +36,7 @@ Future<T?> showSelectFilterMethodDialog<T>({
               children: <Widget>[
                 const Center(
                   child: Text(
-                    'Search Options',
+                    'Filter Options',
                     style: TextStyle(
                       fontSize: 20,
                     ),
@@ -115,7 +107,7 @@ Future<T?> showSelectFilterMethodDialog<T>({
                         TextButton(
                           onPressed: () {
                             setState(() {
-                              _selectedItems = List.from(test);
+                              _selectedItems = List.from(_dataSource);
                             });
                           },
                           child: const Text('All'),
@@ -191,7 +183,7 @@ List<Widget> _buildChoiceList({
   required Function(void Function()) setState,
 }) {
   final List<Widget> choices = [];
-  for (final String item in test) {
+  for (final String item in _dataSource) {
     bool alreadySelected = _selectedItems.contains(item);
     choices.add(
       _ChoiceChipWidget(
