@@ -211,13 +211,6 @@ packages:
       url: "https://pub.dartlang.org"
     source: hosted
     version: "6.1.2"
-  filter_list:
-    dependency: "direct main"
-    description:
-      name: filter_list
-      url: "https://pub.dartlang.org"
-    source: hosted
-    version: "1.0.0"
   flare_flutter:
     dependency: transitive
     description:
