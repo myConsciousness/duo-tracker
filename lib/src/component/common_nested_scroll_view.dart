@@ -8,7 +8,7 @@ class CommonNestesScrollView extends StatelessWidget {
   const CommonNestesScrollView({
     Key? key,
     required this.title,
-    required this.actions,
+    this.actions = const [],
     required this.body,
   }) : super(key: key);
 

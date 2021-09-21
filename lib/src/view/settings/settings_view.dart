@@ -3,6 +3,7 @@
 // BSD-style license that can be found in the LICENSE file.
 
 import 'package:duo_tracker/src/component/snackbar/info_snack_bar.dart';
+import 'package:duo_tracker/src/const/request_mail_meta.dart';
 import 'package:duo_tracker/src/provider/theme_mode_provider.dart';
 import 'package:duo_tracker/src/repository/preference/common_shared_preferences_key.dart';
 import 'package:duo_tracker/src/security/biometric_authenitication.dart';
@@ -10,6 +11,7 @@ import 'package:duo_tracker/src/security/encryption.dart';
 import 'package:duo_tracker/src/view/passcode_view.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_email_sender/flutter_email_sender.dart';
 import 'package:launch_review/launch_review.dart';
 import 'package:package_info/package_info.dart';
 import 'package:provider/provider.dart';
@@ -257,9 +259,25 @@ The device does not support biometric feature.''');
               ],
             ),
             const Divider(),
-            const SizedBox(height: 5),
+            const SizedBox(height: 10),
             _createSettingTitle(
-              title: 'Misc',
+              title: 'About App',
+            ),
+            _createListTile(
+              icon: const Icon(Icons.mail),
+              title: 'Send Your Opinion',
+              subtitle:
+                  'You can directly request new features or improvements to existing features to the developers.',
+              onTap: () async {
+                await FlutterEmailSender.send(
+                  Email(
+                    recipients: [RequestMailMeta.recipientAddress],
+                    subject: RequestMailMeta.subject,
+                    body: RequestMailMeta.body,
+                    isHTML: false,
+                  ),
+                );
+              },
             ),
             _createListTile(
               icon: const Icon(Icons.share),
