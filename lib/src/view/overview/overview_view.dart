@@ -14,6 +14,7 @@ import 'package:duo_tracker/src/component/dialog/select_filter_method_dialog.dar
 import 'package:duo_tracker/src/component/dialog/select_search_method_dialog.dart';
 import 'package:duo_tracker/src/component/dialog/switch_language_dialog.dart';
 import 'package:duo_tracker/src/component/dialog/select_sort_method_dialog.dart';
+import 'package:duo_tracker/src/component/loading.dart';
 import 'package:duo_tracker/src/http/duolingo_page_launcher.dart';
 import 'package:duo_tracker/src/repository/preference/common_shared_preferences_key.dart';
 import 'package:duo_tracker/src/component/snackbar/info_snack_bar.dart';
@@ -684,23 +685,7 @@ class _OverviewViewState extends State<OverviewView> {
             future: _fetchDataSource(context: context),
             builder: (context, AsyncSnapshot snapshot) {
               if (!snapshot.hasData) {
-                return Center(
-                  child: Column(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    crossAxisAlignment: CrossAxisAlignment.center,
-                    children: [
-                      CircularProgressIndicator(
-                        color: Theme.of(context).colorScheme.secondary,
-                      ),
-                      const SizedBox(
-                        height: 10,
-                      ),
-                      const Text(
-                        'Loading...',
-                      ),
-                    ],
-                  ),
-                );
+                return const Loading();
               }
 
               final List<LearnedWord> learnedWords = snapshot.data;

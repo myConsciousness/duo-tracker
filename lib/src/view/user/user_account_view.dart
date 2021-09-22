@@ -2,6 +2,7 @@
 // Use of this source code is governed by a
 // BSD-style license that can be found in the LICENSE file.
 
+import 'package:duo_tracker/src/component/loading.dart';
 import 'package:duo_tracker/src/repository/model/course_model.dart';
 import 'package:duo_tracker/src/repository/model/user_model.dart';
 import 'package:duo_tracker/src/repository/preference/common_shared_preferences_key.dart';
@@ -32,23 +33,7 @@ class _UserAccountViewState extends State<UserAccountView> {
             future: _findUser(),
             builder: (BuildContext context, AsyncSnapshot snapshot) {
               if (!snapshot.hasData) {
-                return Center(
-                  child: Column(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    crossAxisAlignment: CrossAxisAlignment.center,
-                    children: [
-                      CircularProgressIndicator(
-                        color: Theme.of(context).colorScheme.secondary,
-                      ),
-                      const SizedBox(
-                        height: 10,
-                      ),
-                      const Text(
-                        'Loading...',
-                      ),
-                    ],
-                  ),
-                );
+                return const Loading();
               }
 
               final User user = snapshot.data;
@@ -133,24 +118,7 @@ class _UserAccountViewState extends State<UserAccountView> {
                       future: _courseService.findAll(),
                       builder: (BuildContext context, AsyncSnapshot snapshot) {
                         if (!snapshot.hasData) {
-                          return Center(
-                            child: Column(
-                              mainAxisAlignment: MainAxisAlignment.center,
-                              crossAxisAlignment: CrossAxisAlignment.center,
-                              children: [
-                                CircularProgressIndicator(
-                                  color:
-                                      Theme.of(context).colorScheme.secondary,
-                                ),
-                                const SizedBox(
-                                  height: 10,
-                                ),
-                                const Text(
-                                  'Loading...',
-                                ),
-                              ],
-                            ),
-                          );
+                          return const Loading();
                         }
 
                         final List<Course> courses = snapshot.data;
