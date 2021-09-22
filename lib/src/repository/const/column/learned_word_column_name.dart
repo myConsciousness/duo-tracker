@@ -10,6 +10,8 @@ class LearnedWordColumnName {
   static const languageString = 'LANGUAGE_STRING';
   static const learningLanguage = 'LEARNING_LANGUAGE';
   static const fromLanguage = 'FROM_LANGUAGE';
+  static const formalLearningLanguage = 'FORMAL_LEARNING_LANGUAGE';
+  static const formalFromLanguage = 'FORMAL_FROM_LANGUAGE';
   static const lexemeId = 'LEXEME_ID';
   static const relatedLexemes = 'RELATED_REXEMES';
   static const strengthBars = 'STRENGTH_BARS';

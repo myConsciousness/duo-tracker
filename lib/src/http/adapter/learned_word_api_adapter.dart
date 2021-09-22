@@ -12,6 +12,7 @@ import 'package:duo_tracker/src/http/http_status.dart';
 import 'package:duo_tracker/src/repository/model/learned_word_model.dart';
 import 'package:duo_tracker/src/repository/preference/common_shared_preferences_key.dart';
 import 'package:duo_tracker/src/repository/service/learned_word_service.dart';
+import 'package:duo_tracker/src/utils/language_converter.dart';
 import 'package:flutter/material.dart';
 
 class LearnedWordApiAdapter extends ApiAdapter {
@@ -47,6 +48,12 @@ class LearnedWordApiAdapter extends ApiAdapter {
             languageString: languageString,
             learningLanguage: learningLanguage,
             fromLanguage: fromLanguage,
+            formalLearningLanguage: LanguageConverter.toFormalLanguageCode(
+              languageCode: learningLanguage,
+            ),
+            formalFromLanguage: LanguageConverter.toFormalLanguageCode(
+              languageCode: fromLanguage,
+            ),
             lexemeId: overview['lexeme_id'] ?? '',
             relatedLexemes: overview['related_lexemes'],
             strengthBars: overview['strength_bars'] ?? -1,

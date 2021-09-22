@@ -176,4 +176,21 @@ class LanguageConverter {
         return 'N/A ($languageCode)';
     }
   }
+
+  static String toFormalLanguageCode({
+    required String languageCode,
+  }) {
+    switch (languageCode) {
+      case 'zs':
+        return 'zh';
+      case 'dn':
+        return 'nl-NL';
+      case 'nb':
+        return 'no-BO';
+      case 'kl':
+        return 'tlh';
+      default:
+        return languageCode;
+    }
+  }
 }
