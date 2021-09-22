@@ -4,47 +4,9 @@
 
 import 'package:awesome_dialog/awesome_dialog.dart';
 import 'package:duo_tracker/src/component/common_two_grids_radio_list_tile.dart';
+import 'package:duo_tracker/src/component/const/match_pattern.dart';
 import 'package:duo_tracker/src/repository/preference/common_shared_preferences_key.dart';
 import 'package:flutter/material.dart';
-
-enum MatchPattern {
-  /// Partial match
-  partial,
-
-  /// Exact Match
-  exact,
-
-  /// Prefix match
-  prefix,
-
-  /// Suffix match
-  suffix,
-}
-
-extension MatchPatternExt on MatchPattern {
-  int get code {
-    switch (this) {
-      case MatchPattern.partial:
-        return 0;
-      case MatchPattern.exact:
-        return 1;
-      case MatchPattern.prefix:
-        return 2;
-      case MatchPattern.suffix:
-        return 3;
-    }
-  }
-
-  static MatchPattern toEnum({required final int code}) {
-    for (final MatchPattern matchPattern in MatchPattern.values) {
-      if (code == matchPattern.code) {
-        return matchPattern;
-      }
-    }
-
-    return MatchPattern.partial;
-  }
-}
 
 late AwesomeDialog _dialog;
 late MatchPattern _matchPattern;

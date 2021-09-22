@@ -6,6 +6,8 @@ import 'package:audioplayers/audioplayers.dart';
 import 'package:clipboard/clipboard.dart';
 import 'package:duo_tracker/src/component/common_app_bar_titles.dart';
 import 'package:duo_tracker/src/component/common_nested_scroll_view.dart';
+import 'package:duo_tracker/src/component/const/filter_pattern.dart';
+import 'package:duo_tracker/src/component/const/match_pattern.dart';
 import 'package:duo_tracker/src/component/dialog/loading_dialog.dart';
 import 'package:duo_tracker/src/component/dialog/network_error_dialog.dart';
 import 'package:duo_tracker/src/component/dialog/select_filter_method_dialog.dart';
@@ -52,6 +54,7 @@ class _OverviewViewState extends State<OverviewView> {
   String _appBarSubTitle = '';
   final _audioPlayer = AudioPlayer();
   final _datetimeFormat = DateFormat('yyyy/MM/dd HH:mm');
+  FilterPattern _filterPattern = FilterPattern.none;
 
   /// The learned word service
   final _learnedWordService = LearnedWordService.getInstance();
@@ -59,8 +62,6 @@ class _OverviewViewState extends State<OverviewView> {
   MatchPattern _matchPattern = MatchPattern.partial;
   String _searchWord = '';
   bool _searching = false;
-
-  FilterPattern _filterPattern = FilterPattern.none;
   List<String> _selectedFilterItems = [];
 
   @override

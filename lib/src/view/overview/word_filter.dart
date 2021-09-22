@@ -2,8 +2,8 @@
 // Use of this source code is governed by a
 // BSD-style license that can be found in the LICENSE file.
 
-import 'package:duo_tracker/src/component/dialog/select_filter_method_dialog.dart';
-import 'package:duo_tracker/src/component/dialog/select_search_method_dialog.dart';
+import 'package:duo_tracker/src/component/const/filter_pattern.dart';
+import 'package:duo_tracker/src/component/const/match_pattern.dart';
 import 'package:duo_tracker/src/repository/model/learned_word_model.dart';
 import 'package:duo_tracker/src/view/overview/overview_tab_view.dart';
 
