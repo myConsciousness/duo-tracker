@@ -2,6 +2,7 @@
 // Use of this source code is governed by a
 // BSD-style license that can be found in the LICENSE file.
 
+import 'package:duo_tracker/src/component/dialog/select_filter_method_dialog.dart';
 import 'package:duo_tracker/src/repository/model/learned_word_model.dart';
 import 'package:duo_tracker/src/repository/repository.dart';
 
@@ -16,6 +17,14 @@ abstract class LearnedWordRepository extends Repository<LearnedWord> {
     String wordId,
     String userId,
   );
+
+  Future<List<String>>
+      findDistinctFilterItemByUserIdAndLearningLanguageAndFromLanguage({
+    required FilterItem filterItem,
+    required String userId,
+    required String learningLanguage,
+    required String fromLanguage,
+  });
 
   Future<void> deleteByWordIdAndUserId(
     String wordId,

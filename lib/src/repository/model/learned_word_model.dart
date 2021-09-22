@@ -3,6 +3,7 @@
 // BSD-style license that can be found in the LICENSE file.
 
 import 'package:duo_tracker/src/repository/boolean_text.dart';
+import 'package:duo_tracker/src/repository/const/column/learned_word_column_name.dart';
 import 'package:duo_tracker/src/repository/model/word_hint_model.dart';
 
 class LearnedWord {
@@ -103,98 +104,71 @@ class LearnedWord {
 
   /// Returns the new instance of [LearnedWord] based on the [map] passed as an argument.
   factory LearnedWord.fromMap(Map<String, dynamic> map) => LearnedWord.from(
-        id: map[_ColumnName.id],
-        wordId: map[_ColumnName.wordId],
-        userId: map[_ColumnName.userId],
-        languageString: map[_ColumnName.languageString],
-        learningLanguage: map[_ColumnName.learningLanguage],
-        fromLanguage: map[_ColumnName.fromLanguage],
-        lexemeId: map[_ColumnName.lexemeId],
-        relatedLexemes: (map[_ColumnName.relatedLexemes] as String).split(','),
-        strengthBars: map[_ColumnName.strengthBars],
-        infinitive: map[_ColumnName.infinitive],
-        wordString: map[_ColumnName.wordString],
-        normalizedString: map[_ColumnName.normalizedString],
-        pos: map[_ColumnName.pos],
-        lastPracticedMs: map[_ColumnName.lastPracticedMs],
-        skill: map[_ColumnName.skill],
-        lastPracticed: map[_ColumnName.lastPracticed],
-        strength: map[_ColumnName.strength],
-        skillUrlTitle: map[_ColumnName.skillUrlTitle],
-        gender: map[_ColumnName.gender],
-        bookmarked: map[_ColumnName.bookmarked] == BooleanText.true_,
-        completed: map[_ColumnName.completed] == BooleanText.true_,
-        deleted: map[_ColumnName.deleted] == BooleanText.true_,
-        sortOrder: map[_ColumnName.sortOrder],
+        id: map[LearnedWordColumnName.id],
+        wordId: map[LearnedWordColumnName.wordId],
+        userId: map[LearnedWordColumnName.userId],
+        languageString: map[LearnedWordColumnName.languageString],
+        learningLanguage: map[LearnedWordColumnName.learningLanguage],
+        fromLanguage: map[LearnedWordColumnName.fromLanguage],
+        lexemeId: map[LearnedWordColumnName.lexemeId],
+        relatedLexemes:
+            (map[LearnedWordColumnName.relatedLexemes] as String).split(','),
+        strengthBars: map[LearnedWordColumnName.strengthBars],
+        infinitive: map[LearnedWordColumnName.infinitive],
+        wordString: map[LearnedWordColumnName.wordString],
+        normalizedString: map[LearnedWordColumnName.normalizedString],
+        pos: map[LearnedWordColumnName.pos],
+        lastPracticedMs: map[LearnedWordColumnName.lastPracticedMs],
+        skill: map[LearnedWordColumnName.skill],
+        lastPracticed: map[LearnedWordColumnName.lastPracticed],
+        strength: map[LearnedWordColumnName.strength],
+        skillUrlTitle: map[LearnedWordColumnName.skillUrlTitle],
+        gender: map[LearnedWordColumnName.gender],
+        bookmarked: map[LearnedWordColumnName.bookmarked] == BooleanText.true_,
+        completed: map[LearnedWordColumnName.completed] == BooleanText.true_,
+        deleted: map[LearnedWordColumnName.deleted] == BooleanText.true_,
+        sortOrder: map[LearnedWordColumnName.sortOrder],
         createdAt: DateTime.fromMillisecondsSinceEpoch(
-          map[_ColumnName.createdAt] ?? 0,
+          map[LearnedWordColumnName.createdAt] ?? 0,
         ),
         updatedAt: DateTime.fromMillisecondsSinceEpoch(
-          map[_ColumnName.updatedAt] ?? 0,
+          map[LearnedWordColumnName.updatedAt] ?? 0,
         ),
       );
 
   /// Returns this [LearnedWord] model as [Map].
   Map<String, dynamic> toMap() {
     final map = <String, dynamic>{};
-    map[_ColumnName.wordId] = wordId;
-    map[_ColumnName.userId] = userId;
-    map[_ColumnName.languageString] = languageString;
-    map[_ColumnName.learningLanguage] = learningLanguage;
-    map[_ColumnName.fromLanguage] = fromLanguage;
-    map[_ColumnName.lexemeId] = lexemeId;
-    map[_ColumnName.relatedLexemes] = relatedLexemes.join(',');
-    map[_ColumnName.strengthBars] = strengthBars;
-    map[_ColumnName.infinitive] = infinitive;
-    map[_ColumnName.wordString] = wordString;
-    map[_ColumnName.normalizedString] = normalizedString;
-    map[_ColumnName.pos] = pos;
-    map[_ColumnName.lastPracticedMs] = lastPracticedMs;
-    map[_ColumnName.skill] = skill;
-    map[_ColumnName.lastPracticed] = lastPracticed;
-    map[_ColumnName.strength] = strength;
-    map[_ColumnName.skillUrlTitle] = skillUrlTitle;
-    map[_ColumnName.gender] = gender;
-    map[_ColumnName.bookmarked] =
+    map[LearnedWordColumnName.wordId] = wordId;
+    map[LearnedWordColumnName.userId] = userId;
+    map[LearnedWordColumnName.languageString] = languageString;
+    map[LearnedWordColumnName.learningLanguage] = learningLanguage;
+    map[LearnedWordColumnName.fromLanguage] = fromLanguage;
+    map[LearnedWordColumnName.lexemeId] = lexemeId;
+    map[LearnedWordColumnName.relatedLexemes] = relatedLexemes.join(',');
+    map[LearnedWordColumnName.strengthBars] = strengthBars;
+    map[LearnedWordColumnName.infinitive] = infinitive;
+    map[LearnedWordColumnName.wordString] = wordString;
+    map[LearnedWordColumnName.normalizedString] = normalizedString;
+    map[LearnedWordColumnName.pos] = pos;
+    map[LearnedWordColumnName.lastPracticedMs] = lastPracticedMs;
+    map[LearnedWordColumnName.skill] = skill;
+    map[LearnedWordColumnName.lastPracticed] = lastPracticed;
+    map[LearnedWordColumnName.strength] = strength;
+    map[LearnedWordColumnName.skillUrlTitle] = skillUrlTitle;
+    map[LearnedWordColumnName.gender] = gender;
+    map[LearnedWordColumnName.bookmarked] =
         bookmarked ? BooleanText.true_ : BooleanText.false_;
-    map[_ColumnName.completed] =
+    map[LearnedWordColumnName.completed] =
         completed ? BooleanText.true_ : BooleanText.false_;
-    map[_ColumnName.deleted] = deleted ? BooleanText.true_ : BooleanText.false_;
-    map[_ColumnName.sortOrder] = sortOrder;
-    map[_ColumnName.createdAt] = createdAt.millisecondsSinceEpoch;
-    map[_ColumnName.updatedAt] = updatedAt.millisecondsSinceEpoch;
+    map[LearnedWordColumnName.deleted] =
+        deleted ? BooleanText.true_ : BooleanText.false_;
+    map[LearnedWordColumnName.sortOrder] = sortOrder;
+    map[LearnedWordColumnName.createdAt] = createdAt.millisecondsSinceEpoch;
+    map[LearnedWordColumnName.updatedAt] = updatedAt.millisecondsSinceEpoch;
     return map;
   }
 
   /// Returns [true] if this model is empty, otherwise [false].
   bool isEmpty() => _empty;
-}
-
-/// The internal const class that manages the column name of [LearnedWord] repository.
-class _ColumnName {
-  static const id = 'ID';
-  static const wordId = 'WORD_ID';
-  static const userId = 'USER_ID';
-  static const languageString = 'LANGUAGE_STRING';
-  static const learningLanguage = 'LEARNING_LANGUAGE';
-  static const fromLanguage = 'FROM_LANGUAGE';
-  static const lexemeId = 'LEXEME_ID';
-  static const relatedLexemes = 'RELATED_REXEMES';
-  static const strengthBars = 'STRENGTH_BARS';
-  static const infinitive = 'INFINITIVE';
-  static const wordString = 'WORD_STRING';
-  static const normalizedString = 'NORMALIZED_STRING';
-  static const pos = 'POS';
-  static const lastPracticedMs = 'LAST_PRACTICED_MS';
-  static const skill = 'SKILL';
-  static const lastPracticed = 'LAST_PRACTICED';
-  static const strength = 'STRENGTH';
-  static const skillUrlTitle = 'SKILL_URL_TITLE';
-  static const gender = 'GENDER';
-  static const bookmarked = 'BOOKMARKED';
-  static const completed = 'COMPLETED';
-  static const deleted = 'DELETED';
-  static const sortOrder = 'SORT_ORDER';
-  static const createdAt = 'CREATED_AT';
-  static const updatedAt = 'UPDATED_AT';
 }

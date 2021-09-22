@@ -3,6 +3,7 @@
 // BSD-style license that can be found in the LICENSE file.
 
 import 'package:duo_tracker/src/repository/boolean_text.dart';
+import 'package:duo_tracker/src/repository/const/column/skill_column_name.dart';
 
 class Skill {
   int id = -1;
@@ -60,65 +61,47 @@ class Skill {
 
   /// Returns the new instance of [Skill] based on the [map] passed as an argument.
   factory Skill.fromMap(Map<String, dynamic> map) => Skill.from(
-        id: map[_ColumnName.id],
-        skillId: map[_ColumnName.skillId],
-        name: map[_ColumnName.name],
-        shortName: map[_ColumnName.shortName],
-        urlName: map[_ColumnName.urlName],
-        iconId: map[_ColumnName.iconId],
-        lessons: map[_ColumnName.lessons],
-        strength: map[_ColumnName.strength],
+        id: map[SkillColumnName.id],
+        skillId: map[SkillColumnName.skillId],
+        name: map[SkillColumnName.name],
+        shortName: map[SkillColumnName.shortName],
+        urlName: map[SkillColumnName.urlName],
+        iconId: map[SkillColumnName.iconId],
+        lessons: map[SkillColumnName.lessons],
+        strength: map[SkillColumnName.strength],
         lastLessonPerfect:
-            map[_ColumnName.lastLessonPerfect] == BooleanText.true_,
-        finishedLevels: map[_ColumnName.finishedLevels],
-        levels: map[_ColumnName.levels],
-        tipsAndNotes: map[_ColumnName.tipsAndNotes],
+            map[SkillColumnName.lastLessonPerfect] == BooleanText.true_,
+        finishedLevels: map[SkillColumnName.finishedLevels],
+        levels: map[SkillColumnName.levels],
+        tipsAndNotes: map[SkillColumnName.tipsAndNotes],
         createdAt: DateTime.fromMillisecondsSinceEpoch(
-          map[_ColumnName.createdAt] ?? 0,
+          map[SkillColumnName.createdAt] ?? 0,
         ),
         updatedAt: DateTime.fromMillisecondsSinceEpoch(
-          map[_ColumnName.updatedAt] ?? 0,
+          map[SkillColumnName.updatedAt] ?? 0,
         ),
       );
 
   /// Returns this [Skill] model as [Map].
   Map<String, dynamic> toMap() {
     final map = <String, dynamic>{};
-    map[_ColumnName.skillId] = skillId;
-    map[_ColumnName.name] = name;
-    map[_ColumnName.shortName] = shortName;
-    map[_ColumnName.urlName] = urlName;
-    map[_ColumnName.iconId] = iconId;
-    map[_ColumnName.lessons] = lessons;
-    map[_ColumnName.strength] = strength;
-    map[_ColumnName.lastLessonPerfect] =
+    map[SkillColumnName.skillId] = skillId;
+    map[SkillColumnName.name] = name;
+    map[SkillColumnName.shortName] = shortName;
+    map[SkillColumnName.urlName] = urlName;
+    map[SkillColumnName.iconId] = iconId;
+    map[SkillColumnName.lessons] = lessons;
+    map[SkillColumnName.strength] = strength;
+    map[SkillColumnName.lastLessonPerfect] =
         lastLessonPerfect ? BooleanText.true_ : BooleanText.false_;
-    map[_ColumnName.finishedLevels] = finishedLevels;
-    map[_ColumnName.levels] = levels;
-    map[_ColumnName.tipsAndNotes] = tipsAndNotes;
-    map[_ColumnName.createdAt] = createdAt.millisecondsSinceEpoch;
-    map[_ColumnName.updatedAt] = updatedAt.millisecondsSinceEpoch;
+    map[SkillColumnName.finishedLevels] = finishedLevels;
+    map[SkillColumnName.levels] = levels;
+    map[SkillColumnName.tipsAndNotes] = tipsAndNotes;
+    map[SkillColumnName.createdAt] = createdAt.millisecondsSinceEpoch;
+    map[SkillColumnName.updatedAt] = updatedAt.millisecondsSinceEpoch;
     return map;
   }
 
   /// Returns [true] if this model is empty, otherwise [false].
   bool isEmpty() => _empty;
-}
-
-/// The internal const class that manages the column name of [Skill] repository.
-class _ColumnName {
-  static const id = 'ID';
-  static const skillId = 'SKILL_ID';
-  static const name = 'NAME';
-  static const shortName = 'SHORT_NAME';
-  static const urlName = 'URL_NAME';
-  static const iconId = 'ICON_ID';
-  static const lessons = 'LESSONS';
-  static const strength = 'STRENGTH';
-  static const lastLessonPerfect = 'LAST_LESSON_PERFECT';
-  static const finishedLevels = 'FINISHED_LEVELS';
-  static const levels = 'LEVELS';
-  static const tipsAndNotes = 'TIPS_AND_NOTES';
-  static const createdAt = 'CREATED_AT';
-  static const updatedAt = 'UPDATED_AT';
 }

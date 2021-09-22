@@ -178,13 +178,32 @@ enum FilterItem {
   gender,
 }
 
+extension FilterItemExt on FilterItem {
+  int get code {
+    switch (this) {
+      case FilterItem.none:
+        return 0;
+      case FilterItem.lesson:
+        return 1;
+      case FilterItem.strength:
+        return 2;
+      case FilterItem.pos:
+        return 3;
+      case FilterItem.infinitive:
+        return 4;
+      case FilterItem.gender:
+        return 5;
+    }
+  }
+}
+
 List<Widget> _buildChoiceList({
   required BuildContext context,
   required Function(void Function()) setState,
 }) {
   final List<Widget> choices = [];
   for (final String item in _dataSource) {
-    bool alreadySelected = _selectedItems.contains(item);
+    final bool alreadySelected = _selectedItems.contains(item);
     choices.add(
       _ChoiceChipWidget(
         item: item,

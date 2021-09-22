@@ -2,6 +2,8 @@
 // Use of this source code is governed by a
 // BSD-style license that can be found in the LICENSE file.
 
+import 'package:duo_tracker/src/repository/const/column/course_column_name.dart';
+
 class Course {
   int id = -1;
   String courseId;
@@ -43,48 +45,35 @@ class Course {
 
   /// Returns the new instance of [Course] based on the [map] passed as an argument.
   factory Course.fromMap(Map<String, dynamic> map) => Course.from(
-        id: map[_ColumnName.id],
-        courseId: map[_ColumnName.courseId],
-        title: map[_ColumnName.title],
-        learningLanguage: map[_ColumnName.learningLanguage],
-        fromLanguage: map[_ColumnName.fromLanguage],
-        xp: map[_ColumnName.xp],
-        crowns: map[_ColumnName.crowns],
+        id: map[CourseColumnName.id],
+        courseId: map[CourseColumnName.courseId],
+        title: map[CourseColumnName.title],
+        learningLanguage: map[CourseColumnName.learningLanguage],
+        fromLanguage: map[CourseColumnName.fromLanguage],
+        xp: map[CourseColumnName.xp],
+        crowns: map[CourseColumnName.crowns],
         createdAt: DateTime.fromMillisecondsSinceEpoch(
-          map[_ColumnName.createdAt] ?? 0,
+          map[CourseColumnName.createdAt] ?? 0,
         ),
         updatedAt: DateTime.fromMillisecondsSinceEpoch(
-          map[_ColumnName.updatedAt] ?? 0,
+          map[CourseColumnName.updatedAt] ?? 0,
         ),
       );
 
   /// Returns this [VoiceConfiguration] model as [Map].
   Map<String, dynamic> toMap() {
     final map = <String, dynamic>{};
-    map[_ColumnName.courseId] = courseId;
-    map[_ColumnName.title] = title;
-    map[_ColumnName.learningLanguage] = learningLanguage;
-    map[_ColumnName.fromLanguage] = fromLanguage;
-    map[_ColumnName.xp] = xp;
-    map[_ColumnName.crowns] = crowns;
-    map[_ColumnName.createdAt] = createdAt.millisecondsSinceEpoch;
-    map[_ColumnName.updatedAt] = updatedAt.millisecondsSinceEpoch;
+    map[CourseColumnName.courseId] = courseId;
+    map[CourseColumnName.title] = title;
+    map[CourseColumnName.learningLanguage] = learningLanguage;
+    map[CourseColumnName.fromLanguage] = fromLanguage;
+    map[CourseColumnName.xp] = xp;
+    map[CourseColumnName.crowns] = crowns;
+    map[CourseColumnName.createdAt] = createdAt.millisecondsSinceEpoch;
+    map[CourseColumnName.updatedAt] = updatedAt.millisecondsSinceEpoch;
     return map;
   }
 
   /// Returns [true] if this model is empty, otherwise [false].
   bool isEmpty() => _empty;
-}
-
-/// The internal const class that manages the column name of [Course] repository.
-class _ColumnName {
-  static const id = 'ID';
-  static const courseId = 'COURSE_ID';
-  static const title = 'TITLE';
-  static const learningLanguage = 'LEARNING_LANGUAGE';
-  static const fromLanguage = 'FROM_LANGUAGE';
-  static const xp = 'XP';
-  static const crowns = 'CROWNS';
-  static const createdAt = 'CREATED_AT';
-  static const updatedAt = 'UPDATED_AT';
 }

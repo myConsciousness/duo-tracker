@@ -4,6 +4,7 @@
 
 import 'package:awesome_dialog/awesome_dialog.dart';
 import 'package:duo_tracker/src/component/common_two_grids_radio_list_tile.dart';
+import 'package:duo_tracker/src/repository/const/column/learned_word_column_name.dart';
 import 'package:duo_tracker/src/repository/preference/common_shared_preferences_key.dart';
 import 'package:flutter/material.dart';
 
@@ -160,6 +161,27 @@ extension SortItemExt on SortItem {
     }
   }
 
+  String get columnName {
+    switch (this) {
+      case SortItem.defaultIndex:
+        return LearnedWordColumnName.sortOrder;
+      case SortItem.lesson:
+        return LearnedWordColumnName.skillUrlTitle;
+      case SortItem.strength:
+        return LearnedWordColumnName.strengthBars;
+      case SortItem.pos:
+        return LearnedWordColumnName.pos;
+      case SortItem.infinitive:
+        return LearnedWordColumnName.infinitive;
+      case SortItem.gender:
+        return LearnedWordColumnName.gender;
+      case SortItem.proficiency:
+        return LearnedWordColumnName.strength;
+      case SortItem.lastPracticed:
+        return LearnedWordColumnName.lastPracticedMs;
+    }
+  }
+
   static SortItem toEnum({required final int code}) {
     for (final SortItem sortItem in SortItem.values) {
       if (code == sortItem.code) {
@@ -178,6 +200,15 @@ extension SortPatternExt on SortPattern {
         return 0;
       case SortPattern.desc:
         return 1;
+    }
+  }
+
+  String get patternName {
+    switch (this) {
+      case SortPattern.asc:
+        return 'ASC';
+      case SortPattern.desc:
+        return 'DESC';
     }
   }
 
