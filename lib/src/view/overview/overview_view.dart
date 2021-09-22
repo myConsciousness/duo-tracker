@@ -497,7 +497,7 @@ class _OverviewViewState extends State<OverviewView> {
                   await DuolingoPageLauncher.learnWord.build.execute(
                 context: context,
                 params: {
-                  'learningLanguage': learnedWord.learningLanguage,
+                  'learningLanguage': learnedWord.formalLearningLanguage,
                   'skillUrlTitle': learnedWord.skillUrlTitle,
                 },
               ),
