@@ -7,6 +7,7 @@ import 'package:flutter/material.dart';
 abstract class Launcher {
   Future<bool> execute({
     required final BuildContext context,
+    final params = const <String, String>{},
   });
 
   void checkParameterKey({

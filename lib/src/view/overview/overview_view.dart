@@ -493,8 +493,14 @@ class _OverviewViewState extends State<OverviewView> {
             IconButton(
               tooltip: 'Learn at Duolingo',
               icon: const Icon(Icons.school),
-              onPressed: () async => await DuolingoPageLauncher.learnWord.build
-                  .execute(context: context),
+              onPressed: () async =>
+                  await DuolingoPageLauncher.learnWord.build.execute(
+                context: context,
+                params: {
+                  'learningLanguage': learnedWord.learningLanguage,
+                  'skillUrlTitle': learnedWord.skillUrlTitle,
+                },
+              ),
             ),
           ],
         ),

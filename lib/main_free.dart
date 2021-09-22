@@ -12,10 +12,14 @@ void main() {
   WidgetsFlutterBinding.ensureInitialized();
   MobileAds.instance.initialize();
 
+  RequestConfiguration configuration =
+      RequestConfiguration(testDeviceIds: ['12FA608E7D2E2A96D30BE9C3D4A6ACA5']);
+  MobileAds.instance.updateRequestConfiguration(configuration);
+
   FlavorConfig(
     variables: {
       'paidUrl':
-          'https://play.google.com/store/apps/details?id=org.thinkit.paid.duovoc',
+          'https://play.google.com/store/apps/details?id=org.thinkit.paid.duotracker',
     },
   );
 

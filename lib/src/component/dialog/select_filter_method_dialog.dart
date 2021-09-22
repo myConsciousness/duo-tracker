@@ -132,7 +132,14 @@ Future<T?> showSelectFilterMethodDialog<T>({
                               _selectedItems = List.from(_dataSource);
                             });
                           },
-                          child: const Text('All'),
+                          child: Text(
+                            'All',
+                            style: TextStyle(
+                              color: Theme.of(context).colorScheme.secondary,
+                              fontWeight: FontWeight.bold,
+                              fontStyle: FontStyle.italic,
+                            ),
+                          ),
                         ),
                         TextButton(
                           onPressed: () {
@@ -140,7 +147,14 @@ Future<T?> showSelectFilterMethodDialog<T>({
                               _selectedItems.clear();
                             });
                           },
-                          child: const Text('Reset'),
+                          child: Text(
+                            'Reset',
+                            style: TextStyle(
+                              color: Theme.of(context).colorScheme.secondary,
+                              fontWeight: FontWeight.bold,
+                              fontStyle: FontStyle.italic,
+                            ),
+                          ),
                         ),
                       ],
                     ),
@@ -220,7 +234,7 @@ List<Widget> _buildChoiceList({
           });
         },
         selected: alreadySelected,
-        text: item,
+        text: item.isEmpty ? 'N/A' : item,
       ),
     );
   }

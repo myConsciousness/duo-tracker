@@ -272,10 +272,6 @@ class LearnedWordService extends LearnedWordRepository {
                       return value.toString();
                     }
 
-                    if ((value as String).isEmpty) {
-                      return 'N/A';
-                    }
-
                     return entity[filterPattern.columnName] as String;
                   },
                 ).toList(),
