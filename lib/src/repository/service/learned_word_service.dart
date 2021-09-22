@@ -242,8 +242,8 @@ class LearnedWordService extends LearnedWordRepository {
 
   @override
   Future<List<String>>
-      findDistinctFilterItemByUserIdAndLearningLanguageAndFromLanguage({
-    required FilterItem filterItem,
+      findDistinctFilterPatternByUserIdAndLearningLanguageAndFromLanguage({
+    required FilterPattern filterPattern,
     required String userId,
     required String learningLanguage,
     required String fromLanguage,
@@ -252,7 +252,7 @@ class LearnedWordService extends LearnedWordRepository {
               .query(
                 table,
                 distinct: true,
-                columns: [],
+                columns: [filterPattern.columnName],
                 where:
                     'USER_ID = ? AND LEARNING_LANGUAGE = ? AND FROM_LANGUAGE = ?',
                 whereArgs: [
@@ -260,13 +260,23 @@ class LearnedWordService extends LearnedWordRepository {
                   learningLanguage,
                   fromLanguage,
                 ],
-                orderBy: '',
+                orderBy: filterPattern.columnName,
               )
               .then(
-                (entities) => entities
-                    .map(
-                      (entity) => entity['FROM_LANGUAGE'] as String,
-                    )
-                    .toList(),
+                (entities) => entities.map(
+                  (entity) {
+                    final dynamic value = entity[filterPattern.columnName];
+
+                    if (filterPattern == FilterPattern.strength) {
+                      return value.toString();
+                    }
+
+                    if ((value as String).isEmpty) {
+                      return 'N/A';
+                    }
+
+                    return entity[filterPattern.columnName] as String;
+                  },
+                ).toList(),
               ));
 }

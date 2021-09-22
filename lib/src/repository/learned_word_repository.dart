@@ -19,8 +19,8 @@ abstract class LearnedWordRepository extends Repository<LearnedWord> {
   );
 
   Future<List<String>>
-      findDistinctFilterItemByUserIdAndLearningLanguageAndFromLanguage({
-    required FilterItem filterItem,
+      findDistinctFilterPatternByUserIdAndLearningLanguageAndFromLanguage({
+    required FilterPattern filterPattern,
     required String userId,
     required String learningLanguage,
     required String fromLanguage,

@@ -15,7 +15,7 @@ class WordFilter {
     required bool searching,
     required String searchWord,
     required MatchPattern matchPattern,
-    required FilterItem filterItem,
+    required FilterPattern filterPattern,
     required List<String> selectedFilterItems,
   }) =>
       _checkOverviewTabType(
@@ -28,9 +28,9 @@ class WordFilter {
         searchWord: searchWord,
         matchPattern: matchPattern,
       ) &&
-      _checkSelectedFilter(
+      _checkFilter(
         learnedWord: learnedWord,
-        filterItem: filterItem,
+        filterPattern: filterPattern,
         selectedFilterItems: selectedFilterItems,
       );
 
@@ -78,24 +78,24 @@ class WordFilter {
     return true;
   }
 
-  static bool _checkSelectedFilter({
+  static bool _checkFilter({
     required LearnedWord learnedWord,
-    required FilterItem filterItem,
+    required FilterPattern filterPattern,
     required List<String> selectedFilterItems,
   }) {
-    switch (filterItem) {
-      case FilterItem.none:
+    switch (filterPattern) {
+      case FilterPattern.none:
         // No filter was applied
         return true;
-      case FilterItem.lesson:
+      case FilterPattern.lesson:
         return selectedFilterItems.contains(learnedWord.skillUrlTitle);
-      case FilterItem.strength:
+      case FilterPattern.strength:
         return selectedFilterItems.contains('${learnedWord.strengthBars}');
-      case FilterItem.pos:
+      case FilterPattern.pos:
         return selectedFilterItems.contains(learnedWord.pos);
-      case FilterItem.infinitive:
+      case FilterPattern.infinitive:
         return selectedFilterItems.contains(learnedWord.infinitive);
-      case FilterItem.gender:
+      case FilterPattern.gender:
         return selectedFilterItems.contains(learnedWord.gender);
     }
   }

@@ -5,12 +5,14 @@
 import 'package:awesome_dialog/awesome_dialog.dart';
 import 'package:duo_tracker/src/component/common_two_grids_radio_list_tile.dart';
 import 'package:duo_tracker/src/component/dialog/warning_dialog.dart';
+import 'package:duo_tracker/src/repository/const/column/learned_word_column_name.dart';
+import 'package:duo_tracker/src/repository/preference/common_shared_preferences_key.dart';
 import 'package:duo_tracker/src/repository/service/learned_word_service.dart';
 import 'package:flutter/material.dart';
 
 late AwesomeDialog _dialog;
 
-FilterItem _filterItem = FilterItem.lesson;
+FilterPattern _filterPattern = FilterPattern.lesson;
 List<String> _dataSource = [];
 List<String> _selectedItems = <String>[];
 
@@ -19,9 +21,22 @@ final _learnedWordService = LearnedWordService.getInstance();
 
 Future<T?> showSelectFilterMethodDialog<T>({
   required BuildContext context,
-  required Function(FilterItem filterItem, List<String> selectedItems)
+  required Function(FilterPattern filterPattern, List<String> selectedItems)
       onPressedOk,
 }) async {
+  final userId = await CommonSharedPreferencesKey.userId.getString();
+  final learningLanguage =
+      await CommonSharedPreferencesKey.currentLearningLanguage.getString();
+  final fromLanguage =
+      await CommonSharedPreferencesKey.currentFromLanguage.getString();
+
+  await _refreshDataSource(
+    filterPattern: _filterPattern,
+    userId: userId,
+    learningLanguage: learningLanguage,
+    fromLanguage: fromLanguage,
+  );
+
   _dialog = AwesomeDialog(
     context: context,
     animType: AnimType.LEFTSLIDE,
@@ -48,17 +63,24 @@ Future<T?> showSelectFilterMethodDialog<T>({
                 CommonTwoGridsRadioListTile(
                   label: 'Filter Pattern',
                   dataSource: const {
-                    'Lesson': FilterItem.lesson,
-                    'Pos': FilterItem.pos,
-                    'Infinitive': FilterItem.infinitive,
-                    'Gender': FilterItem.gender,
-                    'Strength': FilterItem.strength,
-                    'None': FilterItem.none,
+                    'Lesson': FilterPattern.lesson,
+                    'Pos': FilterPattern.pos,
+                    'Infinitive': FilterPattern.infinitive,
+                    'Gender': FilterPattern.gender,
+                    'Strength': FilterPattern.strength,
+                    'None': FilterPattern.none,
                   },
-                  groupValue: _filterItem,
-                  onChanged: (value) {
+                  groupValue: _filterPattern,
+                  onChanged: (value) async {
+                    await _refreshDataSource(
+                      filterPattern: value,
+                      userId: userId,
+                      learningLanguage: learningLanguage,
+                      fromLanguage: fromLanguage,
+                    );
+
                     setState(() {
-                      _filterItem = value;
+                      _filterPattern = value;
                     });
                   },
                 ),
@@ -129,7 +151,7 @@ Future<T?> showSelectFilterMethodDialog<T>({
                         text: 'Apply',
                         color: Theme.of(context).colorScheme.secondaryVariant,
                         pressEvent: () {
-                          if (_filterItem != FilterItem.none &&
+                          if (_filterPattern != FilterPattern.none &&
                               _selectedItems.isEmpty) {
                             showWarningDialog(
                               context: context,
@@ -140,7 +162,7 @@ Future<T?> showSelectFilterMethodDialog<T>({
                             return;
                           }
 
-                          onPressedOk.call(_filterItem, _selectedItems);
+                          onPressedOk.call(_filterPattern, _selectedItems);
                           _dialog.dismiss();
                         },
                       ),
@@ -158,7 +180,27 @@ Future<T?> showSelectFilterMethodDialog<T>({
   await _dialog.show();
 }
 
-enum FilterItem {
+Future<void> _refreshDataSource({
+  required FilterPattern filterPattern,
+  required String userId,
+  required String learningLanguage,
+  required String fromLanguage,
+}) async {
+  if (filterPattern == FilterPattern.none) {
+    _dataSource = [];
+    return;
+  }
+
+  _dataSource = await _learnedWordService
+      .findDistinctFilterPatternByUserIdAndLearningLanguageAndFromLanguage(
+    filterPattern: filterPattern,
+    userId: userId,
+    learningLanguage: learningLanguage,
+    fromLanguage: fromLanguage,
+  );
+}
+
+enum FilterPattern {
   // The none
   none,
 
@@ -178,21 +220,38 @@ enum FilterItem {
   gender,
 }
 
-extension FilterItemExt on FilterItem {
+extension FilterItemExt on FilterPattern {
   int get code {
     switch (this) {
-      case FilterItem.none:
+      case FilterPattern.none:
         return 0;
-      case FilterItem.lesson:
+      case FilterPattern.lesson:
         return 1;
-      case FilterItem.strength:
+      case FilterPattern.strength:
         return 2;
-      case FilterItem.pos:
+      case FilterPattern.pos:
         return 3;
-      case FilterItem.infinitive:
+      case FilterPattern.infinitive:
         return 4;
-      case FilterItem.gender:
+      case FilterPattern.gender:
         return 5;
+    }
+  }
+
+  String get columnName {
+    switch (this) {
+      case FilterPattern.none:
+        throw UnimplementedError();
+      case FilterPattern.lesson:
+        return LearnedWordColumnName.skillUrlTitle;
+      case FilterPattern.strength:
+        return LearnedWordColumnName.strengthBars;
+      case FilterPattern.pos:
+        return LearnedWordColumnName.pos;
+      case FilterPattern.infinitive:
+        return LearnedWordColumnName.infinitive;
+      case FilterPattern.gender:
+        return LearnedWordColumnName.gender;
     }
   }
 }

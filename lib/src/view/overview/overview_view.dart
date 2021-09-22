@@ -60,7 +60,7 @@ class _OverviewViewState extends State<OverviewView> {
   String _searchWord = '';
   bool _searching = false;
 
-  FilterItem _filterItem = FilterItem.none;
+  FilterPattern _filterPattern = FilterPattern.none;
   List<String> _selectedFilterItems = [];
 
   @override
@@ -149,7 +149,7 @@ class _OverviewViewState extends State<OverviewView> {
           searching: _searching,
           searchWord: _searchWord,
           matchPattern: _matchPattern,
-          filterItem: _filterItem,
+          filterPattern: _filterPattern,
           selectedFilterItems: _selectedFilterItems,
         ),
         child: Card(
@@ -615,9 +615,9 @@ class _OverviewViewState extends State<OverviewView> {
               onTap: () async {
                 await showSelectFilterMethodDialog(
                   context: context,
-                  onPressedOk: (filterItem, selectedItems) {
+                  onPressedOk: (filterPattern, selectedItems) {
                     super.setState(() {
-                      _filterItem = filterItem;
+                      _filterPattern = filterPattern;
                       _selectedFilterItems = List.from(selectedItems);
                     });
                   },
