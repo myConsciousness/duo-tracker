@@ -5,6 +5,7 @@
 import 'package:duo_tracker/src/component/common_default_tab_controller.dart';
 import 'package:duo_tracker/src/view/overview/overview_tab_view.dart';
 import 'package:duo_tracker/src/view/settings/settings_view.dart';
+import 'package:duo_tracker/src/view/user/user_account_view.dart';
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 
@@ -13,7 +14,7 @@ class DuoTrackerHomeView extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) => const CommonDefaultTabController(
-        length: 2,
+        length: 3,
         labelFontSize: 12.0,
         unselectedLabelFontSize: 11.0,
         tabs: [
@@ -29,12 +30,7 @@ class DuoTrackerHomeView extends StatelessWidget {
           //     size: 16,
           //   ),
           // ),
-          // Tab(
-          //   icon: Icon(
-          //     FontAwesomeIcons.userAlt,
-          //     size: 16,
-          //   ),
-          // ),
+          Tab(icon: Icon(FontAwesomeIcons.userAlt, size: 16)),
           Tab(
             icon: Icon(Icons.settings),
           ),
@@ -42,7 +38,7 @@ class DuoTrackerHomeView extends StatelessWidget {
         body: [
           OverviewTabView(),
           // StatisticsView(),
-          // UserAccountView(),
+          UserAccountView(),
           SettingsView(),
         ],
       );

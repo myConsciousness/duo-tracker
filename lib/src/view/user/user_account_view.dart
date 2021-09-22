@@ -2,6 +2,8 @@
 // Use of this source code is governed by a
 // BSD-style license that can be found in the LICENSE file.
 
+import 'package:duo_tracker/src/component/common_app_bar_titles.dart';
+import 'package:duo_tracker/src/component/common_nested_scroll_view.dart';
 import 'package:flutter/material.dart';
 
 class UserAccountView extends StatefulWidget {
@@ -14,155 +16,129 @@ class UserAccountView extends StatefulWidget {
 class _UserAccountViewState extends State<UserAccountView> {
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      body: SingleChildScrollView(
-        child: Column(
-          children: <Widget>[
-            Container(
-              decoration: BoxDecoration(
-                gradient: LinearGradient(
-                  begin: Alignment.topCenter,
-                  end: Alignment.bottomCenter,
-                  colors: [
-                    Theme.of(context).colorScheme.secondary,
-                    Colors.black,
-                  ],
+    return CommonNestesScrollView(
+      title: const CommonAppBarTitles(
+        title: 'User Account',
+        subTitle: 'Achievements',
+      ),
+      body: Card(
+        elevation: 2.0,
+        child: Padding(
+          padding: const EdgeInsets.fromLTRB(20, 10, 20, 10),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.center,
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: <Widget>[
+              CircleAvatar(
+                child: Text(
+                  'Kato Shinya',
+                  style: TextStyle(
+                    color: Theme.of(context).colorScheme.onSurface,
+                  ),
                 ),
+                radius: 50,
+                backgroundColor: Theme.of(context).colorScheme.secondaryVariant,
               ),
-              child: SizedBox(
-                width: double.infinity,
-                height: 350.0,
-                child: Center(
+              const SizedBox(
+                height: 25,
+              ),
+              Card(
+                margin: const EdgeInsets.symmetric(
+                  horizontal: 20,
+                  vertical: 5,
+                ),
+                clipBehavior: Clip.antiAlias,
+                color: Colors.white,
+                elevation: 5,
+                child: Padding(
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: 8,
+                    vertical: 22,
+                  ),
                   child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.center,
                     mainAxisAlignment: MainAxisAlignment.center,
-                    children: <Widget>[
-                      const CircleAvatar(
-                        child: Text('Kato Shinya'),
-                        radius: 50.0,
-                      ),
-                      const SizedBox(
-                        height: 10.0,
-                      ),
-                      const Text(
-                        "Software Developer",
-                        style: TextStyle(
-                          fontSize: 22.0,
-                          color: Colors.white,
-                        ),
-                      ),
-                      const SizedBox(
-                        height: 10.0,
-                      ),
+                    crossAxisAlignment: CrossAxisAlignment.center,
+                    children: [
                       Row(
-                        children: const [
-                          Icon(Icons.location_pin),
-                          Text(
-                            "Tokyo",
-                            style: TextStyle(
-                              fontSize: 22.0,
-                              color: Colors.white,
-                            ),
+                        children: <Widget>[
+                          _buildCardText(
+                            title: 'Posts',
+                            subTitle: '5200',
+                          ),
+                          _buildCardText(
+                            title: 'Followers',
+                            subTitle: '28.5K',
+                          ),
+                          _buildCardText(
+                            title: 'Follow',
+                            subTitle: '1300',
                           ),
                         ],
                       ),
-                      Card(
-                        margin: const EdgeInsets.symmetric(
-                          horizontal: 20.0,
-                          vertical: 5.0,
-                        ),
-                        clipBehavior: Clip.antiAlias,
-                        color: Colors.white,
-                        elevation: 5.0,
-                        child: Padding(
-                          padding: const EdgeInsets.symmetric(
-                              horizontal: 8.0, vertical: 22.0),
-                          child: Row(
-                            children: <Widget>[
-                              Expanded(
-                                child: Column(
-                                  children: const <Widget>[
-                                    Text(
-                                      "Posts",
-                                      style: TextStyle(
-                                        color: Colors.redAccent,
-                                        fontSize: 22.0,
-                                        fontWeight: FontWeight.bold,
-                                      ),
-                                    ),
-                                    SizedBox(
-                                      height: 5.0,
-                                    ),
-                                    Text(
-                                      "5200",
-                                      style: TextStyle(
-                                        fontSize: 20.0,
-                                        color: Colors.pinkAccent,
-                                      ),
-                                    )
-                                  ],
-                                ),
-                              ),
-                              Expanded(
-                                child: Column(
-                                  children: const <Widget>[
-                                    Text(
-                                      "Followers",
-                                      style: TextStyle(
-                                        color: Colors.redAccent,
-                                        fontSize: 22.0,
-                                        fontWeight: FontWeight.bold,
-                                      ),
-                                    ),
-                                    SizedBox(
-                                      height: 5.0,
-                                    ),
-                                    Text(
-                                      "28.5K",
-                                      style: TextStyle(
-                                        fontSize: 20.0,
-                                        color: Colors.pinkAccent,
-                                      ),
-                                    )
-                                  ],
-                                ),
-                              ),
-                              Expanded(
-                                child: Column(
-                                  children: const <Widget>[
-                                    Text(
-                                      "Follow",
-                                      style: TextStyle(
-                                        color: Colors.redAccent,
-                                        fontSize: 22.0,
-                                        fontWeight: FontWeight.bold,
-                                      ),
-                                    ),
-                                    SizedBox(
-                                      height: 5.0,
-                                    ),
-                                    Text(
-                                      "1300",
-                                      style: TextStyle(
-                                        fontSize: 20.0,
-                                        color: Colors.pinkAccent,
-                                      ),
-                                    )
-                                  ],
-                                ),
-                              ),
-                            ],
+                      _divider,
+                      Row(
+                        children: <Widget>[
+                          _buildCardText(
+                            title: 'Posts',
+                            subTitle: '5200',
                           ),
-                        ),
-                      )
+                          _buildCardText(
+                            title: 'Followers',
+                            subTitle: '28.5K',
+                          ),
+                          _buildCardText(
+                            title: 'Follow',
+                            subTitle: '1300',
+                          ),
+                        ],
+                      ),
                     ],
                   ),
                 ),
-              ),
-            ),
-          ],
+              )
+            ],
+          ),
+        ),
+        shape: const RoundedRectangleBorder(
+          borderRadius: BorderRadius.vertical(
+            top: Radius.circular(30),
+            bottom: Radius.circular(30),
+          ),
         ),
       ),
     );
   }
+
+  Widget _buildCardText({
+    required String title,
+    required String subTitle,
+  }) =>
+      Expanded(
+        child: Column(
+          children: <Widget>[
+            Text(
+              title,
+              style: const TextStyle(
+                color: Colors.redAccent,
+                fontSize: 22.0,
+                fontWeight: FontWeight.bold,
+              ),
+            ),
+            const SizedBox(
+              height: 5.0,
+            ),
+            Text(
+              subTitle,
+              style: const TextStyle(
+                fontSize: 20.0,
+                color: Colors.pinkAccent,
+              ),
+            )
+          ],
+        ),
+      );
+
+  Divider get _divider => Divider(
+        color: Theme.of(context).colorScheme.onSurface.withOpacity(0.3),
+      );
 }
