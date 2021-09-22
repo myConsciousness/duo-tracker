@@ -2,7 +2,7 @@
 // Use of this source code is governed by a
 // BSD-style license that can be found in the LICENSE file.
 
-import 'package:duo_tracker/src/http/api_adapter.dart';
+import 'package:duo_tracker/src/http/duolingo_api_adapter.dart';
 import 'package:duo_tracker/src/repository/preference/common_shared_preferences_key.dart';
 import 'package:duo_tracker/src/security/encryption.dart';
 import 'package:flutter/material.dart';
@@ -11,8 +11,7 @@ class DuolingoApiUtils {
   static Future<bool> refreshVersionInfo({
     required BuildContext context,
   }) async =>
-      await ApiAdapter.of(type: ApiAdapterType.versionInfo)
-          .execute(context: context);
+      await DuolingoApiAdapter.versionInfo.build.execute(context: context);
 
   static Future<bool> authenticateAccount({
     required BuildContext context,
@@ -27,9 +26,7 @@ class DuolingoApiUtils {
             value: await CommonSharedPreferencesKey.password.getString())
         : password;
 
-    final loginApi = ApiAdapter.of(type: ApiAdapterType.login);
-
-    return await loginApi.execute(
+    return await DuolingoApiAdapter.login.build.execute(
       context: context,
       params: {
         'username': usernameInternal,
@@ -41,20 +38,19 @@ class DuolingoApiUtils {
   static Future<bool> refreshUser({
     required BuildContext context,
   }) async =>
-      await ApiAdapter.of(type: ApiAdapterType.user).execute(context: context);
+      await DuolingoApiAdapter.user.build.execute(context: context);
 
   static Future<bool> synchronizeLearnedWords({
     required BuildContext context,
   }) async =>
-      await ApiAdapter.of(type: ApiAdapterType.overview)
-          .execute(context: context);
+      await DuolingoApiAdapter.overview.build.execute(context: context);
 
   static Future<bool> switchLearnLanguage({
     required BuildContext context,
     required String fromLanguage,
     required String learningLanguage,
   }) async =>
-      await ApiAdapter.of(type: ApiAdapterType.switchLanguage).execute(
+      await DuolingoApiAdapter.switchLanguage.build.execute(
         context: context,
         params: {
           'fromLanguage': fromLanguage,
