@@ -12,13 +12,14 @@ import 'package:duo_tracker/src/component/dialog/select_filter_method_dialog.dar
 import 'package:duo_tracker/src/component/dialog/select_search_method_dialog.dart';
 import 'package:duo_tracker/src/component/dialog/switch_language_dialog.dart';
 import 'package:duo_tracker/src/component/dialog/select_sort_method_dialog.dart';
+import 'package:duo_tracker/src/http/duolingo_page_launcher.dart';
 import 'package:duo_tracker/src/repository/preference/common_shared_preferences_key.dart';
 import 'package:duo_tracker/src/component/snackbar/info_snack_bar.dart';
 import 'package:duo_tracker/src/http/network.dart';
 import 'package:duo_tracker/src/repository/model/learned_word_model.dart';
 import 'package:duo_tracker/src/repository/model/word_hint_model.dart';
 import 'package:duo_tracker/src/repository/service/learned_word_service.dart';
-import 'package:duo_tracker/src/utils/duolingo_api_utils.dart';
+import 'package:duo_tracker/src/http/utils/duolingo_api_utils.dart';
 import 'package:duo_tracker/src/utils/language_converter.dart';
 import 'package:duo_tracker/src/view/lesson_tips_view.dart';
 import 'package:duo_tracker/src/view/overview/overview_tab_view.dart';
@@ -31,7 +32,6 @@ import 'package:flutter/widgets.dart';
 import 'package:flutter_speed_dial/flutter_speed_dial.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:intl/intl.dart';
-import 'package:url_launcher/url_launcher.dart';
 
 class OverviewView extends StatefulWidget {
   const OverviewView({
@@ -492,17 +492,8 @@ class _OverviewViewState extends State<OverviewView> {
             IconButton(
               tooltip: 'Learn at Duolingo',
               icon: const Icon(Icons.school),
-              onPressed: () async {
-                if (!await Network.isConnected()) {
-                  showNetworkErrorDialog(context: context);
-                  return;
-                }
-
-                await launch(
-                  'https://www.duolingo.com/skill/${learnedWord.learningLanguage}/${learnedWord.skillUrlTitle}',
-                  forceWebView: true,
-                );
-              },
+              onPressed: () async => await DuolingoPageLauncher.learnWord.build
+                  .execute(context: context),
             ),
           ],
         ),

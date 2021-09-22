@@ -5,10 +5,10 @@
 import 'package:duo_tracker/src/component/dialog/error_dialog.dart';
 import 'package:flutter/material.dart';
 
-void showNetworkErrorDialog<T>({
+Future<void> showNetworkErrorDialog<T>({
   required BuildContext context,
-}) {
-  showErrorDialog(
+}) async {
+  await showErrorDialog(
     context: context,
     title: 'Network Error',
     content:

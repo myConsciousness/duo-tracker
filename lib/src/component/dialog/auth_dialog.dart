@@ -5,7 +5,7 @@
 import 'package:awesome_dialog/awesome_dialog.dart';
 import 'package:duo_tracker/src/component/common_text_field.dart';
 import 'package:duo_tracker/src/component/dialog/input_error_dialog.dart';
-import 'package:duo_tracker/src/utils/duolingo_api_utils.dart';
+import 'package:duo_tracker/src/http/utils/duolingo_api_utils.dart';
 import 'package:flutter/material.dart';
 
 AwesomeDialog? _dialog;

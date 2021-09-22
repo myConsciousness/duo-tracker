@@ -5,16 +5,14 @@
 import 'package:awesome_dialog/awesome_dialog.dart';
 import 'package:dropdown_below/dropdown_below.dart';
 import 'package:duo_tracker/src/component/dialog/input_error_dialog.dart';
-import 'package:duo_tracker/src/component/dialog/network_error_dialog.dart';
 import 'package:duo_tracker/src/component/snackbar/info_snack_bar.dart';
 import 'package:duo_tracker/src/component/text_with_horizontal_divider.dart';
-import 'package:duo_tracker/src/http/network.dart';
+import 'package:duo_tracker/src/http/duolingo_page_launcher.dart';
 import 'package:duo_tracker/src/repository/preference/common_shared_preferences_key.dart';
 import 'package:duo_tracker/src/repository/service/supported_language_service.dart';
-import 'package:duo_tracker/src/utils/duolingo_api_utils.dart';
+import 'package:duo_tracker/src/http/utils/duolingo_api_utils.dart';
 import 'package:duo_tracker/src/utils/language_converter.dart';
 import 'package:flutter/material.dart';
-import 'package:url_launcher/url_launcher.dart';
 
 List<DropdownMenuItem> _selectableFromLanguageItems = [];
 List<DropdownMenuItem> _selectableLearningLanguageItems = [];
@@ -208,14 +206,9 @@ Future<T?> showSwitchLanguageDialog<T>({
                       fontStyle: FontStyle.italic,
                     ),
                   ),
-                  onPressed: () async {
-                    if (!await Network.isConnected()) {
-                      showNetworkErrorDialog(context: context);
-                      return;
-                    }
-
-                    await launch('https://www.duolingo.com/courses');
-                  },
+                  onPressed: () async => await DuolingoPageLauncher
+                      .selectLangauge.build
+                      .execute(context: context),
                 )
               ],
             ),

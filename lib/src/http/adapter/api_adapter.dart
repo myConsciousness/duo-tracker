@@ -2,10 +2,10 @@
 // Use of this source code is governed by a
 // BSD-style license that can be found in the LICENSE file.
 
-import 'package:awesome_dialog/awesome_dialog.dart';
 import 'package:duo_tracker/src/component/dialog/auth_dialog.dart';
 import 'package:duo_tracker/src/component/dialog/error_dialog.dart';
 import 'package:duo_tracker/src/component/dialog/input_error_dialog.dart';
+import 'package:duo_tracker/src/component/dialog/network_error_dialog.dart';
 import 'package:duo_tracker/src/component/snackbar/info_snack_bar.dart';
 import 'package:duo_tracker/src/http/adapter/adapter.dart';
 import 'package:duo_tracker/src/http/api_response.dart';
@@ -18,7 +18,6 @@ abstract class ApiAdapter implements Adapter {
   Future<bool> execute({
     required final BuildContext context,
     final params = const <String, String>{},
-    final AwesomeDialog? dialog,
   }) async {
     if (!await Network.isConnected()) {
       return await _checkResponse(
@@ -26,8 +25,6 @@ abstract class ApiAdapter implements Adapter {
         response: ApiResponse.from(
           fromApi: FromApi.none,
           errorType: ErrorType.network,
-          message:
-              'Could not detect a valid network. Please check the network environment and the network settings of the device.',
         ),
       );
     }
@@ -60,6 +57,7 @@ abstract class ApiAdapter implements Adapter {
 
         return true;
       case ErrorType.network:
+        await showNetworkErrorDialog(context: context);
         await OpenSettings.openNetworkOperatorSetting();
         return false;
       case ErrorType.noUserRegistered:

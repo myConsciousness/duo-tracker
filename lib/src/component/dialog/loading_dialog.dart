@@ -5,11 +5,11 @@
 import 'package:flutter/material.dart';
 import 'package:future_progress_dialog/future_progress_dialog.dart';
 
-void showLoadingDialog<T>({
+Future<void> showLoadingDialog<T>({
   required BuildContext context,
   required String title,
   required Future<dynamic> future,
-}) {
+}) async {
   showDialog(
     context: context,
     builder: (context) => FutureProgressDialog(
