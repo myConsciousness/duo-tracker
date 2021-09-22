@@ -20,6 +20,7 @@ class LanguageConverter {
       case 'ja':
         return 'Japanese';
       case 'zs':
+      case 'zh':
         return 'Chinese';
       case 'ru':
         return 'Russian';
@@ -30,10 +31,12 @@ class LanguageConverter {
       case 'ar':
         return 'Arabic';
       case 'dn':
+      case 'nl-NL':
         return 'Dutch';
       case 'sv':
         return 'Swedish';
       case 'nb':
+      case 'no-BO':
         return 'Norwegian';
       case 'tr':
         return 'Turkish';
@@ -72,6 +75,7 @@ class LanguageConverter {
       case 'nv':
         return 'Navajo';
       case 'kl':
+      case 'tlh':
         return 'Klingon';
       case 'hv':
         return 'High Valyrian';
@@ -107,6 +111,7 @@ class LanguageConverter {
       case 'ja':
         return 'Japanese (日本語)';
       case 'zs':
+      case 'zh':
         return 'Chinese (中文)';
       case 'ru':
         return 'Russian (Ру́сский)';
@@ -117,10 +122,12 @@ class LanguageConverter {
       case 'ar':
         return 'Arabic (اَلْعَرَبِيَّةُ)';
       case 'dn':
+      case 'nl-NL':
         return 'Dutch (Nederlands)';
       case 'sv':
         return 'Swedish (Svenska)';
       case 'nb':
+      case 'no-BO':
         return 'Norwegian (Bokmål)';
       case 'tr':
         return 'Turkish (Türkçe)';
@@ -159,6 +166,7 @@ class LanguageConverter {
       case 'nv':
         return 'Navajo (Naabeehó)';
       case 'kl':
+      case 'tlh':
         return 'Klingon';
       case 'hv':
         return 'High Valyrian';

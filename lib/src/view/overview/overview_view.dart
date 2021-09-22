@@ -5,6 +5,7 @@
 import 'package:audioplayers/audioplayers.dart';
 import 'package:clipboard/clipboard.dart';
 import 'package:duo_tracker/src/component/common_app_bar_titles.dart';
+import 'package:duo_tracker/src/component/common_divider.dart';
 import 'package:duo_tracker/src/component/common_nested_scroll_view.dart';
 import 'package:duo_tracker/src/component/const/filter_pattern.dart';
 import 'package:duo_tracker/src/component/const/match_pattern.dart';
@@ -186,7 +187,7 @@ class _OverviewViewState extends State<OverviewView> {
                     ),
                   ],
                 ),
-                _divider,
+                const CommonDivider(),
                 Container(
                   padding: const EdgeInsets.fromLTRB(20, 0, 20, 0),
                   child: Row(
@@ -219,7 +220,7 @@ class _OverviewViewState extends State<OverviewView> {
                     ],
                   ),
                 ),
-                _divider,
+                const CommonDivider(),
                 Row(
                   mainAxisAlignment: MainAxisAlignment.start,
                   children: [
@@ -272,7 +273,7 @@ class _OverviewViewState extends State<OverviewView> {
                       ),
                   ],
                 ),
-                _divider,
+                const CommonDivider(),
                 Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   crossAxisAlignment: CrossAxisAlignment.end,
@@ -520,10 +521,6 @@ class _OverviewViewState extends State<OverviewView> {
         return 'Trashed Learned Words';
     }
   }
-
-  Divider get _divider => Divider(
-        color: Theme.of(context).colorScheme.onSurface.withOpacity(0.3),
-      );
 
   Widget _buildSearchBar() => Container(
         margin: const EdgeInsets.fromLTRB(40, 5, 40, 5),

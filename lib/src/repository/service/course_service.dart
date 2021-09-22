@@ -2,6 +2,7 @@
 // Use of this source code is governed by a
 // BSD-style license that can be found in the LICENSE file.
 
+import 'package:duo_tracker/src/repository/const/column/course_column_name.dart';
 import 'package:duo_tracker/src/repository/course_repository.dart';
 import 'package:duo_tracker/src/repository/model/course_model.dart';
 
@@ -98,4 +99,23 @@ class CourseService extends CourseRepository {
           ],
         ),
       );
+
+  @override
+  Future<List<Course>> findByGroupByFromLanguageAndLearningLanguage() async =>
+      await super.database.then(
+            (database) => database
+                .query(
+                  table,
+                  groupBy:
+                      '${CourseColumnName.fromLanguage}, ${CourseColumnName.learningLanguage}',
+                )
+                .then(
+                  (v) => v
+                      .map(
+                        (e) =>
+                            e.isNotEmpty ? Course.fromMap(e) : Course.empty(),
+                      )
+                      .toList(),
+                ),
+          );
 }

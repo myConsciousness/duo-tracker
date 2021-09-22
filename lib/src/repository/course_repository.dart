@@ -9,4 +9,6 @@ abstract class CourseRepository extends Repository<Course> {
   Future<Course> findByCourseId({
     required String courseId,
   });
+
+  Future<List<Course>> findByGroupByFromLanguageAndLearningLanguage();
 }
