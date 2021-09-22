@@ -98,10 +98,10 @@ class _DuoTrackerState extends State<DuoTracker> with WidgetsBindingObserver {
                     : Colors.blue,
                 systemNavigationBarColor: _themeModeProvider.appliedDarkTheme
                     ? Colors.grey[850]!
-                    : Colors.white,
+                    : Colors.grey[50]!,
                 systemNavigationBarIconBrightness:
                     _themeModeProvider.appliedDarkTheme
-                        ? Brightness.dark
+                        ? Brightness.light
                         : Brightness.dark,
               ),
             );

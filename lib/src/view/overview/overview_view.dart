@@ -154,7 +154,8 @@ class _OverviewViewState extends State<OverviewView> {
           selectedFilterItems: _selectedFilterItems,
         ),
         child: Card(
-          elevation: 2.0,
+          clipBehavior: Clip.antiAlias,
+          elevation: 5,
           child: Padding(
             padding: const EdgeInsets.fromLTRB(20, 10, 20, 10),
             child: Column(
