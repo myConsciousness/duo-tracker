@@ -60,6 +60,7 @@ dependencies:
   future_progress_dialog: ^0.2.0
   flutter_email_sender: ^5.0.2
   app_review: ^2.1.1+1
+  upgrader: ^3.5.1
 
 dev_dependencies:
   flutter_test:

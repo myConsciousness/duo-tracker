@@ -87,41 +87,43 @@ class _DuoTrackerState extends State<DuoTracker> with WidgetsBindingObserver {
   }
 
   @override
-  Widget build(BuildContext context) => ChangeNotifierProvider(
-        create: (_) => _themeModeProvider,
-        child: Consumer<ThemeModeProvider>(
-          builder: (context, _, __) {
-            SystemChrome.setSystemUIOverlayStyle(
-              SystemUiOverlayStyle(
-                statusBarColor: _themeModeProvider.appliedDarkTheme
-                    ? Colors.grey[800]!
-                    : Colors.blue,
-                systemNavigationBarColor: _themeModeProvider.appliedDarkTheme
-                    ? Colors.grey[850]!
-                    : Colors.grey[50]!,
-                systemNavigationBarIconBrightness:
-                    _themeModeProvider.appliedDarkTheme
-                        ? Brightness.light
-                        : Brightness.dark,
-              ),
-            );
-
-            return MaterialApp(
-              debugShowCheckedModeBanner: false,
-              theme: ThemeData(
-                brightness: _themeModeProvider.appliedDarkTheme
-                    ? Brightness.dark
-                    : Brightness.light,
-                typography: Typography.material2018(),
-                textTheme: GoogleFonts.latoTextTheme(
+  Widget build(BuildContext context) {
+    return ChangeNotifierProvider(
+      create: (_) => _themeModeProvider,
+      child: Consumer<ThemeModeProvider>(
+        builder: (context, _, __) {
+          SystemChrome.setSystemUIOverlayStyle(
+            SystemUiOverlayStyle(
+              statusBarColor: _themeModeProvider.appliedDarkTheme
+                  ? Colors.grey[800]!
+                  : Colors.blue,
+              systemNavigationBarColor: _themeModeProvider.appliedDarkTheme
+                  ? Colors.grey[850]!
+                  : Colors.grey[50]!,
+              systemNavigationBarIconBrightness:
                   _themeModeProvider.appliedDarkTheme
-                      ? Typography.whiteMountainView
-                      : Typography.blackMountainView,
-                ),
+                      ? Brightness.light
+                      : Brightness.dark,
+            ),
+          );
+
+          return MaterialApp(
+            debugShowCheckedModeBanner: false,
+            theme: ThemeData(
+              brightness: _themeModeProvider.appliedDarkTheme
+                  ? Brightness.dark
+                  : Brightness.light,
+              typography: Typography.material2018(),
+              textTheme: GoogleFonts.latoTextTheme(
+                _themeModeProvider.appliedDarkTheme
+                    ? Typography.whiteMountainView
+                    : Typography.blackMountainView,
               ),
-              home: const DuoTrackerHomeView(),
-            );
-          },
-        ),
-      );
+            ),
+            home: const DuoTrackerHomeView(),
+          );
+        },
+      ),
+    );
+  }
 }
