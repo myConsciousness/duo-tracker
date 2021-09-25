@@ -3,43 +3,85 @@
 // BSD-style license that can be found in the LICENSE file.
 
 import 'package:flutter/material.dart';
+import 'package:flutter/widgets.dart';
 
 class TextWithHorizontalDivider extends StatelessWidget {
   /// The text value
   final String value;
 
+  /// The font size
+  final double? fontSize;
+
+  /// The text color
+  final Color? textColor;
+
+  /// The font weight
+  final FontWeight? fontWeight;
+
   const TextWithHorizontalDivider({
     Key? key,
     required this.value,
+    this.fontSize,
+    this.textColor,
+    this.fontWeight,
   }) : super(key: key);
 
   @override
   Widget build(BuildContext context) => Row(
         children: <Widget>[
-          Expanded(
-            child: Container(
-              margin: const EdgeInsets.only(left: 10.0, right: 20.0),
-              child: Divider(
-                color: Theme.of(context).colorScheme.onSurface,
-                height: 36,
-              ),
-            ),
+          _buildDivider(
+            context: context,
           ),
           Text(
             value,
             style: TextStyle(
-              color: Theme.of(context).colorScheme.onSurface,
+              fontSize: _getTextFontSize(),
+              color: _getTextColor(context: context),
+              fontWeight: _getFontWeight(),
             ),
           ),
-          Expanded(
-            child: Container(
-              margin: const EdgeInsets.only(left: 20.0, right: 10.0),
-              child: Divider(
-                color: Theme.of(context).colorScheme.onSurface,
-                height: 36,
-              ),
-            ),
+          _buildDivider(
+            context: context,
           ),
         ],
       );
+
+  Widget _buildDivider({
+    required BuildContext context,
+  }) =>
+      Expanded(
+        child: Container(
+          margin: const EdgeInsets.only(left: 20, right: 20),
+          child: Divider(
+            color: Theme.of(context).colorScheme.onSurface,
+            height: 36,
+          ),
+        ),
+      );
+
+  double? _getTextFontSize() {
+    if (fontSize != null) {
+      return fontSize;
+    }
+
+    return 13;
+  }
+
+  Color? _getTextColor({
+    required BuildContext context,
+  }) {
+    if (textColor != null) {
+      return textColor;
+    }
+
+    return Theme.of(context).colorScheme.onSurface;
+  }
+
+  FontWeight? _getFontWeight() {
+    if (fontWeight != null) {
+      return fontWeight;
+    }
+
+    return FontWeight.normal;
+  }
 }

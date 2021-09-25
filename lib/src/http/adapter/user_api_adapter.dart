@@ -92,6 +92,7 @@ class UserApiAdapter extends ApiAdapter {
         pictureUrl: json['picture'] ?? '',
         plusStatus: json['plusStatus'] ?? '',
         lingots: json['lingots'],
+        gems: json['gems'],
         totalXp: json['totalXp'],
         xpGoal: json['xpGoal'],
         weeklyXp: json['weeklyXp'],

@@ -523,7 +523,7 @@ class _OverviewViewState extends State<OverviewView> {
   }
 
   Widget _buildSearchBar() => Container(
-        margin: const EdgeInsets.fromLTRB(40, 5, 40, 5),
+        margin: const EdgeInsets.fromLTRB(45, 0, 45, 0),
         child: TextField(
           decoration: InputDecoration(
             prefixIcon: const Icon(Icons.search),
@@ -602,7 +602,13 @@ class _OverviewViewState extends State<OverviewView> {
 
   @override
   Widget build(BuildContext context) => Scaffold(
+        floatingActionButtonLocation:
+            FloatingActionButtonLocation.miniCenterDocked,
         floatingActionButton: SpeedDial(
+          renderOverlay: true,
+          switchLabelPosition: true,
+          buttonSize: 40,
+          childrenButtonSize: 40,
           tooltip: 'Show Actions',
           animatedIcon: AnimatedIcons.menu_close,
           children: [
@@ -632,11 +638,11 @@ class _OverviewViewState extends State<OverviewView> {
             ),
             _buildSpeedDialChild(
               icon: FontAwesomeIcons.sync,
-              label: 'Sync Words',
+              label: 'Update Words',
               onTap: () async {
                 showLoadingDialog(
                   context: context,
-                  title: 'Updating Words',
+                  title: 'Updating Learned Words',
                   future: _syncLearnedWords(),
                 );
 
@@ -670,7 +676,7 @@ class _OverviewViewState extends State<OverviewView> {
             ),
           ],
         ),
-        body: CommonNestesScrollView(
+        body: CommonNestedScrollView(
           title: _searching
               ? _buildSearchBar()
               : CommonAppBarTitles(

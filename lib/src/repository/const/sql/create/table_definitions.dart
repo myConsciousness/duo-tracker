@@ -24,6 +24,7 @@ class TableDefinitions {
           PICTURE_URL TEXT NOT NULL,
           PLUS_STATUS TEXT NOT NULL,
           LINGOTS INTEGER NOT NULL,
+          GEMS INTEGER NOT NULL,
           TOTAL_XP INTEGER NOT NULL,
           XP_GOAL INTEGER NOT NULL,
           WEEKLY_XP INTEGER NOT NULL,

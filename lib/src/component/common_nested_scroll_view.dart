@@ -4,8 +4,8 @@
 
 import 'package:flutter/material.dart';
 
-class CommonNestesScrollView extends StatelessWidget {
-  const CommonNestesScrollView({
+class CommonNestedScrollView extends StatelessWidget {
+  const CommonNestedScrollView({
     Key? key,
     required this.title,
     this.actions = const [],

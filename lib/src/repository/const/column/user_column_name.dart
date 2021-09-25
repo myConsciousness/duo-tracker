@@ -21,6 +21,7 @@ class UserColumnName {
   static const pictureUrl = 'PICTURE_URL';
   static const plusStatus = 'PLUS_STATUS';
   static const lingots = 'LINGOTS';
+  static const gems = 'GEMS';
   static const totalXp = 'TOTAL_XP';
   static const xpGoals = 'XP_GOAL';
   static const weeklyXp = 'WEEKLY_XP';

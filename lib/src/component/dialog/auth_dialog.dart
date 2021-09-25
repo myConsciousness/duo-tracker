@@ -6,6 +6,7 @@ import 'package:awesome_dialog/awesome_dialog.dart';
 import 'package:duo_tracker/src/component/common_text_field.dart';
 import 'package:duo_tracker/src/component/dialog/input_error_dialog.dart';
 import 'package:duo_tracker/src/http/utils/duolingo_api_utils.dart';
+import 'package:duo_tracker/src/repository/preference/common_shared_preferences_key.dart';
 import 'package:flutter/material.dart';
 
 AwesomeDialog? _dialog;
@@ -71,7 +72,7 @@ Future<T?> showAuthDialog<T>({
               AnimatedButton(
                 isFixedHeight: false,
                 text: 'Login',
-                color: Theme.of(context).colorScheme.secondary,
+                color: Theme.of(context).colorScheme.secondaryVariant,
                 pressEvent: () async {
                   if (_authenticating) {
                     // Prevents multiple presses.
@@ -80,22 +81,7 @@ Future<T?> showAuthDialog<T>({
 
                   _authenticating = true;
 
-                  if (_usernameController.text.isEmpty) {
-                    showInputErrorDialog(
-                      context: context,
-                      content: 'The username or email address is required.',
-                    );
-
-                    _authenticating = false;
-                    return;
-                  }
-
-                  if (_rawPassword.isEmpty) {
-                    showInputErrorDialog(
-                      context: context,
-                      content: 'The password is required.',
-                    );
-
+                  if (!await _checkInput(context: context)) {
                     _authenticating = false;
                     return;
                   }
@@ -123,4 +109,39 @@ Future<T?> showAuthDialog<T>({
   );
 
   await _dialog!.show();
+}
+
+Future<bool> _checkInput({
+  required BuildContext context,
+}) async {
+  if (_usernameController.text.isEmpty) {
+    showInputErrorDialog(
+      context: context,
+      content: 'The username or email address is required.',
+    );
+
+    return false;
+  }
+
+  final currentUsername = await CommonSharedPreferencesKey.username.getString();
+
+  if (_usernameController.text == currentUsername) {
+    showInputErrorDialog(
+      context: context,
+      content: 'This user is already logged in.',
+    );
+
+    return false;
+  }
+
+  if (_rawPassword.isEmpty) {
+    showInputErrorDialog(
+      context: context,
+      content: 'The password is required.',
+    );
+
+    return false;
+  }
+
+  return true;
 }

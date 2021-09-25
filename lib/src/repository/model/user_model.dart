@@ -23,6 +23,7 @@ class User {
   String pictureUrl;
   String plusStatus;
   int lingots;
+  int gems;
   int totalXp;
   int xpGoal;
   int weeklyXp;
@@ -54,6 +55,7 @@ class User {
         pictureUrl = '',
         plusStatus = '',
         lingots = 0,
+        gems = 0,
         totalXp = 0,
         xpGoal = 0,
         weeklyXp = 0,
@@ -82,6 +84,7 @@ class User {
     required this.pictureUrl,
     required this.plusStatus,
     required this.lingots,
+    required this.gems,
     required this.totalXp,
     required this.xpGoal,
     required this.weeklyXp,
@@ -111,6 +114,7 @@ class User {
         pictureUrl: map[UserColumnName.pictureUrl],
         plusStatus: map[UserColumnName.plusStatus],
         lingots: map[UserColumnName.lingots],
+        gems: map[UserColumnName.gems],
         totalXp: map[UserColumnName.totalXp],
         xpGoal: map[UserColumnName.xpGoals],
         weeklyXp: map[UserColumnName.weeklyXp],
@@ -145,6 +149,7 @@ class User {
     map[UserColumnName.pictureUrl] = pictureUrl;
     map[UserColumnName.plusStatus] = plusStatus;
     map[UserColumnName.lingots] = lingots;
+    map[UserColumnName.gems] = gems;
     map[UserColumnName.totalXp] = totalXp;
     map[UserColumnName.xpGoals] = xpGoal;
     map[UserColumnName.weeklyXp] = weeklyXp;
