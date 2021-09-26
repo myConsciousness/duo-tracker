@@ -6,7 +6,17 @@ import 'package:flutter/material.dart';
 import 'package:syncfusion_flutter_charts/charts.dart';
 
 class RadicalBarChart extends StatelessWidget {
-  const RadicalBarChart({Key? key}) : super(key: key);
+  /// The chart title
+  final ChartTitle? chartTitle;
+
+  /// The center object
+  final Widget centerObject;
+
+  const RadicalBarChart({
+    Key? key,
+    this.chartTitle,
+    required this.centerObject,
+  }) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -25,12 +35,12 @@ class RadicalBarChart extends StatelessWidget {
       ChartSampleData(
           x: 'Vehicle',
           y: 62.70,
-          text: '10%',
+          text: '100%',
           pointColor: const Color.fromRGBO(69, 186, 161, 1.0)),
       ChartSampleData(
           x: 'Education',
           y: 29.20,
-          text: '10%',
+          text: '100%',
           pointColor: const Color.fromRGBO(230, 135, 111, 1.0)),
       ChartSampleData(
           x: 'Home',
@@ -60,52 +70,10 @@ class RadicalBarChart extends StatelessWidget {
     ];
 
     return SfCircularChart(
-      title: ChartTitle(text: 'Percentage of loan closure'),
+      title: chartTitle,
       legend: Legend(
         isVisible: true,
         overflowMode: LegendItemOverflowMode.wrap,
-        legendItemBuilder:
-            (String name, dynamic series, dynamic point, int index) => SizedBox(
-          height: 60,
-          width: 150,
-          child: Row(
-            children: <Widget>[
-              SizedBox(
-                height: 75,
-                width: 65,
-                child: SfCircularChart(
-                  annotations: <CircularChartAnnotation>[
-                    _annotationSources[index],
-                  ],
-                  series: <RadialBarSeries<ChartSampleData, String>>[
-                    RadialBarSeries<ChartSampleData, String>(
-                        animationDuration: 0,
-                        dataSource: <ChartSampleData>[dataSources[index]],
-                        maximumValue: 100,
-                        radius: '100%',
-                        cornerStyle: CornerStyle.bothCurve,
-                        xValueMapper: (ChartSampleData data, _) =>
-                            point.x as String,
-                        yValueMapper: (ChartSampleData data, _) => data.y,
-                        pointColorMapper: (ChartSampleData data, _) =>
-                            data.pointColor,
-                        innerRadius: '70%',
-                        pointRadiusMapper: (ChartSampleData data, _) =>
-                            data.text),
-                  ],
-                ),
-              ),
-              SizedBox(
-                width: 72,
-                child: Text(
-                  point.x,
-                  style: TextStyle(
-                      color: colors[index], fontWeight: FontWeight.bold),
-                ),
-              ),
-            ],
-          ),
-        ),
       ),
       series: _getRadialBarCustomizedSeries(),
       tooltipBehavior:
@@ -114,13 +82,9 @@ class RadicalBarChart extends StatelessWidget {
         CircularChartAnnotation(
           angle: 0,
           radius: '0%',
-          height: '90%',
-          width: '90%',
-          widget: Image.asset(
-            'assets/icon/bowie_license.png',
-            height: 100.0,
-            width: 100.0,
-          ),
+          height: '95%',
+          width: '95%',
+          widget: centerObject,
         ),
       ],
     );

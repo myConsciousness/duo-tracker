@@ -6,7 +6,8 @@ import 'package:duo_tracker/src/component/common_default_tab_controller.dart';
 import 'package:duo_tracker/src/view/overview/overview_tab_view.dart';
 import 'package:duo_tracker/src/view/settings/settings_view.dart';
 import 'package:duo_tracker/src/view/statistics/statistics_view.dart';
-import 'package:duo_tracker/src/view/user/user_account_view.dart';
+import 'package:duo_tracker/src/view/user/user_account_tab_view.dart';
+import 'package:duo_tracker/src/view/user/user_overview_view.dart';
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 
@@ -27,7 +28,7 @@ class DuoTrackerHomeView extends StatelessWidget {
         body: [
           OverviewTabView(),
           StatisticsView(),
-          UserAccountView(),
+          UserAccountTabView(),
           SettingsView(),
         ],
       );
