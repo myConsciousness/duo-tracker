@@ -104,7 +104,7 @@ class _OverviewViewState extends State<OverviewView> {
             ),
           )
           .inDays >=
-      7);
+      1);
 
   Future<void> _syncLearnedWords() async {
     if (!_alreadyAuthDialogOpened) {

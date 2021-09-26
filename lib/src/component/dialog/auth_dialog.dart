@@ -18,12 +18,13 @@ bool _authenticating = false;
 
 Future<T?> showAuthDialog<T>({
   required BuildContext context,
+  bool dismissOnTouchOutside = false,
 }) async {
   _dialog = AwesomeDialog(
     context: context,
     animType: AnimType.LEFTSLIDE,
     dialogType: DialogType.SUCCES,
-    dismissOnTouchOutside: false,
+    dismissOnTouchOutside: dismissOnTouchOutside,
     btnOkColor: Theme.of(context).colorScheme.secondary,
     body: Container(
       padding: const EdgeInsets.all(13),

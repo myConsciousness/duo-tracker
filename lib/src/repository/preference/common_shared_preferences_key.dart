@@ -52,6 +52,13 @@ enum CommonSharedPreferencesKey {
 
   //! The Score Goals ↑
 
+  //! The Shop Config ↓
+
+  /// The reward point
+  rewardPoint,
+
+  //! The Shop Config ↑
+
   //! The Sync Config ↓
 
   /// The datetime last auto synced overview
@@ -110,6 +117,8 @@ extension KeyFeature on CommonSharedPreferencesKey {
         return 'score_goals_monthly_xp';
       case CommonSharedPreferencesKey.scoreGoalsStreak:
         return 'score_goals_streak';
+      case CommonSharedPreferencesKey.rewardPoint:
+        return 'reward_point';
       case CommonSharedPreferencesKey.currentLearningLanguage:
         return 'current_learning_language';
       case CommonSharedPreferencesKey.currentFromLanguage:

@@ -331,6 +331,7 @@ class _UserOverviewViewState extends State<UserOverviewView> {
               onTap: () async {
                 await showAuthDialog(
                   context: context,
+                  dismissOnTouchOutside: true,
                 );
 
                 await showLoadingDialog(

@@ -2,9 +2,15 @@
 // Use of this source code is governed by a
 // BSD-style license that can be found in the LICENSE file.
 
+import 'package:awesome_dialog/awesome_dialog.dart';
 import 'package:duo_tracker/src/admob/reawarde_ad_utils.dart';
+import 'package:duo_tracker/src/component/dialog/charge_point_dialog.dart';
+import 'package:duo_tracker/src/repository/preference/common_shared_preferences_key.dart';
 import 'package:duo_tracker/src/repository/preference/rewarded_ad_shared_preferences.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/widgets.dart';
+import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+import 'package:intl/intl.dart';
 
 class ShopView extends StatefulWidget {
   const ShopView({Key? key}) : super(key: key);
@@ -14,17 +20,167 @@ class ShopView extends StatefulWidget {
 }
 
 class _ShopViewState extends State<ShopView> {
+  /// The format for numeric text
+  final _numericTextFormat = NumberFormat('#,###');
+
+  /// The point
+  int _point = 0;
+
+  @override
+  void initState() {
+    super.initState();
+    _asyncInitState();
+  }
+
+  @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+  }
+
+  @override
+  void dispose() {
+    super.dispose();
+  }
+
+  Future<void> _asyncInitState() async {
+    _point =
+        await CommonSharedPreferencesKey.rewardPoint.getInt(defaultValue: 0);
+    super.setState(() {});
+  }
+
   @override
   Widget build(BuildContext context) => Scaffold(
         body: SafeArea(
           child: SingleChildScrollView(
-            child: TextButton(
-              child: Text('Reward'),
-              onPressed: () {
-                RewardedAdUtils.showRewarededAd(
-                    sharedPreferencesKey: RewardedAdSharedPreferencesKey.test);
-              },
+            child: Padding(
+              padding: const EdgeInsets.all(10),
+              child: Column(
+                children: [
+                  _buildWalletCard(),
+                  _buildDisableAdProductCard(),
+                ],
+              ),
             ),
+          ),
+        ),
+      );
+
+  Widget _buildWalletCard() => Padding(
+        padding: const EdgeInsets.fromLTRB(30, 0, 30, 5),
+        child: Card(
+          clipBehavior: Clip.antiAlias,
+          elevation: 5,
+          child: Column(
+            children: [
+              ListTile(
+                title: Center(
+                  child: Text(
+                      'You have ${_numericTextFormat.format(_point)} points.'),
+                ),
+              ),
+              Padding(
+                padding: const EdgeInsets.fromLTRB(20, 0, 20, 5),
+                child: AnimatedButton(
+                  isFixedHeight: false,
+                  text: 'Charge Points',
+                  color: Theme.of(context).colorScheme.secondaryVariant,
+                  pressEvent: () {
+                    RewardedAdUtils.showRewarededAd(
+                        sharedPreferencesKey:
+                            RewardedAdSharedPreferencesKey.rewardImmediately);
+                  },
+                ),
+              ),
+            ],
+          ),
+        ),
+      );
+
+  Widget _buildDisableAdProductCard() => Padding(
+        padding: const EdgeInsets.all(5),
+        child: Card(
+          clipBehavior: Clip.antiAlias,
+          elevation: 5,
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            crossAxisAlignment: CrossAxisAlignment.center,
+            children: [
+              const ListTile(
+                leading: Icon(FontAwesomeIcons.shoppingBasket),
+                title: Text('Disable full-screen ads'),
+                subtitle: Text(
+                    'You can disable full-screen ads for a certain period of time.'),
+              ),
+              const SizedBox(
+                height: 20,
+              ),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                crossAxisAlignment: CrossAxisAlignment.center,
+                children: [
+                  _buildProductCard(title: '30 minutes', price: 5),
+                  _buildProductCard(title: '1 hour', price: 10),
+                ],
+              ),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                crossAxisAlignment: CrossAxisAlignment.center,
+                children: [
+                  _buildProductCard(title: '3 hours', price: 20),
+                  _buildProductCard(title: '6 hours', price: 50),
+                ],
+              ),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                crossAxisAlignment: CrossAxisAlignment.center,
+                children: [
+                  _buildProductCard(title: '12 hours', price: 100),
+                  _buildProductCard(title: '24 hours', price: 150),
+                ],
+              ),
+            ],
+          ),
+        ),
+      );
+
+  Widget _buildProductCard({
+    required String title,
+    required int price,
+  }) =>
+      Expanded(
+        child: Card(
+          elevation: 5,
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            crossAxisAlignment: CrossAxisAlignment.center,
+            children: [
+              Text(
+                title,
+                style: const TextStyle(
+                  fontWeight: FontWeight.bold,
+                ),
+              ),
+              Padding(
+                padding: const EdgeInsets.fromLTRB(20, 0, 20, 10),
+                child: AnimatedButton(
+                  isFixedHeight: false,
+                  text: '$price Points',
+                  color: Theme.of(context).colorScheme.secondaryVariant,
+                  pressEvent: () async {
+                    final currentPoint =
+                        await CommonSharedPreferencesKey.rewardPoint.getInt();
+
+                    if (currentPoint < price) {
+                      await showChargePointDialog(context: context);
+                      return;
+                    }
+
+                    await CommonSharedPreferencesKey.rewardPoint
+                        .setInt(currentPoint - price);
+                  },
+                ),
+              ),
+            ],
           ),
         ),
       );

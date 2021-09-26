@@ -57,9 +57,8 @@ class RewardedAdResolver {
       },
     );
 
-    _rewardedAd!.show(onUserEarnedReward: (RewardedAd ad, RewardItem reward) {
-      print("reqareded!");
-    });
+    _rewardedAd!
+        .show(onUserEarnedReward: (RewardedAd ad, RewardItem reward) {});
 
     _rewardedAd = null;
   }

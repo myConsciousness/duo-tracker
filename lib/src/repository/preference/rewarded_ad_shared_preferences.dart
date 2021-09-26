@@ -4,15 +4,24 @@
 
 import 'package:shared_preferences/shared_preferences.dart';
 
-enum RewardedAdSharedPreferencesKey { test }
+enum RewardedAdSharedPreferencesKey {
+  /// The reward immediately
+  rewardImmediately
+}
 
 extension KeyFeature on RewardedAdSharedPreferencesKey {
   String get key {
-    return '';
+    switch (this) {
+      case RewardedAdSharedPreferencesKey.rewardImmediately:
+        return 'reward_immediately';
+    }
   }
 
   int get limitCount {
-    return 0;
+    switch (this) {
+      case RewardedAdSharedPreferencesKey.rewardImmediately:
+        return 0;
+    }
   }
 
   Future<bool> setInt(final int value) async {
