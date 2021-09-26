@@ -36,6 +36,22 @@ enum CommonSharedPreferencesKey {
 
   //! The Search Config ↑
 
+  //! The Score Goals ↓
+
+  /// The score goals daily xp
+  scoreGoalsDailyXp,
+
+  /// The score goals weekly xp
+  scoreGoalsWeeklyXp,
+
+  /// The score goals monthly xp
+  scoreGoalsMonthlyXp,
+
+  /// The score goals streak
+  scoreGoalsStreak,
+
+  //! The Score Goals ↑
+
   //! The Sync Config ↓
 
   /// The datetime last auto synced overview
@@ -86,6 +102,14 @@ extension KeyFeature on CommonSharedPreferencesKey {
         return 'sort_item';
       case CommonSharedPreferencesKey.sortPattern:
         return 'sort_pattern';
+      case CommonSharedPreferencesKey.scoreGoalsDailyXp:
+        return 'score_goals_daily_xp';
+      case CommonSharedPreferencesKey.scoreGoalsWeeklyXp:
+        return 'score_goals_weekly_xp';
+      case CommonSharedPreferencesKey.scoreGoalsMonthlyXp:
+        return 'score_goals_monthly_xp';
+      case CommonSharedPreferencesKey.scoreGoalsStreak:
+        return 'score_goals_streak';
       case CommonSharedPreferencesKey.currentLearningLanguage:
         return 'current_learning_language';
       case CommonSharedPreferencesKey.currentFromLanguage:
@@ -130,6 +154,21 @@ extension KeyFeature on CommonSharedPreferencesKey {
 
     if (sharedPreferences.containsKey(key)) {
       return sharedPreferences.getInt(key) ?? defaultValue;
+    }
+
+    return defaultValue;
+  }
+
+  Future<bool> setDouble(final double value) async {
+    final sharedPreferences = await SharedPreferences.getInstance();
+    return sharedPreferences.setDouble(key, value);
+  }
+
+  Future<double> getDouble({double defaultValue = -1.0}) async {
+    final sharedPreferences = await SharedPreferences.getInstance();
+
+    if (sharedPreferences.containsKey(key)) {
+      return sharedPreferences.getDouble(key) ?? defaultValue;
     }
 
     return defaultValue;
