@@ -33,14 +33,14 @@ class UserOverviewView extends StatefulWidget {
 }
 
 class _UserOverviewViewState extends State<UserOverviewView> {
+  /// The chart service
+  final _chartService = ChartService.getInstance();
+
   /// The format for numeric text
   final _numericTextFormat = NumberFormat('#,###');
 
   /// The user service
   final _userService = UserService.getInstance();
-
-  /// The chart service
-  final _chartService = ChartService.getInstance();
 
   Widget _buildCardText({
     required String title,
@@ -112,6 +112,9 @@ class _UserOverviewViewState extends State<UserOverviewView> {
             return const Loading();
           }
 
+          final achievements =
+              _getTotalAchievements(chartDataSources: snapshot.data);
+
           return RadicalBarChart(
             centerObject: CircleAvatar(
               child: Column(
@@ -125,9 +128,19 @@ class _UserOverviewViewState extends State<UserOverviewView> {
                       fontWeight: FontWeight.bold,
                     ),
                   ),
-                  const SizedBox(height: 3),
+                  const SizedBox(
+                    height: 7,
+                  ),
                   Text(
-                    LearningScoreConverter.toScoreName(score: 100),
+                    '$achievements / 160',
+                    style: const TextStyle(
+                      fontSize: 12,
+                      color: Colors.white,
+                      fontStyle: FontStyle.italic,
+                    ),
+                  ),
+                  Text(
+                    'Score: ${LearningScoreConverter.toScoreName(score: achievements)}',
                     style: const TextStyle(
                       fontSize: 12,
                       color: Colors.white,
@@ -143,6 +156,18 @@ class _UserOverviewViewState extends State<UserOverviewView> {
           );
         },
       );
+
+  int _getTotalAchievements({
+    required List<ChartDataSource> chartDataSources,
+  }) {
+    int achievements = 0;
+    for (final ChartDataSource chartDataSources in chartDataSources) {
+      achievements +=
+          LearningScoreConverter.toScore(achievement: chartDataSources.y);
+    }
+
+    return achievements;
+  }
 
   Widget _buildStatusCard({
     required User user,

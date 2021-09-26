@@ -32,4 +32,28 @@ class LearningScoreConverter {
 
     return 'D';
   }
+
+  static int toScore({
+    required double achievement,
+  }) {
+    if (achievement >= 100.0) {
+      return 40;
+    } else if (achievement >= 90.0) {
+      return 35;
+    } else if (achievement >= 80.0) {
+      return 30;
+    } else if (achievement >= 70.0) {
+      return 25;
+    } else if (achievement >= 60.0) {
+      return 20;
+    } else if (achievement >= 50.0) {
+      return 15;
+    } else if (achievement >= 40.0) {
+      return 10;
+    } else if (achievement >= 30.0) {
+      return 5;
+    }
+
+    return 0;
+  }
 }
