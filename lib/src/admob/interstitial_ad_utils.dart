@@ -6,9 +6,9 @@ import 'package:duo_tracker/src/admob/interstitial_ad_resolver.dart';
 import 'package:duo_tracker/src/repository/preference/interstitial_ad_shared_preferences_key.dart';
 
 class InterstitialAdUtils {
-  static void showInterstitialAd(
-      {required InterstitialAdSharedPreferencesKey
-          sharedPreferencesKey}) async {
+  static void showInterstitialAd({
+    required InterstitialAdSharedPreferencesKey sharedPreferencesKey,
+  }) async {
     int count = await sharedPreferencesKey.getInt();
 
     if (count >= sharedPreferencesKey.limitCount) {
@@ -16,8 +16,10 @@ class InterstitialAdUtils {
 
       final InterstitialAdResolver interstitialAdResolver =
           InterstitialAdResolver.getInstance();
-      interstitialAdResolver.loadInterstitialAd();
-      interstitialAdResolver.showInterstitialAd();
+
+      if (interstitialAdResolver.adLoaded) {
+        await interstitialAdResolver.showInterstitialAd();
+      }
     } else {
       count++;
       await sharedPreferencesKey.setInt(count);

@@ -13,14 +13,16 @@ class ThemeModeProvider with ChangeNotifier {
   bool _appliedDarkTheme = false;
 
   Future<void> _asyncInit() async {
-    notify(
+    await notify(
         appliedDarkTheme:
             await CommonSharedPreferencesKey.applyDarkTheme.getBool());
   }
 
   bool get appliedDarkTheme => _appliedDarkTheme;
 
-  Future<void> notify({required final bool appliedDarkTheme}) async {
+  Future<void> notify({
+    required final bool appliedDarkTheme,
+  }) async {
     _appliedDarkTheme = appliedDarkTheme;
     await CommonSharedPreferencesKey.applyDarkTheme.setBool(appliedDarkTheme);
     super.notifyListeners();

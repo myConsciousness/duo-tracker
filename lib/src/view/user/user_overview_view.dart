@@ -94,7 +94,10 @@ class _UserOverviewViewState extends State<UserOverviewView> {
       defaultValue: 14.0,
     );
 
-    return await _chartService.computeLearningScoreRatioByTargets(
+    final userId = await CommonSharedPreferencesKey.userId.getString();
+
+    return await _chartService.computeLearningScoreRatioByUserIdAndTargets(
+      userId: userId,
       targetXpPerDay: dailyXpGoal,
       targetWeeklyXp: weeklyXpGoal,
       targetMontlyXp: monthlyXpGoal,
@@ -168,6 +171,61 @@ class _UserOverviewViewState extends State<UserOverviewView> {
 
     return achievements;
   }
+
+  Widget _buildGoalCard({
+    required User user,
+  }) =>
+      Card(
+        margin: const EdgeInsets.symmetric(
+          horizontal: 20,
+          vertical: 5,
+        ),
+        clipBehavior: Clip.antiAlias,
+        elevation: 5,
+        child: Padding(
+          padding: const EdgeInsets.symmetric(
+            horizontal: 8,
+            vertical: 15,
+          ),
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            crossAxisAlignment: CrossAxisAlignment.center,
+            children: [
+              Row(
+                children: <Widget>[
+                  _buildCardText(
+                    title: 'Goal Daily XP',
+                    subTitle: _numericTextFormat.format(user.lingots),
+                  ),
+                  _buildCardText(
+                    title: 'Goal Weekly XP',
+                    subTitle: _numericTextFormat.format(user.gems),
+                  ),
+                ],
+              ),
+              const CommonDivider(),
+              Row(
+                children: <Widget>[
+                  _buildCardText(
+                    title: 'Goal Monthly XP',
+                    subTitle: _numericTextFormat.format(user.weeklyXp / 7.0),
+                  ),
+                  _buildCardText(
+                    title: 'Streak',
+                    subTitle: _numericTextFormat.format(user.weeklyXp),
+                  ),
+                ],
+              ),
+            ],
+          ),
+        ),
+        shape: const RoundedRectangleBorder(
+          borderRadius: BorderRadius.vertical(
+            top: Radius.circular(30),
+            bottom: Radius.circular(30),
+          ),
+        ),
+      );
 
   Widget _buildStatusCard({
     required User user,
@@ -374,6 +432,7 @@ class _UserOverviewViewState extends State<UserOverviewView> {
                         height: 10,
                       ),
                       _buildSummaryCard(user: user),
+                      _buildGoalCard(user: user),
                     ],
                   ),
                 );

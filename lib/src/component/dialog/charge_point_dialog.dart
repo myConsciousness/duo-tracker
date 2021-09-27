@@ -54,6 +54,7 @@ Future<T?> showChargePointDialog<T>({
                   color: Theme.of(context).colorScheme.secondaryVariant,
                   pressEvent: () {
                     RewardedAdUtils.showRewarededAd(
+                        context: context,
                         sharedPreferencesKey:
                             RewardedAdSharedPreferencesKey.rewardImmediately);
 

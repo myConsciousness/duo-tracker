@@ -117,7 +117,7 @@ class UserApiAdapter extends ApiAdapter {
 
     final now = DateTime.now();
     for (final Map<String, dynamic> course in json['courses']) {
-      _courseService.insert(
+      await _courseService.insert(
         Course.from(
           courseId: course['id'],
           title: course['title'],
@@ -141,7 +141,7 @@ class UserApiAdapter extends ApiAdapter {
     for (final List<dynamic> skillsInternal in json['currentCourse']
         ['skills']) {
       for (final Map<String, dynamic> skill in skillsInternal) {
-        _skillService.insert(
+        await _skillService.insert(
           Skill.from(
             skillId: skill['id'],
             name: skill['name'],

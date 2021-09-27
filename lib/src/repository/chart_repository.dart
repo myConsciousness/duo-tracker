@@ -6,7 +6,8 @@ import 'package:duo_tracker/src/repository/model/chart_data_source_mode.dart';
 import 'package:duo_tracker/src/repository/repository.dart';
 
 abstract class ChartRepository extends Repository<ChartDataSource> {
-  Future<List<ChartDataSource>> computeLearningScoreRatioByTargets({
+  Future<List<ChartDataSource>> computeLearningScoreRatioByUserIdAndTargets({
+    required String userId,
     required double targetXpPerDay,
     required double targetWeeklyXp,
     required double targetMontlyXp,

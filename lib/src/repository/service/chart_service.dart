@@ -60,57 +60,76 @@ class ChartService extends ChartRepository {
       throw UnimplementedError();
 
   @override
-  Future<List<ChartDataSource>> computeLearningScoreRatioByTargets({
+  Future<List<ChartDataSource>> computeLearningScoreRatioByUserIdAndTargets({
+    required String userId,
     required double targetXpPerDay,
     required double targetWeeklyXp,
     required double targetMontlyXp,
     required double targetStreak,
-  }) async {
-    return await super.database.then(
-          (database) => database.rawQuery("""
+  }) async =>
+      await super.database.then(
+            (database) => database.rawQuery(
+              """
               SELECT
-                'Daily XP' X_VALUE,
-                ROUND(((WEEKLY_XP / 7.0) / $targetXpPerDay) * 100, 2) Y_VALUE,
-                69 COLOR_R,
-                186 COLOR_G,
-                161 COLOR_B,
-                1.0 COLOR_O
+                X_VALUE,
+                Y_VALUE,
+                COLOR_R,
+                COLOR_G,
+                COLOR_B,
+                COLOR_O
               FROM
-                USER
-              UNION ALL
-              SELECT
-                'Weekly XP' X_VALUE,
-                ROUND((WEEKLY_XP / $targetWeeklyXp) * 100, 2) Y_VALUE,
-                230 COLOR_R,
-                135 COLOR_G,
-                111 COLOR_B,
-                1.0 COLOR_O
-              FROM
-                USER
-              UNION ALL
-              SELECT
-                'Monthly XP' X_VALUE,
-                ROUND((MONTHLY_XP / $targetMontlyXp) * 100, 2) Y_VALUE,
-                145 COLOR_R,
-                132 COLOR_G,
-                202 COLOR_B,
-                1.0 COLOR_O
-              FROM
-                USER
-              UNION ALL
-              SELECT
-                'Streak' X_VALUE,
-                ROUND((STREAK / $targetStreak) * 100, 2) Y_VALUE,
-                235 COLOR_R,
-                96 COLOR_G,
-                143 COLOR_B,
-                1.0 COLOR_O
-              FROM
-                USER""").then(
-            (dataSources) => dataSources
-                .map((dataSource) => ChartDataSource.fromMap(dataSource))
-                .toList(),
-          ),
-        );
-  }
+                (
+                  SELECT
+                    USER_ID,
+                    'Daily XP' X_VALUE,
+                    ROUND(((WEEKLY_XP / 7.0) / $targetXpPerDay) * 100, 2) Y_VALUE,
+                    69 COLOR_R,
+                    186 COLOR_G,
+                    161 COLOR_B,
+                    1.0 COLOR_O
+                  FROM
+                    USER
+                  UNION ALL
+                  SELECT
+                    USER_ID,
+                    'Weekly XP' X_VALUE,
+                    ROUND((WEEKLY_XP / $targetWeeklyXp) * 100, 2) Y_VALUE,
+                    230 COLOR_R,
+                    135 COLOR_G,
+                    111 COLOR_B,
+                    1.0 COLOR_O
+                  FROM
+                    USER
+                  UNION ALL
+                  SELECT
+                    USER_ID,
+                   'Monthly XP' X_VALUE,
+                    ROUND((MONTHLY_XP / $targetMontlyXp) * 100, 2) Y_VALUE,
+                    145 COLOR_R,
+                    132 COLOR_G,
+                    202 COLOR_B,
+                    1.0 COLOR_O
+                  FROM
+                    USER
+                  UNION ALL
+                  SELECT
+                    USER_ID,
+                    'Streak' X_VALUE,
+                    ROUND((STREAK / $targetStreak) * 100, 2) Y_VALUE,
+                    235 COLOR_R,
+                    96 COLOR_G,
+                    143 COLOR_B,
+                    1.0 COLOR_O
+                  FROM
+                    USER
+                )
+              WHERE
+                USER_ID = ?""",
+              [userId],
+            ).then(
+              (dataSources) => dataSources
+                  .map((dataSource) => ChartDataSource.fromMap(dataSource))
+                  .toList(),
+            ),
+          );
 }

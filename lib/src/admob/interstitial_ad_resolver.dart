@@ -21,7 +21,10 @@ class InterstitialAdResolver {
   /// The interstitial ad
   InterstitialAd? _interstitialAd;
 
-  void loadInterstitialAd() async => await InterstitialAd.load(
+  /// Returns [true] if interstitial ad is already loaded, otherwise [false].
+  bool get adLoaded => _interstitialAd != null;
+
+  Future<void> loadInterstitialAd() async => await InterstitialAd.load(
         adUnitId: DuoTrackerAdmobUnitIds.getInstance().releaseInterstitial,
         request: const AdRequest(),
         adLoadCallback: InterstitialAdLoadCallback(
@@ -29,35 +32,40 @@ class InterstitialAdResolver {
             _interstitialAd = interstitialAd;
             _countLoadAttempt = 0;
           },
-          onAdFailedToLoad: (final LoadAdError loadAdError) {
+          onAdFailedToLoad: (final LoadAdError loadAdError) async {
             _interstitialAd = null;
             _countLoadAttempt++;
 
-            if (_countLoadAttempt <= 2) {
-              loadInterstitialAd();
+            if (_countLoadAttempt <= 5) {
+              await loadInterstitialAd();
             }
           },
         ),
       );
 
-  void showInterstitialAd() {
+  Future<void> showInterstitialAd() async {
     if (_interstitialAd == null) {
+      await loadInterstitialAd();
       return;
     }
 
     _interstitialAd!.fullScreenContentCallback = FullScreenContentCallback(
       onAdShowedFullScreenContent: (final InterstitialAd interstitialAd) {},
-      onAdDismissedFullScreenContent: (final InterstitialAd interstitialAd) {
-        interstitialAd.dispose();
+      onAdDismissedFullScreenContent:
+          (final InterstitialAd interstitialAd) async {
+        await interstitialAd.dispose();
       },
       onAdFailedToShowFullScreenContent:
-          (final InterstitialAd interstitialAd, final AdError adError) {
-        interstitialAd.dispose();
-        loadInterstitialAd();
+          (final InterstitialAd interstitialAd, final AdError adError) async {
+        await interstitialAd.dispose();
+        await loadInterstitialAd();
       },
     );
 
     _interstitialAd!.show();
     _interstitialAd = null;
+
+    /// Reload next ad
+    await loadInterstitialAd();
   }
 }

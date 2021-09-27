@@ -97,6 +97,7 @@ Future<T?> showAuthDialog<T>({
                   }
 
                   await _dialog!.dismiss();
+                  _authenticating = false;
                 },
               ),
               const SizedBox(

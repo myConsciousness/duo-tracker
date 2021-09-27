@@ -4,6 +4,7 @@
 
 import 'package:awesome_dialog/awesome_dialog.dart';
 import 'package:duo_tracker/src/admob/reawarde_ad_utils.dart';
+import 'package:duo_tracker/src/admob/rewarded_interstitial_ad_resolver.dart';
 import 'package:duo_tracker/src/component/dialog/charge_point_dialog.dart';
 import 'package:duo_tracker/src/repository/preference/common_shared_preferences_key.dart';
 import 'package:duo_tracker/src/repository/preference/rewarded_ad_shared_preferences.dart';
@@ -23,6 +24,9 @@ class _ShopViewState extends State<ShopView> {
   /// The format for numeric text
   final _numericTextFormat = NumberFormat('#,###');
 
+  /// The rewarded ad resolver
+  final _rewardedAdResolver = RewardedAdResolver.getInstance();
+
   /// The point
   int _point = 0;
 
@@ -30,6 +34,12 @@ class _ShopViewState extends State<ShopView> {
   void initState() {
     super.initState();
     _asyncInitState();
+  }
+
+  Future<void> _asyncInitState() async {
+    await _rewardedAdResolver.loadRewardedAd();
+    _point = await CommonSharedPreferencesKey.rewardPoint.getInt();
+    super.setState(() {});
   }
 
   @override
@@ -40,12 +50,6 @@ class _ShopViewState extends State<ShopView> {
   @override
   void dispose() {
     super.dispose();
-  }
-
-  Future<void> _asyncInitState() async {
-    _point =
-        await CommonSharedPreferencesKey.rewardPoint.getInt(defaultValue: 0);
-    super.setState(() {});
   }
 
   @override
@@ -66,16 +70,33 @@ class _ShopViewState extends State<ShopView> {
       );
 
   Widget _buildWalletCard() => Padding(
-        padding: const EdgeInsets.fromLTRB(30, 0, 30, 5),
+        padding: const EdgeInsets.fromLTRB(50, 5, 50, 5),
         child: Card(
           clipBehavior: Clip.antiAlias,
           elevation: 5,
           child: Column(
             children: [
               ListTile(
-                title: Center(
-                  child: Text(
-                      'You have ${_numericTextFormat.format(_point)} points.'),
+                leading: const Icon(FontAwesomeIcons.wallet),
+                title: Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  crossAxisAlignment: CrossAxisAlignment.center,
+                  children: [
+                    Text(
+                        'You have ${_numericTextFormat.format(_point)} points'),
+                    IconButton(
+                      icon: const Icon(Icons.sync),
+                      onPressed: () async {
+                        final currentRewardPoint =
+                            await CommonSharedPreferencesKey.rewardPoint
+                                .getInt();
+
+                        super.setState(() {
+                          _point = currentRewardPoint;
+                        });
+                      },
+                    ),
+                  ],
                 ),
               ),
               Padding(
@@ -84,8 +105,9 @@ class _ShopViewState extends State<ShopView> {
                   isFixedHeight: false,
                   text: 'Charge Points',
                   color: Theme.of(context).colorScheme.secondaryVariant,
-                  pressEvent: () {
-                    RewardedAdUtils.showRewarededAd(
+                  pressEvent: () async {
+                    await RewardedAdUtils.showRewarededAd(
+                        context: context,
                         sharedPreferencesKey:
                             RewardedAdSharedPreferencesKey.rewardImmediately);
                   },
@@ -101,44 +123,47 @@ class _ShopViewState extends State<ShopView> {
         child: Card(
           clipBehavior: Clip.antiAlias,
           elevation: 5,
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.center,
-            crossAxisAlignment: CrossAxisAlignment.center,
-            children: [
-              const ListTile(
-                leading: Icon(FontAwesomeIcons.shoppingBasket),
-                title: Text('Disable full-screen ads'),
-                subtitle: Text(
-                    'You can disable full-screen ads for a certain period of time.'),
-              ),
-              const SizedBox(
-                height: 20,
-              ),
-              Row(
-                mainAxisAlignment: MainAxisAlignment.center,
-                crossAxisAlignment: CrossAxisAlignment.center,
-                children: [
-                  _buildProductCard(title: '30 minutes', price: 5),
-                  _buildProductCard(title: '1 hour', price: 10),
-                ],
-              ),
-              Row(
-                mainAxisAlignment: MainAxisAlignment.center,
-                crossAxisAlignment: CrossAxisAlignment.center,
-                children: [
-                  _buildProductCard(title: '3 hours', price: 20),
-                  _buildProductCard(title: '6 hours', price: 50),
-                ],
-              ),
-              Row(
-                mainAxisAlignment: MainAxisAlignment.center,
-                crossAxisAlignment: CrossAxisAlignment.center,
-                children: [
-                  _buildProductCard(title: '12 hours', price: 100),
-                  _buildProductCard(title: '24 hours', price: 150),
-                ],
-              ),
-            ],
+          child: Padding(
+            padding: const EdgeInsets.all(10),
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              crossAxisAlignment: CrossAxisAlignment.center,
+              children: [
+                const ListTile(
+                  leading: Icon(FontAwesomeIcons.shoppingBasket),
+                  title: Text('Disable full-screen ads'),
+                  subtitle: Text(
+                      'You can disable full-screen ads for a certain period of time. Ads for recharging points in this store will not be disabled.'),
+                ),
+                const SizedBox(
+                  height: 20,
+                ),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  crossAxisAlignment: CrossAxisAlignment.center,
+                  children: [
+                    _buildProductCard(title: '30 minutes', price: 5),
+                    _buildProductCard(title: '1 hour', price: 10),
+                  ],
+                ),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  crossAxisAlignment: CrossAxisAlignment.center,
+                  children: [
+                    _buildProductCard(title: '3 hours', price: 20),
+                    _buildProductCard(title: '6 hours', price: 50),
+                  ],
+                ),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  crossAxisAlignment: CrossAxisAlignment.center,
+                  children: [
+                    _buildProductCard(title: '12 hours', price: 100),
+                    _buildProductCard(title: '24 hours', price: 150),
+                  ],
+                ),
+              ],
+            ),
           ),
         ),
       );
@@ -148,39 +173,42 @@ class _ShopViewState extends State<ShopView> {
     required int price,
   }) =>
       Expanded(
-        child: Card(
-          elevation: 5,
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.center,
-            crossAxisAlignment: CrossAxisAlignment.center,
-            children: [
-              Text(
-                title,
-                style: const TextStyle(
-                  fontWeight: FontWeight.bold,
+        child: Padding(
+          padding: const EdgeInsets.all(5),
+          child: Card(
+            elevation: 2,
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              crossAxisAlignment: CrossAxisAlignment.center,
+              children: [
+                Text(
+                  title,
+                  style: const TextStyle(
+                    fontWeight: FontWeight.bold,
+                  ),
                 ),
-              ),
-              Padding(
-                padding: const EdgeInsets.fromLTRB(20, 0, 20, 10),
-                child: AnimatedButton(
-                  isFixedHeight: false,
-                  text: '$price Points',
-                  color: Theme.of(context).colorScheme.secondaryVariant,
-                  pressEvent: () async {
-                    final currentPoint =
-                        await CommonSharedPreferencesKey.rewardPoint.getInt();
+                Padding(
+                  padding: const EdgeInsets.fromLTRB(20, 0, 20, 10),
+                  child: AnimatedButton(
+                    isFixedHeight: false,
+                    text: '$price Points',
+                    color: Theme.of(context).colorScheme.secondaryVariant,
+                    pressEvent: () async {
+                      final currentPoint =
+                          await CommonSharedPreferencesKey.rewardPoint.getInt();
 
-                    if (currentPoint < price) {
-                      await showChargePointDialog(context: context);
-                      return;
-                    }
+                      if (currentPoint < price) {
+                        await showChargePointDialog(context: context);
+                        return;
+                      }
 
-                    await CommonSharedPreferencesKey.rewardPoint
-                        .setInt(currentPoint - price);
-                  },
+                      await CommonSharedPreferencesKey.rewardPoint
+                          .setInt(currentPoint - price);
+                    },
+                  ),
                 ),
-              ),
-            ],
+              ],
+            ),
           ),
         ),
       );
