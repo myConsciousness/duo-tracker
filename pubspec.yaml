@@ -63,6 +63,7 @@ dependencies:
   upgrader: ^3.5.1
   syncfusion_flutter_charts: ^19.2.62
   syncfusion_flutter_sliders: ^19.2.62
+  gallery_saver: ^2.2.0
 
 dev_dependencies:
   flutter_test:
