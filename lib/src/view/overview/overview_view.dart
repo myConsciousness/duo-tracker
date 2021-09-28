@@ -608,8 +608,8 @@ class _OverviewViewState extends State<OverviewView> {
         floatingActionButton: SpeedDial(
           renderOverlay: true,
           switchLabelPosition: true,
-          buttonSize: 40,
-          childrenButtonSize: 40,
+          buttonSize: 50,
+          childrenButtonSize: 50,
           tooltip: 'Show Actions',
           animatedIcon: AnimatedIcons.menu_close,
           children: [
@@ -628,6 +628,7 @@ class _OverviewViewState extends State<OverviewView> {
               onTap: () async {
                 await showSelectFilterMethodDialog(
                   context: context,
+                  selectedItems: _selectedFilterItems,
                   onPressedOk: (filterPattern, selectedItems) {
                     super.setState(() {
                       _filterPattern = filterPattern;

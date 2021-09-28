@@ -4,7 +4,6 @@
 
 import 'package:awesome_dialog/awesome_dialog.dart';
 import 'package:duo_tracker/src/admob/reawarde_ad_utils.dart';
-import 'package:duo_tracker/src/admob/rewarded_interstitial_ad_resolver.dart';
 import 'package:duo_tracker/src/component/dialog/charge_point_dialog.dart';
 import 'package:duo_tracker/src/repository/preference/common_shared_preferences_key.dart';
 import 'package:duo_tracker/src/repository/preference/rewarded_ad_shared_preferences.dart';
@@ -24,9 +23,6 @@ class _ShopViewState extends State<ShopView> {
   /// The format for numeric text
   final _numericTextFormat = NumberFormat('#,###');
 
-  /// The rewarded ad resolver
-  final _rewardedAdResolver = RewardedAdResolver.getInstance();
-
   /// The point
   int _point = 0;
 
@@ -37,7 +33,6 @@ class _ShopViewState extends State<ShopView> {
   }
 
   Future<void> _asyncInitState() async {
-    await _rewardedAdResolver.loadRewardedAd();
     _point = await CommonSharedPreferencesKey.rewardPoint.getInt(
       defaultValue: 0,
     );

@@ -43,6 +43,56 @@ class _UserOverviewViewState extends State<UserOverviewView> {
   /// The user service
   final _userService = UserService.getInstance();
 
+  /// The goal of daily xp
+  late double _goalDailyXp;
+
+  /// The goal of weekly xp
+  late double _goalWeeklyXp;
+
+  /// The goal of monthly xp
+  late double _goalMonthlyXp;
+
+  /// The goal of streak
+  late double _goalStreak;
+
+  Future<void> _asyncInitState() async {
+    await _refreshScoreGoals();
+    super.setState(() {});
+  }
+
+  Future<void> _refreshScoreGoals() async {
+    _goalDailyXp = await CommonSharedPreferencesKey.scoreGoalsDailyXp.getDouble(
+      defaultValue: 30.0,
+    );
+    _goalWeeklyXp =
+        await CommonSharedPreferencesKey.scoreGoalsWeeklyXp.getDouble(
+      defaultValue: 250.0,
+    );
+    _goalMonthlyXp =
+        await CommonSharedPreferencesKey.scoreGoalsMonthlyXp.getDouble(
+      defaultValue: 4000.0,
+    );
+    _goalStreak = await CommonSharedPreferencesKey.scoreGoalsStreak.getDouble(
+      defaultValue: 14.0,
+    );
+  }
+
+  @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+  }
+
+  @override
+  void dispose() {
+    super.dispose();
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    _asyncInitState();
+  }
+
   Widget _buildCardText({
     required String title,
     required String subTitle,
@@ -203,11 +253,11 @@ class _UserOverviewViewState extends State<UserOverviewView> {
                 children: <Widget>[
                   _buildCardText(
                     title: 'Goal Daily XP',
-                    subTitle: _numericTextFormat.format(user.lingots),
+                    subTitle: _numericTextFormat.format(_goalDailyXp),
                   ),
                   _buildCardText(
                     title: 'Goal Weekly XP',
-                    subTitle: _numericTextFormat.format(user.gems),
+                    subTitle: _numericTextFormat.format(_goalWeeklyXp),
                   ),
                 ],
               ),
@@ -216,11 +266,11 @@ class _UserOverviewViewState extends State<UserOverviewView> {
                 children: <Widget>[
                   _buildCardText(
                     title: 'Goal Monthly XP',
-                    subTitle: _numericTextFormat.format(user.weeklyXp / 7.0),
+                    subTitle: _numericTextFormat.format(_goalMonthlyXp),
                   ),
                   _buildCardText(
                     title: 'Goal Streak',
-                    subTitle: _numericTextFormat.format(user.weeklyXp),
+                    subTitle: _numericTextFormat.format(_goalStreak),
                   ),
                 ],
               ),
@@ -392,8 +442,8 @@ class _UserOverviewViewState extends State<UserOverviewView> {
         floatingActionButton: SpeedDial(
           renderOverlay: true,
           switchLabelPosition: true,
-          buttonSize: 40,
-          childrenButtonSize: 40,
+          buttonSize: 50,
+          childrenButtonSize: 50,
           tooltip: 'Show Actions',
           animatedIcon: AnimatedIcons.menu_close,
           children: [
@@ -416,6 +466,7 @@ class _UserOverviewViewState extends State<UserOverviewView> {
               label: 'Adjust Goals',
               onTap: () async {
                 await showSelectScoreGoalsDialog(context: context);
+                await _refreshScoreGoals();
                 super.setState(() {});
               },
             ),

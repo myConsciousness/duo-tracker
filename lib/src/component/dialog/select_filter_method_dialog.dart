@@ -13,14 +13,15 @@ import 'package:flutter/material.dart';
 late AwesomeDialog _dialog;
 
 FilterPattern _filterPattern = FilterPattern.lesson;
-List<String> _dataSource = [];
-List<String> _selectedItems = <String>[];
+late List<String> _dataSource;
+late List<String> _selectedItems;
 
 /// The learned word service
 final _learnedWordService = LearnedWordService.getInstance();
 
 Future<T?> showSelectFilterMethodDialog<T>({
   required BuildContext context,
+  required List<String> selectedItems,
   required Function(FilterPattern filterPattern, List<String> selectedItems)
       onPressedOk,
 }) async {
@@ -36,6 +37,8 @@ Future<T?> showSelectFilterMethodDialog<T>({
     learningLanguage: learningLanguage,
     fromLanguage: fromLanguage,
   );
+
+  _selectedItems = selectedItems;
 
   _dialog = AwesomeDialog(
     context: context,
@@ -81,6 +84,7 @@ Future<T?> showSelectFilterMethodDialog<T>({
 
                     setState(() {
                       _filterPattern = value;
+                      _selectedItems = [];
                     });
                   },
                 ),
@@ -164,10 +168,10 @@ Future<T?> showSelectFilterMethodDialog<T>({
                         isFixedHeight: false,
                         text: 'Apply',
                         color: Theme.of(context).colorScheme.secondaryVariant,
-                        pressEvent: () {
+                        pressEvent: () async {
                           if (_filterPattern != FilterPattern.none &&
                               _selectedItems.isEmpty) {
-                            showWarningDialog(
+                            await showWarningDialog(
                               context: context,
                               title: 'Input Error',
                               content: 'Select at least one filter item.',
