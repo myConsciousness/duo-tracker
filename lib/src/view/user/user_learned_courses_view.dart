@@ -9,6 +9,7 @@ import 'package:duo_tracker/src/repository/model/course_model.dart';
 import 'package:duo_tracker/src/repository/service/course_service.dart';
 import 'package:duo_tracker/src/utils/language_converter.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/widgets.dart';
 import 'package:intl/intl.dart';
 
 class UserLearnedCoursesView extends StatefulWidget {
@@ -139,6 +140,12 @@ class _UserLearnedCoursesViewState extends State<UserLearnedCoursesView> {
           final courses = courseMatrix[keys[index]];
           return Card(
             elevation: 5,
+            shape: const RoundedRectangleBorder(
+              borderRadius: BorderRadius.vertical(
+                top: Radius.circular(30),
+                bottom: Radius.circular(30),
+              ),
+            ),
             child: Padding(
               padding: const EdgeInsets.all(10),
               child: Column(
@@ -200,12 +207,6 @@ class _UserLearnedCoursesViewState extends State<UserLearnedCoursesView> {
                 ],
               ),
             ),
-            shape: const RoundedRectangleBorder(
-              borderRadius: BorderRadius.vertical(
-                top: Radius.circular(30),
-                bottom: Radius.circular(30),
-              ),
-            ),
           );
         },
       );
@@ -220,7 +221,7 @@ class _UserLearnedCoursesViewState extends State<UserLearnedCoursesView> {
         itemBuilder: (BuildContext context, int index) {
           final course = courses[index];
           return Card(
-            elevation: 5,
+            elevation: 0,
             child: Column(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
@@ -232,6 +233,9 @@ class _UserLearnedCoursesViewState extends State<UserLearnedCoursesView> {
                         title: Text(
                           LanguageConverter.toNameWithFormal(
                             languageCode: course.learningLanguage,
+                          ),
+                          style: const TextStyle(
+                            fontWeight: FontWeight.bold,
                           ),
                         ),
                       ),
@@ -253,12 +257,6 @@ class _UserLearnedCoursesViewState extends State<UserLearnedCoursesView> {
                   ],
                 ),
               ],
-            ),
-            shape: const RoundedRectangleBorder(
-              borderRadius: BorderRadius.vertical(
-                top: Radius.circular(30),
-                bottom: Radius.circular(30),
-              ),
             ),
           );
         },

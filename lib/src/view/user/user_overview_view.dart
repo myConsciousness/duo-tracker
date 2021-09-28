@@ -497,7 +497,7 @@ class _UserOverviewViewState extends State<UserOverviewView> {
                       _buildSummaryCard(user: user),
                       _buildRadicalBarChart(user: user),
                       const SizedBox(
-                        height: 20,
+                        height: 30,
                       ),
                     ],
                   ),
