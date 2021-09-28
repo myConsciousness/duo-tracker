@@ -12,20 +12,23 @@ class ShareActionUtils {
   static Future<void> onPressedSaveImageButton({
     required BuildContext context,
     required GlobalKey key,
+    required String message,
   }) async {
     await SaveImageUtils.saveOnGallery(key);
-    InfoSnackbar.from(context: context).show(content: 'Saved on Gallery.');
+    InfoSnackbar.from(context: context).show(content: message);
   }
 
   static Future<void> onPressedShareImageButton({
     required GlobalKey key,
+    required String subject,
+    required String text,
   }) async {
     final File file = await SaveImageUtils.saveOnWorkspace(key);
 
     await Share.shareFiles(
       [file.path],
-      subject: '',
-      text: '''''',
+      subject: subject,
+      text: text,
     );
 
     file.delete();

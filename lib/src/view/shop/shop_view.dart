@@ -5,8 +5,10 @@
 import 'package:awesome_dialog/awesome_dialog.dart';
 import 'package:duo_tracker/src/admob/reawarde_ad_utils.dart';
 import 'package:duo_tracker/src/component/dialog/charge_point_dialog.dart';
+import 'package:duo_tracker/src/component/dialog/error_dialog.dart';
 import 'package:duo_tracker/src/repository/preference/common_shared_preferences_key.dart';
 import 'package:duo_tracker/src/repository/preference/rewarded_ad_shared_preferences.dart';
+import 'package:duo_tracker/src/view/shop/disable_full_screen_type.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
@@ -141,24 +143,48 @@ class _ShopViewState extends State<ShopView> {
                   mainAxisAlignment: MainAxisAlignment.center,
                   crossAxisAlignment: CrossAxisAlignment.center,
                   children: [
-                    _buildProductCard(title: '30 minutes', price: 5),
-                    _buildProductCard(title: '1 hour', price: 20),
+                    _buildProductCard(
+                      title: '30 minutes',
+                      price: 5,
+                      disableFullScreenType: DisableFullScreenType.m30,
+                    ),
+                    _buildProductCard(
+                      title: '1 hour',
+                      price: 20,
+                      disableFullScreenType: DisableFullScreenType.h1,
+                    ),
                   ],
                 ),
                 Row(
                   mainAxisAlignment: MainAxisAlignment.center,
                   crossAxisAlignment: CrossAxisAlignment.center,
                   children: [
-                    _buildProductCard(title: '3 hours', price: 40),
-                    _buildProductCard(title: '6 hours', price: 70),
+                    _buildProductCard(
+                      title: '3 hours',
+                      price: 40,
+                      disableFullScreenType: DisableFullScreenType.h3,
+                    ),
+                    _buildProductCard(
+                      title: '6 hours',
+                      price: 70,
+                      disableFullScreenType: DisableFullScreenType.h6,
+                    ),
                   ],
                 ),
                 Row(
                   mainAxisAlignment: MainAxisAlignment.center,
                   crossAxisAlignment: CrossAxisAlignment.center,
                   children: [
-                    _buildProductCard(title: '12 hours', price: 120),
-                    _buildProductCard(title: '24 hours', price: 200),
+                    _buildProductCard(
+                      title: '12 hours',
+                      price: 120,
+                      disableFullScreenType: DisableFullScreenType.h12,
+                    ),
+                    _buildProductCard(
+                      title: '24 hours',
+                      price: 200,
+                      disableFullScreenType: DisableFullScreenType.h24,
+                    ),
                   ],
                 ),
               ],
@@ -170,6 +196,7 @@ class _ShopViewState extends State<ShopView> {
   Widget _buildProductCard({
     required String title,
     required int price,
+    required DisableFullScreenType disableFullScreenType,
   }) =>
       Expanded(
         child: Padding(
@@ -201,8 +228,31 @@ class _ShopViewState extends State<ShopView> {
                         return;
                       }
 
+                      final productType = await CommonSharedPreferencesKey
+                          .disableFullScreenType
+                          .getInt();
+
+                      if (productType != -1) {
+                        // If the disable setting is enabled, do not let the user make a new purchase.
+                        await showErrorDialog(
+                          context: context,
+                          title: 'Purchase Error',
+                          content:
+                              'Disabling full-screen ads is already enabled. Please wait for the time limit of the last product type you purchased to expire.',
+                        );
+                        return;
+                      }
+
                       await CommonSharedPreferencesKey.rewardPoint
                           .setInt(currentPoint - price);
+
+                      await CommonSharedPreferencesKey.disableFullScreenType
+                          .setInt(disableFullScreenType.code);
+                      await CommonSharedPreferencesKey
+                          .datetimeDisabledFullScreen
+                          .setInt(
+                        DateTime.now().millisecondsSinceEpoch,
+                      );
                     },
                   ),
                 ),

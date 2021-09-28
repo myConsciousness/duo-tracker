@@ -57,6 +57,12 @@ enum CommonSharedPreferencesKey {
   /// The reward point
   rewardPoint,
 
+  /// The disable full screen type
+  disableFullScreenType,
+
+  /// The datetime disabled full screen
+  datetimeDisabledFullScreen,
+
   //! The Shop Config ↑
 
   //! The Sync Config ↓
@@ -119,6 +125,10 @@ extension KeyFeature on CommonSharedPreferencesKey {
         return 'score_goals_streak';
       case CommonSharedPreferencesKey.rewardPoint:
         return 'reward_point';
+      case CommonSharedPreferencesKey.disableFullScreenType:
+        return 'disable_full_screen_type';
+      case CommonSharedPreferencesKey.datetimeDisabledFullScreen:
+        return 'datetime_disabled_full_screen';
       case CommonSharedPreferencesKey.currentLearningLanguage:
         return 'current_learning_language';
       case CommonSharedPreferencesKey.currentFromLanguage:
