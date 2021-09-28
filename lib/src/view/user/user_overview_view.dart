@@ -37,23 +37,39 @@ class _UserOverviewViewState extends State<UserOverviewView> {
   /// The chart service
   final _chartService = ChartService.getInstance();
 
-  /// The format for numeric text
-  final _numericTextFormat = NumberFormat('#,###');
-
-  /// The user service
-  final _userService = UserService.getInstance();
-
   /// The goal of daily xp
   late double _goalDailyXp;
-
-  /// The goal of weekly xp
-  late double _goalWeeklyXp;
 
   /// The goal of monthly xp
   late double _goalMonthlyXp;
 
   /// The goal of streak
   late double _goalStreak;
+
+  /// The goal of weekly xp
+  late double _goalWeeklyXp;
+
+  /// The format for numeric text
+  final _numericTextFormat = NumberFormat('#,###');
+
+  /// The user service
+  final _userService = UserService.getInstance();
+
+  @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+  }
+
+  @override
+  void dispose() {
+    super.dispose();
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    _asyncInitState();
+  }
 
   Future<void> _asyncInitState() async {
     await _refreshScoreGoals();
@@ -75,22 +91,6 @@ class _UserOverviewViewState extends State<UserOverviewView> {
     _goalStreak = await CommonSharedPreferencesKey.scoreGoalsStreak.getDouble(
       defaultValue: 14.0,
     );
-  }
-
-  @override
-  void didChangeDependencies() {
-    super.didChangeDependencies();
-  }
-
-  @override
-  void dispose() {
-    super.dispose();
-  }
-
-  @override
-  void initState() {
-    super.initState();
-    _asyncInitState();
   }
 
   Widget _buildCardText({
@@ -159,79 +159,75 @@ class _UserOverviewViewState extends State<UserOverviewView> {
   Widget _buildRadicalBarChart({
     required User user,
   }) =>
-      FutureBuilder(
-        future: _computeLearningScoreRatio(),
-        builder: (BuildContext context, AsyncSnapshot snapshot) {
-          if (!snapshot.hasData) {
-            return const Loading();
-          }
+      Card(
+        clipBehavior: Clip.antiAlias,
+        elevation: 5,
+        shape: const RoundedRectangleBorder(
+          borderRadius: BorderRadius.vertical(
+            top: Radius.circular(30),
+            bottom: Radius.circular(30),
+          ),
+        ),
+        child: FutureBuilder(
+          future: _computeLearningScoreRatio(),
+          builder: (BuildContext context, AsyncSnapshot snapshot) {
+            if (!snapshot.hasData) {
+              return const Loading();
+            }
 
-          final achievements =
-              _getTotalAchievements(chartDataSources: snapshot.data);
-
-          return RadicalBarChart(
-            chartTitle: ChartTitle(
-              text: 'Achievements',
-              textStyle: TextStyle(
-                color: Theme.of(context).colorScheme.secondary,
-                fontWeight: FontWeight.bold,
-              ),
-            ),
-            centerObject: CircleAvatar(
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.center,
-                crossAxisAlignment: CrossAxisAlignment.center,
-                children: [
-                  Text(
-                    user.name,
-                    style: const TextStyle(
-                      color: Colors.white,
+            return Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              crossAxisAlignment: CrossAxisAlignment.center,
+              children: [
+                RadicalBarChart(
+                  chartTitle: ChartTitle(
+                    text: 'Goals and Progress',
+                    textStyle: TextStyle(
+                      color: Theme.of(context).colorScheme.secondary,
                       fontWeight: FontWeight.bold,
                     ),
                   ),
-                  const SizedBox(
-                    height: 7,
-                  ),
-                  Text(
-                    '$achievements / 160',
-                    style: const TextStyle(
-                      fontSize: 12,
-                      color: Colors.white,
-                      fontStyle: FontStyle.italic,
+                  centerObject: CircleAvatar(
+                    child: Text(
+                      user.name,
+                      style: const TextStyle(
+                        fontSize: 13,
+                        color: Colors.white,
+                        fontWeight: FontWeight.bold,
+                      ),
                     ),
+                    radius: 50,
+                    backgroundColor:
+                        Theme.of(context).colorScheme.secondaryVariant,
                   ),
-                  Text(
-                    'Score: ${LearningScoreConverter.toScoreName(score: achievements)}',
-                    style: const TextStyle(
-                      fontSize: 12,
-                      color: Colors.white,
-                      fontStyle: FontStyle.italic,
-                    ),
+                  chartDataSources: snapshot.data,
+                ),
+                _buildGoalCard(
+                  user: user,
+                  achievementScore: _getAchievementScore(
+                    chartDataSources: snapshot.data,
                   ),
-                ],
-              ),
-              radius: 50,
-              backgroundColor: Theme.of(context).colorScheme.secondaryVariant,
-            ),
-            chartDataSources: snapshot.data,
-          );
-        },
+                ),
+              ],
+            );
+          },
+        ),
       );
 
-  int _getTotalAchievements({
+  int _getAchievementScore({
     required List<ChartDataSource> chartDataSources,
   }) {
-    int achievements = 0;
+    int score = 0;
     for (final ChartDataSource chartDataSources in chartDataSources) {
-      achievements +=
-          LearningScoreConverter.toScore(achievement: chartDataSources.y);
+      score += LearningScoreConverter.toScore(achievement: chartDataSources.y);
     }
 
-    return achievements;
+    return score;
   }
 
   Widget _buildGoalCard({
     required User user,
+    required int achievementScore,
   }) =>
       Card(
         margin: const EdgeInsets.symmetric(
@@ -239,7 +235,7 @@ class _UserOverviewViewState extends State<UserOverviewView> {
           vertical: 5,
         ),
         clipBehavior: Clip.antiAlias,
-        elevation: 5,
+        elevation: 0,
         child: Padding(
           padding: const EdgeInsets.symmetric(
             horizontal: 8,
@@ -252,12 +248,14 @@ class _UserOverviewViewState extends State<UserOverviewView> {
               Row(
                 children: <Widget>[
                   _buildCardText(
-                    title: 'Goal Daily XP',
-                    subTitle: _numericTextFormat.format(_goalDailyXp),
+                    title: 'Score',
+                    subTitle: '$achievementScore / 160',
                   ),
                   _buildCardText(
-                    title: 'Goal Weekly XP',
-                    subTitle: _numericTextFormat.format(_goalWeeklyXp),
+                    title: 'Grade',
+                    subTitle: LearningScoreConverter.toGrade(
+                      score: achievementScore,
+                    ),
                   ),
                 ],
               ),
@@ -265,11 +263,19 @@ class _UserOverviewViewState extends State<UserOverviewView> {
               Row(
                 children: <Widget>[
                   _buildCardText(
-                    title: 'Goal Monthly XP',
+                    title: 'Daily XP',
+                    subTitle: _numericTextFormat.format(_goalDailyXp),
+                  ),
+                  _buildCardText(
+                    title: 'Weekly XP',
+                    subTitle: _numericTextFormat.format(_goalWeeklyXp),
+                  ),
+                  _buildCardText(
+                    title: 'Monthly XP',
                     subTitle: _numericTextFormat.format(_goalMonthlyXp),
                   ),
                   _buildCardText(
-                    title: 'Goal Streak',
+                    title: 'Streak',
                     subTitle: _numericTextFormat.format(_goalStreak),
                   ),
                 ],
@@ -289,37 +295,35 @@ class _UserOverviewViewState extends State<UserOverviewView> {
     required User user,
   }) =>
       Card(
-        margin: const EdgeInsets.symmetric(
-          horizontal: 20,
-        ),
         clipBehavior: Clip.antiAlias,
         elevation: 5,
-        child: Padding(
-          padding: const EdgeInsets.symmetric(
-            horizontal: 10,
-            vertical: 10,
-          ),
-          child: Row(
-            children: <Widget>[
-              _buildCardText(
-                title: 'Learning',
-                subTitle: LanguageConverter.toNameWithFormal(
-                  languageCode: user.learningLanguage,
-                ),
-              ),
-              _buildCardText(
-                title: 'From',
-                subTitle: LanguageConverter.toNameWithFormal(
-                  languageCode: user.fromLanguage,
-                ),
-              ),
-            ],
-          ),
-        ),
         shape: const RoundedRectangleBorder(
           borderRadius: BorderRadius.vertical(
             top: Radius.circular(30),
             bottom: Radius.circular(30),
+          ),
+        ),
+        child: Padding(
+          padding: const EdgeInsets.all(10),
+          child: Card(
+            clipBehavior: Clip.antiAlias,
+            elevation: 0,
+            child: Row(
+              children: <Widget>[
+                _buildCardText(
+                  title: 'Learning',
+                  subTitle: LanguageConverter.toNameWithFormal(
+                    languageCode: user.learningLanguage,
+                  ),
+                ),
+                _buildCardText(
+                  title: 'From',
+                  subTitle: LanguageConverter.toNameWithFormal(
+                    languageCode: user.fromLanguage,
+                  ),
+                ),
+              ],
+            ),
           ),
         ),
       );
@@ -328,69 +332,66 @@ class _UserOverviewViewState extends State<UserOverviewView> {
     required User user,
   }) =>
       Card(
-        margin: const EdgeInsets.symmetric(
-          horizontal: 20,
-          vertical: 5,
-        ),
         clipBehavior: Clip.antiAlias,
         elevation: 5,
-        child: Padding(
-          padding: const EdgeInsets.symmetric(
-            horizontal: 8,
-            vertical: 15,
-          ),
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.center,
-            crossAxisAlignment: CrossAxisAlignment.center,
-            children: [
-              Row(
-                children: <Widget>[
-                  _buildCardText(
-                    title: 'Lingots',
-                    subTitle: _numericTextFormat.format(user.lingots),
-                  ),
-                  _buildCardText(
-                    title: 'Gems',
-                    subTitle: _numericTextFormat.format(user.gems),
-                  ),
-                  _buildCardText(
-                    title: 'XP Goal',
-                    subTitle: '${user.xpGoal}',
-                  ),
-                  _buildCardText(
-                    title: 'Streak',
-                    subTitle: '${user.streak}',
-                  ),
-                ],
-              ),
-              const CommonDivider(),
-              Row(
-                children: <Widget>[
-                  _buildCardText(
-                    title: 'Daily XP',
-                    subTitle: _numericTextFormat.format(user.weeklyXp / 7.0),
-                  ),
-                  _buildCardText(
-                    title: 'Weekly XP',
-                    subTitle: _numericTextFormat.format(user.weeklyXp),
-                  ),
-                  _buildCardText(
-                    title: 'Monthly XP',
-                    subTitle: _numericTextFormat.format(user.monthlyXp),
-                  ),
-                  _buildCardText(
-                    title: 'Total XP',
-                    subTitle: _numericTextFormat.format(user.totalXp),
-                  ),
-                ],
-              ),
-            ],
-          ),
-        ),
         shape: const RoundedRectangleBorder(
           borderRadius: BorderRadius.vertical(
             top: Radius.circular(30),
             bottom: Radius.circular(30),
+          ),
+        ),
+        child: Padding(
+          padding: const EdgeInsets.all(10),
+          child: Card(
+            clipBehavior: Clip.antiAlias,
+            elevation: 0,
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              crossAxisAlignment: CrossAxisAlignment.center,
+              children: [
+                Row(
+                  children: <Widget>[
+                    _buildCardText(
+                      title: 'Lingots',
+                      subTitle: _numericTextFormat.format(user.lingots),
+                    ),
+                    _buildCardText(
+                      title: 'Gems',
+                      subTitle: _numericTextFormat.format(user.gems),
+                    ),
+                    _buildCardText(
+                      title: 'XP Goal',
+                      subTitle: '${user.xpGoal}',
+                    ),
+                    _buildCardText(
+                      title: 'Streak',
+                      subTitle: '${user.streak}',
+                    ),
+                  ],
+                ),
+                const CommonDivider(),
+                Row(
+                  children: <Widget>[
+                    _buildCardText(
+                      title: 'Daily XP',
+                      subTitle: _numericTextFormat.format(user.weeklyXp / 7.0),
+                    ),
+                    _buildCardText(
+                      title: 'Weekly XP',
+                      subTitle: _numericTextFormat.format(user.weeklyXp),
+                    ),
+                    _buildCardText(
+                      title: 'Monthly XP',
+                      subTitle: _numericTextFormat.format(user.monthlyXp),
+                    ),
+                    _buildCardText(
+                      title: 'Total XP',
+                      subTitle: _numericTextFormat.format(user.totalXp),
+                    ),
+                  ],
+                ),
+              ],
+            ),
           ),
         ),
       );
@@ -489,13 +490,12 @@ class _UserOverviewViewState extends State<UserOverviewView> {
                     crossAxisAlignment: CrossAxisAlignment.center,
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: <Widget>[
-                      _buildRadicalBarChart(user: user),
-                      _buildStatusCard(user: user),
                       const SizedBox(
                         height: 5,
                       ),
-                      _buildGoalCard(user: user),
+                      _buildStatusCard(user: user),
                       _buildSummaryCard(user: user),
+                      _buildRadicalBarChart(user: user),
                       const SizedBox(
                         height: 20,
                       ),

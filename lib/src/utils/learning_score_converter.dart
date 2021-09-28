@@ -3,7 +3,7 @@
 // BSD-style license that can be found in the LICENSE file.
 
 class LearningScoreConverter {
-  static String toScoreName({
+  static String toGrade({
     required int score,
   }) {
     if (score >= 100) {
