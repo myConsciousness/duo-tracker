@@ -23,6 +23,7 @@ enum DisableFullScreenType {
 }
 
 extension DisableFullScreenTypeExt on DisableFullScreenType {
+  /// Returns the code
   int get code {
     switch (this) {
       case DisableFullScreenType.m30:
@@ -38,5 +39,35 @@ extension DisableFullScreenTypeExt on DisableFullScreenType {
       case DisableFullScreenType.h24:
         return 5;
     }
+  }
+
+  /// Returns the time limit in minutes
+  int get timeLimit {
+    switch (this) {
+      case DisableFullScreenType.m30:
+        return 30;
+      case DisableFullScreenType.h1:
+        return 60;
+      case DisableFullScreenType.h3:
+        return 180;
+      case DisableFullScreenType.h6:
+        return 360;
+      case DisableFullScreenType.h12:
+        return 720;
+      case DisableFullScreenType.h24:
+        return 1440;
+    }
+  }
+
+  static DisableFullScreenType toEnum({
+    required int code,
+  }) {
+    for (final disableFullScreenType in DisableFullScreenType.values) {
+      if (disableFullScreenType.code == code) {
+        return disableFullScreenType;
+      }
+    }
+
+    return DisableFullScreenType.m30;
   }
 }

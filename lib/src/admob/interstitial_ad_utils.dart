@@ -3,13 +3,36 @@
 // BSD-style license that can be found in the LICENSE file.
 
 import 'package:duo_tracker/src/admob/interstitial_ad_resolver.dart';
+import 'package:duo_tracker/src/repository/preference/common_shared_preferences_key.dart';
 import 'package:duo_tracker/src/repository/preference/interstitial_ad_shared_preferences_key.dart';
+import 'package:duo_tracker/src/view/shop/disable_full_screen_type.dart';
 
 class InterstitialAdUtils {
   static Future<void> showInterstitialAd({
     required InterstitialAdSharedPreferencesKey sharedPreferencesKey,
   }) async {
     int count = await sharedPreferencesKey.getInt();
+
+    final disableFullScreenTypeCode =
+        await CommonSharedPreferencesKey.disableFullScreenType.getInt();
+
+    if (disableFullScreenTypeCode != -1) {
+      final disableFullScreenType =
+          DisableFullScreenTypeExt.toEnum(code: disableFullScreenTypeCode);
+      final purchasedDatetime = DateTime.fromMillisecondsSinceEpoch(
+          await CommonSharedPreferencesKey.datetimeDisabledFullScreen.getInt());
+
+      if (purchasedDatetime.difference(DateTime.now()).inMinutes >
+          disableFullScreenType.timeLimit) {
+        // Disable setting expires.
+        await CommonSharedPreferencesKey.disableFullScreenType.setInt(-1);
+        await CommonSharedPreferencesKey.datetimeDisabledFullScreen.setInt(-1);
+      } else {
+        count++;
+        await sharedPreferencesKey.setInt(count);
+        return;
+      }
+    }
 
     if (count >= sharedPreferencesKey.limitCount) {
       final interstitialAdResolver = InterstitialAdResolver.getInstance();

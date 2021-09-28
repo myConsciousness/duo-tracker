@@ -108,9 +108,11 @@ class _ShopViewState extends State<ShopView> {
                   color: Theme.of(context).colorScheme.secondaryVariant,
                   pressEvent: () async {
                     await RewardedAdUtils.showRewarededAd(
-                        context: context,
-                        sharedPreferencesKey:
-                            RewardedAdSharedPreferencesKey.rewardImmediately);
+                      context: context,
+                      sharedPreferencesKey:
+                          RewardedAdSharedPreferencesKey.rewardImmediately,
+                      showForce: true,
+                    );
                   },
                 ),
               ),
@@ -243,6 +245,7 @@ class _ShopViewState extends State<ShopView> {
                         return;
                       }
 
+                      // TODO: 確認ダイアログの追加
                       await CommonSharedPreferencesKey.rewardPoint
                           .setInt(currentPoint - price);
 

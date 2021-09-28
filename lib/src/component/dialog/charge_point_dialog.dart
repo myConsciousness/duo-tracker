@@ -52,11 +52,13 @@ Future<T?> showChargePointDialog<T>({
                   isFixedHeight: false,
                   text: 'Charge',
                   color: Theme.of(context).colorScheme.secondaryVariant,
-                  pressEvent: () {
-                    RewardedAdUtils.showRewarededAd(
-                        context: context,
-                        sharedPreferencesKey:
-                            RewardedAdSharedPreferencesKey.rewardImmediately);
+                  pressEvent: () async {
+                    await RewardedAdUtils.showRewarededAd(
+                      context: context,
+                      sharedPreferencesKey:
+                          RewardedAdSharedPreferencesKey.rewardImmediately,
+                      showForce: true,
+                    );
 
                     _dialog!.dismiss();
                   },
