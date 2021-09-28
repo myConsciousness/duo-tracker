@@ -10,7 +10,7 @@ Future<void> showLoadingDialog<T>({
   required String title,
   required Future<dynamic> future,
 }) async {
-  showDialog(
+  await showDialog(
     context: context,
     builder: (context) => FutureProgressDialog(
       future,

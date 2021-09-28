@@ -4,6 +4,7 @@
 
 import 'package:app_review/app_review.dart';
 import 'package:duo_tracker/flavors.dart';
+import 'package:duo_tracker/src/admob/interstitial_ad_resolver.dart';
 import 'package:duo_tracker/src/admob/interstitial_ad_utils.dart';
 import 'package:duo_tracker/src/provider/theme_mode_provider.dart';
 import 'package:duo_tracker/src/repository/preference/common_shared_preferences_key.dart';
@@ -22,6 +23,9 @@ class DuoTracker extends StatefulWidget {
 }
 
 class _DuoTrackerState extends State<DuoTracker> with WidgetsBindingObserver {
+  /// The interstitial ad resolver
+  final _interstitialAdResolver = InterstitialAdResolver.getInstance();
+
   /// The sheme mode provider
   final _themeModeProvider = ThemeModeProvider();
 
@@ -29,7 +33,7 @@ class _DuoTrackerState extends State<DuoTracker> with WidgetsBindingObserver {
   void didChangeAppLifecycleState(AppLifecycleState state) async {
     if (state == AppLifecycleState.resumed) {
       if (F.isFreeBuild) {
-        InterstitialAdUtils.showInterstitialAd(
+        await InterstitialAdUtils.showInterstitialAd(
           sharedPreferencesKey: InterstitialAdSharedPreferencesKey.countOpenApp,
         );
       }
@@ -63,7 +67,8 @@ class _DuoTrackerState extends State<DuoTracker> with WidgetsBindingObserver {
 
   void _asyncInitState() async {
     if (F.isFreeBuild) {
-      InterstitialAdUtils.showInterstitialAd(
+      await _interstitialAdResolver.loadInterstitialAd();
+      await InterstitialAdUtils.showInterstitialAd(
         sharedPreferencesKey: InterstitialAdSharedPreferencesKey.countOpenApp,
       );
     }

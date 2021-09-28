@@ -82,15 +82,9 @@ class _OverviewViewState extends State<OverviewView> {
     _asyncInitState();
   }
 
-  Future<List<LearnedWord>> _fetchDataSource({
-    required BuildContext context,
-  }) async {
+  Future<List<LearnedWord>> _fetchDataSource() async {
     if (await _canAutoSync()) {
-      showLoadingDialog(
-        context: context,
-        title: 'Updating Words',
-        future: _syncLearnedWords(),
-      );
+      await _syncLearnedWords();
     }
 
     return await _searchLearnedWords();
@@ -110,19 +104,25 @@ class _OverviewViewState extends State<OverviewView> {
     if (!_alreadyAuthDialogOpened) {
       _alreadyAuthDialogOpened = true;
 
-      if (!await DuolingoApiUtils.refreshVersionInfo(context: context)) {
-        return;
-      }
-
       await DuolingoApiUtils.authenticateAccount(context: context);
 
-      if (!await DuolingoApiUtils.refreshUser(context: context)) {
-        return;
-      }
+      await showLoadingDialog(
+        context: context,
+        title: 'Updating API Config',
+        future: DuolingoApiUtils.refreshVersionInfo(context: context),
+      );
 
-      if (!await DuolingoApiUtils.synchronizeLearnedWords(context: context)) {
-        return;
-      }
+      await showLoadingDialog(
+        context: context,
+        title: 'Updating User Information',
+        future: DuolingoApiUtils.refreshUser(context: context),
+      );
+
+      await showLoadingDialog(
+        context: context,
+        title: 'Updating Learned Words',
+        future: DuolingoApiUtils.synchronizeLearnedWords(context: context),
+      );
 
       await CommonSharedPreferencesKey.datetimeLastAutoSyncedOverview.setInt(
         DateTime.now().millisecondsSinceEpoch,
@@ -143,155 +143,156 @@ class _OverviewViewState extends State<OverviewView> {
 
   Widget _buildLearnedWordCard({
     required LearnedWord learnedWord,
-  }) =>
-      Visibility(
-        key: Key('${learnedWord.sortOrder}'),
-        visible: WordFilter.execute(
-          overviewTabType: widget.overviewTabType,
-          learnedWord: learnedWord,
-          searching: _searching,
-          searchWord: _searchWord,
-          matchPattern: _matchPattern,
-          filterPattern: _filterPattern,
-          selectedFilterItems: _selectedFilterItems,
-        ),
-        child: Card(
-          clipBehavior: Clip.antiAlias,
-          elevation: 5,
-          child: Padding(
-            padding: const EdgeInsets.fromLTRB(20, 10, 20, 10),
-            child: Column(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                Row(
+  }) {
+    return Visibility(
+      key: Key('${learnedWord.sortOrder}'),
+      visible: WordFilter.execute(
+        overviewTabType: widget.overviewTabType,
+        learnedWord: learnedWord,
+        searching: _searching,
+        searchWord: _searchWord,
+        matchPattern: _matchPattern,
+        filterPattern: _filterPattern,
+        selectedFilterItems: _selectedFilterItems,
+      ),
+      child: Card(
+        clipBehavior: Clip.antiAlias,
+        elevation: 5,
+        child: Padding(
+          padding: const EdgeInsets.fromLTRB(20, 10, 20, 10),
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  _buildCardHeaderText(
+                    title: '${learnedWord.sortOrder + 1}',
+                    subTitle: 'Index',
+                  ),
+                  _buildCardHeaderText(
+                    title: learnedWord.skillUrlTitle,
+                    subTitle: 'Lesson',
+                  ),
+                  _buildCardHeaderText(
+                    title: '${learnedWord.strengthBars}',
+                    subTitle: 'Strength',
+                  ),
+                  _buildCardHeaderText(
+                    title: _datetimeFormat.format(
+                      DateTime.fromMillisecondsSinceEpoch(
+                          learnedWord.lastPracticedMs),
+                    ),
+                    subTitle: 'Last practiced at',
+                  ),
+                ],
+              ),
+              const CommonDivider(),
+              Container(
+                padding: const EdgeInsets.fromLTRB(20, 0, 20, 0),
+                child: Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  crossAxisAlignment: CrossAxisAlignment.center,
                   children: [
                     _buildCardHeaderText(
-                      title: '${learnedWord.sortOrder + 1}',
-                      subTitle: 'Index',
+                      title: learnedWord.pos.isEmpty
+                          ? unavailableText
+                          : learnedWord.pos,
+                      subTitle: 'Pos',
                     ),
                     _buildCardHeaderText(
-                      title: learnedWord.skillUrlTitle,
-                      subTitle: 'Lesson',
+                      title: learnedWord.infinitive.isEmpty
+                          ? unavailableText
+                          : learnedWord.infinitive,
+                      subTitle: 'Infinitive',
                     ),
                     _buildCardHeaderText(
-                      title: '${learnedWord.strengthBars}',
-                      subTitle: 'Strength',
+                      title: learnedWord.gender.isEmpty
+                          ? unavailableText
+                          : learnedWord.gender,
+                      subTitle: 'Gender',
                     ),
                     _buildCardHeaderText(
-                      title: _datetimeFormat.format(
-                        DateTime.fromMillisecondsSinceEpoch(
-                            learnedWord.lastPracticedMs),
-                      ),
-                      subTitle: 'Last practiced at',
+                      title:
+                          '${(learnedWord.strength * 100.0).toStringAsFixed(2)} %',
+                      subTitle: 'Proficiency',
                     ),
                   ],
                 ),
-                const CommonDivider(),
-                Container(
-                  padding: const EdgeInsets.fromLTRB(20, 0, 20, 0),
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    crossAxisAlignment: CrossAxisAlignment.center,
-                    children: [
-                      _buildCardHeaderText(
-                        title: learnedWord.pos.isEmpty
-                            ? unavailableText
-                            : learnedWord.pos,
-                        subTitle: 'Pos',
+              ),
+              const CommonDivider(),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.start,
+                children: [
+                  Expanded(
+                    child: ListTile(
+                      leading: _buildCardLeading(
+                        learnedWord: learnedWord,
                       ),
-                      _buildCardHeaderText(
-                        title: learnedWord.infinitive.isEmpty
-                            ? unavailableText
-                            : learnedWord.infinitive,
-                        subTitle: 'Infinitive',
+                      title: Row(
+                        children: [
+                          _buildCardTitleText(
+                            learnedWord: learnedWord,
+                          ),
+                          IconButton(
+                            tooltip: 'Copy Word',
+                            icon: const Icon(Icons.copy_all, size: 20),
+                            onPressed: () async {
+                              await FlutterClipboard.copy(
+                                  learnedWord.wordString);
+                              InfoSnackbar.from(context: context).show(
+                                  content:
+                                      'Copied "${learnedWord.wordString}" to clipboard.');
+                            },
+                          )
+                        ],
                       ),
-                      _buildCardHeaderText(
-                        title: learnedWord.gender.isEmpty
-                            ? unavailableText
-                            : learnedWord.gender,
-                        subTitle: 'Gender',
-                      ),
-                      _buildCardHeaderText(
-                        title:
-                            '${(learnedWord.strength * 100.0).toStringAsFixed(2)} %',
-                        subTitle: 'Proficiency',
-                      ),
-                    ],
-                  ),
-                ),
-                const CommonDivider(),
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.start,
-                  children: [
-                    Expanded(
-                      child: ListTile(
-                        leading: _buildCardLeading(
-                          learnedWord: learnedWord,
-                        ),
-                        title: Row(
-                          children: [
-                            _buildCardTitleText(
-                              learnedWord: learnedWord,
-                            ),
-                            IconButton(
-                              tooltip: 'Copy Word',
-                              icon: const Icon(Icons.copy_all, size: 20),
-                              onPressed: () async {
-                                await FlutterClipboard.copy(
-                                    learnedWord.wordString);
-                                InfoSnackbar.from(context: context).show(
-                                    content:
-                                        'Copied "${learnedWord.wordString}" to clipboard.');
-                              },
-                            )
-                          ],
-                        ),
-                        subtitle: _buildCardHintText(
-                          wordHints: learnedWord.wordHints,
-                        ),
+                      subtitle: _buildCardHintText(
+                        wordHints: learnedWord.wordHints,
                       ),
                     ),
-                    if (!learnedWord.deleted)
-                      IconButton(
-                        tooltip: learnedWord.bookmarked
-                            ? 'Remove Bookmark'
-                            : 'Add Bookmark',
-                        icon: learnedWord.bookmarked
-                            ? const Icon(Icons.bookmark_added)
-                            : const Icon(Icons.bookmark_add),
-                        onPressed: () async {
-                          learnedWord.bookmarked = !learnedWord.bookmarked;
-                          learnedWord.updatedAt = DateTime.now();
-
-                          await _learnedWordService.update(
-                            learnedWord,
-                          );
-
-                          super.setState(() {});
-                        },
-                      ),
-                  ],
-                ),
-                const CommonDivider(),
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  crossAxisAlignment: CrossAxisAlignment.end,
-                  children: _createCardActions(
-                    learnedWord: learnedWord,
                   ),
+                  if (!learnedWord.deleted)
+                    IconButton(
+                      tooltip: learnedWord.bookmarked
+                          ? 'Remove Bookmark'
+                          : 'Add Bookmark',
+                      icon: learnedWord.bookmarked
+                          ? const Icon(Icons.bookmark_added)
+                          : const Icon(Icons.bookmark_add),
+                      onPressed: () async {
+                        learnedWord.bookmarked = !learnedWord.bookmarked;
+                        learnedWord.updatedAt = DateTime.now();
+
+                        await _learnedWordService.update(
+                          learnedWord,
+                        );
+
+                        super.setState(() {});
+                      },
+                    ),
+                ],
+              ),
+              const CommonDivider(),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                crossAxisAlignment: CrossAxisAlignment.end,
+                children: _createCardActions(
+                  learnedWord: learnedWord,
                 ),
-              ],
-            ),
-          ),
-          shape: const RoundedRectangleBorder(
-            borderRadius: BorderRadius.vertical(
-              top: Radius.circular(30),
-              bottom: Radius.circular(30),
-            ),
+              ),
+            ],
           ),
         ),
-      );
+        shape: const RoundedRectangleBorder(
+          borderRadius: BorderRadius.vertical(
+            top: Radius.circular(30),
+            bottom: Radius.circular(30),
+          ),
+        ),
+      ),
+    );
+  }
 
   Widget _buildCardHeaderText({
     required String title,
@@ -640,12 +641,7 @@ class _OverviewViewState extends State<OverviewView> {
               icon: FontAwesomeIcons.sync,
               label: 'Update Words',
               onTap: () async {
-                showLoadingDialog(
-                  context: context,
-                  title: 'Updating Learned Words',
-                  future: _syncLearnedWords(),
-                );
-
+                await _syncLearnedWords();
                 super.setState(() {});
               },
             ),
@@ -654,11 +650,11 @@ class _OverviewViewState extends State<OverviewView> {
               label: 'Switch Language',
               onTap: () async {
                 if (!await Network.isConnected()) {
-                  showNetworkErrorDialog(context: context);
+                  await showNetworkErrorDialog(context: context);
                   return;
                 }
 
-                showLoadingDialog(
+                await showLoadingDialog(
                   context: context,
                   title: 'Switching Language',
                   future: showSwitchLanguageDialog(
@@ -685,8 +681,8 @@ class _OverviewViewState extends State<OverviewView> {
                 ),
           actions: _buildActions(),
           body: FutureBuilder(
-            future: _fetchDataSource(context: context),
-            builder: (context, AsyncSnapshot snapshot) {
+            future: _fetchDataSource(),
+            builder: (_, AsyncSnapshot snapshot) {
               if (!snapshot.hasData) {
                 return const Loading();
               }
@@ -704,7 +700,7 @@ class _OverviewViewState extends State<OverviewView> {
                     oldIndex: oldIndex,
                     newIndex: newIndex,
                   ),
-                  itemBuilder: (context, index) => _buildLearnedWordCard(
+                  itemBuilder: (_, index) => _buildLearnedWordCard(
                     learnedWord: learnedWords[index],
                   ),
                 ),

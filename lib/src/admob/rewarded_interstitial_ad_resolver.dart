@@ -64,10 +64,13 @@ class RewardedAdResolver {
 
     await _rewardedAd!.show(
         onUserEarnedReward: (RewardedAd ad, RewardItem reward) async {
-      final currentPoint =
-          await CommonSharedPreferencesKey.rewardPoint.getInt();
-      await CommonSharedPreferencesKey.rewardPoint
-          .setInt(currentPoint + reward.amount.toInt());
+      final currentPoint = await CommonSharedPreferencesKey.rewardPoint.getInt(
+        defaultValue: 0,
+      );
+
+      await CommonSharedPreferencesKey.rewardPoint.setInt(
+        currentPoint + reward.amount.toInt(),
+      );
     });
 
     _rewardedAd = null;

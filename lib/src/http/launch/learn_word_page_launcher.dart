@@ -25,6 +25,7 @@ class LearnWordPageLauncher extends PageLauncher {
     return await launch(
       '${DuolingoPageLauncher.learnWord.url}/${params[_paramLearningLanguage]}/${params[_paramSkillUrlTitle]}',
       headers: super.session.headers,
+      forceWebView: true,
     );
   }
 }

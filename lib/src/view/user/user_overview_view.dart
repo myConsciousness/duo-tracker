@@ -24,6 +24,7 @@ import 'package:flutter/widgets.dart';
 import 'package:flutter_speed_dial/flutter_speed_dial.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:intl/intl.dart';
+import 'package:syncfusion_flutter_charts/charts.dart';
 
 class UserOverviewView extends StatefulWidget {
   const UserOverviewView({Key? key}) : super(key: key);
@@ -105,7 +106,7 @@ class _UserOverviewViewState extends State<UserOverviewView> {
     );
   }
 
-  Widget _buildCircleChart({
+  Widget _buildRadicalBarChart({
     required User user,
   }) =>
       FutureBuilder(
@@ -119,6 +120,13 @@ class _UserOverviewViewState extends State<UserOverviewView> {
               _getTotalAchievements(chartDataSources: snapshot.data);
 
           return RadicalBarChart(
+            chartTitle: ChartTitle(
+              text: 'Achievements',
+              textStyle: TextStyle(
+                color: Theme.of(context).colorScheme.secondary,
+                fontWeight: FontWeight.bold,
+              ),
+            ),
             centerObject: CircleAvatar(
               child: Column(
                 mainAxisAlignment: MainAxisAlignment.center,
@@ -211,7 +219,7 @@ class _UserOverviewViewState extends State<UserOverviewView> {
                     subTitle: _numericTextFormat.format(user.weeklyXp / 7.0),
                   ),
                   _buildCardText(
-                    title: 'Streak',
+                    title: 'Goal Streak',
                     subTitle: _numericTextFormat.format(user.weeklyXp),
                   ),
                 ],
@@ -352,17 +360,23 @@ class _UserOverviewViewState extends State<UserOverviewView> {
       );
 
   Future<void> _syncLearnedWords() async {
-    if (!await DuolingoApiUtils.refreshVersionInfo(context: context)) {
-      return;
-    }
+    await showLoadingDialog(
+      context: context,
+      title: 'Updating API Config',
+      future: DuolingoApiUtils.refreshVersionInfo(context: context),
+    );
 
-    if (!await DuolingoApiUtils.refreshUser(context: context)) {
-      return;
-    }
+    await showLoadingDialog(
+      context: context,
+      title: 'Updating User Information',
+      future: DuolingoApiUtils.refreshUser(context: context),
+    );
 
-    if (!await DuolingoApiUtils.synchronizeLearnedWords(context: context)) {
-      return;
-    }
+    await showLoadingDialog(
+      context: context,
+      title: 'Updating Learned Words',
+      future: DuolingoApiUtils.synchronizeLearnedWords(context: context),
+    );
 
     super.setState(() {});
 
@@ -387,16 +401,14 @@ class _UserOverviewViewState extends State<UserOverviewView> {
               icon: FontAwesomeIcons.userAlt,
               label: 'Switch Account',
               onTap: () async {
-                await showAuthDialog(
+                final authenticated = await showAuthDialog(
                   context: context,
                   dismissOnTouchOutside: true,
                 );
 
-                await showLoadingDialog(
-                  context: context,
-                  title: 'Updating Learned Words',
-                  future: _syncLearnedWords(),
-                );
+                if (authenticated) {
+                  await _syncLearnedWords();
+                }
               },
             ),
             _buildSpeedDialChild(
@@ -426,13 +438,16 @@ class _UserOverviewViewState extends State<UserOverviewView> {
                     crossAxisAlignment: CrossAxisAlignment.center,
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: <Widget>[
-                      _buildCircleChart(user: user),
+                      _buildRadicalBarChart(user: user),
                       _buildStatusCard(user: user),
                       const SizedBox(
-                        height: 10,
+                        height: 5,
                       ),
-                      _buildSummaryCard(user: user),
                       _buildGoalCard(user: user),
+                      _buildSummaryCard(user: user),
+                      const SizedBox(
+                        height: 20,
+                      ),
                     ],
                   ),
                 );

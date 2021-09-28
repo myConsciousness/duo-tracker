@@ -5,11 +5,11 @@
 import 'package:duo_tracker/src/component/dialog/warning_dialog.dart';
 import 'package:flutter/material.dart';
 
-void showInputErrorDialog<T>({
+Future<void> showInputErrorDialog<T>({
   required BuildContext context,
   required String content,
-}) {
-  showWarningDialog(
+}) async {
+  await showWarningDialog(
     context: context,
     title: 'Input Error',
     content: content,

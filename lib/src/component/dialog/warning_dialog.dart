@@ -6,12 +6,12 @@ import 'package:awesome_dialog/awesome_dialog.dart';
 import 'package:duo_tracker/src/component/dialog/common_awesome_dialog.dart';
 import 'package:flutter/material.dart';
 
-void showWarningDialog<T>({
+Future<void> showWarningDialog<T>({
   required BuildContext context,
   required String title,
   required String content,
-}) {
-  showCommonAwesomeDialog(
+}) async {
+  await showCommonAwesomeDialog(
     context: context,
     dialogType: DialogType.WARNING,
     title: title,

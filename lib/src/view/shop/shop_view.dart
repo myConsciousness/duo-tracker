@@ -38,7 +38,10 @@ class _ShopViewState extends State<ShopView> {
 
   Future<void> _asyncInitState() async {
     await _rewardedAdResolver.loadRewardedAd();
-    _point = await CommonSharedPreferencesKey.rewardPoint.getInt();
+    _point = await CommonSharedPreferencesKey.rewardPoint.getInt(
+      defaultValue: 0,
+    );
+
     super.setState(() {});
   }
 
@@ -85,11 +88,12 @@ class _ShopViewState extends State<ShopView> {
                     Text(
                         'You have ${_numericTextFormat.format(_point)} points'),
                     IconButton(
+                      tooltip: 'Update Point',
                       icon: const Icon(Icons.sync),
                       onPressed: () async {
                         final currentRewardPoint =
                             await CommonSharedPreferencesKey.rewardPoint
-                                .getInt();
+                                .getInt(defaultValue: 0);
 
                         super.setState(() {
                           _point = currentRewardPoint;
@@ -103,7 +107,7 @@ class _ShopViewState extends State<ShopView> {
                 padding: const EdgeInsets.fromLTRB(20, 0, 20, 5),
                 child: AnimatedButton(
                   isFixedHeight: false,
-                  text: 'Charge Points',
+                  text: 'Charge +2 Points',
                   color: Theme.of(context).colorScheme.secondaryVariant,
                   pressEvent: () async {
                     await RewardedAdUtils.showRewarededAd(
@@ -143,23 +147,23 @@ class _ShopViewState extends State<ShopView> {
                   crossAxisAlignment: CrossAxisAlignment.center,
                   children: [
                     _buildProductCard(title: '30 minutes', price: 5),
-                    _buildProductCard(title: '1 hour', price: 10),
+                    _buildProductCard(title: '1 hour', price: 20),
                   ],
                 ),
                 Row(
                   mainAxisAlignment: MainAxisAlignment.center,
                   crossAxisAlignment: CrossAxisAlignment.center,
                   children: [
-                    _buildProductCard(title: '3 hours', price: 20),
-                    _buildProductCard(title: '6 hours', price: 50),
+                    _buildProductCard(title: '3 hours', price: 40),
+                    _buildProductCard(title: '6 hours', price: 70),
                   ],
                 ),
                 Row(
                   mainAxisAlignment: MainAxisAlignment.center,
                   crossAxisAlignment: CrossAxisAlignment.center,
                   children: [
-                    _buildProductCard(title: '12 hours', price: 100),
-                    _buildProductCard(title: '24 hours', price: 150),
+                    _buildProductCard(title: '12 hours', price: 120),
+                    _buildProductCard(title: '24 hours', price: 200),
                   ],
                 ),
               ],

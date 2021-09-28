@@ -15,13 +15,11 @@ class RewardedAdUtils {
     int count = await sharedPreferencesKey.getInt();
 
     if (count >= sharedPreferencesKey.limitCount) {
-      await sharedPreferencesKey.setInt(0);
-
-      final RewardedAdResolver rewardedAdResolver =
-          RewardedAdResolver.getInstance();
+      final rewardedAdResolver = RewardedAdResolver.getInstance();
 
       if (rewardedAdResolver.adLoaded) {
         await rewardedAdResolver.showRewardedAd();
+        await sharedPreferencesKey.setInt(0);
       } else {
         await showErrorDialog(
           context: context,

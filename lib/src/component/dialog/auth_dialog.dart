@@ -14,12 +14,16 @@ final _usernameController = TextEditingController();
 final _passwordController = TextEditingController();
 String _rawPassword = '';
 
-bool _authenticating = false;
+late bool _authenticating;
+late bool _authenticated;
 
-Future<T?> showAuthDialog<T>({
+Future<bool> showAuthDialog({
   required BuildContext context,
   bool dismissOnTouchOutside = false,
 }) async {
+  _authenticating = false;
+  _authenticated = false;
+
   _dialog = AwesomeDialog(
     context: context,
     animType: AnimType.LEFTSLIDE,
@@ -96,8 +100,14 @@ Future<T?> showAuthDialog<T>({
                     return;
                   }
 
+                  // Delete input information
+                  _usernameController.clear();
+                  _passwordController.clear();
+                  _rawPassword = '';
+
+                  _authenticated = true;
+
                   await _dialog!.dismiss();
-                  _authenticating = false;
                 },
               ),
               const SizedBox(
@@ -111,6 +121,8 @@ Future<T?> showAuthDialog<T>({
   );
 
   await _dialog!.show();
+
+  return _authenticated;
 }
 
 Future<bool> _checkInput({
