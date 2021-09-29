@@ -242,28 +242,10 @@ class _ShopViewState extends State<ShopView> {
                       await CommonSharedPreferencesKey.rewardPoint
                           .setInt(currentPoint - price);
 
-                      switch (productType) {
-                        case DisableAdProductType.disbaleFullScreenAd:
-                          await CommonSharedPreferencesKey.disableFullScreenType
-                              .setInt(disableAdType.code);
-                          await CommonSharedPreferencesKey
-                              .datetimeDisabledFullScreen
-                              .setInt(
-                            DateTime.now().millisecondsSinceEpoch,
-                          );
-
-                          break;
-                        case DisableAdProductType.disableBannerAd:
-                          await CommonSharedPreferencesKey.disableBannerType
-                              .setInt(disableAdType.code);
-                          await CommonSharedPreferencesKey
-                              .datetimeDisabledBanner
-                              .setInt(
-                            DateTime.now().millisecondsSinceEpoch,
-                          );
-
-                          break;
-                      }
+                      await _disableAds(
+                        productType: productType,
+                        disableAdType: disableAdType,
+                      );
                     },
                   ),
                 ),
@@ -272,6 +254,45 @@ class _ShopViewState extends State<ShopView> {
           ),
         ),
       );
+
+  Future<void> _disableAds({
+    required DisableAdProductType productType,
+    required DisableAdType disableAdType,
+  }) async {
+    switch (productType) {
+      case DisableAdProductType.disbaleFullScreenAd:
+        await CommonSharedPreferencesKey.disableFullScreenType
+            .setInt(disableAdType.code);
+        await CommonSharedPreferencesKey.datetimeDisabledFullScreen.setInt(
+          DateTime.now().millisecondsSinceEpoch,
+        );
+
+        break;
+      case DisableAdProductType.disableBannerAd:
+        await CommonSharedPreferencesKey.disableBannerType
+            .setInt(disableAdType.code);
+        await CommonSharedPreferencesKey.datetimeDisabledBanner.setInt(
+          DateTime.now().millisecondsSinceEpoch,
+        );
+
+        break;
+      case DisableAdProductType.all:
+        // Enables all
+        await CommonSharedPreferencesKey.disableFullScreenType
+            .setInt(disableAdType.code);
+        await CommonSharedPreferencesKey.datetimeDisabledFullScreen.setInt(
+          DateTime.now().millisecondsSinceEpoch,
+        );
+
+        await CommonSharedPreferencesKey.disableBannerType
+            .setInt(disableAdType.code);
+        await CommonSharedPreferencesKey.datetimeDisabledBanner.setInt(
+          DateTime.now().millisecondsSinceEpoch,
+        );
+
+        break;
+    }
+  }
 
   Future<bool> _alreadyAdDisabled({
     required DisableAdProductType productType,
@@ -284,6 +305,11 @@ class _ShopViewState extends State<ShopView> {
       case DisableAdProductType.disableBannerAd:
         return await CommonSharedPreferencesKey.disableBannerType.getInt() !=
             -1;
+      case DisableAdProductType.all:
+        return await CommonSharedPreferencesKey.disableFullScreenType
+                    .getInt() !=
+                -1 &&
+            await CommonSharedPreferencesKey.disableBannerType.getInt() != -1;
     }
   }
 
@@ -307,6 +333,12 @@ class _ShopViewState extends State<ShopView> {
                     subtitle:
                         'You can disable banner ads for a certain period of time.',
                     productType: DisableAdProductType.disableBannerAd,
+                  ),
+                  _buildDisableAdProductsCard(
+                    title: 'Disable All Ads',
+                    subtitle:
+                        'You can disable all ads for a certain period of time. Ads for recharging points in this store will not be disabled.',
+                    productType: DisableAdProductType.all,
                   ),
                 ],
               ),

@@ -9,4 +9,7 @@ enum DisableAdProductType {
 
   /// The disable banner ad
   disableBannerAd,
+
+  /// All ads
+  all
 }
