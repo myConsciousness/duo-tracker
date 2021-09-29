@@ -8,7 +8,8 @@ import 'package:duo_tracker/src/component/dialog/charge_point_dialog.dart';
 import 'package:duo_tracker/src/component/dialog/error_dialog.dart';
 import 'package:duo_tracker/src/repository/preference/common_shared_preferences_key.dart';
 import 'package:duo_tracker/src/repository/preference/rewarded_ad_shared_preferences.dart';
-import 'package:duo_tracker/src/view/shop/disable_full_screen_type.dart';
+import 'package:duo_tracker/src/view/shop/disable_ad_type.dart';
+import 'package:duo_tracker/src/view/shop/disable_ad_product_type.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
@@ -29,6 +30,16 @@ class _ShopViewState extends State<ShopView> {
   int _point = 0;
 
   @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+  }
+
+  @override
+  void dispose() {
+    super.dispose();
+  }
+
+  @override
   void initState() {
     super.initState();
     _asyncInitState();
@@ -41,33 +52,6 @@ class _ShopViewState extends State<ShopView> {
 
     super.setState(() {});
   }
-
-  @override
-  void didChangeDependencies() {
-    super.didChangeDependencies();
-  }
-
-  @override
-  void dispose() {
-    super.dispose();
-  }
-
-  @override
-  Widget build(BuildContext context) => Scaffold(
-        body: SafeArea(
-          child: SingleChildScrollView(
-            child: Padding(
-              padding: const EdgeInsets.all(10),
-              child: Column(
-                children: [
-                  _buildWalletCard(),
-                  _buildDisableAdProductCard(),
-                ],
-              ),
-            ),
-          ),
-        ),
-      );
 
   Widget _buildWalletCard() => Padding(
         padding: const EdgeInsets.fromLTRB(50, 5, 50, 5),
@@ -121,7 +105,12 @@ class _ShopViewState extends State<ShopView> {
         ),
       );
 
-  Widget _buildDisableAdProductCard() => Padding(
+  Widget _buildDisableAdProductsCard({
+    required String title,
+    required String subtitle,
+    required DisableAdProductType productType,
+  }) =>
+      Padding(
         padding: const EdgeInsets.all(5),
         child: Card(
           clipBehavior: Clip.antiAlias,
@@ -132,11 +121,12 @@ class _ShopViewState extends State<ShopView> {
               mainAxisAlignment: MainAxisAlignment.center,
               crossAxisAlignment: CrossAxisAlignment.center,
               children: [
-                const ListTile(
-                  leading: Icon(FontAwesomeIcons.shoppingBasket),
-                  title: Text('Disable full-screen ads'),
+                ListTile(
+                  leading: const Icon(FontAwesomeIcons.shoppingBasket),
+                  title: Text(title),
                   subtitle: Text(
-                      'You can disable full-screen ads for a certain period of time. Ads for recharging points in this store will not be disabled.'),
+                    subtitle,
+                  ),
                 ),
                 const SizedBox(
                   height: 20,
@@ -145,15 +135,17 @@ class _ShopViewState extends State<ShopView> {
                   mainAxisAlignment: MainAxisAlignment.center,
                   crossAxisAlignment: CrossAxisAlignment.center,
                   children: [
-                    _buildProductCard(
+                    _buildDisableAdProductCard(
                       title: '30 minutes',
                       price: 5,
-                      disableFullScreenType: DisableFullScreenType.m30,
+                      productType: productType,
+                      disableAdType: DisableAdType.m30,
                     ),
-                    _buildProductCard(
+                    _buildDisableAdProductCard(
                       title: '1 hour',
                       price: 20,
-                      disableFullScreenType: DisableFullScreenType.h1,
+                      productType: productType,
+                      disableAdType: DisableAdType.h1,
                     ),
                   ],
                 ),
@@ -161,15 +153,17 @@ class _ShopViewState extends State<ShopView> {
                   mainAxisAlignment: MainAxisAlignment.center,
                   crossAxisAlignment: CrossAxisAlignment.center,
                   children: [
-                    _buildProductCard(
+                    _buildDisableAdProductCard(
                       title: '3 hours',
                       price: 40,
-                      disableFullScreenType: DisableFullScreenType.h3,
+                      productType: productType,
+                      disableAdType: DisableAdType.h3,
                     ),
-                    _buildProductCard(
+                    _buildDisableAdProductCard(
                       title: '6 hours',
                       price: 70,
-                      disableFullScreenType: DisableFullScreenType.h6,
+                      productType: productType,
+                      disableAdType: DisableAdType.h6,
                     ),
                   ],
                 ),
@@ -177,15 +171,17 @@ class _ShopViewState extends State<ShopView> {
                   mainAxisAlignment: MainAxisAlignment.center,
                   crossAxisAlignment: CrossAxisAlignment.center,
                   children: [
-                    _buildProductCard(
+                    _buildDisableAdProductCard(
                       title: '12 hours',
                       price: 120,
-                      disableFullScreenType: DisableFullScreenType.h12,
+                      productType: productType,
+                      disableAdType: DisableAdType.h12,
                     ),
-                    _buildProductCard(
+                    _buildDisableAdProductCard(
                       title: '24 hours',
                       price: 200,
-                      disableFullScreenType: DisableFullScreenType.h24,
+                      productType: productType,
+                      disableAdType: DisableAdType.h24,
                     ),
                   ],
                 ),
@@ -195,16 +191,17 @@ class _ShopViewState extends State<ShopView> {
         ),
       );
 
-  Widget _buildProductCard({
+  Widget _buildDisableAdProductCard({
     required String title,
     required int price,
-    required DisableFullScreenType disableFullScreenType,
+    required DisableAdProductType productType,
+    required DisableAdType disableAdType,
   }) =>
       Expanded(
         child: Padding(
           padding: const EdgeInsets.all(5),
           child: Card(
-            elevation: 2,
+            elevation: 0,
             child: Column(
               mainAxisAlignment: MainAxisAlignment.center,
               crossAxisAlignment: CrossAxisAlignment.center,
@@ -230,17 +227,13 @@ class _ShopViewState extends State<ShopView> {
                         return;
                       }
 
-                      final productType = await CommonSharedPreferencesKey
-                          .disableFullScreenType
-                          .getInt();
-
-                      if (productType != -1) {
+                      if (await _alreadyAdDisabled(productType: productType)) {
                         // If the disable setting is enabled, do not let the user make a new purchase.
                         await showErrorDialog(
                           context: context,
                           title: 'Purchase Error',
                           content:
-                              'Disabling full-screen ads is already enabled. Please wait for the time limit of the last product type you purchased to expire.',
+                              'Disabling ad is already enabled. Please wait for the time limit of the last product type you purchased to expire.',
                         );
                         return;
                       }
@@ -249,17 +242,74 @@ class _ShopViewState extends State<ShopView> {
                       await CommonSharedPreferencesKey.rewardPoint
                           .setInt(currentPoint - price);
 
-                      await CommonSharedPreferencesKey.disableFullScreenType
-                          .setInt(disableFullScreenType.code);
-                      await CommonSharedPreferencesKey
-                          .datetimeDisabledFullScreen
-                          .setInt(
-                        DateTime.now().millisecondsSinceEpoch,
-                      );
+                      switch (productType) {
+                        case DisableAdProductType.disbaleFullScreenAd:
+                          await CommonSharedPreferencesKey.disableFullScreenType
+                              .setInt(disableAdType.code);
+                          await CommonSharedPreferencesKey
+                              .datetimeDisabledFullScreen
+                              .setInt(
+                            DateTime.now().millisecondsSinceEpoch,
+                          );
+
+                          break;
+                        case DisableAdProductType.disableBannerAd:
+                          await CommonSharedPreferencesKey.disableBannerType
+                              .setInt(disableAdType.code);
+                          await CommonSharedPreferencesKey
+                              .datetimeDisabledBanner
+                              .setInt(
+                            DateTime.now().millisecondsSinceEpoch,
+                          );
+
+                          break;
+                      }
                     },
                   ),
                 ),
               ],
+            ),
+          ),
+        ),
+      );
+
+  Future<bool> _alreadyAdDisabled({
+    required DisableAdProductType productType,
+  }) async {
+    switch (productType) {
+      case DisableAdProductType.disbaleFullScreenAd:
+        return await CommonSharedPreferencesKey.disableFullScreenType
+                .getInt() !=
+            -1;
+      case DisableAdProductType.disableBannerAd:
+        return await CommonSharedPreferencesKey.disableBannerType.getInt() !=
+            -1;
+    }
+  }
+
+  @override
+  Widget build(BuildContext context) => Scaffold(
+        body: SafeArea(
+          child: SingleChildScrollView(
+            child: Padding(
+              padding: const EdgeInsets.all(10),
+              child: Column(
+                children: [
+                  _buildWalletCard(),
+                  _buildDisableAdProductsCard(
+                    title: 'Disable Full Screen Ads',
+                    subtitle:
+                        'You can disable full-screen ads for a certain period of time. Ads for recharging points in this store will not be disabled.',
+                    productType: DisableAdProductType.disbaleFullScreenAd,
+                  ),
+                  _buildDisableAdProductsCard(
+                    title: 'Disable Banner Ads',
+                    subtitle:
+                        'You can disable banner ads for a certain period of time.',
+                    productType: DisableAdProductType.disableBannerAd,
+                  ),
+                ],
+              ),
             ),
           ),
         ),

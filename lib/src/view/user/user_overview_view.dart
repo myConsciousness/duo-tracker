@@ -2,6 +2,7 @@
 // Use of this source code is governed by a
 // BSD-style license that can be found in the LICENSE file.
 
+import 'package:duo_tracker/src/admob/banner_ad_utils.dart';
 import 'package:duo_tracker/src/component/charts/radical_bar_chart.dart';
 import 'package:duo_tracker/src/component/common_divider.dart';
 import 'package:duo_tracker/src/component/dialog/auth_dialog.dart';
@@ -23,6 +24,7 @@ import 'package:flutter/rendering.dart';
 import 'package:flutter/widgets.dart';
 import 'package:flutter_speed_dial/flutter_speed_dial.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+import 'package:google_mobile_ads/google_mobile_ads.dart';
 import 'package:intl/intl.dart';
 import 'package:syncfusion_flutter_charts/charts.dart';
 
@@ -55,6 +57,9 @@ class _UserOverviewViewState extends State<UserOverviewView> {
   /// The user service
   final _userService = UserService.getInstance();
 
+  /// The banner ad
+  BannerAd? _bannerAd;
+
   @override
   void didChangeDependencies() {
     super.didChangeDependencies();
@@ -62,6 +67,10 @@ class _UserOverviewViewState extends State<UserOverviewView> {
 
   @override
   void dispose() {
+    if (_bannerAd != null) {
+      _bannerAd!.dispose();
+    }
+
     super.dispose();
   }
 
@@ -69,6 +78,11 @@ class _UserOverviewViewState extends State<UserOverviewView> {
   void initState() {
     super.initState();
     _asyncInitState();
+  }
+
+  BannerAd _loadBannerAd() {
+    _bannerAd = BannerAdUtils.loadBannerAd();
+    return _bannerAd!;
   }
 
   Future<void> _asyncInitState() async {
@@ -179,6 +193,20 @@ class _UserOverviewViewState extends State<UserOverviewView> {
               mainAxisAlignment: MainAxisAlignment.center,
               crossAxisAlignment: CrossAxisAlignment.center,
               children: [
+                FutureBuilder(
+                  future: BannerAdUtils.canShow(),
+                  builder: (BuildContext context, AsyncSnapshot snapshot) {
+                    if (!snapshot.hasData) {
+                      return const Loading();
+                    }
+
+                    if (!snapshot.data) {
+                      return Container();
+                    }
+
+                    return BannerAdUtils.createBannerAdWidget(_loadBannerAd());
+                  },
+                ),
                 RadicalBarChart(
                   chartTitle: ChartTitle(
                     text: 'Goals and Progress',

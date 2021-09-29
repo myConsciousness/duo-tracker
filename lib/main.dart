@@ -86,13 +86,13 @@ class _DuoTrackerState extends State<DuoTracker> with WidgetsBindingObserver {
       /// First time app is launched
       await CommonSharedPreferencesKey.datetimeLastShowedAppReview
           .setInt(DateTime.now().millisecondsSinceEpoch);
-      AppReview.requestReview;
+      await AppReview.requestReview;
     } else {
-      final DateTime datetimeLastShowed =
+      final datetimeLastShowed =
           DateTime.fromMillisecondsSinceEpoch(datetimeSinceEpock);
 
-      if (datetimeLastShowed.difference(DateTime.now()).inDays >= 7) {
-        AppReview.requestReview;
+      if (DateTime.now().difference(datetimeLastShowed).inDays.abs() >= 7) {
+        await AppReview.requestReview;
       }
     }
   }

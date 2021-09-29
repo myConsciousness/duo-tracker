@@ -5,7 +5,7 @@
 import 'package:duo_tracker/src/admob/interstitial_ad_resolver.dart';
 import 'package:duo_tracker/src/repository/preference/common_shared_preferences_key.dart';
 import 'package:duo_tracker/src/repository/preference/interstitial_ad_shared_preferences_key.dart';
-import 'package:duo_tracker/src/view/shop/disable_full_screen_type.dart';
+import 'package:duo_tracker/src/view/shop/disable_ad_type.dart';
 
 class InterstitialAdUtils {
   static Future<void> showInterstitialAd({
@@ -13,17 +13,16 @@ class InterstitialAdUtils {
   }) async {
     int count = await sharedPreferencesKey.getInt();
 
-    final disableFullScreenTypeCode =
+    final disableAdTypeCode =
         await CommonSharedPreferencesKey.disableFullScreenType.getInt();
 
-    if (disableFullScreenTypeCode != -1) {
-      final disableFullScreenType =
-          DisableFullScreenTypeExt.toEnum(code: disableFullScreenTypeCode);
+    if (disableAdTypeCode != -1) {
+      final disableAdType = DisableAdTypeExt.toEnum(code: disableAdTypeCode);
       final purchasedDatetime = DateTime.fromMillisecondsSinceEpoch(
           await CommonSharedPreferencesKey.datetimeDisabledFullScreen.getInt());
 
-      if (purchasedDatetime.difference(DateTime.now()).inMinutes >
-          disableFullScreenType.timeLimit) {
+      if (DateTime.now().difference(purchasedDatetime).inMinutes.abs() >
+          disableAdType.timeLimit) {
         // Disable setting expires.
         await CommonSharedPreferencesKey.disableFullScreenType.setInt(-1);
         await CommonSharedPreferencesKey.datetimeDisabledFullScreen.setInt(-1);

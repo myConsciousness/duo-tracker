@@ -4,6 +4,7 @@
 
 import 'package:audioplayers/audioplayers.dart';
 import 'package:clipboard/clipboard.dart';
+import 'package:duo_tracker/src/admob/banner_ad_utils.dart';
 import 'package:duo_tracker/src/component/common_app_bar_titles.dart';
 import 'package:duo_tracker/src/component/common_divider.dart';
 import 'package:duo_tracker/src/component/common_nested_scroll_view.dart';
@@ -35,6 +36,7 @@ import 'package:flutter/rendering.dart';
 import 'package:flutter/widgets.dart';
 import 'package:flutter_speed_dial/flutter_speed_dial.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+import 'package:google_mobile_ads/google_mobile_ads.dart';
 import 'package:intl/intl.dart';
 
 class OverviewView extends StatefulWidget {
@@ -55,6 +57,7 @@ class _OverviewViewState extends State<OverviewView> {
   bool _alreadyAuthDialogOpened = false;
   String _appBarSubTitle = '';
   final _audioPlayer = AudioPlayer();
+  final List<BannerAd> _bannerAds = <BannerAd>[];
   final _datetimeFormat = DateFormat('yyyy/MM/dd HH:mm');
   FilterPattern _filterPattern = FilterPattern.none;
 
@@ -73,6 +76,10 @@ class _OverviewViewState extends State<OverviewView> {
 
   @override
   void dispose() {
+    for (final bannerAd in _bannerAds) {
+      bannerAd.dispose();
+    }
+
     super.dispose();
   }
 
@@ -80,6 +87,12 @@ class _OverviewViewState extends State<OverviewView> {
   void initState() {
     super.initState();
     _asyncInitState();
+  }
+
+  BannerAd _loadBannerAd() {
+    final BannerAd bannerAd = BannerAdUtils.loadBannerAd();
+    _bannerAds.add(bannerAd);
+    return bannerAd;
   }
 
   Future<List<LearnedWord>> _fetchDataSource() async {
@@ -91,13 +104,11 @@ class _OverviewViewState extends State<OverviewView> {
   }
 
   Future<bool> _canAutoSync() async => (DateTime.now()
-          .difference(
-            DateTime.fromMillisecondsSinceEpoch(
+          .difference(DateTime.fromMillisecondsSinceEpoch(
               await CommonSharedPreferencesKey.datetimeLastAutoSyncedOverview
-                  .getInt(),
-            ),
-          )
-          .inDays >=
+                  .getInt()))
+          .inDays
+          .abs() >=
       1);
 
   Future<void> _syncLearnedWords() async {
@@ -142,154 +153,179 @@ class _OverviewViewState extends State<OverviewView> {
       );
 
   Widget _buildLearnedWordCard({
+    required int index,
     required LearnedWord learnedWord,
   }) {
+    final visible = WordFilter.execute(
+      overviewTabType: widget.overviewTabType,
+      learnedWord: learnedWord,
+      searching: _searching,
+      searchWord: _searchWord,
+      matchPattern: _matchPattern,
+      filterPattern: _filterPattern,
+      selectedFilterItems: _selectedFilterItems,
+    );
+
     return Visibility(
       key: Key('${learnedWord.sortOrder}'),
-      visible: WordFilter.execute(
-        overviewTabType: widget.overviewTabType,
-        learnedWord: learnedWord,
-        searching: _searching,
-        searchWord: _searchWord,
-        matchPattern: _matchPattern,
-        filterPattern: _filterPattern,
-        selectedFilterItems: _selectedFilterItems,
-      ),
-      child: Card(
-        clipBehavior: Clip.antiAlias,
-        elevation: 5,
-        child: Padding(
-          padding: const EdgeInsets.fromLTRB(20, 10, 20, 10),
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  _buildCardHeaderText(
-                    title: '${learnedWord.sortOrder + 1}',
-                    subTitle: 'Index',
-                  ),
-                  _buildCardHeaderText(
-                    title: learnedWord.skillUrlTitle,
-                    subTitle: 'Lesson',
-                  ),
-                  _buildCardHeaderText(
-                    title: '${learnedWord.strengthBars}',
-                    subTitle: 'Strength',
-                  ),
-                  _buildCardHeaderText(
-                    title: _datetimeFormat.format(
-                      DateTime.fromMillisecondsSinceEpoch(
-                          learnedWord.lastPracticedMs),
-                    ),
-                    subTitle: 'Last practiced at',
-                  ),
-                ],
+      visible: visible,
+      child: Column(
+        children: [
+          if (visible)
+            FutureBuilder(
+              future: BannerAdUtils.canShow(
+                index: index,
+                interval: 3,
               ),
-              const CommonDivider(),
-              Container(
-                padding: const EdgeInsets.fromLTRB(20, 0, 20, 0),
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  crossAxisAlignment: CrossAxisAlignment.center,
-                  children: [
-                    _buildCardHeaderText(
-                      title: learnedWord.pos.isEmpty
-                          ? unavailableText
-                          : learnedWord.pos,
-                      subTitle: 'Pos',
-                    ),
-                    _buildCardHeaderText(
-                      title: learnedWord.infinitive.isEmpty
-                          ? unavailableText
-                          : learnedWord.infinitive,
-                      subTitle: 'Infinitive',
-                    ),
-                    _buildCardHeaderText(
-                      title: learnedWord.gender.isEmpty
-                          ? unavailableText
-                          : learnedWord.gender,
-                      subTitle: 'Gender',
-                    ),
-                    _buildCardHeaderText(
-                      title:
-                          '${(learnedWord.strength * 100.0).toStringAsFixed(2)} %',
-                      subTitle: 'Proficiency',
-                    ),
-                  ],
-                ),
-              ),
-              const CommonDivider(),
-              Row(
-                mainAxisAlignment: MainAxisAlignment.start,
+              builder: (BuildContext context, AsyncSnapshot snapshot) {
+                if (!snapshot.hasData) {
+                  return const Loading();
+                }
+
+                if (!snapshot.data) {
+                  return Container();
+                }
+
+                return BannerAdUtils.createBannerAdWidget(_loadBannerAd());
+              },
+            ),
+          Card(
+            clipBehavior: Clip.antiAlias,
+            elevation: 5,
+            child: Padding(
+              padding: const EdgeInsets.fromLTRB(20, 10, 20, 10),
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
                 children: [
-                  Expanded(
-                    child: ListTile(
-                      leading: _buildCardLeading(
-                        learnedWord: learnedWord,
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      _buildCardHeaderText(
+                        title: '${learnedWord.sortOrder + 1}',
+                        subTitle: 'Index',
                       ),
-                      title: Row(
-                        children: [
-                          _buildCardTitleText(
+                      _buildCardHeaderText(
+                        title: learnedWord.skillUrlTitle,
+                        subTitle: 'Lesson',
+                      ),
+                      _buildCardHeaderText(
+                        title: '${learnedWord.strengthBars}',
+                        subTitle: 'Strength',
+                      ),
+                      _buildCardHeaderText(
+                        title: _datetimeFormat.format(
+                          DateTime.fromMillisecondsSinceEpoch(
+                              learnedWord.lastPracticedMs),
+                        ),
+                        subTitle: 'Last practiced at',
+                      ),
+                    ],
+                  ),
+                  const CommonDivider(),
+                  Container(
+                    padding: const EdgeInsets.fromLTRB(20, 0, 20, 0),
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      crossAxisAlignment: CrossAxisAlignment.center,
+                      children: [
+                        _buildCardHeaderText(
+                          title: learnedWord.pos.isEmpty
+                              ? unavailableText
+                              : learnedWord.pos,
+                          subTitle: 'Pos',
+                        ),
+                        _buildCardHeaderText(
+                          title: learnedWord.infinitive.isEmpty
+                              ? unavailableText
+                              : learnedWord.infinitive,
+                          subTitle: 'Infinitive',
+                        ),
+                        _buildCardHeaderText(
+                          title: learnedWord.gender.isEmpty
+                              ? unavailableText
+                              : learnedWord.gender,
+                          subTitle: 'Gender',
+                        ),
+                        _buildCardHeaderText(
+                          title:
+                              '${(learnedWord.strength * 100.0).toStringAsFixed(2)} %',
+                          subTitle: 'Proficiency',
+                        ),
+                      ],
+                    ),
+                  ),
+                  const CommonDivider(),
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.start,
+                    children: [
+                      Expanded(
+                        child: ListTile(
+                          leading: _buildCardLeading(
                             learnedWord: learnedWord,
                           ),
-                          IconButton(
-                            tooltip: 'Copy Word',
-                            icon: const Icon(Icons.copy_all, size: 20),
-                            onPressed: () async {
-                              await FlutterClipboard.copy(
-                                  learnedWord.wordString);
-                              InfoSnackbar.from(context: context).show(
-                                  content:
-                                      'Copied "${learnedWord.wordString}" to clipboard.');
-                            },
-                          )
-                        ],
+                          title: Row(
+                            children: [
+                              _buildCardTitleText(
+                                learnedWord: learnedWord,
+                              ),
+                              IconButton(
+                                tooltip: 'Copy Word',
+                                icon: const Icon(Icons.copy_all, size: 20),
+                                onPressed: () async {
+                                  await FlutterClipboard.copy(
+                                      learnedWord.wordString);
+                                  InfoSnackbar.from(context: context).show(
+                                      content:
+                                          'Copied "${learnedWord.wordString}" to clipboard.');
+                                },
+                              )
+                            ],
+                          ),
+                          subtitle: _buildCardHintText(
+                            wordHints: learnedWord.wordHints,
+                          ),
+                        ),
                       ),
-                      subtitle: _buildCardHintText(
-                        wordHints: learnedWord.wordHints,
-                      ),
+                      if (!learnedWord.deleted)
+                        IconButton(
+                          tooltip: learnedWord.bookmarked
+                              ? 'Remove Bookmark'
+                              : 'Add Bookmark',
+                          icon: learnedWord.bookmarked
+                              ? const Icon(Icons.bookmark_added)
+                              : const Icon(Icons.bookmark_add),
+                          onPressed: () async {
+                            learnedWord.bookmarked = !learnedWord.bookmarked;
+                            learnedWord.updatedAt = DateTime.now();
+
+                            await _learnedWordService.update(
+                              learnedWord,
+                            );
+
+                            super.setState(() {});
+                          },
+                        ),
+                    ],
+                  ),
+                  const CommonDivider(),
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    crossAxisAlignment: CrossAxisAlignment.end,
+                    children: _createCardActions(
+                      learnedWord: learnedWord,
                     ),
                   ),
-                  if (!learnedWord.deleted)
-                    IconButton(
-                      tooltip: learnedWord.bookmarked
-                          ? 'Remove Bookmark'
-                          : 'Add Bookmark',
-                      icon: learnedWord.bookmarked
-                          ? const Icon(Icons.bookmark_added)
-                          : const Icon(Icons.bookmark_add),
-                      onPressed: () async {
-                        learnedWord.bookmarked = !learnedWord.bookmarked;
-                        learnedWord.updatedAt = DateTime.now();
-
-                        await _learnedWordService.update(
-                          learnedWord,
-                        );
-
-                        super.setState(() {});
-                      },
-                    ),
                 ],
               ),
-              const CommonDivider(),
-              Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                crossAxisAlignment: CrossAxisAlignment.end,
-                children: _createCardActions(
-                  learnedWord: learnedWord,
-                ),
+            ),
+            shape: const RoundedRectangleBorder(
+              borderRadius: BorderRadius.vertical(
+                top: Radius.circular(30),
+                bottom: Radius.circular(30),
               ),
-            ],
+            ),
           ),
-        ),
-        shape: const RoundedRectangleBorder(
-          borderRadius: BorderRadius.vertical(
-            top: Radius.circular(30),
-            bottom: Radius.circular(30),
-          ),
-        ),
+        ],
       ),
     );
   }
@@ -702,6 +738,7 @@ class _OverviewViewState extends State<OverviewView> {
                     newIndex: newIndex,
                   ),
                   itemBuilder: (_, index) => _buildLearnedWordCard(
+                    index: index,
                     learnedWord: learnedWords[index],
                   ),
                 ),

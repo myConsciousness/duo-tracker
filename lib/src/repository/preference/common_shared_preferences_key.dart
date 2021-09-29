@@ -63,6 +63,12 @@ enum CommonSharedPreferencesKey {
   /// The datetime disabled full screen
   datetimeDisabledFullScreen,
 
+  /// The disable banner type
+  disableBannerType,
+
+  /// The datetime disabled banner
+  datetimeDisabledBanner,
+
   //! The Shop Config ↑
 
   //! The Sync Config ↓
@@ -129,6 +135,10 @@ extension KeyFeature on CommonSharedPreferencesKey {
         return 'disable_full_screen_type';
       case CommonSharedPreferencesKey.datetimeDisabledFullScreen:
         return 'datetime_disabled_full_screen';
+      case CommonSharedPreferencesKey.disableBannerType:
+        return 'disable_banner_type';
+      case CommonSharedPreferencesKey.datetimeDisabledBanner:
+        return 'datetime_disabled_banner';
       case CommonSharedPreferencesKey.currentLearningLanguage:
         return 'current_learning_language';
       case CommonSharedPreferencesKey.currentFromLanguage:
