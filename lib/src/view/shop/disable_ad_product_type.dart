@@ -13,3 +13,16 @@ enum DisableAdProductType {
   /// All ads
   all
 }
+
+extension DisableAdProductTypeExt on DisableAdProductType {
+  int get priceWeight {
+    switch (this) {
+      case DisableAdProductType.disbaleFullScreenAd:
+        return 1;
+      case DisableAdProductType.disableBannerAd:
+        return 2;
+      case DisableAdProductType.all:
+        return 3;
+    }
+  }
+}

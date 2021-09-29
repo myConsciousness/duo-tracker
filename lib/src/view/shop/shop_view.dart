@@ -137,13 +137,13 @@ class _ShopViewState extends State<ShopView> {
                   children: [
                     _buildDisableAdProductCard(
                       title: '30 minutes',
-                      price: 5,
+                      price: 5 * productType.priceWeight,
                       productType: productType,
                       disableAdType: DisableAdType.m30,
                     ),
                     _buildDisableAdProductCard(
                       title: '1 hour',
-                      price: 20,
+                      price: 15 * productType.priceWeight,
                       productType: productType,
                       disableAdType: DisableAdType.h1,
                     ),
@@ -155,13 +155,13 @@ class _ShopViewState extends State<ShopView> {
                   children: [
                     _buildDisableAdProductCard(
                       title: '3 hours',
-                      price: 40,
+                      price: 30 * productType.priceWeight,
                       productType: productType,
                       disableAdType: DisableAdType.h3,
                     ),
                     _buildDisableAdProductCard(
                       title: '6 hours',
-                      price: 70,
+                      price: 50 * productType.priceWeight,
                       productType: productType,
                       disableAdType: DisableAdType.h6,
                     ),
@@ -173,13 +173,13 @@ class _ShopViewState extends State<ShopView> {
                   children: [
                     _buildDisableAdProductCard(
                       title: '12 hours',
-                      price: 120,
+                      price: 80 * productType.priceWeight,
                       productType: productType,
                       disableAdType: DisableAdType.h12,
                     ),
                     _buildDisableAdProductCard(
                       title: '24 hours',
-                      price: 200,
+                      price: 100 * productType.priceWeight,
                       productType: productType,
                       disableAdType: DisableAdType.h24,
                     ),
