@@ -16,6 +16,5 @@ class SelectLanguagePageLauncher extends PageLauncher {
       await launch(
         DuolingoPageLauncher.selectLangauge.url,
         headers: super.session.headers,
-        forceWebView: true,
       );
 }

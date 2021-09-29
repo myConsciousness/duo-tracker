@@ -6,6 +6,7 @@ import 'package:awesome_dialog/awesome_dialog.dart';
 import 'package:duo_tracker/src/admob/reawarde_ad_utils.dart';
 import 'package:duo_tracker/src/component/dialog/charge_point_dialog.dart';
 import 'package:duo_tracker/src/component/dialog/error_dialog.dart';
+import 'package:duo_tracker/src/component/loading.dart';
 import 'package:duo_tracker/src/repository/preference/common_shared_preferences_key.dart';
 import 'package:duo_tracker/src/repository/preference/rewarded_ad_shared_preferences.dart';
 import 'package:duo_tracker/src/view/shop/disable_ad_type.dart';
@@ -191,6 +192,91 @@ class _ShopViewState extends State<ShopView> {
         ),
       );
 
+  Future<String> _buildPurchaseButtonTitle({
+    required DisableAdProductType productType,
+    required DisableAdType disableAdType,
+    required String defaultTitle,
+  }) async {
+    switch (productType) {
+      case DisableAdProductType.disbaleFullScreenAd:
+        final disableFullScreenTypeCode =
+            await CommonSharedPreferencesKey.disableFullScreenType.getInt();
+
+        if (disableFullScreenTypeCode == -1) {
+          return defaultTitle;
+        }
+
+        final purchasedDisableAdType =
+            DisableAdTypeExt.toEnum(code: disableFullScreenTypeCode);
+
+        if (purchasedDisableAdType == disableAdType) {
+          return 'Enabled Until 2021';
+        }
+
+        return defaultTitle;
+      case DisableAdProductType.disableBannerAd:
+        final disableBannerTypeCode =
+            await CommonSharedPreferencesKey.disableBannerType.getInt();
+
+        if (disableBannerTypeCode == -1) {
+          return defaultTitle;
+        }
+
+        final purchasedDisableAdType =
+            DisableAdTypeExt.toEnum(code: disableBannerTypeCode);
+
+        if (purchasedDisableAdType == disableAdType) {
+          return 'Enabled Until 2021';
+        }
+
+        return defaultTitle;
+      case DisableAdProductType.all:
+        final disableFullScreenTypeCode =
+            await CommonSharedPreferencesKey.disableFullScreenType.getInt();
+        final disableBannerTypeCode =
+            await CommonSharedPreferencesKey.disableBannerType.getInt();
+
+        if (disableFullScreenTypeCode == -1 && disableBannerTypeCode == -1) {
+          return defaultTitle;
+        }
+
+        if (await _disabledAll()) {
+          final purchasedDisableAdType =
+              DisableAdTypeExt.toEnum(code: disableFullScreenTypeCode);
+
+          if (purchasedDisableAdType == disableAdType) {
+            return 'Enabled Until 2021';
+          }
+
+          return defaultTitle;
+        } else {
+          return defaultTitle;
+        }
+    }
+  }
+
+  Future<bool> _disabledAll() async {
+    final disableFullScreenTypeCode =
+        await CommonSharedPreferencesKey.disableFullScreenType.getInt();
+    final disableBannerTypeCode =
+        await CommonSharedPreferencesKey.disableBannerType.getInt();
+
+    if (disableFullScreenTypeCode == -1 || disableBannerTypeCode == -1) {
+      return false;
+    }
+
+    final datetimeDisabledFullScreen =
+        await CommonSharedPreferencesKey.datetimeDisabledFullScreen.getInt();
+    final datetimeDisabledBanner =
+        await CommonSharedPreferencesKey.datetimeDisabledBanner.getInt();
+
+    if (datetimeDisabledFullScreen != datetimeDisabledBanner) {
+      return false;
+    }
+
+    return true;
+  }
+
   Widget _buildDisableAdProductCard({
     required String title,
     required int price,
@@ -214,37 +300,54 @@ class _ShopViewState extends State<ShopView> {
                 ),
                 Padding(
                   padding: const EdgeInsets.fromLTRB(20, 0, 20, 10),
-                  child: AnimatedButton(
-                    isFixedHeight: false,
-                    text: '$price Points',
-                    color: Theme.of(context).colorScheme.secondaryVariant,
-                    pressEvent: () async {
-                      final currentPoint =
-                          await CommonSharedPreferencesKey.rewardPoint.getInt();
-
-                      if (currentPoint < price) {
-                        await showChargePointDialog(context: context);
-                        return;
+                  child: FutureBuilder(
+                    future: _buildPurchaseButtonTitle(
+                      productType: productType,
+                      disableAdType: disableAdType,
+                      defaultTitle: '$price Points',
+                    ),
+                    builder: (BuildContext context, AsyncSnapshot snapshot) {
+                      if (!snapshot.hasData) {
+                        return const Loading();
                       }
 
-                      if (await _alreadyAdDisabled(productType: productType)) {
-                        // If the disable setting is enabled, do not let the user make a new purchase.
-                        await showErrorDialog(
-                          context: context,
-                          title: 'Purchase Error',
-                          content:
-                              'Disabling ad is already enabled. Please wait for the time limit of the last product type you purchased to expire.',
-                        );
-                        return;
-                      }
+                      return AnimatedButton(
+                        isFixedHeight: false,
+                        text: snapshot.data,
+                        color: Theme.of(context).colorScheme.secondaryVariant,
+                        pressEvent: () async {
+                          if (await _alreadyAdDisabled(
+                              productType: productType)) {
+                            // If the disable setting is enabled, do not let the user make a new purchase.
+                            await showErrorDialog(
+                              context: context,
+                              title: 'Purchase Error',
+                              content:
+                                  'Disabling ad is already enabled. Please wait for the time limit of the last product type you purchased to expire.',
+                            );
+                            return;
+                          }
 
-                      // TODO: 確認ダイアログの追加
-                      await CommonSharedPreferencesKey.rewardPoint
-                          .setInt(currentPoint - price);
+                          final currentPoint = await CommonSharedPreferencesKey
+                              .rewardPoint
+                              .getInt();
 
-                      await _disableAds(
-                        productType: productType,
-                        disableAdType: disableAdType,
+                          if (currentPoint < price) {
+                            await showChargePointDialog(context: context);
+                            return;
+                          }
+
+                          // TODO: 確認ダイアログの追加
+                          await CommonSharedPreferencesKey.rewardPoint
+                              .setInt(currentPoint - price);
+
+                          await _disableAds(
+                            productType: productType,
+                            disableAdType: disableAdType,
+                          );
+
+                          super.setState(() {});
+                        },
                       );
                     },
                   ),
@@ -277,18 +380,16 @@ class _ShopViewState extends State<ShopView> {
 
         break;
       case DisableAdProductType.all:
-        // Enables all
+        // Enables all at the same time
+        final now = DateTime.now().millisecondsSinceEpoch;
+
         await CommonSharedPreferencesKey.disableFullScreenType
             .setInt(disableAdType.code);
-        await CommonSharedPreferencesKey.datetimeDisabledFullScreen.setInt(
-          DateTime.now().millisecondsSinceEpoch,
-        );
+        await CommonSharedPreferencesKey.datetimeDisabledFullScreen.setInt(now);
 
         await CommonSharedPreferencesKey.disableBannerType
             .setInt(disableAdType.code);
-        await CommonSharedPreferencesKey.datetimeDisabledBanner.setInt(
-          DateTime.now().millisecondsSinceEpoch,
-        );
+        await CommonSharedPreferencesKey.datetimeDisabledBanner.setInt(now);
 
         break;
     }
@@ -308,7 +409,7 @@ class _ShopViewState extends State<ShopView> {
       case DisableAdProductType.all:
         return await CommonSharedPreferencesKey.disableFullScreenType
                     .getInt() !=
-                -1 &&
+                -1 ||
             await CommonSharedPreferencesKey.disableBannerType.getInt() != -1;
     }
   }

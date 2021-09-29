@@ -20,9 +20,9 @@ extension DisableAdProductTypeExt on DisableAdProductType {
       case DisableAdProductType.disbaleFullScreenAd:
         return 1;
       case DisableAdProductType.disableBannerAd:
-        return 2;
+        return 1;
       case DisableAdProductType.all:
-        return 3;
+        return 2;
     }
   }
 }
