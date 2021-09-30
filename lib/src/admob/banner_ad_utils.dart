@@ -31,19 +31,19 @@ class BannerAdUtils {
       return false;
     }
 
-    final disableBannerTypeCode =
-        await CommonSharedPreferencesKey.disableBannerType.getInt();
+    final disableBannerPatternCode =
+        await CommonSharedPreferencesKey.disableBannerPattern.getInt();
 
-    if (disableBannerTypeCode != -1) {
-      final disableBannerType =
-          DisableAdTypeExt.toEnum(code: disableBannerTypeCode);
+    if (disableBannerPatternCode != -1) {
+      final disableBannerPattern =
+          DisableAdPatternExt.toEnum(code: disableBannerPatternCode);
       final purchasedDatetime = DateTime.fromMillisecondsSinceEpoch(
         await CommonSharedPreferencesKey.datetimeDisabledBanner.getInt(),
       );
 
       if (DateTime.now().difference(purchasedDatetime).inMinutes.abs() >
-          disableBannerType.timeLimit) {
-        await CommonSharedPreferencesKey.disableBannerType.setInt(-1);
+          disableBannerPattern.timeLimit) {
+        await CommonSharedPreferencesKey.disableBannerPattern.setInt(-1);
         await CommonSharedPreferencesKey.datetimeDisabledBanner.setInt(-1);
       } else {
         return false;

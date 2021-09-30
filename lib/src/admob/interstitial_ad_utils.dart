@@ -13,18 +13,19 @@ class InterstitialAdUtils {
   }) async {
     int count = await sharedPreferencesKey.getInt();
 
-    final disableAdTypeCode =
-        await CommonSharedPreferencesKey.disableFullScreenType.getInt();
+    final disableAdPatternCode =
+        await CommonSharedPreferencesKey.disableFullScreenPattern.getInt();
 
-    if (disableAdTypeCode != -1) {
-      final disableAdType = DisableAdTypeExt.toEnum(code: disableAdTypeCode);
+    if (disableAdPatternCode != -1) {
+      final disableAdPattern =
+          DisableAdPatternExt.toEnum(code: disableAdPatternCode);
       final purchasedDatetime = DateTime.fromMillisecondsSinceEpoch(
           await CommonSharedPreferencesKey.datetimeDisabledFullScreen.getInt());
 
       if (DateTime.now().difference(purchasedDatetime).inMinutes.abs() >
-          disableAdType.timeLimit) {
+          disableAdPattern.timeLimit) {
         // Disable setting expires.
-        await CommonSharedPreferencesKey.disableFullScreenType.setInt(-1);
+        await CommonSharedPreferencesKey.disableFullScreenPattern.setInt(-1);
         await CommonSharedPreferencesKey.datetimeDisabledFullScreen.setInt(-1);
       } else {
         count++;

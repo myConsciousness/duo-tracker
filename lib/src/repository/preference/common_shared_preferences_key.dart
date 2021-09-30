@@ -57,14 +57,14 @@ enum CommonSharedPreferencesKey {
   /// The reward point
   rewardPoint,
 
-  /// The disable full screen type
-  disableFullScreenType,
+  /// The disable full screen pattern
+  disableFullScreenPattern,
 
   /// The datetime disabled full screen
   datetimeDisabledFullScreen,
 
-  /// The disable banner type
-  disableBannerType,
+  /// The disable banner pattern
+  disableBannerPattern,
 
   /// The datetime disabled banner
   datetimeDisabledBanner,
@@ -131,12 +131,12 @@ extension KeyFeature on CommonSharedPreferencesKey {
         return 'score_goals_streak';
       case CommonSharedPreferencesKey.rewardPoint:
         return 'reward_point';
-      case CommonSharedPreferencesKey.disableFullScreenType:
-        return 'disable_full_screen_type';
+      case CommonSharedPreferencesKey.disableFullScreenPattern:
+        return 'disable_full_screen_pattern';
       case CommonSharedPreferencesKey.datetimeDisabledFullScreen:
         return 'datetime_disabled_full_screen';
-      case CommonSharedPreferencesKey.disableBannerType:
-        return 'disable_banner_type';
+      case CommonSharedPreferencesKey.disableBannerPattern:
+        return 'disable_banner_pattern';
       case CommonSharedPreferencesKey.datetimeDisabledBanner:
         return 'datetime_disabled_banner';
       case CommonSharedPreferencesKey.currentLearningLanguage:

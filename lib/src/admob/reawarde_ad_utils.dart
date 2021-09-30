@@ -18,20 +18,20 @@ class RewardedAdUtils {
     int count = await sharedPreferencesKey.getInt();
 
     if (!showForce) {
-      final disableAdTypeCode =
-          await CommonSharedPreferencesKey.disableFullScreenType.getInt();
+      final disableAdPatternCode =
+          await CommonSharedPreferencesKey.disableFullScreenPattern.getInt();
 
-      if (disableAdTypeCode != -1) {
-        final disableFullScreenType =
-            DisableAdTypeExt.toEnum(code: disableAdTypeCode);
+      if (disableAdPatternCode != -1) {
+        final disableFullScreenPattern =
+            DisableAdPatternExt.toEnum(code: disableAdPatternCode);
         final purchasedDatetime = DateTime.fromMillisecondsSinceEpoch(
             await CommonSharedPreferencesKey.datetimeDisabledFullScreen
                 .getInt());
 
         if (DateTime.now().difference(purchasedDatetime).inMinutes.abs() >
-            disableFullScreenType.timeLimit) {
+            disableFullScreenPattern.timeLimit) {
           // Disable setting expires.
-          await CommonSharedPreferencesKey.disableFullScreenType.setInt(-1);
+          await CommonSharedPreferencesKey.disableFullScreenPattern.setInt(-1);
           await CommonSharedPreferencesKey.datetimeDisabledFullScreen
               .setInt(-1);
         } else {

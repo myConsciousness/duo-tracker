@@ -25,4 +25,15 @@ extension DisableAdProductTypeExt on DisableAdProductType {
         return 2;
     }
   }
+
+  String get name {
+    switch (this) {
+      case DisableAdProductType.disbaleFullScreenAd:
+        return 'Disable Full Screen Ads';
+      case DisableAdProductType.disableBannerAd:
+        return 'Disable Banner Ads';
+      case DisableAdProductType.all:
+        return 'Disable All Ads';
+    }
+  }
 }

@@ -141,13 +141,13 @@ class _ShopViewState extends State<ShopView> {
                       title: '30 minutes',
                       price: 5 * productType.priceWeight,
                       productType: productType,
-                      disableAdType: DisableAdType.m30,
+                      disableAdPattern: DisableAdPattern.m30,
                     ),
                     _buildDisableAdProductCard(
                       title: '1 hour',
                       price: 15 * productType.priceWeight,
                       productType: productType,
-                      disableAdType: DisableAdType.h1,
+                      disableAdPattern: DisableAdPattern.h1,
                     ),
                   ],
                 ),
@@ -159,13 +159,13 @@ class _ShopViewState extends State<ShopView> {
                       title: '3 hours',
                       price: 30 * productType.priceWeight,
                       productType: productType,
-                      disableAdType: DisableAdType.h3,
+                      disableAdPattern: DisableAdPattern.h3,
                     ),
                     _buildDisableAdProductCard(
                       title: '6 hours',
                       price: 50 * productType.priceWeight,
                       productType: productType,
-                      disableAdType: DisableAdType.h6,
+                      disableAdPattern: DisableAdPattern.h6,
                     ),
                   ],
                 ),
@@ -177,13 +177,13 @@ class _ShopViewState extends State<ShopView> {
                       title: '12 hours',
                       price: 80 * productType.priceWeight,
                       productType: productType,
-                      disableAdType: DisableAdType.h12,
+                      disableAdPattern: DisableAdPattern.h12,
                     ),
                     _buildDisableAdProductCard(
                       title: '24 hours',
                       price: 100 * productType.priceWeight,
                       productType: productType,
-                      disableAdType: DisableAdType.h24,
+                      disableAdPattern: DisableAdPattern.h24,
                     ),
                   ],
                 ),
@@ -195,20 +195,20 @@ class _ShopViewState extends State<ShopView> {
 
   Future<String> _buildPurchaseButtonTitle({
     required DisableAdProductType productType,
-    required DisableAdType disableAdType,
+    required DisableAdPattern disableAdType,
     required String defaultTitle,
   }) async {
     switch (productType) {
       case DisableAdProductType.disbaleFullScreenAd:
         final disableFullScreenTypeCode =
-            await CommonSharedPreferencesKey.disableFullScreenType.getInt();
+            await CommonSharedPreferencesKey.disableFullScreenPattern.getInt();
 
         if (disableFullScreenTypeCode == -1) {
           return defaultTitle;
         }
 
         final purchasedDisableAdType =
-            DisableAdTypeExt.toEnum(code: disableFullScreenTypeCode);
+            DisableAdPatternExt.toEnum(code: disableFullScreenTypeCode);
 
         if (purchasedDisableAdType == disableAdType) {
           return 'Enabled';
@@ -217,14 +217,14 @@ class _ShopViewState extends State<ShopView> {
         return defaultTitle;
       case DisableAdProductType.disableBannerAd:
         final disableBannerTypeCode =
-            await CommonSharedPreferencesKey.disableBannerType.getInt();
+            await CommonSharedPreferencesKey.disableBannerPattern.getInt();
 
         if (disableBannerTypeCode == -1) {
           return defaultTitle;
         }
 
         final purchasedDisableAdType =
-            DisableAdTypeExt.toEnum(code: disableBannerTypeCode);
+            DisableAdPatternExt.toEnum(code: disableBannerTypeCode);
 
         if (purchasedDisableAdType == disableAdType) {
           return 'Enabled';
@@ -233,9 +233,9 @@ class _ShopViewState extends State<ShopView> {
         return defaultTitle;
       case DisableAdProductType.all:
         final disableFullScreenTypeCode =
-            await CommonSharedPreferencesKey.disableFullScreenType.getInt();
+            await CommonSharedPreferencesKey.disableFullScreenPattern.getInt();
         final disableBannerTypeCode =
-            await CommonSharedPreferencesKey.disableBannerType.getInt();
+            await CommonSharedPreferencesKey.disableBannerPattern.getInt();
 
         if (disableFullScreenTypeCode == -1 && disableBannerTypeCode == -1) {
           return defaultTitle;
@@ -243,7 +243,7 @@ class _ShopViewState extends State<ShopView> {
 
         if (await _disabledAll()) {
           final purchasedDisableAdType =
-              DisableAdTypeExt.toEnum(code: disableFullScreenTypeCode);
+              DisableAdPatternExt.toEnum(code: disableFullScreenTypeCode);
 
           if (purchasedDisableAdType == disableAdType) {
             return 'Enabled';
@@ -258,9 +258,9 @@ class _ShopViewState extends State<ShopView> {
 
   Future<bool> _disabledAll() async {
     final disableFullScreenTypeCode =
-        await CommonSharedPreferencesKey.disableFullScreenType.getInt();
+        await CommonSharedPreferencesKey.disableFullScreenPattern.getInt();
     final disableBannerTypeCode =
-        await CommonSharedPreferencesKey.disableBannerType.getInt();
+        await CommonSharedPreferencesKey.disableBannerPattern.getInt();
 
     if (disableFullScreenTypeCode == -1 || disableBannerTypeCode == -1) {
       return false;
@@ -282,7 +282,7 @@ class _ShopViewState extends State<ShopView> {
     required String title,
     required int price,
     required DisableAdProductType productType,
-    required DisableAdType disableAdType,
+    required DisableAdPattern disableAdPattern,
   }) =>
       Expanded(
         child: Padding(
@@ -304,7 +304,7 @@ class _ShopViewState extends State<ShopView> {
                   child: FutureBuilder(
                     future: _buildPurchaseButtonTitle(
                       productType: productType,
-                      disableAdType: disableAdType,
+                      disableAdType: disableAdPattern,
                       defaultTitle: '$price Points',
                     ),
                     builder:
@@ -316,7 +316,7 @@ class _ShopViewState extends State<ShopView> {
                       return FutureBuilder(
                         future: _getDisableAdPurchaseButtonColor(
                           productType: productType,
-                          disableAdType: disableAdType,
+                          disableAdPattern: disableAdPattern,
                         ),
                         builder: (BuildContext context,
                             AsyncSnapshot buttonColorSnapshot) {
@@ -328,8 +328,8 @@ class _ShopViewState extends State<ShopView> {
                             title: titleSnapshot.data,
                             color: buttonColorSnapshot.data,
                             price: price,
-                            productType: productType,
-                            disableAdType: disableAdType,
+                            product: productType,
+                            disableAdPattern: disableAdPattern,
                           );
                         },
                       );
@@ -346,21 +346,21 @@ class _ShopViewState extends State<ShopView> {
     required String title,
     required Color color,
     required int price,
-    required DisableAdProductType productType,
-    required DisableAdType disableAdType,
+    required DisableAdProductType product,
+    required DisableAdPattern disableAdPattern,
   }) =>
       AnimatedButton(
         isFixedHeight: false,
         text: title,
         color: color,
         pressEvent: () async {
-          if (await _alreadyAdDisabled(productType: productType)) {
+          if (await _alreadyAdDisabled(productType: product)) {
             // If the disable setting is enabled, do not let the user make a new purchase.
             await showErrorDialog(
               context: context,
               title: 'Purchase Error',
               content:
-                  'Disabling ad is already enabled. Please wait for the time limit of the last product type you purchased to expire.',
+                  'Disabling ads is already enabled. Please wait for the time limit of the last product you purchased to expire.',
             );
             return;
           }
@@ -377,15 +377,16 @@ class _ShopViewState extends State<ShopView> {
             context: context,
             currentPoint: currentPoint,
             price: price,
-            productName: 'name',
-            timeLimitInEpoch: 1,
+            productName: product.name,
+            timeLimit: DateTime.now()
+                .add(Duration(minutes: disableAdPattern.timeLimit)),
             onPressedOk: () async {
               await CommonSharedPreferencesKey.rewardPoint
                   .setInt(currentPoint - price);
 
               await _disableAds(
-                productType: productType,
-                disableAdType: disableAdType,
+                productType: product,
+                disableAdPattern: disableAdPattern,
               );
 
               super.setState(() {});
@@ -396,21 +397,19 @@ class _ShopViewState extends State<ShopView> {
 
   Future<Color> _getDisableAdPurchaseButtonColor({
     required DisableAdProductType productType,
-    required DisableAdType disableAdType,
+    required DisableAdPattern disableAdPattern,
   }) async {
-    // TODO: 片方だけ有効な時でAllの商品が灰色にならない。
-    // TODO: 片方だけが有効な場合は既に一括購入はできないので灰色になるべき。
     switch (productType) {
       case DisableAdProductType.disbaleFullScreenAd:
         final disableAdTypeCode =
-            await CommonSharedPreferencesKey.disableFullScreenType.getInt();
+            await CommonSharedPreferencesKey.disableFullScreenPattern.getInt();
 
         if (disableAdTypeCode == -1) {
           // Available color
           return Theme.of(context).colorScheme.secondaryVariant;
         }
 
-        if (disableAdTypeCode == disableAdType.code) {
+        if (disableAdTypeCode == disableAdPattern.code) {
           // Enabled color
           return Theme.of(context).colorScheme.secondaryVariant;
         }
@@ -418,14 +417,14 @@ class _ShopViewState extends State<ShopView> {
         return Colors.grey;
       case DisableAdProductType.disableBannerAd:
         final disableAdTypeCode =
-            await CommonSharedPreferencesKey.disableBannerType.getInt();
+            await CommonSharedPreferencesKey.disableBannerPattern.getInt();
 
         if (disableAdTypeCode == -1) {
           // Available color
           return Theme.of(context).colorScheme.secondaryVariant;
         }
 
-        if (disableAdTypeCode == disableAdType.code) {
+        if (disableAdTypeCode == disableAdPattern.code) {
           // Enabled color
           return Theme.of(context).colorScheme.secondaryVariant;
         }
@@ -433,11 +432,11 @@ class _ShopViewState extends State<ShopView> {
         return Colors.grey;
       case DisableAdProductType.all:
         final disableFullScreenAdTypeCode =
-            await CommonSharedPreferencesKey.disableFullScreenType.getInt();
+            await CommonSharedPreferencesKey.disableFullScreenPattern.getInt();
         final disableBannerAdTypeCode =
-            await CommonSharedPreferencesKey.disableBannerType.getInt();
+            await CommonSharedPreferencesKey.disableBannerPattern.getInt();
 
-        if (disableFullScreenAdTypeCode == -1 ||
+        if (disableFullScreenAdTypeCode == -1 &&
             disableBannerAdTypeCode == -1) {
           // Available color
           return Theme.of(context).colorScheme.secondaryVariant;
@@ -460,20 +459,20 @@ class _ShopViewState extends State<ShopView> {
 
   Future<void> _disableAds({
     required DisableAdProductType productType,
-    required DisableAdType disableAdType,
+    required DisableAdPattern disableAdPattern,
   }) async {
     switch (productType) {
       case DisableAdProductType.disbaleFullScreenAd:
-        await CommonSharedPreferencesKey.disableFullScreenType
-            .setInt(disableAdType.code);
+        await CommonSharedPreferencesKey.disableFullScreenPattern
+            .setInt(disableAdPattern.code);
         await CommonSharedPreferencesKey.datetimeDisabledFullScreen.setInt(
           DateTime.now().millisecondsSinceEpoch,
         );
 
         break;
       case DisableAdProductType.disableBannerAd:
-        await CommonSharedPreferencesKey.disableBannerType
-            .setInt(disableAdType.code);
+        await CommonSharedPreferencesKey.disableBannerPattern
+            .setInt(disableAdPattern.code);
         await CommonSharedPreferencesKey.datetimeDisabledBanner.setInt(
           DateTime.now().millisecondsSinceEpoch,
         );
@@ -483,12 +482,12 @@ class _ShopViewState extends State<ShopView> {
         // Enables all at the same time
         final now = DateTime.now().millisecondsSinceEpoch;
 
-        await CommonSharedPreferencesKey.disableFullScreenType
-            .setInt(disableAdType.code);
+        await CommonSharedPreferencesKey.disableFullScreenPattern
+            .setInt(disableAdPattern.code);
         await CommonSharedPreferencesKey.datetimeDisabledFullScreen.setInt(now);
 
-        await CommonSharedPreferencesKey.disableBannerType
-            .setInt(disableAdType.code);
+        await CommonSharedPreferencesKey.disableBannerPattern
+            .setInt(disableAdPattern.code);
         await CommonSharedPreferencesKey.datetimeDisabledBanner.setInt(now);
 
         break;
@@ -500,17 +499,18 @@ class _ShopViewState extends State<ShopView> {
   }) async {
     switch (productType) {
       case DisableAdProductType.disbaleFullScreenAd:
-        return await CommonSharedPreferencesKey.disableFullScreenType
+        return await CommonSharedPreferencesKey.disableFullScreenPattern
                 .getInt() !=
             -1;
       case DisableAdProductType.disableBannerAd:
-        return await CommonSharedPreferencesKey.disableBannerType.getInt() !=
+        return await CommonSharedPreferencesKey.disableBannerPattern.getInt() !=
             -1;
       case DisableAdProductType.all:
-        return await CommonSharedPreferencesKey.disableFullScreenType
+        return await CommonSharedPreferencesKey.disableFullScreenPattern
                     .getInt() !=
                 -1 ||
-            await CommonSharedPreferencesKey.disableBannerType.getInt() != -1;
+            await CommonSharedPreferencesKey.disableBannerPattern.getInt() !=
+                -1;
     }
   }
 

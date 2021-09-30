@@ -676,7 +676,7 @@ class _OverviewViewState extends State<OverviewView> {
             ),
             _buildSpeedDialChild(
               icon: FontAwesomeIcons.sync,
-              label: 'Update Words',
+              label: 'Sync Words',
               onTap: () async {
                 await _syncLearnedWords();
                 super.setState(() {});

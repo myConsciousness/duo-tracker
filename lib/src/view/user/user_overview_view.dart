@@ -491,6 +491,13 @@ class _UserOverviewViewState extends State<UserOverviewView> {
               },
             ),
             _buildSpeedDialChild(
+              icon: FontAwesomeIcons.sync,
+              label: 'Sync User',
+              onTap: () async {
+                await _refreshUserInformation();
+              },
+            ),
+            _buildSpeedDialChild(
               icon: FontAwesomeIcons.dumbbell,
               label: 'Adjust Goals',
               onTap: () async {
@@ -535,4 +542,16 @@ class _UserOverviewViewState extends State<UserOverviewView> {
           ),
         ),
       );
+
+  Future<void> _refreshUserInformation() async {
+    await DuolingoApiUtils.authenticateAccount(context: context);
+
+    await showLoadingDialog(
+      context: context,
+      title: 'Updating User Information',
+      future: DuolingoApiUtils.refreshUser(context: context),
+    );
+
+    super.setState(() {});
+  }
 }

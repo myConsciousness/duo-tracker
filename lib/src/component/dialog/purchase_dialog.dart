@@ -5,16 +5,19 @@
 import 'package:awesome_dialog/awesome_dialog.dart';
 import 'package:duo_tracker/src/component/common_divider.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/painting.dart';
 import 'package:flutter/widgets.dart';
+import 'package:intl/intl.dart';
 
 late AwesomeDialog _dialog;
+final _datetimeFormat = DateFormat('yyyy/MM/dd HH:mm');
 
 Future<T?> showPurchaseDialog<T>({
   required BuildContext context,
   required int currentPoint,
   required int price,
   required String productName,
-  required int timeLimitInEpoch,
+  required DateTime timeLimit,
   required Function onPressedOk,
 }) async {
   _dialog = AwesomeDialog(
@@ -33,6 +36,7 @@ Future<T?> showPurchaseDialog<T>({
                   child: Text(
                     'Purchase Confirmation',
                     style: TextStyle(
+                      fontWeight: FontWeight.bold,
                       fontSize: 20,
                     ),
                   ),
@@ -40,30 +44,36 @@ Future<T?> showPurchaseDialog<T>({
                 const SizedBox(
                   height: 25,
                 ),
-                const Center(
-                  child: Text(
-                      'Do you want to spend your points to purchase this item?'),
-                ),
-                const SizedBox(
-                  height: 20,
-                ),
                 Card(
                   elevation: 0,
-                  child: Column(
-                    children: const [
-                      ListTile(
-                        title: Text('Disable Full Screen Ads'),
-                        subtitle: Text('Valid until 2021/12/01 13:00'),
-                      ),
-                      CommonDivider(),
-                      Text(
-                        '* The expiration date is valid since the time of confirm, so the expiration dates shown above are for reference only.',
-                        style: TextStyle(
-                          fontSize: 13,
-                          fontWeight: FontWeight.bold,
+                  child: Padding(
+                    padding: const EdgeInsets.all(20),
+                    child: Column(
+                      children: [
+                        ListTile(
+                          title: Text(
+                            productName,
+                            style: TextStyle(
+                              fontWeight: FontWeight.bold,
+                              color: Theme.of(context).colorScheme.secondary,
+                            ),
+                          ),
+                          subtitle: Text(
+                            'Expiration: ${_datetimeFormat.format(timeLimit)}',
+                          ),
                         ),
-                      ),
-                    ],
+                        const CommonDivider(),
+                        const Center(
+                          child: Text(
+                            '* The expiration datetime is valid since its confirmed.',
+                            style: TextStyle(
+                              fontSize: 13,
+                              fontWeight: FontWeight.bold,
+                            ),
+                          ),
+                        ),
+                      ],
+                    ),
                   ),
                 ),
                 const SizedBox(

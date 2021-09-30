@@ -2,7 +2,7 @@
 // Use of this source code is governed by a
 // BSD-style license that can be found in the LICENSE file.
 
-enum DisableAdType {
+enum DisableAdPattern {
   /// 30 minutes
   m30,
 
@@ -22,21 +22,21 @@ enum DisableAdType {
   h24
 }
 
-extension DisableAdTypeExt on DisableAdType {
+extension DisableAdPatternExt on DisableAdPattern {
   /// Returns the code
   int get code {
     switch (this) {
-      case DisableAdType.m30:
+      case DisableAdPattern.m30:
         return 0;
-      case DisableAdType.h1:
+      case DisableAdPattern.h1:
         return 1;
-      case DisableAdType.h3:
+      case DisableAdPattern.h3:
         return 2;
-      case DisableAdType.h6:
+      case DisableAdPattern.h6:
         return 3;
-      case DisableAdType.h12:
+      case DisableAdPattern.h12:
         return 4;
-      case DisableAdType.h24:
+      case DisableAdPattern.h24:
         return 5;
     }
   }
@@ -44,30 +44,30 @@ extension DisableAdTypeExt on DisableAdType {
   /// Returns the time limit in minutes
   int get timeLimit {
     switch (this) {
-      case DisableAdType.m30:
+      case DisableAdPattern.m30:
         return 30;
-      case DisableAdType.h1:
+      case DisableAdPattern.h1:
         return 60;
-      case DisableAdType.h3:
+      case DisableAdPattern.h3:
         return 180;
-      case DisableAdType.h6:
+      case DisableAdPattern.h6:
         return 360;
-      case DisableAdType.h12:
+      case DisableAdPattern.h12:
         return 720;
-      case DisableAdType.h24:
+      case DisableAdPattern.h24:
         return 1440;
     }
   }
 
-  static DisableAdType toEnum({
+  static DisableAdPattern toEnum({
     required int code,
   }) {
-    for (final disableAdType in DisableAdType.values) {
-      if (disableAdType.code == code) {
-        return disableAdType;
+    for (final disableAdPattern in DisableAdPattern.values) {
+      if (disableAdPattern.code == code) {
+        return disableAdPattern;
       }
     }
 
-    return DisableAdType.m30;
+    return DisableAdPattern.m30;
   }
 }
