@@ -210,7 +210,7 @@ class _ShopViewState extends State<ShopView> {
             DisableAdTypeExt.toEnum(code: disableFullScreenTypeCode);
 
         if (purchasedDisableAdType == disableAdType) {
-          return 'Enabled Until 2021';
+          return 'Enabled';
         }
 
         return defaultTitle;
@@ -226,7 +226,7 @@ class _ShopViewState extends State<ShopView> {
             DisableAdTypeExt.toEnum(code: disableBannerTypeCode);
 
         if (purchasedDisableAdType == disableAdType) {
-          return 'Enabled Until 2021';
+          return 'Enabled';
         }
 
         return defaultTitle;
@@ -245,7 +245,7 @@ class _ShopViewState extends State<ShopView> {
               DisableAdTypeExt.toEnum(code: disableFullScreenTypeCode);
 
           if (purchasedDisableAdType == disableAdType) {
-            return 'Enabled Until 2021';
+            return 'Enabled';
           }
 
           return defaultTitle;
@@ -306,47 +306,30 @@ class _ShopViewState extends State<ShopView> {
                       disableAdType: disableAdType,
                       defaultTitle: '$price Points',
                     ),
-                    builder: (BuildContext context, AsyncSnapshot snapshot) {
-                      if (!snapshot.hasData) {
+                    builder:
+                        (BuildContext context, AsyncSnapshot titleSnapshot) {
+                      if (!titleSnapshot.hasData) {
                         return const Loading();
                       }
 
-                      return AnimatedButton(
-                        isFixedHeight: false,
-                        text: snapshot.data,
-                        color: Theme.of(context).colorScheme.secondaryVariant,
-                        pressEvent: () async {
-                          if (await _alreadyAdDisabled(
-                              productType: productType)) {
-                            // If the disable setting is enabled, do not let the user make a new purchase.
-                            await showErrorDialog(
-                              context: context,
-                              title: 'Purchase Error',
-                              content:
-                                  'Disabling ad is already enabled. Please wait for the time limit of the last product type you purchased to expire.',
-                            );
-                            return;
+                      return FutureBuilder(
+                        future: _getDisableAdPurchaseButtonColor(
+                          productType: productType,
+                          disableAdType: disableAdType,
+                        ),
+                        builder: (BuildContext context,
+                            AsyncSnapshot buttonColorSnapshot) {
+                          if (!buttonColorSnapshot.hasData) {
+                            return const Loading();
                           }
 
-                          final currentPoint = await CommonSharedPreferencesKey
-                              .rewardPoint
-                              .getInt();
-
-                          if (currentPoint < price) {
-                            await showChargePointDialog(context: context);
-                            return;
-                          }
-
-                          // TODO: 確認ダイアログの追加
-                          await CommonSharedPreferencesKey.rewardPoint
-                              .setInt(currentPoint - price);
-
-                          await _disableAds(
+                          return _buildDisableAdPurchaseButton(
+                            title: titleSnapshot.data,
+                            color: buttonColorSnapshot.data,
+                            price: price,
                             productType: productType,
                             disableAdType: disableAdType,
                           );
-
-                          super.setState(() {});
                         },
                       );
                     },
@@ -357,6 +340,112 @@ class _ShopViewState extends State<ShopView> {
           ),
         ),
       );
+
+  Widget _buildDisableAdPurchaseButton({
+    required String title,
+    required Color color,
+    required int price,
+    required DisableAdProductType productType,
+    required DisableAdType disableAdType,
+  }) =>
+      AnimatedButton(
+        isFixedHeight: false,
+        text: title,
+        color: color,
+        pressEvent: () async {
+          if (await _alreadyAdDisabled(productType: productType)) {
+            // If the disable setting is enabled, do not let the user make a new purchase.
+            await showErrorDialog(
+              context: context,
+              title: 'Purchase Error',
+              content:
+                  'Disabling ad is already enabled. Please wait for the time limit of the last product type you purchased to expire.',
+            );
+            return;
+          }
+
+          final currentPoint =
+              await CommonSharedPreferencesKey.rewardPoint.getInt();
+
+          if (currentPoint < price) {
+            await showChargePointDialog(context: context);
+            return;
+          }
+
+          // TODO: 確認ダイアログの追加
+          await CommonSharedPreferencesKey.rewardPoint
+              .setInt(currentPoint - price);
+
+          await _disableAds(
+            productType: productType,
+            disableAdType: disableAdType,
+          );
+
+          super.setState(() {});
+        },
+      );
+
+  Future<Color> _getDisableAdPurchaseButtonColor({
+    required DisableAdProductType productType,
+    required DisableAdType disableAdType,
+  }) async {
+    switch (productType) {
+      case DisableAdProductType.disbaleFullScreenAd:
+        final disableAdTypeCode =
+            await CommonSharedPreferencesKey.disableFullScreenType.getInt();
+
+        if (disableAdTypeCode == -1) {
+          // Available color
+          return Theme.of(context).colorScheme.secondaryVariant;
+        }
+
+        if (disableAdTypeCode == disableAdType.code) {
+          // Enabled color
+          return Theme.of(context).colorScheme.secondaryVariant;
+        }
+
+        return Colors.grey;
+      case DisableAdProductType.disableBannerAd:
+        final disableAdTypeCode =
+            await CommonSharedPreferencesKey.disableBannerType.getInt();
+
+        if (disableAdTypeCode == -1) {
+          // Available color
+          return Theme.of(context).colorScheme.secondaryVariant;
+        }
+
+        if (disableAdTypeCode == disableAdType.code) {
+          // Enabled color
+          return Theme.of(context).colorScheme.secondaryVariant;
+        }
+
+        return Colors.grey;
+      case DisableAdProductType.all:
+        final disableFullScreenAdTypeCode =
+            await CommonSharedPreferencesKey.disableFullScreenType.getInt();
+        final disableBannerAdTypeCode =
+            await CommonSharedPreferencesKey.disableBannerType.getInt();
+
+        if (disableFullScreenAdTypeCode == -1 ||
+            disableBannerAdTypeCode == -1) {
+          // Available color
+          return Theme.of(context).colorScheme.secondaryVariant;
+        }
+
+        final datetimeDisabledFullScreen = await CommonSharedPreferencesKey
+            .datetimeDisabledFullScreen
+            .getInt();
+        final datetimeDisabledBanner =
+            await CommonSharedPreferencesKey.datetimeDisabledBanner.getInt();
+
+        if (datetimeDisabledFullScreen == datetimeDisabledBanner) {
+          // Enabled color
+          return Theme.of(context).colorScheme.secondaryVariant;
+        }
+
+        return Colors.grey;
+    }
+  }
 
   Future<void> _disableAds({
     required DisableAdProductType productType,
