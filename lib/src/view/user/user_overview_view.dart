@@ -3,7 +3,7 @@
 // BSD-style license that can be found in the LICENSE file.
 
 import 'package:duo_tracker/src/admob/banner_ad_utils.dart';
-import 'package:duo_tracker/src/component/charts/radical_bar_chart.dart';
+import 'package:duo_tracker/src/component/chart/radical_bar_chart.dart';
 import 'package:duo_tracker/src/component/common_divider.dart';
 import 'package:duo_tracker/src/component/dialog/auth_dialog.dart';
 import 'package:duo_tracker/src/component/dialog/loading_dialog.dart';
