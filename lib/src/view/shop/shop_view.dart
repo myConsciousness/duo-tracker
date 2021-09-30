@@ -6,6 +6,7 @@ import 'package:awesome_dialog/awesome_dialog.dart';
 import 'package:duo_tracker/src/admob/reawarde_ad_utils.dart';
 import 'package:duo_tracker/src/component/dialog/charge_point_dialog.dart';
 import 'package:duo_tracker/src/component/dialog/error_dialog.dart';
+import 'package:duo_tracker/src/component/dialog/purchase_dialog.dart';
 import 'package:duo_tracker/src/component/loading.dart';
 import 'package:duo_tracker/src/repository/preference/common_shared_preferences_key.dart';
 import 'package:duo_tracker/src/repository/preference/rewarded_ad_shared_preferences.dart';
@@ -372,16 +373,24 @@ class _ShopViewState extends State<ShopView> {
             return;
           }
 
-          // TODO: 確認ダイアログの追加
-          await CommonSharedPreferencesKey.rewardPoint
-              .setInt(currentPoint - price);
+          await showPurchaseDialog(
+            context: context,
+            currentPoint: currentPoint,
+            price: price,
+            productName: 'name',
+            timeLimitInEpoch: 1,
+            onPressedOk: () async {
+              await CommonSharedPreferencesKey.rewardPoint
+                  .setInt(currentPoint - price);
 
-          await _disableAds(
-            productType: productType,
-            disableAdType: disableAdType,
+              await _disableAds(
+                productType: productType,
+                disableAdType: disableAdType,
+              );
+
+              super.setState(() {});
+            },
           );
-
-          super.setState(() {});
         },
       );
 
@@ -389,6 +398,8 @@ class _ShopViewState extends State<ShopView> {
     required DisableAdProductType productType,
     required DisableAdType disableAdType,
   }) async {
+    // TODO: 片方だけ有効な時でAllの商品が灰色にならない。
+    // TODO: 片方だけが有効な場合は既に一括購入はできないので灰色になるべき。
     switch (productType) {
       case DisableAdProductType.disbaleFullScreenAd:
         final disableAdTypeCode =
