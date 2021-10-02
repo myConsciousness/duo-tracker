@@ -8,8 +8,8 @@ enum InterstitialAdSharedPreferencesKey {
   /// The count of open app
   countOpenApp,
 
-  /// The count misc sctions
-  countMiscActions,
+  /// The immediately
+  immediately,
 }
 
 extension KeyFeature on InterstitialAdSharedPreferencesKey {
@@ -17,8 +17,8 @@ extension KeyFeature on InterstitialAdSharedPreferencesKey {
     switch (this) {
       case InterstitialAdSharedPreferencesKey.countOpenApp:
         return 'count_open_app';
-      case InterstitialAdSharedPreferencesKey.countMiscActions:
-        return 'count_misc_actions';
+      case InterstitialAdSharedPreferencesKey.immediately:
+        return 'interstitial_immediately';
     }
   }
 
@@ -26,8 +26,8 @@ extension KeyFeature on InterstitialAdSharedPreferencesKey {
     switch (this) {
       case InterstitialAdSharedPreferencesKey.countOpenApp:
         return 3;
-      case InterstitialAdSharedPreferencesKey.countMiscActions:
-        return 3;
+      case InterstitialAdSharedPreferencesKey.immediately:
+        return 1;
     }
   }
 

@@ -2,11 +2,15 @@
 // Use of this source code is governed by a
 // BSD-style license that can be found in the LICENSE file.
 
+import 'package:duo_tracker/src/admob/banner_ad_utils.dart';
+import 'package:duo_tracker/src/admob/interstitial_ad_utils.dart';
 import 'package:duo_tracker/src/component/chart/tracker_column_chart.dart';
 import 'package:duo_tracker/src/component/loading.dart';
+import 'package:duo_tracker/src/repository/preference/interstitial_ad_shared_preferences_key.dart';
 import 'package:duo_tracker/src/repository/service/chart_service.dart';
 import 'package:duo_tracker/src/view/analysis/proficiency_range.dart';
 import 'package:flutter/material.dart';
+import 'package:google_mobile_ads/google_mobile_ads.dart';
 import 'package:syncfusion_flutter_charts/charts.dart';
 import 'package:syncfusion_flutter_sliders/sliders.dart';
 
@@ -28,6 +32,26 @@ class _ProficiencyAnalysisViewState extends State<ProficiencyAnalysisView> {
   /// The selected bar count
   int _selectedBarCount = 10;
 
+  /// The header banner ad
+  late BannerAd _headerBannerAd;
+
+  @override
+  void initState() {
+    super.initState();
+    _headerBannerAd = BannerAdUtils.loadBannerAd();
+  }
+
+  @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+  }
+
+  @override
+  void dispose() {
+    _headerBannerAd.dispose();
+    super.dispose();
+  }
+
   @override
   Widget build(BuildContext context) => Scaffold(
         body: SafeArea(
@@ -38,6 +62,22 @@ class _ProficiencyAnalysisViewState extends State<ProficiencyAnalysisView> {
                 mainAxisAlignment: MainAxisAlignment.center,
                 crossAxisAlignment: CrossAxisAlignment.center,
                 children: [
+                  FutureBuilder(
+                    future: BannerAdUtils.canShow(),
+                    builder: (BuildContext context, AsyncSnapshot snapshot) {
+                      if (!snapshot.hasData) {
+                        return const Loading();
+                      }
+
+                      if (!snapshot.data) {
+                        return Container();
+                      }
+
+                      return BannerAdUtils.createBannerAdWidget(
+                        _headerBannerAd,
+                      );
+                    },
+                  ),
                   SizedBox(
                     height: 350,
                     child: FutureBuilder(
