@@ -14,6 +14,7 @@ class TrackerColumnChart extends StatefulWidget {
     required this.tooltipBehavior,
     required this.chartDataSources,
     required this.seriesName,
+    required this.showLegend,
   }) : super(key: key);
 
   /// The chart data sources
@@ -28,6 +29,9 @@ class TrackerColumnChart extends StatefulWidget {
   /// The series name
   final String seriesName;
 
+  /// The show legend flag
+  final bool showLegend;
+
   @override
   _TrackerColumnChartState createState() => _TrackerColumnChartState();
 }
@@ -38,7 +42,7 @@ class _TrackerColumnChartState extends State<TrackerColumnChart> {
         title: widget.chartTitle,
         enableAxisAnimation: true,
         legend: Legend(
-          isVisible: true,
+          isVisible: widget.showLegend,
           overflowMode: LegendItemOverflowMode.wrap,
         ),
         primaryXAxis: CategoryAxis(
@@ -49,7 +53,6 @@ class _TrackerColumnChartState extends State<TrackerColumnChart> {
           minimum: 0.0,
           maximum: 1.0,
           numberFormat: NumberFormat.percentPattern(),
-          title: AxisTitle(text: 'aaaa'),
           axisLine: const AxisLine(width: 0),
           majorGridLines: const MajorGridLines(width: 0),
           majorTickLines: const MajorTickLines(size: 0),

@@ -17,7 +17,6 @@ import 'package:duo_tracker/src/component/dialog/select_search_method_dialog.dar
 import 'package:duo_tracker/src/component/dialog/switch_language_dialog.dart';
 import 'package:duo_tracker/src/component/dialog/select_sort_method_dialog.dart';
 import 'package:duo_tracker/src/component/loading.dart';
-import 'package:duo_tracker/src/http/duolingo_page_launcher.dart';
 import 'package:duo_tracker/src/repository/preference/common_shared_preferences_key.dart';
 import 'package:duo_tracker/src/component/snackbar/info_snack_bar.dart';
 import 'package:duo_tracker/src/http/network.dart';
@@ -530,18 +529,19 @@ class _OverviewViewState extends State<OverviewView> {
                   ),
                 ),
               ),
-            IconButton(
-              tooltip: 'Learn at Duolingo',
-              icon: const Icon(Icons.school),
-              onPressed: () async =>
-                  await DuolingoPageLauncher.learnWord.build.execute(
-                context: context,
-                params: {
-                  'learningLanguage': learnedWord.formalLearningLanguage,
-                  'skillUrlTitle': learnedWord.skillUrlTitle,
-                },
-              ),
-            ),
+            //! It will be forcibly redirected to the official app side to the learning page.
+            // IconButton(
+            //   tooltip: 'Learn at Duolingo',
+            //   icon: const Icon(Icons.school),
+            //   onPressed: () async =>
+            //       await DuolingoPageLauncher.learnWord.build.execute(
+            //     context: context,
+            //     params: {
+            //       'learningLanguage': learnedWord.formalLearningLanguage,
+            //       'skillUrlTitle': learnedWord.skillUrlTitle,
+            //     },
+            //   ),
+            // ),
           ],
         ),
       ];

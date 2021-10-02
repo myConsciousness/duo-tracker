@@ -4,6 +4,7 @@
 
 import 'package:duo_tracker/src/repository/model/chart_data_source_model.dart';
 import 'package:duo_tracker/src/repository/repository.dart';
+import 'package:duo_tracker/src/view/analysis/proficiency_range.dart';
 
 abstract class ChartRepository extends Repository<ChartDataSource> {
   Future<List<ChartDataSource>> computeLearningScoreRatioByUserIdAndTargets({
@@ -14,5 +15,9 @@ abstract class ChartRepository extends Repository<ChartDataSource> {
     required double targetStreak,
   });
 
-  Future<List<ChartDataSource>> computeLowProficiencySKillLimit10();
+  Future<List<ChartDataSource>>
+      computeSkillProficiencyByProficiencyRangeAndLimit({
+    required ProficiencyRange proficiencyRange,
+    required int limit,
+  });
 }

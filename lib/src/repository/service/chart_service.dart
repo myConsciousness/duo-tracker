@@ -5,6 +5,7 @@
 import 'package:duo_tracker/src/repository/boolean_text.dart';
 import 'package:duo_tracker/src/repository/chart_repository.dart';
 import 'package:duo_tracker/src/repository/model/chart_data_source_model.dart';
+import 'package:duo_tracker/src/view/analysis/proficiency_range.dart';
 
 class ChartService extends ChartRepository {
   /// The internal constructor.
@@ -135,9 +136,13 @@ class ChartService extends ChartRepository {
           );
 
   @override
-  Future<List<ChartDataSource>> computeLowProficiencySKillLimit10() async =>
-      await super.database.then(
-            (database) => database.rawQuery("""
+  Future<List<ChartDataSource>>
+      computeSkillProficiencyByProficiencyRangeAndLimit({
+    required ProficiencyRange proficiencyRange,
+    required int limit,
+  }) async =>
+          await super.database.then(
+                (database) => database.rawQuery("""
               SELECT
                 URL_NAME X_VALUE,
                 STRENGTH Y_VALUE
@@ -146,17 +151,20 @@ class ChartService extends ChartRepository {
               WHERE
                 1 = 1
                 AND ACCESSIBLE = ?
-                AND STRENGTH <= 0.5
+                AND ? <= STRENGTH AND STRENGTH <= ?
               ORDER BY
                 STRENGTH
               LIMIT
-                10
+                ?
               """, [
-              BooleanText.true_,
-            ]).then(
-              (dataSources) => dataSources
-                  .map((dataSource) => ChartDataSource.fromMap(dataSource))
-                  .toList(),
-            ),
-          );
+                  BooleanText.true_,
+                  proficiencyRange.from,
+                  proficiencyRange.to,
+                  limit,
+                ]).then(
+                  (dataSources) => dataSources
+                      .map((dataSource) => ChartDataSource.fromMap(dataSource))
+                      .toList(),
+                ),
+              );
 }
