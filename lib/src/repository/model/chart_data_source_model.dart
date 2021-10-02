@@ -9,8 +9,8 @@ class ChartDataSource {
   ChartDataSource.from({
     required this.x,
     required this.y,
-    required this.text,
-    required this.pointColor,
+    this.text,
+    this.pointColor,
   });
 
   /// Returns the new instance of [ChartDataSource] based on the [map] passed as an argument.
@@ -19,19 +19,21 @@ class ChartDataSource {
         x: map[ChartColumnName.xValue],
         y: map[ChartColumnName.yValue],
         text: '100%',
-        pointColor: Color.fromRGBO(
-          map[ChartColumnName.colorR],
-          map[ChartColumnName.colorG],
-          map[ChartColumnName.colorB],
-          map[ChartColumnName.colorO],
-        ),
+        pointColor: map.containsKey(ChartColumnName.colorR)
+            ? Color.fromRGBO(
+                map[ChartColumnName.colorR],
+                map[ChartColumnName.colorG],
+                map[ChartColumnName.colorB],
+                map[ChartColumnName.colorO],
+              )
+            : null,
       );
 
   /// Holds point color of the datapoint
-  final Color pointColor;
+  final Color? pointColor;
 
   /// Holds datalabel/text value mapper of the datapoint
-  final String text;
+  final String? text;
 
   /// Holds x value of the datapoint
   final String x;

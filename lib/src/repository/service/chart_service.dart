@@ -2,8 +2,9 @@
 // Use of this source code is governed by a
 // BSD-style license that can be found in the LICENSE file.
 
+import 'package:duo_tracker/src/repository/boolean_text.dart';
 import 'package:duo_tracker/src/repository/chart_repository.dart';
-import 'package:duo_tracker/src/repository/model/chart_data_source_mode.dart';
+import 'package:duo_tracker/src/repository/model/chart_data_source_model.dart';
 
 class ChartService extends ChartRepository {
   /// The internal constructor.
@@ -127,6 +128,32 @@ class ChartService extends ChartRepository {
                 USER_ID = ?""",
               [userId],
             ).then(
+              (dataSources) => dataSources
+                  .map((dataSource) => ChartDataSource.fromMap(dataSource))
+                  .toList(),
+            ),
+          );
+
+  @override
+  Future<List<ChartDataSource>> computeLowProficiencySKillLimit10() async =>
+      await super.database.then(
+            (database) => database.rawQuery("""
+              SELECT
+                URL_NAME X_VALUE,
+                STRENGTH Y_VALUE
+              FROM
+                SKILL
+              WHERE
+                1 = 1
+                AND ACCESSIBLE = ?
+                AND STRENGTH <= 0.5
+              ORDER BY
+                STRENGTH
+              LIMIT
+                10
+              """, [
+              BooleanText.true_,
+            ]).then(
               (dataSources) => dataSources
                   .map((dataSource) => ChartDataSource.fromMap(dataSource))
                   .toList(),

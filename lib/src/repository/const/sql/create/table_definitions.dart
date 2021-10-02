@@ -59,6 +59,7 @@ class TableDefinitions {
           NAME TEXT NOT NULL,
           SHORT_NAME NOT NULL,
           URL_NAME TEXT NOT NULL,
+          ACCESSIBLE TEXT NOT NULL,
           ICON_ID INTEGER NOT NULL,
           LESSONS INTEGER NOT NULL,
           STRENGTH REAL NOT NULL,

@@ -10,7 +10,7 @@ import 'package:duo_tracker/src/component/dialog/loading_dialog.dart';
 import 'package:duo_tracker/src/component/dialog/select_score_goals_dialog.dart';
 import 'package:duo_tracker/src/component/loading.dart';
 import 'package:duo_tracker/src/http/utils/duolingo_api_utils.dart';
-import 'package:duo_tracker/src/repository/model/chart_data_source_mode.dart';
+import 'package:duo_tracker/src/repository/model/chart_data_source_model.dart';
 import 'package:duo_tracker/src/repository/model/user_model.dart';
 import 'package:duo_tracker/src/repository/preference/common_shared_preferences_key.dart';
 import 'package:duo_tracker/src/repository/service/chart_service.dart';

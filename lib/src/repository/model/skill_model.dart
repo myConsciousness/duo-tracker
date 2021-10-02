@@ -11,6 +11,7 @@ class Skill {
   String name;
   String shortName;
   String urlName;
+  bool accessible;
   int iconId;
   int lessons;
   double strength;
@@ -31,6 +32,7 @@ class Skill {
         name = '',
         shortName = '',
         urlName = '',
+        accessible = false,
         iconId = 0,
         lessons = 0,
         strength = 0.0,
@@ -48,6 +50,7 @@ class Skill {
     required this.name,
     required this.shortName,
     required this.urlName,
+    required this.accessible,
     required this.iconId,
     required this.lessons,
     required this.strength,
@@ -66,6 +69,7 @@ class Skill {
         name: map[SkillColumnName.name],
         shortName: map[SkillColumnName.shortName],
         urlName: map[SkillColumnName.urlName],
+        accessible: map[SkillColumnName.accessible] == BooleanText.true_,
         iconId: map[SkillColumnName.iconId],
         lessons: map[SkillColumnName.lessons],
         strength: map[SkillColumnName.strength],
@@ -89,6 +93,8 @@ class Skill {
     map[SkillColumnName.name] = name;
     map[SkillColumnName.shortName] = shortName;
     map[SkillColumnName.urlName] = urlName;
+    map[SkillColumnName.accessible] =
+        accessible ? BooleanText.true_ : BooleanText.false_;
     map[SkillColumnName.iconId] = iconId;
     map[SkillColumnName.lessons] = lessons;
     map[SkillColumnName.strength] = strength;

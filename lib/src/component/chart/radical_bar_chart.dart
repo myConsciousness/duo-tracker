@@ -2,7 +2,7 @@
 // Use of this source code is governed by a
 // BSD-style license that can be found in the LICENSE file.
 
-import 'package:duo_tracker/src/repository/model/chart_data_source_mode.dart';
+import 'package:duo_tracker/src/repository/model/chart_data_source_model.dart';
 import 'package:flutter/material.dart';
 import 'package:syncfusion_flutter_charts/charts.dart';
 
@@ -35,8 +35,10 @@ class RadicalBarChart extends StatelessWidget {
           overflowMode: LegendItemOverflowMode.wrap,
         ),
         series: _getRadialBarCustomizedSeries(),
-        tooltipBehavior:
-            TooltipBehavior(enable: true, format: 'point.x : point.y%'),
+        tooltipBehavior: TooltipBehavior(
+          enable: true,
+          format: 'point.x : point.y%',
+        ),
         annotations: <CircularChartAnnotation>[
           CircularChartAnnotation(
             angle: 0,

@@ -147,6 +147,7 @@ class UserApiAdapter extends ApiAdapter {
             name: skill['name'],
             shortName: skill['shortName'],
             urlName: skill['urlName'],
+            accessible: skill['accessible'] ?? false,
             iconId: skill['iconId'],
             lessons: skill['lessons'],
             strength: skill['strength'] ?? 0,

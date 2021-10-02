@@ -2,7 +2,7 @@
 // Use of this source code is governed by a
 // BSD-style license that can be found in the LICENSE file.
 
-import 'package:duo_tracker/src/repository/model/chart_data_source_mode.dart';
+import 'package:duo_tracker/src/repository/model/chart_data_source_model.dart';
 import 'package:duo_tracker/src/repository/repository.dart';
 
 abstract class ChartRepository extends Repository<ChartDataSource> {
@@ -13,4 +13,6 @@ abstract class ChartRepository extends Repository<ChartDataSource> {
     required double targetMontlyXp,
     required double targetStreak,
   });
+
+  Future<List<ChartDataSource>> computeLowProficiencySKillLimit10();
 }
