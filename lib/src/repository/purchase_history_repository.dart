@@ -5,4 +5,8 @@
 import 'package:duo_tracker/src/repository/model/purchase_history_model.dart';
 import 'package:duo_tracker/src/repository/repository.dart';
 
-abstract class PurchaseHistoryRepository extends Repository<PurchaseHistory> {}
+abstract class PurchaseHistoryRepository extends Repository<PurchaseHistory> {
+  Future<List<PurchaseHistory>> findAllValid();
+
+  Future<List<PurchaseHistory>> findAllExpired();
+}

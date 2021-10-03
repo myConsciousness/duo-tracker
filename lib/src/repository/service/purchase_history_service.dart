@@ -90,4 +90,44 @@ class PurchaseHistoryService extends PurchaseHistoryRepository {
           ],
         ),
       );
+
+  @override
+  Future<List<PurchaseHistory>> findAllValid() async =>
+      await super.database.then(
+            (database) => database.query(
+              table,
+              where: '? < EXPIRED_AT',
+              whereArgs: [
+                DateTime.now().millisecondsSinceEpoch,
+              ],
+            ).then(
+              (v) => v
+                  .map(
+                    (e) => e.isNotEmpty
+                        ? PurchaseHistory.fromMap(e)
+                        : PurchaseHistory.empty(),
+                  )
+                  .toList(),
+            ),
+          );
+
+  @override
+  Future<List<PurchaseHistory>> findAllExpired() async =>
+      await super.database.then(
+            (database) => database.query(
+              table,
+              where: 'EXPIRED_AT <= ?',
+              whereArgs: [
+                DateTime.now().millisecondsSinceEpoch,
+              ],
+            ).then(
+              (v) => v
+                  .map(
+                    (e) => e.isNotEmpty
+                        ? PurchaseHistory.fromMap(e)
+                        : PurchaseHistory.empty(),
+                  )
+                  .toList(),
+            ),
+          );
 }

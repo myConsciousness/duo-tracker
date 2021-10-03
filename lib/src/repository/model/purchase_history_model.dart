@@ -11,6 +11,7 @@ class PurchaseHistory {
   int priceType;
   int validPeriodInMinutes;
   DateTime purchasedAt;
+  DateTime expiredAt;
   DateTime createdAt;
   DateTime updatedAt;
 
@@ -25,6 +26,7 @@ class PurchaseHistory {
         priceType = -1,
         validPeriodInMinutes = -1,
         purchasedAt = DateTime.now(),
+        expiredAt = DateTime.now(),
         createdAt = DateTime.now(),
         updatedAt = DateTime.now();
 
@@ -36,6 +38,7 @@ class PurchaseHistory {
     required this.priceType,
     required this.validPeriodInMinutes,
     required this.purchasedAt,
+    required this.expiredAt,
     required this.createdAt,
     required this.updatedAt,
   });
@@ -51,6 +54,9 @@ class PurchaseHistory {
             map[PurchaseHistoryColumnName.validPeriodInMinutes],
         purchasedAt: DateTime.fromMillisecondsSinceEpoch(
           map[PurchaseHistoryColumnName.purchasedAt] ?? 0,
+        ),
+        expiredAt: DateTime.fromMillisecondsSinceEpoch(
+          map[PurchaseHistoryColumnName.expiredAt] ?? 0,
         ),
         createdAt: DateTime.fromMillisecondsSinceEpoch(
           map[PurchaseHistoryColumnName.createdAt] ?? 0,
@@ -69,6 +75,7 @@ class PurchaseHistory {
     map[PurchaseHistoryColumnName.validPeriodInMinutes] = validPeriodInMinutes;
     map[PurchaseHistoryColumnName.purchasedAt] =
         purchasedAt.millisecondsSinceEpoch;
+    map[PurchaseHistoryColumnName.expiredAt] = expiredAt.millisecondsSinceEpoch;
     map[PurchaseHistoryColumnName.createdAt] = createdAt.millisecondsSinceEpoch;
     map[PurchaseHistoryColumnName.updatedAt] = updatedAt.millisecondsSinceEpoch;
     return map;

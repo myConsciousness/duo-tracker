@@ -10,6 +10,7 @@ class PurchaseHistoryColumnName {
   static const priceType = 'PRICE_TYPE';
   static const validPeriodInMinutes = 'VALID_PERIOD_IN_MINUTES';
   static const purchasedAt = 'PURCHASED_AT';
+  static const expiredAt = 'EXPIRED_AT';
   static const createdAt = 'CREATED_AT';
   static const updatedAt = 'UPDATED_AT';
 }
