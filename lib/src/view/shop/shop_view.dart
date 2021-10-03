@@ -4,6 +4,8 @@
 
 import 'package:awesome_dialog/awesome_dialog.dart';
 import 'package:duo_tracker/src/admob/reawarde_ad_utils.dart';
+import 'package:duo_tracker/src/component/common_app_bar_titles.dart';
+import 'package:duo_tracker/src/component/common_nested_scroll_view.dart';
 import 'package:duo_tracker/src/component/dialog/charge_point_dialog.dart';
 import 'package:duo_tracker/src/component/dialog/error_dialog.dart';
 import 'package:duo_tracker/src/component/dialog/purchase_dialog.dart';
@@ -12,6 +14,7 @@ import 'package:duo_tracker/src/repository/preference/common_shared_preferences_
 import 'package:duo_tracker/src/repository/preference/rewarded_ad_shared_preferences.dart';
 import 'package:duo_tracker/src/view/shop/disable_ad_type.dart';
 import 'package:duo_tracker/src/view/shop/disable_ad_product_type.dart';
+import 'package:duo_tracker/src/view/shop/purchase_history_tab_view.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
@@ -375,11 +378,9 @@ class _ShopViewState extends State<ShopView> {
 
           await showPurchaseDialog(
             context: context,
-            currentPoint: currentPoint,
             price: price,
             productName: product.name,
-            timeLimit: DateTime.now()
-                .add(Duration(minutes: disableAdPattern.timeLimit)),
+            validPeriodInMinutes: disableAdPattern.timeLimit,
             onPressedOk: () async {
               await CommonSharedPreferencesKey.rewardPoint
                   .setInt(currentPoint - price);
@@ -516,32 +517,56 @@ class _ShopViewState extends State<ShopView> {
 
   @override
   Widget build(BuildContext context) => Scaffold(
-        body: SafeArea(
-          child: SingleChildScrollView(
-            child: Padding(
-              padding: const EdgeInsets.all(10),
-              child: Column(
-                children: [
-                  _buildWalletCard(),
-                  _buildDisableAdProductsCard(
-                    title: 'Disable Full Screen Ads',
-                    subtitle:
-                        'You can disable full-screen ads for a certain period of time. Ads for recharging points in this store will not be disabled.',
-                    productType: DisableAdProductType.disbaleFullScreenAd,
+        body: CommonNestedScrollView(
+          title: const Center(
+            child: Text(
+              'Shop',
+              style: TextStyle(
+                color: Colors.white,
+                fontSize: 17,
+              ),
+            ),
+          ),
+          actions: [
+            IconButton(
+              icon: const Icon(Icons.history),
+              onPressed: () async {
+                await Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (context) => const PurchaseHistoryTabView(),
                   ),
-                  _buildDisableAdProductsCard(
-                    title: 'Disable Banner Ads',
-                    subtitle:
-                        'You can disable banner ads for a certain period of time.',
-                    productType: DisableAdProductType.disableBannerAd,
-                  ),
-                  _buildDisableAdProductsCard(
-                    title: 'Disable All Ads',
-                    subtitle:
-                        'You can disable all ads for a certain period of time. Ads for recharging points in this store will not be disabled.',
-                    productType: DisableAdProductType.all,
-                  ),
-                ],
+                );
+              },
+            ),
+          ],
+          body: SafeArea(
+            child: SingleChildScrollView(
+              child: Padding(
+                padding: const EdgeInsets.all(10),
+                child: Column(
+                  children: [
+                    _buildWalletCard(),
+                    _buildDisableAdProductsCard(
+                      title: 'Disable Full Screen Ads',
+                      subtitle:
+                          'You can disable full-screen ads for a certain period of time. Ads for recharging points in this store will not be disabled.',
+                      productType: DisableAdProductType.disbaleFullScreenAd,
+                    ),
+                    _buildDisableAdProductsCard(
+                      title: 'Disable Banner Ads',
+                      subtitle:
+                          'You can disable banner ads for a certain period of time.',
+                      productType: DisableAdProductType.disableBannerAd,
+                    ),
+                    _buildDisableAdProductsCard(
+                      title: 'Disable All Ads',
+                      subtitle:
+                          'You can disable all ads for a certain period of time. Ads for recharging points in this store will not be disabled.',
+                      productType: DisableAdProductType.all,
+                    ),
+                  ],
+                ),
               ),
             ),
           ),

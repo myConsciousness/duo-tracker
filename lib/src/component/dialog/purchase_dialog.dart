@@ -4,6 +4,9 @@
 
 import 'package:awesome_dialog/awesome_dialog.dart';
 import 'package:duo_tracker/src/component/common_divider.dart';
+import 'package:duo_tracker/src/repository/model/purchase_history_model.dart';
+import 'package:duo_tracker/src/repository/service/purchase_history_service.dart';
+import 'package:duo_tracker/src/view/shop/price_type.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/painting.dart';
 import 'package:flutter/widgets.dart';
@@ -12,12 +15,14 @@ import 'package:intl/intl.dart';
 late AwesomeDialog _dialog;
 final _datetimeFormat = DateFormat('yyyy/MM/dd HH:mm');
 
+/// The purchase history service
+final _purchaseHistoryService = PurchaseHistoryService.getInstance();
+
 Future<T?> showPurchaseDialog<T>({
   required BuildContext context,
-  required int currentPoint,
-  required int price,
   required String productName,
-  required DateTime timeLimit,
+  required int price,
+  required int validPeriodInMinutes,
   required Function onPressedOk,
 }) async {
   _dialog = AwesomeDialog(
@@ -59,7 +64,7 @@ Future<T?> showPurchaseDialog<T>({
                             ),
                           ),
                           subtitle: Text(
-                            'Expiration: ${_datetimeFormat.format(timeLimit)}',
+                            'Expiration: ${_datetimeFormat.format(DateTime.now().add(Duration(minutes: validPeriodInMinutes)))}',
                           ),
                         ),
                         const CommonDivider(),
@@ -83,8 +88,26 @@ Future<T?> showPurchaseDialog<T>({
                   isFixedHeight: false,
                   text: 'Confirm',
                   color: Theme.of(context).colorScheme.secondaryVariant,
-                  pressEvent: () {
-                    onPressedOk.call();
+                  pressEvent: () async {
+                    await onPressedOk.call();
+
+                    _purchaseHistoryService.insert(
+                      PurchaseHistory.from(
+                        productName: productName,
+                        price: price,
+                        priceType: PriceType.duoTrackerPoint.code,
+                        validPeriodInMinutes: validPeriodInMinutes,
+                        purchasedAt: DateTime.now(),
+                        expiredAt: DateTime.now().add(
+                          Duration(
+                            minutes: validPeriodInMinutes,
+                          ),
+                        ),
+                        createdAt: DateTime.now(),
+                        updatedAt: DateTime.now(),
+                      ),
+                    );
+
                     _dialog.dismiss();
                   },
                 ),

@@ -191,6 +191,12 @@ class _OverviewViewState extends State<OverviewView> {
           Card(
             clipBehavior: Clip.antiAlias,
             elevation: 5,
+            shape: const RoundedRectangleBorder(
+              borderRadius: BorderRadius.vertical(
+                top: Radius.circular(30),
+                bottom: Radius.circular(30),
+              ),
+            ),
             child: Padding(
               padding: const EdgeInsets.fromLTRB(20, 10, 20, 10),
               child: Column(
@@ -315,12 +321,6 @@ class _OverviewViewState extends State<OverviewView> {
                     ),
                   ),
                 ],
-              ),
-            ),
-            shape: const RoundedRectangleBorder(
-              borderRadius: BorderRadius.vertical(
-                top: Radius.circular(30),
-                bottom: Radius.circular(30),
               ),
             ),
           ),

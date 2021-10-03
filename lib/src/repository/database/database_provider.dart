@@ -40,6 +40,7 @@ class DatabaseProvider {
           await database.execute(TableDefinitions.course);
           await database.execute(TableDefinitions.learnedWord);
           await database.execute(TableDefinitions.wordHint);
+          await database.execute(TableDefinitions.purchaseHistory);
         },
         onUpgrade: (Database db, int oldVersion, int newVersion) async {
           // Do nothing now
