@@ -158,4 +158,18 @@ class TableDefinitions {
           UPDATED_AT INTEGER NOT NULL
         )
         ''';
+
+  /// The purchase history
+  static const purchaseHistory = '''
+        CREATE TABLE PURCHASE_HISTORY (
+          ID INTEGER NOT NULL PRIMARY KEY,
+          PRODUCT_NAME TEXT NOT NULL,
+          PRICE INTEGER NOT NULL,
+          PRICE_TYPE INTEGER NOT NULL,
+          VALID_PERIOD_IN_MINUTES INTEGER NOT NULL,
+          PURCHASED_AT INTEGER NOT NULL,
+          CREATED_AT INTEGER NOT NULL,
+          UPDATED_AT INTEGER NOT NULL
+        )
+        ''';
 }

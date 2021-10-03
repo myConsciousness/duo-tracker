@@ -3,10 +3,8 @@
 // BSD-style license that can be found in the LICENSE file.
 
 import 'package:duo_tracker/src/admob/banner_ad_utils.dart';
-import 'package:duo_tracker/src/admob/interstitial_ad_utils.dart';
 import 'package:duo_tracker/src/component/chart/tracker_column_chart.dart';
 import 'package:duo_tracker/src/component/loading.dart';
-import 'package:duo_tracker/src/repository/preference/interstitial_ad_shared_preferences_key.dart';
 import 'package:duo_tracker/src/repository/service/chart_service.dart';
 import 'package:duo_tracker/src/view/analysis/proficiency_range.dart';
 import 'package:flutter/material.dart';
