@@ -2,9 +2,11 @@
 // Use of this source code is governed by a
 // BSD-style license that can be found in the LICENSE file.
 
+import 'package:duo_tracker/src/admob/banner_ad_utils.dart';
 import 'package:duo_tracker/src/component/common_app_bar_titles.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_html/flutter_html.dart';
+import 'package:google_mobile_ads/google_mobile_ads.dart';
 
 class LessonTipsView extends StatefulWidget {
   const LessonTipsView({
@@ -21,10 +23,35 @@ class LessonTipsView extends StatefulWidget {
 }
 
 class _LessonTipsViewState extends State<LessonTipsView> {
+  /// The header banner ad
+  late BannerAd _headerBannerAd;
+
+  /// The bottom banner ad
+  late BannerAd _bottomBannerAd;
+
+  @override
+  void initState() {
+    super.initState();
+    _headerBannerAd = BannerAdUtils.loadBannerAd();
+    _bottomBannerAd = BannerAdUtils.loadBannerAd();
+  }
+
+  @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+  }
+
+  @override
+  void dispose() {
+    _headerBannerAd.dispose();
+    _bottomBannerAd.dispose();
+
+    super.dispose();
+  }
+
   @override
   Widget build(BuildContext context) => Scaffold(
         body: NestedScrollView(
-          // floatHeaderSlivers: true,
           headerSliverBuilder: (context, innerBoxIsScrolled) => [
             SliverAppBar(
               floating: true,
@@ -46,6 +73,17 @@ class _LessonTipsViewState extends State<LessonTipsView> {
             child: SingleChildScrollView(
               child: Wrap(
                 children: [
+                  FutureBuilder(
+                    future: BannerAdUtils.canShow(),
+                    builder: (BuildContext context, AsyncSnapshot snapshot) {
+                      if (!snapshot.hasData || !snapshot.data) {
+                        return Container();
+                      }
+
+                      return BannerAdUtils.createBannerAdWidget(
+                          _headerBannerAd);
+                    },
+                  ),
                   Center(
                     child: Html(
                       data: '''
@@ -106,6 +144,17 @@ class _LessonTipsViewState extends State<LessonTipsView> {
                         ),
                       },
                     ),
+                  ),
+                  FutureBuilder(
+                    future: BannerAdUtils.canShow(),
+                    builder: (BuildContext context, AsyncSnapshot snapshot) {
+                      if (!snapshot.hasData || !snapshot.data) {
+                        return Container();
+                      }
+
+                      return BannerAdUtils.createBannerAdWidget(
+                          _bottomBannerAd);
+                    },
                   ),
                 ],
               ),

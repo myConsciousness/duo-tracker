@@ -160,4 +160,40 @@ class TableDefinitions {
           UPDATED_AT INTEGER NOT NULL
         )
         ''';
+
+  /// The learned word folder
+  static const learnedWordFolder = '''
+        CREATE TABLE LEARNED_WORD_FOLDER (
+          ID INTEGER NOT NULL PRIMARY KEY,
+          PARENT_FOLDER_ID INTEGER NOT NULL,
+          NAME TEXT NOT NULL,
+          ALIAS TEXT NOT NULL,
+          REMARKS TEXT NOT NULL,
+          USER_ID TEXT NOT NULL,
+          FROM_LANGUAGE TEXT NOT NULL,
+          LEARNING_LANGUAGE TEXT NOT NULL,
+          SORT_ORDER INTEGER NOT NULL,
+          DELETED TEXT NOT NULL,
+          CREATED_AT INTEGER NOT NULL,
+          UPDATED_AT INTEGER NOT NULL
+        )
+        ''';
+
+  /// The learned word folder item
+  static const learnedWordFolderItem = '''
+        CREATE TABLE LEARNED_WORD_FOLDER_ITEM (
+          ID INTEGER NOT NULL PRIMARY KEY,
+          FOLDER_ID INTEGER NOT NULL,
+          WORD_ID TEXT NOT NULL,
+          ALIAS TEXT NOT NULL,
+          REMARKS TEXT NOT NULL,
+          USER_ID TEXT NOT NULL,
+          FROM_LANGUAGE TEXT NOT NULL,
+          LEARNING_LANGUAGE TEXT NOT NULL,
+          SORT_ORDER INTEGER NOT NULL,
+          DELETED TEXT NOT NULL,
+          CREATED_AT INTEGER NOT NULL,
+          UPDATED_AT INTEGER NOT NULL
+        )
+        ''';
 }

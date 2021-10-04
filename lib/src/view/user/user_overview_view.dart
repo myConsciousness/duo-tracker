@@ -193,16 +193,6 @@ class _UserOverviewViewState extends State<UserOverviewView> {
               mainAxisAlignment: MainAxisAlignment.center,
               crossAxisAlignment: CrossAxisAlignment.center,
               children: [
-                FutureBuilder(
-                  future: BannerAdUtils.canShow(),
-                  builder: (BuildContext context, AsyncSnapshot snapshot) {
-                    if (!snapshot.hasData || !snapshot.data) {
-                      return Container();
-                    }
-
-                    return BannerAdUtils.createBannerAdWidget(_loadBannerAd());
-                  },
-                ),
                 RadicalBarChart(
                   chartTitle: ChartTitle(
                     text: 'Goals and Progress',
@@ -526,6 +516,18 @@ class _UserOverviewViewState extends State<UserOverviewView> {
                       ),
                       _buildStatusCard(user: user),
                       _buildSummaryCard(user: user),
+                      FutureBuilder(
+                        future: BannerAdUtils.canShow(),
+                        builder:
+                            (BuildContext context, AsyncSnapshot snapshot) {
+                          if (!snapshot.hasData || !snapshot.data) {
+                            return Container();
+                          }
+
+                          return BannerAdUtils.createBannerAdWidget(
+                              _loadBannerAd());
+                        },
+                      ),
                       _buildRadicalBarChart(user: user),
                       const SizedBox(
                         height: 30,

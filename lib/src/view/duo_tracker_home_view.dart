@@ -4,6 +4,7 @@
 
 import 'package:duo_tracker/src/component/common_default_tab_controller.dart';
 import 'package:duo_tracker/src/view/analysis/proficiency_analysis_view.dart';
+import 'package:duo_tracker/src/view/folder/learned_word_folder_view.dart';
 import 'package:duo_tracker/src/view/overview/overview_tab_view.dart';
 import 'package:duo_tracker/src/view/settings/settings_view.dart';
 import 'package:duo_tracker/src/view/shop/shop_view.dart';
@@ -16,11 +17,12 @@ class DuoTrackerHomeView extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) => const CommonDefaultTabController(
-        length: 5,
+        length: 6,
         labelFontSize: 12.0,
         unselectedLabelFontSize: 11.0,
         tabs: [
           Tab(icon: Icon(FontAwesomeIcons.listAlt, size: 16)),
+          Tab(icon: Icon(FontAwesomeIcons.folderOpen, size: 16)),
           Tab(icon: Icon(FontAwesomeIcons.chartPie, size: 16)),
           Tab(icon: Icon(FontAwesomeIcons.userAlt, size: 16)),
           Tab(icon: Icon(FontAwesomeIcons.shoppingCart, size: 16)),
@@ -28,6 +30,7 @@ class DuoTrackerHomeView extends StatelessWidget {
         ],
         body: [
           OverviewTabView(),
+          LearnedWordFolderView(),
           ProficiencyAnalysisView(),
           UserAccountTabView(),
           ShopView(),

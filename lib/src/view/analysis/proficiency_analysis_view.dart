@@ -25,7 +25,7 @@ class _ProficiencyAnalysisViewState extends State<ProficiencyAnalysisView> {
   final _chartService = ChartService.getInstance();
 
   /// The selected proficiency range
-  SfRangeValues _selectedProficiencyRange = const SfRangeValues(10.0, 100.0);
+  SfRangeValues _selectedProficiencyRange = const SfRangeValues(10.0, 50.0);
 
   /// The selected bar count
   int _selectedBarCount = 10;

@@ -27,7 +27,7 @@ import 'package:duo_tracker/src/repository/preference/interstitial_ad_shared_pre
 import 'package:duo_tracker/src/repository/service/learned_word_service.dart';
 import 'package:duo_tracker/src/http/utils/duolingo_api_utils.dart';
 import 'package:duo_tracker/src/utils/language_converter.dart';
-import 'package:duo_tracker/src/view/lesson_tips_view.dart';
+import 'package:duo_tracker/src/view/overview/lesson_tips_view.dart';
 import 'package:duo_tracker/src/view/overview/overview_tab_view.dart';
 import 'package:duo_tracker/src/view/overview/word_filter.dart';
 import 'package:flutter/cupertino.dart';
@@ -729,12 +729,6 @@ class _OverviewViewState extends State<OverviewView> {
               }
 
               final List<LearnedWord> learnedWords = snapshot.data;
-
-              if (learnedWords.isEmpty) {
-                return const Center(
-                  child: Text('No Data'),
-                );
-              }
 
               return RefreshIndicator(
                 onRefresh: () async {

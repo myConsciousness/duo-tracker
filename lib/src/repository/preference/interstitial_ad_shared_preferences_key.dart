@@ -23,6 +23,9 @@ enum InterstitialAdSharedPreferencesKey {
   /// The count adjust goals
   countAdjustGoals,
 
+  /// The count sync user
+  countSyncUser,
+
   /// The immediately
   immediately,
 }
@@ -42,6 +45,8 @@ extension KeyFeature on InterstitialAdSharedPreferencesKey {
         return 'count_filter_words';
       case InterstitialAdSharedPreferencesKey.countAdjustGoals:
         return 'count_adjust_goals';
+      case InterstitialAdSharedPreferencesKey.countSyncUser:
+        return 'count_sync_user';
       case InterstitialAdSharedPreferencesKey.immediately:
         return 'interstitial_immediately';
     }
@@ -60,6 +65,8 @@ extension KeyFeature on InterstitialAdSharedPreferencesKey {
       case InterstitialAdSharedPreferencesKey.countFilterWords:
         return 0;
       case InterstitialAdSharedPreferencesKey.countAdjustGoals:
+        return 0;
+      case InterstitialAdSharedPreferencesKey.countSyncUser:
         return 0;
       case InterstitialAdSharedPreferencesKey.immediately:
         return 1;
