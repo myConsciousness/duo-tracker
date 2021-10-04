@@ -3,7 +3,6 @@
 // BSD-style license that can be found in the LICENSE file.
 
 import 'package:app_review/app_review.dart';
-import 'package:duo_tracker/flavors.dart';
 import 'package:duo_tracker/src/admob/interstitial_ad_resolver.dart';
 import 'package:duo_tracker/src/admob/interstitial_ad_utils.dart';
 import 'package:duo_tracker/src/admob/rewarded_interstitial_ad_resolver.dart';
@@ -36,11 +35,9 @@ class _DuoTrackerState extends State<DuoTracker> with WidgetsBindingObserver {
   @override
   void didChangeAppLifecycleState(AppLifecycleState state) async {
     if (state == AppLifecycleState.resumed) {
-      if (F.isFreeBuild) {
-        await InterstitialAdUtils.showInterstitialAd(
-          sharedPreferencesKey: InterstitialAdSharedPreferencesKey.countOpenApp,
-        );
-      }
+      await InterstitialAdUtils.showInterstitialAd(
+        sharedPreferencesKey: InterstitialAdSharedPreferencesKey.countOpenApp,
+      );
     }
   }
 
@@ -70,14 +67,12 @@ class _DuoTrackerState extends State<DuoTracker> with WidgetsBindingObserver {
   }
 
   void _asyncInitState() async {
-    if (F.isFreeBuild) {
-      await _interstitialAdResolver.loadInterstitialAd();
-      await _rewardedAdResolver.loadRewardedAd();
+    await _interstitialAdResolver.loadInterstitialAd();
+    await _rewardedAdResolver.loadRewardedAd();
 
-      await InterstitialAdUtils.showInterstitialAd(
-        sharedPreferencesKey: InterstitialAdSharedPreferencesKey.countOpenApp,
-      );
-    }
+    await InterstitialAdUtils.showInterstitialAd(
+      sharedPreferencesKey: InterstitialAdSharedPreferencesKey.countOpenApp,
+    );
 
     final int datetimeSinceEpock =
         await CommonSharedPreferencesKey.datetimeLastShowedAppReview.getInt();

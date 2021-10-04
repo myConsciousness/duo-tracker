@@ -196,11 +196,7 @@ class _UserOverviewViewState extends State<UserOverviewView> {
                 FutureBuilder(
                   future: BannerAdUtils.canShow(),
                   builder: (BuildContext context, AsyncSnapshot snapshot) {
-                    if (!snapshot.hasData) {
-                      return const Loading();
-                    }
-
-                    if (!snapshot.data) {
+                    if (!snapshot.hasData || !snapshot.data) {
                       return Container();
                     }
 

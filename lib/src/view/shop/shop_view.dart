@@ -4,7 +4,6 @@
 
 import 'package:awesome_dialog/awesome_dialog.dart';
 import 'package:duo_tracker/src/admob/reawarde_ad_utils.dart';
-import 'package:duo_tracker/src/component/common_app_bar_titles.dart';
 import 'package:duo_tracker/src/component/common_nested_scroll_view.dart';
 import 'package:duo_tracker/src/component/dialog/charge_point_dialog.dart';
 import 'package:duo_tracker/src/component/dialog/error_dialog.dart';

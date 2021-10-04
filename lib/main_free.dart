@@ -7,9 +7,13 @@ import 'package:flutter/material.dart';
 import 'package:google_mobile_ads/google_mobile_ads.dart';
 import 'flavors.dart';
 
-void main() {
+void main() async {
   WidgetsFlutterBinding.ensureInitialized();
-  MobileAds.instance.initialize();
+  await MobileAds.instance.initialize();
+
+  RequestConfiguration configuration =
+      RequestConfiguration(testDeviceIds: ['12FA608E7D2E2A96D30BE9C3D4A6ACA5']);
+  await MobileAds.instance.updateRequestConfiguration(configuration);
 
   F.appFlavor = Flavor.free;
   runApp(const DuoTracker());
