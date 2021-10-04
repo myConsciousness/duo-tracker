@@ -4,10 +4,17 @@
 
 import 'package:duo_tracker/src/component/common_app_bar_titles.dart';
 import 'package:duo_tracker/src/component/common_nested_scroll_view.dart';
+import 'package:duo_tracker/src/component/dialog/create_new_folder_dialog.dart';
+import 'package:duo_tracker/src/component/loading.dart';
+import 'package:duo_tracker/src/repository/model/learned_word_folder_model.dart';
 import 'package:duo_tracker/src/repository/preference/common_shared_preferences_key.dart';
+import 'package:duo_tracker/src/repository/service/learned_word_folder_item_service.dart';
+import 'package:duo_tracker/src/repository/service/learned_word_folder_service.dart';
 import 'package:duo_tracker/src/utils/language_converter.dart';
+import 'package:duo_tracker/src/view/folder/learned_word_folder_items_view.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_speed_dial/flutter_speed_dial.dart';
+import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 
 class LearnedWordFolderView extends StatefulWidget {
   const LearnedWordFolderView({Key? key}) : super(key: key);
@@ -19,6 +26,9 @@ class LearnedWordFolderView extends StatefulWidget {
 class _LearnedWordFolderViewState extends State<LearnedWordFolderView> {
   /// The app bar subtitle
   String _appBarSubTitle = 'N/A';
+
+  /// The learned word folder service
+  final _learnedWordFolderService = LearnedWordFolderService.getInstance();
 
   @override
   void initState() {
@@ -73,25 +83,110 @@ class _LearnedWordFolderViewState extends State<LearnedWordFolderView> {
     });
   }
 
+  SpeedDialChild _buildSpeedDialChild({
+    required IconData icon,
+    required String label,
+    required Function() onTap,
+  }) =>
+      SpeedDialChild(
+        child: Icon(
+          icon,
+          size: 19,
+        ),
+        label: label,
+        onTap: onTap,
+      );
+
   @override
   Widget build(BuildContext context) => Scaffold(
-        floatingActionButtonLocation:
-            FloatingActionButtonLocation.miniCenterDocked,
-        floatingActionButton: const SpeedDial(
-          renderOverlay: true,
-          switchLabelPosition: true,
-          buttonSize: 50,
-          childrenButtonSize: 50,
-          tooltip: 'Show Actions',
-          animatedIcon: AnimatedIcons.menu_close,
-          children: [],
-        ),
         body: CommonNestedScrollView(
           title: CommonAppBarTitles(
-            title: 'Learned Words Folder',
+            title: 'Learned Word Folder',
             subTitle: _appBarSubTitle,
           ),
-          body: Container(),
+          actions: [
+            IconButton(
+              tooltip: 'Add Folder',
+              icon: const Icon(Icons.add),
+              onPressed: () async {
+                await showCreateNewFolderDialog(context: context);
+                super.setState(() {});
+              },
+            ),
+          ],
+          body: FutureBuilder(
+            future: _fetchDataSource(),
+            builder: (BuildContext context, AsyncSnapshot snapshot) {
+              if (!snapshot.hasData) {
+                return const Loading();
+              }
+
+              final List<LearnedWordFolder> folders = snapshot.data;
+
+              if (folders.isEmpty) {
+                return Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  crossAxisAlignment: CrossAxisAlignment.center,
+                  children: [
+                    const Center(
+                      child: Text('No Folders'),
+                    ),
+                    ElevatedButton(
+                      child: const Text('Add New Folder'),
+                      style: ElevatedButton.styleFrom(
+                        primary: Theme.of(context).colorScheme.secondaryVariant,
+                        onPrimary: Colors.white,
+                      ),
+                      onPressed: () async {
+                        await showCreateNewFolderDialog(context: context);
+                        super.setState(() {});
+                      },
+                    ),
+                  ],
+                );
+              }
+
+              return ListView.builder(
+                itemCount: folders.length,
+                itemBuilder: (BuildContext context, int index) {
+                  final folder = folders[index];
+                  return Card(
+                    child: ListTile(
+                      leading: const Icon(Icons.folder),
+                      title: Text(folder.name),
+                      subtitle: Text(folder.remarks),
+                      onTap: () async {
+                        await Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder: (_) => LearnedWordFolderItemsView(
+                              folderCode: folder.id,
+                              folderName: folder.name,
+                            ),
+                          ),
+                        );
+                      },
+                    ),
+                  );
+                },
+              );
+            },
+          ),
         ),
       );
+
+  Future<List<LearnedWordFolder>> _fetchDataSource() async {
+    final userId = await CommonSharedPreferencesKey.userId.getString();
+    final fromLanguage =
+        await CommonSharedPreferencesKey.currentFromLanguage.getString();
+    final learningLanguage =
+        await CommonSharedPreferencesKey.currentLearningLanguage.getString();
+
+    return await _learnedWordFolderService
+        .findByUserIdAndFromLanguageAndLearningLanguage(
+      userId: userId,
+      fromLanguage: fromLanguage,
+      learningLanguage: learningLanguage,
+    );
+  }
 }

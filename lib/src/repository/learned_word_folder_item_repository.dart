@@ -6,4 +6,11 @@ import 'package:duo_tracker/src/repository/model/learned_word_folder_item_model.
 import 'package:duo_tracker/src/repository/repository.dart';
 
 abstract class LearnedWordFolderItemRepository
-    extends Repository<LearnedWordFolderItem> {}
+    extends Repository<LearnedWordFolderItem> {
+  Future<List<LearnedWordFolderItem>>
+      findByUserIdAndFromLanguageAndLearningLanguage({
+    required String userId,
+    required String fromLanguage,
+    required String learningLanguage,
+  });
+}

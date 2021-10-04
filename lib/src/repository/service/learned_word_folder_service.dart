@@ -92,4 +92,32 @@ class LearnedWordFolderService extends LearnedWordFolderRepository {
               ],
             ),
           );
+
+  @override
+  Future<List<LearnedWordFolder>>
+      findByUserIdAndFromLanguageAndLearningLanguage({
+    required String userId,
+    required String fromLanguage,
+    required String learningLanguage,
+  }) async =>
+          await super.database.then(
+                (database) => database.query(
+                  table,
+                  where:
+                      'USER_ID = ? AND FROM_LANGUAGE = ? AND LEARNING_LANGUAGE = ?',
+                  whereArgs: [
+                    userId,
+                    fromLanguage,
+                    learningLanguage,
+                  ],
+                ).then(
+                  (v) => v
+                      .map(
+                        (e) => e.isNotEmpty
+                            ? LearnedWordFolder.fromMap(e)
+                            : LearnedWordFolder.empty(),
+                      )
+                      .toList(),
+                ),
+              );
 }
