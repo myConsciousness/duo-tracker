@@ -730,6 +730,12 @@ class _OverviewViewState extends State<OverviewView> {
 
               final List<LearnedWord> learnedWords = snapshot.data;
 
+              if (learnedWords.isEmpty) {
+                return const Center(
+                  child: Text('No Data'),
+                );
+              }
+
               return RefreshIndicator(
                 onRefresh: () async {
                   super.setState(() {});

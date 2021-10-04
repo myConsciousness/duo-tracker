@@ -149,7 +149,10 @@ class _PurchaseHistoryViewState extends State<PurchaseHistoryView> {
                   return Column(
                     children: [
                       FutureBuilder(
-                        future: BannerAdUtils.canShow(),
+                        future: BannerAdUtils.canShow(
+                          index: index,
+                          interval: 3,
+                        ),
                         builder:
                             (BuildContext context, AsyncSnapshot snapshot) {
                           if (!snapshot.hasData || !snapshot.data) {

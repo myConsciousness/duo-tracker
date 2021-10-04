@@ -16,7 +16,6 @@ class LearnedWord {
   String formalLearningLanguage;
   String formalFromLanguage;
   String lexemeId;
-  List<dynamic> relatedLexemes;
   int strengthBars;
   String infinitive;
   String wordString;
@@ -58,7 +57,6 @@ class LearnedWord {
         formalLearningLanguage = '',
         formalFromLanguage = '',
         lexemeId = '',
-        relatedLexemes = const <String>[],
         strengthBars = -1,
         infinitive = '',
         wordString = '',
@@ -88,7 +86,6 @@ class LearnedWord {
     required this.formalLearningLanguage,
     required this.formalFromLanguage,
     required this.lexemeId,
-    required this.relatedLexemes,
     required this.strengthBars,
     required this.infinitive,
     required this.wordString,
@@ -120,8 +117,6 @@ class LearnedWord {
             map[LearnedWordColumnName.formalLearningLanguage],
         formalFromLanguage: map[LearnedWordColumnName.formalFromLanguage],
         lexemeId: map[LearnedWordColumnName.lexemeId],
-        relatedLexemes:
-            (map[LearnedWordColumnName.relatedLexemes] as String).split(','),
         strengthBars: map[LearnedWordColumnName.strengthBars],
         infinitive: map[LearnedWordColumnName.infinitive],
         wordString: map[LearnedWordColumnName.wordString],
@@ -156,7 +151,6 @@ class LearnedWord {
     map[LearnedWordColumnName.formalLearningLanguage] = formalLearningLanguage;
     map[LearnedWordColumnName.formalFromLanguage] = formalFromLanguage;
     map[LearnedWordColumnName.lexemeId] = lexemeId;
-    map[LearnedWordColumnName.relatedLexemes] = relatedLexemes.join(',');
     map[LearnedWordColumnName.strengthBars] = strengthBars;
     map[LearnedWordColumnName.infinitive] = infinitive;
     map[LearnedWordColumnName.wordString] = wordString;

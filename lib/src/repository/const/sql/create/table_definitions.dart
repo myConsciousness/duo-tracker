@@ -146,19 +146,6 @@ class TableDefinitions {
         )
         ''';
 
-  /// The learned word related lexeme
-  static const learnedWordRelatedLexeme = '''
-        CREATE TABLE LEARNED_WORD_RELATED_LEXEME (
-          ID INTEGER NOT NULL PRIMARY KEY,
-          LEXEME_ID TEXT NOT NULL UNIQUE,
-          WORD_ID TEXT NOT NULL UNIQUE,
-          WORD TEXT NOT NULL,
-          LESSON_NAME TEXT NOT NULL,
-          CREATED_AT INTEGER NOT NULL,
-          UPDATED_AT INTEGER NOT NULL
-        )
-        ''';
-
   /// The purchase history
   static const purchaseHistory = '''
         CREATE TABLE PURCHASE_HISTORY (

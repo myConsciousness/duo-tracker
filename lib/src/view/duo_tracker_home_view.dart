@@ -3,7 +3,7 @@
 // BSD-style license that can be found in the LICENSE file.
 
 import 'package:duo_tracker/src/component/common_default_tab_controller.dart';
-import 'package:duo_tracker/src/view/analysis/analysis_tab_view.dart';
+import 'package:duo_tracker/src/view/analysis/proficiency_analysis_view.dart';
 import 'package:duo_tracker/src/view/overview/overview_tab_view.dart';
 import 'package:duo_tracker/src/view/settings/settings_view.dart';
 import 'package:duo_tracker/src/view/shop/shop_view.dart';
@@ -28,7 +28,7 @@ class DuoTrackerHomeView extends StatelessWidget {
         ],
         body: [
           OverviewTabView(),
-          AnalysisTabView(),
+          ProficiencyAnalysisView(),
           UserAccountTabView(),
           ShopView(),
           SettingsView(),

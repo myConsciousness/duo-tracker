@@ -55,7 +55,6 @@ class LearnedWordApiAdapter extends ApiAdapter {
               languageCode: fromLanguage,
             ),
             lexemeId: overview['lexeme_id'] ?? '',
-            relatedLexemes: overview['related_lexemes'],
             strengthBars: overview['strength_bars'] ?? -1,
             infinitive: overview['infinitive'] ?? '',
             wordString: wordString,
