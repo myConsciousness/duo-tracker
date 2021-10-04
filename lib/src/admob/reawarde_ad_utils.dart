@@ -2,6 +2,7 @@
 // Use of this source code is governed by a
 // BSD-style license that can be found in the LICENSE file.
 
+import 'package:duo_tracker/flavors.dart';
 import 'package:duo_tracker/src/admob/rewarded_interstitial_ad_resolver.dart';
 import 'package:duo_tracker/src/component/dialog/error_dialog.dart';
 import 'package:duo_tracker/src/repository/preference/common_shared_preferences_key.dart';
@@ -15,6 +16,10 @@ class RewardedAdUtils {
     required RewardedAdSharedPreferencesKey sharedPreferencesKey,
     bool showForce = false,
   }) async {
+    if (!F.isFreeBuild) {
+      return;
+    }
+
     int count = await sharedPreferencesKey.getInt();
 
     if (!showForce) {

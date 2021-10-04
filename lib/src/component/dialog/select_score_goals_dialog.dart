@@ -3,7 +3,9 @@
 // BSD-style license that can be found in the LICENSE file.
 
 import 'package:awesome_dialog/awesome_dialog.dart';
+import 'package:duo_tracker/src/admob/interstitial_ad_utils.dart';
 import 'package:duo_tracker/src/repository/preference/common_shared_preferences_key.dart';
+import 'package:duo_tracker/src/repository/preference/interstitial_ad_shared_preferences_key.dart';
 import 'package:flutter/material.dart';
 import 'package:syncfusion_flutter_sliders/sliders.dart';
 
@@ -134,6 +136,11 @@ Future<T?> showSelectScoreGoalsDialog<T>({
                         .setDouble(_selectedStreak);
 
                     _dialog.dismiss();
+
+                    await InterstitialAdUtils.showInterstitialAd(
+                      sharedPreferencesKey:
+                          InterstitialAdSharedPreferencesKey.countAdjustGoals,
+                    );
                   },
                 ),
                 const SizedBox(

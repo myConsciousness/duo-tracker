@@ -3,10 +3,12 @@
 // BSD-style license that can be found in the LICENSE file.
 
 import 'package:awesome_dialog/awesome_dialog.dart';
+import 'package:duo_tracker/src/admob/interstitial_ad_utils.dart';
 import 'package:duo_tracker/src/component/common_two_grids_radio_list_tile.dart';
 import 'package:duo_tracker/src/component/const/sort_item.dart';
 import 'package:duo_tracker/src/component/const/sort_pattern.dart';
 import 'package:duo_tracker/src/repository/preference/common_shared_preferences_key.dart';
+import 'package:duo_tracker/src/repository/preference/interstitial_ad_shared_preferences_key.dart';
 import 'package:flutter/material.dart';
 
 late AwesomeDialog _dialog;
@@ -98,6 +100,11 @@ Future<T?> showSelectSortMethodDialog<T>({
                         .setInt(_sortPattern.code);
 
                     _dialog.dismiss();
+
+                    await InterstitialAdUtils.showInterstitialAd(
+                      sharedPreferencesKey:
+                          InterstitialAdSharedPreferencesKey.countSortWords,
+                    );
                   },
                 ),
                 AnimatedButton(

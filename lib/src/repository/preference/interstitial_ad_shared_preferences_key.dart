@@ -8,6 +8,21 @@ enum InterstitialAdSharedPreferencesKey {
   /// The count of open app
   countOpenApp,
 
+  /// The count sync words
+  countSyncWords,
+
+  /// The count search words
+  countSearchWords,
+
+  /// The count sort words
+  countSortWords,
+
+  /// The filter words
+  countFilterWords,
+
+  /// The count adjust goals
+  countAdjustGoals,
+
   /// The immediately
   immediately,
 }
@@ -17,6 +32,16 @@ extension KeyFeature on InterstitialAdSharedPreferencesKey {
     switch (this) {
       case InterstitialAdSharedPreferencesKey.countOpenApp:
         return 'count_open_app';
+      case InterstitialAdSharedPreferencesKey.countSyncWords:
+        return 'count_sync_words';
+      case InterstitialAdSharedPreferencesKey.countSearchWords:
+        return 'count_search_words';
+      case InterstitialAdSharedPreferencesKey.countSortWords:
+        return 'count_sort_words';
+      case InterstitialAdSharedPreferencesKey.countFilterWords:
+        return 'count_filter_words';
+      case InterstitialAdSharedPreferencesKey.countAdjustGoals:
+        return 'count_adjust_goals';
       case InterstitialAdSharedPreferencesKey.immediately:
         return 'interstitial_immediately';
     }
@@ -26,6 +51,16 @@ extension KeyFeature on InterstitialAdSharedPreferencesKey {
     switch (this) {
       case InterstitialAdSharedPreferencesKey.countOpenApp:
         return 3;
+      case InterstitialAdSharedPreferencesKey.countSyncWords:
+        return 3;
+      case InterstitialAdSharedPreferencesKey.countSearchWords:
+        return 3;
+      case InterstitialAdSharedPreferencesKey.countSortWords:
+        return 0;
+      case InterstitialAdSharedPreferencesKey.countFilterWords:
+        return 0;
+      case InterstitialAdSharedPreferencesKey.countAdjustGoals:
+        return 0;
       case InterstitialAdSharedPreferencesKey.immediately:
         return 1;
     }

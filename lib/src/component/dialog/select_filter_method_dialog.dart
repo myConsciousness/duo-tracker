@@ -3,10 +3,12 @@
 // BSD-style license that can be found in the LICENSE file.
 
 import 'package:awesome_dialog/awesome_dialog.dart';
+import 'package:duo_tracker/src/admob/interstitial_ad_utils.dart';
 import 'package:duo_tracker/src/component/common_two_grids_radio_list_tile.dart';
 import 'package:duo_tracker/src/component/const/filter_pattern.dart';
 import 'package:duo_tracker/src/component/dialog/warning_dialog.dart';
 import 'package:duo_tracker/src/repository/preference/common_shared_preferences_key.dart';
+import 'package:duo_tracker/src/repository/preference/interstitial_ad_shared_preferences_key.dart';
 import 'package:duo_tracker/src/repository/service/learned_word_service.dart';
 import 'package:flutter/material.dart';
 
@@ -182,6 +184,12 @@ Future<T?> showSelectFilterMethodDialog<T>({
 
                           onPressedOk.call(_filterPattern, _selectedItems);
                           _dialog.dismiss();
+
+                          await InterstitialAdUtils.showInterstitialAd(
+                            sharedPreferencesKey:
+                                InterstitialAdSharedPreferencesKey
+                                    .countFilterWords,
+                          );
                         },
                       ),
                     ),

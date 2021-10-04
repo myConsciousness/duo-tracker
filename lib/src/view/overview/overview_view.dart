@@ -5,6 +5,7 @@
 import 'package:audioplayers/audioplayers.dart';
 import 'package:clipboard/clipboard.dart';
 import 'package:duo_tracker/src/admob/banner_ad_utils.dart';
+import 'package:duo_tracker/src/admob/interstitial_ad_utils.dart';
 import 'package:duo_tracker/src/component/common_app_bar_titles.dart';
 import 'package:duo_tracker/src/component/common_divider.dart';
 import 'package:duo_tracker/src/component/common_nested_scroll_view.dart';
@@ -22,6 +23,7 @@ import 'package:duo_tracker/src/component/snackbar/info_snack_bar.dart';
 import 'package:duo_tracker/src/http/network.dart';
 import 'package:duo_tracker/src/repository/model/learned_word_model.dart';
 import 'package:duo_tracker/src/repository/model/word_hint_model.dart';
+import 'package:duo_tracker/src/repository/preference/interstitial_ad_shared_preferences_key.dart';
 import 'package:duo_tracker/src/repository/service/learned_word_service.dart';
 import 'package:duo_tracker/src/http/utils/duolingo_api_utils.dart';
 import 'package:duo_tracker/src/utils/language_converter.dart';
@@ -174,7 +176,7 @@ class _OverviewViewState extends State<OverviewView> {
             FutureBuilder(
               future: BannerAdUtils.canShow(
                 index: index,
-                interval: 2,
+                interval: 5,
               ),
               builder: (BuildContext context, AsyncSnapshot snapshot) {
                 if (!snapshot.hasData || !snapshot.data) {
@@ -586,6 +588,12 @@ class _OverviewViewState extends State<OverviewView> {
               _searchWord = searchWord;
               _matchPattern = MatchPatternExt.toEnum(code: matchPatternCode);
             });
+          },
+          onSubmitted: (_) async {
+            await InterstitialAdUtils.showInterstitialAd(
+              sharedPreferencesKey:
+                  InterstitialAdSharedPreferencesKey.countSearchWords,
+            );
           },
         ),
       );
