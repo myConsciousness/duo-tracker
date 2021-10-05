@@ -39,4 +39,8 @@ abstract class LearnedWordFolderItemRepository
     required String fromLanguage,
     required String learningLanguage,
   });
+
+  Future<void> deleteByFolderId({
+    required int folderId,
+  });
 }

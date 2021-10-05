@@ -5,6 +5,7 @@
 import 'package:duo_tracker/src/component/common_app_bar_titles.dart';
 import 'package:duo_tracker/src/component/common_divider.dart';
 import 'package:duo_tracker/src/component/common_nested_scroll_view.dart';
+import 'package:duo_tracker/src/component/dialog/confirm_dialog.dart';
 import 'package:duo_tracker/src/component/dialog/create_new_folder_dialog.dart';
 import 'package:duo_tracker/src/component/loading.dart';
 import 'package:duo_tracker/src/repository/model/learned_word_folder_model.dart';
@@ -126,6 +127,12 @@ class _LearnedWordFolderViewState extends State<LearnedWordFolderView> {
                   final folder = folders[index];
                   return Card(
                     elevation: 5,
+                    shape: const RoundedRectangleBorder(
+                      borderRadius: BorderRadius.vertical(
+                        top: Radius.circular(30),
+                        bottom: Radius.circular(30),
+                      ),
+                    ),
                     child: Padding(
                       padding: const EdgeInsets.all(20),
                       child: Column(
@@ -167,24 +174,53 @@ class _LearnedWordFolderViewState extends State<LearnedWordFolderView> {
                             ],
                           ),
                           const CommonDivider(),
-                          ListTile(
-                            leading: Icon(
-                              Icons.folder_open,
-                              color: Theme.of(context).colorScheme.secondary,
-                            ),
-                            title: Text(folder.name),
-                            subtitle: Text(folder.remarks),
-                            onTap: () async {
-                              await Navigator.push(
-                                context,
-                                MaterialPageRoute(
-                                  builder: (_) => LearnedWordFolderItemsView(
-                                    folderId: folder.id,
-                                    folderName: folder.name,
+                          Row(
+                            children: [
+                              Expanded(
+                                child: ListTile(
+                                  leading: Icon(
+                                    Icons.folder_open,
+                                    color:
+                                        Theme.of(context).colorScheme.secondary,
                                   ),
+                                  title: Text(folder.name),
+                                  subtitle: Text(folder.remarks),
+                                  onTap: () async {
+                                    await Navigator.push(
+                                      context,
+                                      MaterialPageRoute(
+                                        builder: (_) =>
+                                            LearnedWordFolderItemsView(
+                                          folderId: folder.id,
+                                          folderName: folder.name,
+                                        ),
+                                      ),
+                                    );
+                                  },
                                 ),
-                              );
-                            },
+                              ),
+                              IconButton(
+                                tooltip: 'Delete Folder',
+                                icon: const Icon(Icons.delete),
+                                onPressed: () async {
+                                  await showConfirmDialog(
+                                    context: context,
+                                    title: 'Delete Folder',
+                                    content:
+                                        'Are you sure you want to delete the folder "${folder.name}"?',
+                                    onPressedOk: () async {
+                                      await _learnedWordFolderService
+                                          .delete(folder);
+                                      await _learnedWordFolderItemService
+                                          .deleteByFolderId(
+                                              folderId: folder.id);
+
+                                      super.setState(() {});
+                                    },
+                                  );
+                                },
+                              ),
+                            ],
                           ),
                         ],
                       ),

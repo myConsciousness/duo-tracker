@@ -3,7 +3,6 @@
 // BSD-style license that can be found in the LICENSE file.
 
 import 'package:awesome_dialog/awesome_dialog.dart';
-import 'package:duo_tracker/src/component/dialog/input_error_dialog.dart';
 import 'package:duo_tracker/src/component/loading.dart';
 import 'package:duo_tracker/src/repository/model/learned_word_folder_item_model.dart';
 import 'package:duo_tracker/src/repository/model/learned_word_folder_model.dart';

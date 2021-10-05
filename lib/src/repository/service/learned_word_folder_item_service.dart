@@ -212,4 +212,16 @@ class LearnedWordFolderItemService extends LearnedWordFolderItemRepository {
                   ],
                 ),
               );
+
+  @override
+  Future<void> deleteByFolderId({
+    required int folderId,
+  }) async =>
+      await super.database.then(
+            (database) => database.delete(
+              table,
+              where: 'FOLDER_ID = ?',
+              whereArgs: [folderId],
+            ),
+          );
 }
