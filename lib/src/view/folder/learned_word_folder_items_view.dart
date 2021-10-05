@@ -66,8 +66,9 @@ class _LearnedWordFolderItemsViewState
 
   Widget _buildLearnedWordCard({
     required int index,
-    required LearnedWord learnedWord,
+    required LearnedWordFolderItem learnedWordFolderItem,
   }) {
+    final learnedWord = learnedWordFolderItem.learnedWord;
     return Column(
       children: [
         Card(
@@ -88,7 +89,7 @@ class _LearnedWordFolderItemsViewState
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
                     _buildCardHeaderText(
-                      title: '${learnedWord.sortOrder + 1}',
+                      title: '${learnedWord!.sortOrder + 1}',
                       subTitle: 'Index',
                     ),
                     _buildCardHeaderText(
@@ -172,6 +173,16 @@ class _LearnedWordFolderItemsViewState
                           wordHints: learnedWord.wordHints,
                         ),
                       ),
+                    ),
+                    IconButton(
+                      icon: const Icon(Icons.delete),
+                      onPressed: () async {
+                        await _learnedWordFolderItemService.delete(
+                          learnedWordFolderItem,
+                        );
+
+                        super.setState(() {});
+                      },
                     ),
                   ],
                 ),
@@ -343,7 +354,7 @@ class _LearnedWordFolderItemsViewState
                   final item = items[index];
                   return _buildLearnedWordCard(
                     index: index,
-                    learnedWord: item.learnedWord!,
+                    learnedWordFolderItem: item,
                   );
                 },
               );

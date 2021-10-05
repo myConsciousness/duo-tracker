@@ -2,7 +2,6 @@
 // Use of this source code is governed by a
 // BSD-style license that can be found in the LICENSE file.
 
-import 'package:duo_tracker/src/component/common_divider.dart';
 import 'package:duo_tracker/src/component/loading.dart';
 import 'package:duo_tracker/src/component/text_with_horizontal_divider.dart';
 import 'package:duo_tracker/src/repository/model/course_model.dart';
@@ -193,16 +192,6 @@ class _UserLearnedCoursesViewState extends State<UserLearnedCoursesView> {
                   ),
                   const SizedBox(
                     height: 5,
-                  ),
-                  const CommonDivider(),
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.end,
-                    children: [
-                      IconButton(
-                        icon: const Icon(Icons.share),
-                        onPressed: () {},
-                      ),
-                    ],
                   ),
                 ],
               ),

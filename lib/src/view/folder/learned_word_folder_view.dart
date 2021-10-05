@@ -195,7 +195,7 @@ class _LearnedWordFolderViewState extends State<LearnedWordFolderView> {
                                           folderName: folder.name,
                                         ),
                                       ),
-                                    );
+                                    ).then((value) => super.setState(() {}));
                                   },
                                 ),
                               ),
