@@ -3,6 +3,7 @@
 // BSD-style license that can be found in the LICENSE file.
 
 import 'package:awesome_dialog/awesome_dialog.dart';
+import 'package:duo_tracker/src/component/dialog/create_new_folder_dialog.dart';
 import 'package:duo_tracker/src/component/loading.dart';
 import 'package:duo_tracker/src/repository/model/learned_word_folder_item_model.dart';
 import 'package:duo_tracker/src/repository/model/learned_word_folder_model.dart';
@@ -67,6 +68,32 @@ Future<T?> showSelectFolderDialog<T>({
                       }
 
                       final List<LearnedWordFolder> folders = snapshot.data;
+
+                      if (folders.isEmpty) {
+                        return Column(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          crossAxisAlignment: CrossAxisAlignment.center,
+                          children: [
+                            const Center(
+                              child: Text('No Folders'),
+                            ),
+                            ElevatedButton(
+                              child: const Text('Add New Folder'),
+                              style: ElevatedButton.styleFrom(
+                                primary: Theme.of(context)
+                                    .colorScheme
+                                    .secondaryVariant,
+                                onPrimary: Colors.white,
+                              ),
+                              onPressed: () async {
+                                await showCreateNewFolderDialog(
+                                    context: context);
+                                setState(() {});
+                              },
+                            ),
+                          ],
+                        );
+                      }
 
                       return ListView.builder(
                         itemCount: folders.length,
