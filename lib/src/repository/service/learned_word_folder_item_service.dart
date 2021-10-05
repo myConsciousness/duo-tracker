@@ -4,6 +4,7 @@
 
 import 'package:duo_tracker/src/repository/learned_word_folder_item_repository.dart';
 import 'package:duo_tracker/src/repository/model/learned_word_folder_item_model.dart';
+import 'package:duo_tracker/src/repository/service/learned_word_service.dart';
 
 class LearnedWordFolderItemService extends LearnedWordFolderItemRepository {
   /// The internal constructor.
@@ -14,6 +15,9 @@ class LearnedWordFolderItemService extends LearnedWordFolderItemRepository {
 
   /// The singleton instance of this [LearnedWordFolderItemService].
   static final _singletonInstance = LearnedWordFolderItemService._internal();
+
+  /// The learned word service
+  final _learnedWordService = LearnedWordService.getInstance();
 
   @override
   Future<bool>
@@ -91,6 +95,42 @@ class LearnedWordFolderItemService extends LearnedWordFolderItemRepository {
       );
 
   @override
+  Future<void> deleteByFolderId({
+    required int folderId,
+  }) async =>
+      await super.database.then(
+            (database) => database.delete(
+              table,
+              where: 'FOLDER_ID = ?',
+              whereArgs: [folderId],
+            ),
+          );
+
+  @override
+  Future<void>
+      deleteByFolderIdAndWordIdAndUserIdAndFromLanguageAndLearningLanguage({
+    required int folderId,
+    required String wordId,
+    required String userId,
+    required String fromLanguage,
+    required String learningLanguage,
+  }) async =>
+          await super.database.then(
+                (database) => database.delete(
+                  table,
+                  where:
+                      'FOLDER_ID = ? AND WORD_ID = ? AND USER_ID = ? AND FROM_LANGUAGE = ? AND LEARNING_LANGUAGE = ?',
+                  whereArgs: [
+                    folderId,
+                    wordId,
+                    userId,
+                    fromLanguage,
+                    learningLanguage,
+                  ],
+                ),
+              );
+
+  @override
   Future<List<LearnedWordFolderItem>> findAll() async =>
       await super.database.then(
             (database) => database.query(table).then(
@@ -111,31 +151,39 @@ class LearnedWordFolderItemService extends LearnedWordFolderItemRepository {
     required String userId,
     required String fromLanguage,
     required String learningLanguage,
-  }) async =>
-          await super.database.then(
-                (database) => database
-                    .query(
-                      table,
-                      where:
-                          'FOLDER_ID = ? AND USER_ID = ? AND FROM_LANGUAGE = ? AND LEARNING_LANGUAGE = ?',
-                      whereArgs: [
-                        folderId,
-                        userId,
-                        fromLanguage,
-                        learningLanguage,
-                      ],
-                      orderBy: 'CREATED_AT DESC',
+  }) async {
+    final learnedWordFolderItems = await super.database.then(
+          (database) => database
+              .query(
+                table,
+                where:
+                    'FOLDER_ID = ? AND USER_ID = ? AND FROM_LANGUAGE = ? AND LEARNING_LANGUAGE = ?',
+                whereArgs: [
+                  folderId,
+                  userId,
+                  fromLanguage,
+                  learningLanguage,
+                ],
+                orderBy: 'CREATED_AT DESC',
+              )
+              .then(
+                (v) => v
+                    .map(
+                      (e) => e.isNotEmpty
+                          ? LearnedWordFolderItem.fromMap(e)
+                          : LearnedWordFolderItem.empty(),
                     )
-                    .then(
-                      (v) => v
-                          .map(
-                            (e) => e.isNotEmpty
-                                ? LearnedWordFolderItem.fromMap(e)
-                                : LearnedWordFolderItem.empty(),
-                          )
-                          .toList(),
-                    ),
-              );
+                    .toList(),
+              ),
+        );
+
+    for (final learnedWordFolderItem in learnedWordFolderItems) {
+      learnedWordFolderItem.learnedWord = await _learnedWordService
+          .findByWordIdAndUserId(learnedWordFolderItem.wordId, userId);
+    }
+
+    return learnedWordFolderItems;
+  }
 
   @override
   Future<LearnedWordFolderItem> findById(int id) async =>
@@ -186,42 +234,6 @@ class LearnedWordFolderItemService extends LearnedWordFolderItemRepository {
               whereArgs: [
                 model.id,
               ],
-            ),
-          );
-
-  @override
-  Future<void>
-      deleteByFolderIdAndWordIdAndUserIdAndFromLanguageAndLearningLanguage({
-    required int folderId,
-    required String wordId,
-    required String userId,
-    required String fromLanguage,
-    required String learningLanguage,
-  }) async =>
-          await super.database.then(
-                (database) => database.delete(
-                  table,
-                  where:
-                      'FOLDER_ID = ? AND WORD_ID = ? AND USER_ID = ? AND FROM_LANGUAGE = ? AND LEARNING_LANGUAGE = ?',
-                  whereArgs: [
-                    folderId,
-                    wordId,
-                    userId,
-                    fromLanguage,
-                    learningLanguage,
-                  ],
-                ),
-              );
-
-  @override
-  Future<void> deleteByFolderId({
-    required int folderId,
-  }) async =>
-      await super.database.then(
-            (database) => database.delete(
-              table,
-              where: 'FOLDER_ID = ?',
-              whereArgs: [folderId],
             ),
           );
 }

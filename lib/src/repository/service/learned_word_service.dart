@@ -100,7 +100,7 @@ class LearnedWordService extends LearnedWordRepository {
     final sortPattern =
         SortPatternExt.toEnum(code: sortPatternCode).patternName;
 
-    final learedWords = await super.database.then(
+    final learnedWords = await super.database.then(
           (database) => database
               .query(
                 table,
@@ -122,12 +122,28 @@ class LearnedWordService extends LearnedWordRepository {
               ),
         );
 
+    await _correctModelObject(
+      learnedWords: learnedWords,
+      userId: userId,
+      learningLanguage: learningLanguage,
+    );
+
+    return learnedWords;
+  }
+
+  Future<void> _correctModelObject({
+    required List<LearnedWord> learnedWords,
+    required String userId,
+    required String learningLanguage,
+  }) async {
     final voiceConfiguration = await _voiceConfigurationService.findByLanguage(
-        language: learningLanguage);
+      language: learningLanguage,
+    );
+
     final String baseTtsVoiceUrl =
         '${voiceConfiguration.ttsBaseUrlHttps}${voiceConfiguration.path}/${voiceConfiguration.voiceType}/token';
 
-    for (final LearnedWord learnedWord in learedWords) {
+    for (final LearnedWord learnedWord in learnedWords) {
       if (learnedWord.wordString.contains(' ')) {
         final wordStrings = learnedWord.wordString.split(' ');
         for (final String wordString in wordStrings) {
@@ -144,13 +160,12 @@ class LearnedWordService extends LearnedWordRepository {
       final skill = await _skillService.findByName(name: learnedWord.skill);
       learnedWord.tipsAndNotes = skill.tipsAndNotes;
     }
-
-    return learedWords;
   }
 
   @override
   Future<LearnedWord> findByWordIdAndUserId(
-          String wordId, String userId) async =>
+      String wordId, String userId) async {
+    final learnedWords = [
       await super.database.then(
             (database) => database.query(
               table,
@@ -164,7 +179,17 @@ class LearnedWordService extends LearnedWordRepository {
                   ? LearnedWord.fromMap(entity[0])
                   : LearnedWord.empty(),
             ),
-          );
+          )
+    ];
+
+    await _correctModelObject(
+      learnedWords: learnedWords,
+      userId: userId,
+      learningLanguage: learnedWords[0].learningLanguage,
+    );
+
+    return learnedWords[0];
+  }
 
   @override
   Future<LearnedWord> insert(LearnedWord model) async {

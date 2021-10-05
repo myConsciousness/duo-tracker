@@ -4,6 +4,7 @@
 
 import 'package:duo_tracker/src/repository/boolean_text.dart';
 import 'package:duo_tracker/src/repository/const/column/learned_word_folder_item_column_name.dart';
+import 'package:duo_tracker/src/repository/model/learned_word_model.dart';
 
 class LearnedWordFolderItem {
   int id = -1;
@@ -18,6 +19,9 @@ class LearnedWordFolderItem {
   bool deleted;
   DateTime createdAt;
   DateTime updatedAt;
+
+  /// The learned word linked to word id
+  LearnedWord? learnedWord;
 
   /// The flag that represents if this model is exist
   bool _empty = false;
