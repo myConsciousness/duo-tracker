@@ -8,7 +8,33 @@ import 'package:duo_tracker/src/repository/repository.dart';
 abstract class LearnedWordFolderItemRepository
     extends Repository<LearnedWordFolderItem> {
   Future<List<LearnedWordFolderItem>>
-      findByUserIdAndFromLanguageAndLearningLanguage({
+      findByFolderIdAndUserIdAndFromLanguageAndLearningLanguage({
+    required int folderId,
+    required String userId,
+    required String fromLanguage,
+    required String learningLanguage,
+  });
+
+  Future<int> countByFolderIdAndUserIdAndFromLanguageAndLearningLanguage({
+    required int folderId,
+    required String userId,
+    required String fromLanguage,
+    required String learningLanguage,
+  });
+
+  Future<bool>
+      checkExistByFolderIdAndWordIdAndUserIdAndFromLanguageAndLearningLanguage({
+    required int folderId,
+    required String wordId,
+    required String userId,
+    required String fromLanguage,
+    required String learningLanguage,
+  });
+
+  Future<void>
+      deleteByFolderIdAndWordIdAndUserIdAndFromLanguageAndLearningLanguage({
+    required int folderId,
+    required String wordId,
     required String userId,
     required String fromLanguage,
     required String learningLanguage,

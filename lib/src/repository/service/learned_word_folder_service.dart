@@ -101,23 +101,54 @@ class LearnedWordFolderService extends LearnedWordFolderRepository {
     required String learningLanguage,
   }) async =>
           await super.database.then(
-                (database) => database.query(
-                  table,
-                  where:
-                      'USER_ID = ? AND FROM_LANGUAGE = ? AND LEARNING_LANGUAGE = ?',
-                  whereArgs: [
-                    userId,
-                    fromLanguage,
-                    learningLanguage,
-                  ],
-                ).then(
-                  (v) => v
-                      .map(
-                        (e) => e.isNotEmpty
-                            ? LearnedWordFolder.fromMap(e)
-                            : LearnedWordFolder.empty(),
-                      )
-                      .toList(),
-                ),
+                (database) => database
+                    .query(
+                      table,
+                      where:
+                          'USER_ID = ? AND FROM_LANGUAGE = ? AND LEARNING_LANGUAGE = ?',
+                      whereArgs: [
+                        userId,
+                        fromLanguage,
+                        learningLanguage,
+                      ],
+                      orderBy: 'CREATED_AT DESC',
+                    )
+                    .then(
+                      (v) => v
+                          .map(
+                            (e) => e.isNotEmpty
+                                ? LearnedWordFolder.fromMap(e)
+                                : LearnedWordFolder.empty(),
+                          )
+                          .toList(),
+                    ),
               );
+
+  @override
+  Future<bool>
+      checkExistByFolderNameAndUserIdAndFromLanguageAndLearningLanguage({
+    required String folderName,
+    required String userId,
+    required String fromLanguage,
+    required String learningLanguage,
+  }) async =>
+          await super.database.then((database) => database.rawQuery('''
+              SELECT
+                COUNT(*) ITEM_COUNT
+              FROM
+                $table
+              WHERE
+                1 = 1
+                AND NAME = ?
+                AND USER_ID = ?
+                AND FROM_LANGUAGE = ?
+                AND LEARNING_LANGUAGE = ?
+              ''', [
+                folderName,
+                userId,
+                fromLanguage,
+                learningLanguage
+              ]).then((entity) =>
+                  entity.isEmpty ? 0 : entity[0]['ITEM_COUNT'] as int)) >
+          0;
 }

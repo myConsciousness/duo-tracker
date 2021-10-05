@@ -12,14 +12,14 @@ import 'package:flutter/material.dart';
 
 class LearnedWordFolderItemsView extends StatefulWidget {
   /// The folder code
-  final int folderCode;
+  final int folderId;
 
   /// The folder name
   final String folderName;
 
   const LearnedWordFolderItemsView({
     Key? key,
-    required this.folderCode,
+    required this.folderId,
     required this.folderName,
   }) : super(key: key);
 
@@ -53,18 +53,11 @@ class _LearnedWordFolderItemsViewState
   Widget build(BuildContext context) => Scaffold(
         body: CommonNestedScrollView(
           title: CommonAppBarTitles(
-            title: 'Learned Word Folder Items',
-            subTitle: widget.folderName,
+            title: 'Stored Learned Words',
+            subTitle: 'Folder: ${widget.folderName}',
           ),
-          actions: [
-            IconButton(
-              tooltip: 'Add Item',
-              icon: const Icon(Icons.add),
-              onPressed: () async {},
-            ),
-          ],
           body: FutureBuilder(
-            future: _fetchDataSource(),
+            future: _fetchDataSource(folderId: widget.folderId),
             builder: (BuildContext context, AsyncSnapshot snapshot) {
               if (!snapshot.hasData) {
                 return const Loading();
@@ -73,22 +66,8 @@ class _LearnedWordFolderItemsViewState
               final List<LearnedWordFolderItem> items = snapshot.data;
 
               if (items.isEmpty) {
-                return Column(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  crossAxisAlignment: CrossAxisAlignment.center,
-                  children: [
-                    const Center(
-                      child: Text('No Items'),
-                    ),
-                    ElevatedButton(
-                      child: const Text('Add New Item'),
-                      style: ElevatedButton.styleFrom(
-                        primary: Theme.of(context).colorScheme.secondaryVariant,
-                        onPrimary: Colors.white,
-                      ),
-                      onPressed: () async {},
-                    ),
-                  ],
+                return const Center(
+                  child: Text('No Items'),
                 );
               }
 
@@ -111,7 +90,9 @@ class _LearnedWordFolderItemsViewState
         ),
       );
 
-  Future<List<LearnedWordFolderItem>> _fetchDataSource() async {
+  Future<List<LearnedWordFolderItem>> _fetchDataSource({
+    required int folderId,
+  }) async {
     final userId = await CommonSharedPreferencesKey.userId.getString();
     final fromLanguage =
         await CommonSharedPreferencesKey.currentFromLanguage.getString();
@@ -119,7 +100,8 @@ class _LearnedWordFolderItemsViewState
         await CommonSharedPreferencesKey.currentLearningLanguage.getString();
 
     return await _learnedWordFolderItemService
-        .findByUserIdAndFromLanguageAndLearningLanguage(
+        .findByFolderIdAndUserIdAndFromLanguageAndLearningLanguage(
+      folderId: folderId,
       userId: userId,
       fromLanguage: fromLanguage,
       learningLanguage: learningLanguage,

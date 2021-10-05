@@ -13,4 +13,12 @@ abstract class LearnedWordFolderRepository
     required String fromLanguage,
     required String learningLanguage,
   });
+
+  Future<bool>
+      checkExistByFolderNameAndUserIdAndFromLanguageAndLearningLanguage({
+    required String folderName,
+    required String userId,
+    required String fromLanguage,
+    required String learningLanguage,
+  });
 }

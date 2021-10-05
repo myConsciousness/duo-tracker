@@ -21,6 +21,9 @@ final _remarks = TextEditingController();
 Future<T?> showCreateNewFolderDialog<T>({
   required BuildContext context,
 }) async {
+  _folderName.text = '';
+  _remarks.text = '';
+
   _dialog = AwesomeDialog(
     context: context,
     animType: AnimType.LEFTSLIDE,
@@ -50,6 +53,7 @@ Future<T?> showCreateNewFolderDialog<T>({
                       controller: _folderName,
                       label: 'Folder Name',
                       hintText: 'Folder name (required)',
+                      maxLength: 50,
                     ),
                     const SizedBox(
                       height: 10,
@@ -71,7 +75,9 @@ Future<T?> showCreateNewFolderDialog<T>({
                   text: 'Create',
                   color: Theme.of(context).colorScheme.secondaryVariant,
                   pressEvent: () async {
-                    if (_folderName.text.isEmpty) {
+                    final trimmedFolderName = _folderName.text.trim();
+
+                    if (trimmedFolderName.isEmpty) {
                       await showInputErrorDialog(
                           context: context,
                           content: 'The folder name is required.');
@@ -87,20 +93,24 @@ Future<T?> showCreateNewFolderDialog<T>({
                         .currentLearningLanguage
                         .getString();
 
-                    await _learnedWordFolderService.insert(
-                      LearnedWordFolder.from(
-                        parentFolderId: -1,
-                        name: _folderName.text,
-                        alias: '',
-                        remarks: _remarks.text,
-                        userId: userId,
-                        fromLanguage: fromLanguage,
-                        learningLanguage: learningLanguage,
-                        sortOrder: 2,
-                        deleted: false,
-                        createdAt: DateTime.now(),
-                        updatedAt: DateTime.now(),
-                      ),
+                    if (await _isFolderDuplicated(
+                      folderName: trimmedFolderName,
+                      userId: userId,
+                      fromLanguage: fromLanguage,
+                      learningLanguage: learningLanguage,
+                    )) {
+                      await showInputErrorDialog(
+                          context: context,
+                          content:
+                              'The folder "$trimmedFolderName" already exists.');
+                      return;
+                    }
+
+                    await _createNewFolder(
+                      folderName: trimmedFolderName,
+                      userId: userId,
+                      fromLanguage: fromLanguage,
+                      learningLanguage: learningLanguage,
                     );
 
                     _dialog.dismiss();
@@ -115,7 +125,7 @@ Future<T?> showCreateNewFolderDialog<T>({
                   },
                 ),
                 const SizedBox(
-                  height: 30,
+                  height: 10,
                 ),
               ],
             ),
@@ -127,3 +137,40 @@ Future<T?> showCreateNewFolderDialog<T>({
 
   await _dialog.show();
 }
+
+Future<bool> _isFolderDuplicated({
+  required String folderName,
+  required String userId,
+  required String fromLanguage,
+  required String learningLanguage,
+}) async {
+  return await _learnedWordFolderService
+      .checkExistByFolderNameAndUserIdAndFromLanguageAndLearningLanguage(
+    folderName: folderName,
+    userId: userId,
+    fromLanguage: fromLanguage,
+    learningLanguage: learningLanguage,
+  );
+}
+
+Future<void> _createNewFolder({
+  required String folderName,
+  required String userId,
+  required String fromLanguage,
+  required String learningLanguage,
+}) async =>
+    await _learnedWordFolderService.insert(
+      LearnedWordFolder.from(
+        parentFolderId: -1,
+        name: folderName,
+        alias: '',
+        remarks: _remarks.text,
+        userId: userId,
+        fromLanguage: fromLanguage,
+        learningLanguage: learningLanguage,
+        sortOrder: 2,
+        deleted: false,
+        createdAt: DateTime.now(),
+        updatedAt: DateTime.now(),
+      ),
+    );

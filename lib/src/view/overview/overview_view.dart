@@ -14,6 +14,7 @@ import 'package:duo_tracker/src/component/const/match_pattern.dart';
 import 'package:duo_tracker/src/component/dialog/loading_dialog.dart';
 import 'package:duo_tracker/src/component/dialog/network_error_dialog.dart';
 import 'package:duo_tracker/src/component/dialog/select_filter_method_dialog.dart';
+import 'package:duo_tracker/src/component/dialog/select_folder_dialog.dart';
 import 'package:duo_tracker/src/component/dialog/select_search_method_dialog.dart';
 import 'package:duo_tracker/src/component/dialog/switch_language_dialog.dart';
 import 'package:duo_tracker/src/component/dialog/select_sort_method_dialog.dart';
@@ -527,6 +528,16 @@ class _OverviewViewState extends State<OverviewView> {
                   ),
                 ),
               ),
+            IconButton(
+              tooltip: 'Store In Folder',
+              icon: const Icon(Icons.create_new_folder),
+              onPressed: () async {
+                await showSelectFolderDialog(
+                  context: context,
+                  wordId: learnedWord.wordId,
+                );
+              },
+            ),
             //! It will be forcibly redirected to the official app side to the learning page.
             // IconButton(
             //   tooltip: 'Learn at Duolingo',

@@ -3,6 +3,7 @@
 // BSD-style license that can be found in the LICENSE file.
 
 import 'package:duo_tracker/src/component/common_app_bar_titles.dart';
+import 'package:duo_tracker/src/component/common_divider.dart';
 import 'package:duo_tracker/src/component/common_nested_scroll_view.dart';
 import 'package:duo_tracker/src/component/dialog/create_new_folder_dialog.dart';
 import 'package:duo_tracker/src/component/loading.dart';
@@ -13,8 +14,7 @@ import 'package:duo_tracker/src/repository/service/learned_word_folder_service.d
 import 'package:duo_tracker/src/utils/language_converter.dart';
 import 'package:duo_tracker/src/view/folder/learned_word_folder_items_view.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_speed_dial/flutter_speed_dial.dart';
-import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+import 'package:intl/intl.dart';
 
 class LearnedWordFolderView extends StatefulWidget {
   const LearnedWordFolderView({Key? key}) : super(key: key);
@@ -29,6 +29,16 @@ class _LearnedWordFolderViewState extends State<LearnedWordFolderView> {
 
   /// The learned word folder service
   final _learnedWordFolderService = LearnedWordFolderService.getInstance();
+
+  /// The learned word folder item service
+  final _learnedWordFolderItemService =
+      LearnedWordFolderItemService.getInstance();
+
+  /// The datetime format
+  final _datetimeFormat = DateFormat('yyyy/MM/dd HH:mm');
+
+  /// The format for numeric text
+  final _numericTextFormat = NumberFormat('#,###');
 
   @override
   void initState() {
@@ -46,28 +56,6 @@ class _LearnedWordFolderViewState extends State<LearnedWordFolderView> {
     super.dispose();
   }
 
-  Widget _buildSearchBar() => Container(
-        margin: const EdgeInsets.fromLTRB(45, 0, 45, 0),
-        child: TextField(
-          decoration: InputDecoration(
-            prefixIcon: const Icon(Icons.search),
-            hintText: 'Search Word',
-            filled: true,
-            fillColor:
-                Theme.of(context).colorScheme.background.withOpacity(0.5),
-            border: OutlineInputBorder(
-              borderRadius: BorderRadius.circular(50),
-              borderSide: const BorderSide(
-                width: 0,
-                style: BorderStyle.none,
-              ),
-            ),
-          ),
-          onChanged: (searchWord) async {},
-          onSubmitted: (_) async {},
-        ),
-      );
-
   Future<void> _buildAppBarSubTitle() async {
     final fromLanguage =
         await CommonSharedPreferencesKey.currentFromLanguage.getString();
@@ -82,20 +70,6 @@ class _LearnedWordFolderViewState extends State<LearnedWordFolderView> {
       _appBarSubTitle = '$fromLanguageName → $learningLanguageName';
     });
   }
-
-  SpeedDialChild _buildSpeedDialChild({
-    required IconData icon,
-    required String label,
-    required Function() onTap,
-  }) =>
-      SpeedDialChild(
-        child: Icon(
-          icon,
-          size: 19,
-        ),
-        label: label,
-        onTap: onTap,
-      );
 
   @override
   Widget build(BuildContext context) => Scaffold(
@@ -151,27 +125,120 @@ class _LearnedWordFolderViewState extends State<LearnedWordFolderView> {
                 itemBuilder: (BuildContext context, int index) {
                   final folder = folders[index];
                   return Card(
-                    child: ListTile(
-                      leading: const Icon(Icons.folder),
-                      title: Text(folder.name),
-                      subtitle: Text(folder.remarks),
-                      onTap: () async {
-                        await Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                            builder: (_) => LearnedWordFolderItemsView(
-                              folderCode: folder.id,
-                              folderName: folder.name,
-                            ),
+                    elevation: 5,
+                    child: Padding(
+                      padding: const EdgeInsets.all(20),
+                      child: Column(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        crossAxisAlignment: CrossAxisAlignment.center,
+                        children: [
+                          Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                            children: [
+                              FutureBuilder(
+                                future: _learnedWordFolderItemService
+                                    .countByFolderIdAndUserIdAndFromLanguageAndLearningLanguage(
+                                  folderId: folder.id,
+                                  userId: folder.userId,
+                                  fromLanguage: folder.fromLanguage,
+                                  learningLanguage: folder.learningLanguage,
+                                ),
+                                builder: (BuildContext context,
+                                    AsyncSnapshot itemCountSnapshot) {
+                                  if (!itemCountSnapshot.hasData) {
+                                    return const Loading();
+                                  }
+
+                                  return _buildCardHeaderText(
+                                    title: _numericTextFormat
+                                        .format(itemCountSnapshot.data),
+                                    subTitle: 'Folder Items',
+                                  );
+                                },
+                              ),
+                              _buildCardHeaderText(
+                                title: _datetimeFormat.format(folder.createdAt),
+                                subTitle: 'Created At',
+                              ),
+                              _buildCardHeaderText(
+                                title: _datetimeFormat.format(folder.updatedAt),
+                                subTitle: 'Updated At',
+                              ),
+                            ],
                           ),
-                        );
-                      },
+                          const CommonDivider(),
+                          ListTile(
+                            leading: Icon(
+                              Icons.folder_open,
+                              color: Theme.of(context).colorScheme.secondary,
+                            ),
+                            title: Text(folder.name),
+                            subtitle: Text(folder.remarks),
+                            onTap: () async {
+                              await Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                  builder: (_) => LearnedWordFolderItemsView(
+                                    folderId: folder.id,
+                                    folderName: folder.name,
+                                  ),
+                                ),
+                              );
+                            },
+                          ),
+                        ],
+                      ),
                     ),
                   );
                 },
               );
             },
           ),
+        ),
+      );
+
+  Widget _buildCardHeaderText({
+    required String title,
+    required String subTitle,
+  }) =>
+      Column(
+        children: [
+          _buildTextSecondaryColor(
+            text: subTitle,
+            fontSize: 12,
+          ),
+          _buildText(
+            text: title,
+            fontSize: 14,
+          ),
+        ],
+      );
+
+  Text _buildText({
+    required String text,
+    required double fontSize,
+    double opacity = 1.0,
+    bool boldText = false,
+  }) =>
+      Text(
+        text,
+        style: TextStyle(
+          color: Theme.of(context).colorScheme.onSurface.withOpacity(opacity),
+          fontSize: fontSize,
+          fontWeight: boldText ? FontWeight.bold : FontWeight.normal,
+        ),
+      );
+
+  Text _buildTextSecondaryColor({
+    required String text,
+    required double fontSize,
+    double opacity = 1.0,
+  }) =>
+      Text(
+        text,
+        style: TextStyle(
+          color: Theme.of(context).colorScheme.secondary.withOpacity(opacity),
+          fontSize: fontSize,
         ),
       );
 
