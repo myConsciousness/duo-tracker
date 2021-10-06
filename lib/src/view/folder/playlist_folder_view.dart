@@ -77,7 +77,7 @@ class _PlaylistFolderViewState extends State<PlaylistFolderView> {
   Widget build(BuildContext context) => Scaffold(
         body: CommonNestedScrollView(
           title: CommonAppBarTitles(
-            title: 'Playlist Folder',
+            title: 'Playlist Folders',
             subTitle: _appBarSubTitle,
           ),
           actions: [

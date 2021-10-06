@@ -78,7 +78,7 @@ class _LearnedWordFolderViewState extends State<LearnedWordFolderView> {
   Widget build(BuildContext context) => Scaffold(
         body: CommonNestedScrollView(
           title: CommonAppBarTitles(
-            title: 'Learned Word Folder',
+            title: 'Learned Word Folders',
             subTitle: _appBarSubTitle,
           ),
           actions: [
