@@ -3,14 +3,17 @@
 // BSD-style license that can be found in the LICENSE file.
 
 import 'package:awesome_dialog/awesome_dialog.dart';
+import 'package:duo_tracker/src/component/common_two_grids_radio_list_tile.dart';
 import 'package:duo_tracker/src/component/const/folder_type.dart';
 import 'package:duo_tracker/src/component/dialog/create_new_folder_dialog.dart';
 import 'package:duo_tracker/src/component/loading.dart';
 import 'package:duo_tracker/src/repository/model/learned_word_folder_item_model.dart';
-import 'package:duo_tracker/src/repository/model/learned_word_folder_model.dart';
+import 'package:duo_tracker/src/repository/model/playlist_folder_item_model.dart';
 import 'package:duo_tracker/src/repository/preference/common_shared_preferences_key.dart';
 import 'package:duo_tracker/src/repository/service/learned_word_folder_item_service.dart';
 import 'package:duo_tracker/src/repository/service/learned_word_folder_service.dart';
+import 'package:duo_tracker/src/repository/service/playlist_folder_item_service.dart';
+import 'package:duo_tracker/src/repository/service/playlist_folder_service.dart';
 import 'package:flutter/material.dart';
 import 'package:quiver/iterables.dart';
 
@@ -26,6 +29,15 @@ final _learnedWordFolderService = LearnedWordFolderService.getInstance();
 final _learnedWordFolderItemService =
     LearnedWordFolderItemService.getInstance();
 
+/// The playlist folder service
+final _playlistFolderService = PlaylistFolderService.getInstance();
+
+/// The playlist folder item service
+final _playlistFolderItemService = PlaylistFolderItemService.getInstance();
+
+/// The selected folder type
+late FolderType _selectedFolderType;
+
 Future<T?> showSelectFolderDialog<T>({
   required BuildContext context,
   required String wordId,
@@ -33,6 +45,8 @@ Future<T?> showSelectFolderDialog<T>({
   _checkMarkers = [];
   _checkMarkersOriginal = [];
   _folderIds = [];
+
+  _selectedFolderType = FolderType.word;
 
   _dialog = AwesomeDialog(
     context: context,
@@ -57,10 +71,23 @@ Future<T?> showSelectFolderDialog<T>({
                 const SizedBox(
                   height: 25,
                 ),
+                CommonTwoGridsRadioListTile(
+                  dataSource: const {
+                    'Word': FolderType.word,
+                    'Playlist': FolderType.voice,
+                  },
+                  groupValue: _selectedFolderType,
+                  onChanged: (value) {
+                    setState(() {
+                      _selectedFolderType = value;
+                    });
+                  },
+                ),
                 SizedBox(
                   height: 200,
                   child: FutureBuilder(
                     future: _fetchDataSource(
+                      folderType: _selectedFolderType,
                       wordId: wordId,
                     ),
                     builder: (BuildContext context, AsyncSnapshot snapshot) {
@@ -68,11 +95,12 @@ Future<T?> showSelectFolderDialog<T>({
                         return const Loading();
                       }
 
-                      final List<LearnedWordFolder> folders = snapshot.data;
+                      final List<dynamic> folders = snapshot.data;
 
                       if (folders.isEmpty) {
                         return _buildAddNewFolderButton(
                           context: context,
+                          folderType: _selectedFolderType,
                           setState: setState,
                         );
                       }
@@ -124,6 +152,7 @@ Future<T?> showSelectFolderDialog<T>({
 
                       if (_checkMarkers[index]) {
                         await _addFolderItem(
+                          folderType: _selectedFolderType,
                           folderId: _folderIds[index],
                           wordId: wordId,
                           userId: userId,
@@ -132,6 +161,7 @@ Future<T?> showSelectFolderDialog<T>({
                         );
                       } else {
                         await _removeFolderItem(
+                            folderType: _selectedFolderType,
                             folderId: _folderIds[index],
                             wordId: wordId,
                             userId: userId,
@@ -167,6 +197,7 @@ Future<T?> showSelectFolderDialog<T>({
 
 Widget _buildAddNewFolderButton({
   required BuildContext context,
+  required FolderType folderType,
   required Function(void Function()) setState,
 }) =>
     Column(
@@ -185,7 +216,7 @@ Widget _buildAddNewFolderButton({
           onPressed: () async {
             await showCreateNewFolderDialog(
               context: context,
-              folderType: FolderType.word,
+              folderType: folderType,
             );
 
             setState(() {});
@@ -195,62 +226,97 @@ Widget _buildAddNewFolderButton({
     );
 
 Future<void> _addFolderItem({
+  required FolderType folderType,
   required int folderId,
   required String wordId,
   required String userId,
   required String fromLanguage,
   required String learningLanguage,
-}) async =>
-    await _learnedWordFolderItemService.insert(
-      LearnedWordFolderItem.from(
+}) async {
+  switch (folderType) {
+    case FolderType.word:
+      await _learnedWordFolderItemService.insert(
+        LearnedWordFolderItem.from(
+          folderId: folderId,
+          wordId: wordId,
+          alias: '',
+          remarks: '',
+          userId: userId,
+          fromLanguage: fromLanguage,
+          learningLanguage: learningLanguage,
+          sortOrder: 0,
+          deleted: false,
+          createdAt: DateTime.now(),
+          updatedAt: DateTime.now(),
+        ),
+      );
+      break;
+    case FolderType.voice:
+      await _playlistFolderItemService.insert(
+        PlaylistFolderItem.from(
+          folderId: folderId,
+          wordId: wordId,
+          alias: '',
+          remarks: '',
+          userId: userId,
+          fromLanguage: fromLanguage,
+          learningLanguage: learningLanguage,
+          sortOrder: 0,
+          deleted: false,
+          createdAt: DateTime.now(),
+          updatedAt: DateTime.now(),
+        ),
+      );
+      break;
+  }
+}
+
+Future<void> _removeFolderItem({
+  required FolderType folderType,
+  required int folderId,
+  required String wordId,
+  required String userId,
+  required String fromLanguage,
+  required String learningLanguage,
+}) async {
+  switch (folderType) {
+    case FolderType.word:
+      await _learnedWordFolderItemService
+          .deleteByFolderIdAndWordIdAndUserIdAndFromLanguageAndLearningLanguage(
         folderId: folderId,
         wordId: wordId,
-        alias: '',
-        remarks: '',
         userId: userId,
         fromLanguage: fromLanguage,
         learningLanguage: learningLanguage,
-        sortOrder: 0,
-        deleted: false,
-        createdAt: DateTime.now(),
-        updatedAt: DateTime.now(),
-      ),
-    );
-
-Future<void> _removeFolderItem({
-  required int folderId,
-  required String wordId,
-  required String userId,
-  required String fromLanguage,
-  required String learningLanguage,
-}) async =>
-    await _learnedWordFolderItemService
-        .deleteByFolderIdAndWordIdAndUserIdAndFromLanguageAndLearningLanguage(
-      folderId: folderId,
-      wordId: wordId,
-      userId: userId,
-      fromLanguage: fromLanguage,
-      learningLanguage: learningLanguage,
-    );
+      );
+      break;
+    case FolderType.voice:
+      await _playlistFolderItemService
+          .deleteByFolderIdAndWordIdAndUserIdAndFromLanguageAndLearningLanguage(
+        folderId: folderId,
+        wordId: wordId,
+        userId: userId,
+        fromLanguage: fromLanguage,
+        learningLanguage: learningLanguage,
+      );
+      break;
+  }
+}
 
 Future<void> _createCheckMarkers({
-  required List<LearnedWordFolder> folders,
+  required FolderType folderType,
+  required List<dynamic> folders,
   required String wordId,
 }) async {
-  final userId = await CommonSharedPreferencesKey.userId.getString();
-  final fromLanguage =
-      await CommonSharedPreferencesKey.currentFromLanguage.getString();
-  final learningLanguage =
-      await CommonSharedPreferencesKey.currentLearningLanguage.getString();
+  _checkMarkers = [];
+  _checkMarkersOriginal = [];
+  _folderIds = [];
 
   for (final folder in folders) {
-    final checked = await _learnedWordFolderItemService
-        .checkExistByFolderIdAndWordIdAndUserIdAndFromLanguageAndLearningLanguage(
+    final checked = await _isFolderAlreadyChecked(
+      folderType: folderType,
       folderId: folder.id,
       wordId: wordId,
-      userId: userId,
-      fromLanguage: fromLanguage,
-      learningLanguage: learningLanguage,
     );
 
     _checkMarkers.add(checked);
@@ -259,7 +325,9 @@ Future<void> _createCheckMarkers({
   }
 }
 
-Future<List<LearnedWordFolder>> _fetchDataSource({
+Future<bool> _isFolderAlreadyChecked({
+  required FolderType folderType,
+  required int folderId,
   required String wordId,
 }) async {
   final userId = await CommonSharedPreferencesKey.userId.getString();
@@ -268,19 +336,68 @@ Future<List<LearnedWordFolder>> _fetchDataSource({
   final learningLanguage =
       await CommonSharedPreferencesKey.currentLearningLanguage.getString();
 
-  final folders = await _learnedWordFolderService
-      .findByUserIdAndFromLanguageAndLearningLanguage(
-    userId: userId,
-    fromLanguage: fromLanguage,
-    learningLanguage: learningLanguage,
+  switch (folderType) {
+    case FolderType.word:
+      return await _learnedWordFolderItemService
+          .checkExistByFolderIdAndWordIdAndUserIdAndFromLanguageAndLearningLanguage(
+        folderId: folderId,
+        wordId: wordId,
+        userId: userId,
+        fromLanguage: fromLanguage,
+        learningLanguage: learningLanguage,
+      );
+    case FolderType.voice:
+      return await _playlistFolderItemService
+          .checkExistByFolderIdAndWordIdAndUserIdAndFromLanguageAndLearningLanguage(
+        folderId: folderId,
+        wordId: wordId,
+        userId: userId,
+        fromLanguage: fromLanguage,
+        learningLanguage: learningLanguage,
+      );
+  }
+}
+
+Future<List<dynamic>> _fetchDataSource({
+  required FolderType folderType,
+  required String wordId,
+}) async {
+  final List<dynamic> folders = await _fetchFolders(
+    folderType: folderType,
   );
 
-  if (_checkMarkers.isEmpty) {
-    await _createCheckMarkers(
-      folders: folders,
-      wordId: wordId,
-    );
-  }
+  await _createCheckMarkers(
+    folderType: folderType,
+    folders: folders,
+    wordId: wordId,
+  );
 
   return folders;
+}
+
+Future<List<dynamic>> _fetchFolders({
+  required FolderType folderType,
+}) async {
+  final userId = await CommonSharedPreferencesKey.userId.getString();
+  final fromLanguage =
+      await CommonSharedPreferencesKey.currentFromLanguage.getString();
+  final learningLanguage =
+      await CommonSharedPreferencesKey.currentLearningLanguage.getString();
+
+  switch (folderType) {
+    case FolderType.word:
+      return await _learnedWordFolderService
+          .findByUserIdAndFromLanguageAndLearningLanguage(
+        userId: userId,
+        fromLanguage: fromLanguage,
+        learningLanguage: learningLanguage,
+      );
+    case FolderType.voice:
+      return await _playlistFolderService
+          .findByUserIdAndFromLanguageAndLearningLanguage(
+        userId: userId,
+        fromLanguage: fromLanguage,
+        learningLanguage: learningLanguage,
+      );
+  }
 }
