@@ -3,6 +3,7 @@
 // BSD-style license that can be found in the LICENSE file.
 
 import 'package:awesome_dialog/awesome_dialog.dart';
+import 'package:duo_tracker/src/component/const/folder_type.dart';
 import 'package:duo_tracker/src/component/dialog/create_new_folder_dialog.dart';
 import 'package:duo_tracker/src/component/loading.dart';
 import 'package:duo_tracker/src/repository/model/learned_word_folder_item_model.dart';
@@ -28,6 +29,7 @@ final _learnedWordFolderItemService =
 Future<T?> showSelectFolderDialog<T>({
   required BuildContext context,
   required String wordId,
+  required FolderType folderType,
 }) async {
   _checkMarkers = [];
   _checkMarkersOriginal = [];
@@ -87,7 +89,10 @@ Future<T?> showSelectFolderDialog<T>({
                               ),
                               onPressed: () async {
                                 await showCreateNewFolderDialog(
-                                    context: context);
+                                  context: context,
+                                  folderType: folderType,
+                                );
+
                                 setState(() {});
                               },
                             ),

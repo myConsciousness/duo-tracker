@@ -5,7 +5,7 @@
 import 'package:duo_tracker/src/component/const/filter_pattern.dart';
 import 'package:duo_tracker/src/component/const/match_pattern.dart';
 import 'package:duo_tracker/src/repository/model/learned_word_model.dart';
-import 'package:duo_tracker/src/view/overview/overview_tab_view.dart';
+import 'package:duo_tracker/src/view/overview/overview_tab_type.dart';
 
 class WordFilter {
   /// Checks whether or not the word can be displayed based on the given arguments.

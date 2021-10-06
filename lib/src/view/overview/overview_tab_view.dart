@@ -3,23 +3,9 @@
 // BSD-style license that can be found in the LICENSE file.
 
 import 'package:duo_tracker/src/component/common_default_tab_controller.dart';
+import 'package:duo_tracker/src/view/overview/overview_tab_type.dart';
 import 'package:duo_tracker/src/view/overview/overview_view.dart';
 import 'package:flutter/material.dart';
-
-/// The enum that represents overview tab type.
-enum OverviewTabType {
-  /// All
-  all,
-
-  /// Bookmarked
-  bookmarked,
-
-  /// Completed
-  completed,
-
-  /// Trash
-  trash,
-}
 
 class OverviewTabView extends StatelessWidget {
   const OverviewTabView({

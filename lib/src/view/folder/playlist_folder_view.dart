@@ -10,32 +10,31 @@ import 'package:duo_tracker/src/component/dialog/confirm_dialog.dart';
 import 'package:duo_tracker/src/component/dialog/create_new_folder_dialog.dart';
 import 'package:duo_tracker/src/component/dialog/edit_folder_dialog.dart';
 import 'package:duo_tracker/src/component/loading.dart';
-import 'package:duo_tracker/src/repository/model/learned_word_folder_model.dart';
+import 'package:duo_tracker/src/repository/model/playlist_folder_model.dart';
 import 'package:duo_tracker/src/repository/preference/common_shared_preferences_key.dart';
-import 'package:duo_tracker/src/repository/service/learned_word_folder_item_service.dart';
-import 'package:duo_tracker/src/repository/service/learned_word_folder_service.dart';
+import 'package:duo_tracker/src/repository/service/playlist_folder_item_service.dart';
+import 'package:duo_tracker/src/repository/service/playlist_folder_service.dart';
 import 'package:duo_tracker/src/utils/language_converter.dart';
 import 'package:duo_tracker/src/view/folder/learned_word_folder_items_view.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 
-class LearnedWordFolderView extends StatefulWidget {
-  const LearnedWordFolderView({Key? key}) : super(key: key);
+class PlaylistFolderView extends StatefulWidget {
+  const PlaylistFolderView({Key? key}) : super(key: key);
 
   @override
-  _LearnedWordFolderViewState createState() => _LearnedWordFolderViewState();
+  _PlaylistFolderViewState createState() => _PlaylistFolderViewState();
 }
 
-class _LearnedWordFolderViewState extends State<LearnedWordFolderView> {
+class _PlaylistFolderViewState extends State<PlaylistFolderView> {
   /// The app bar subtitle
   String _appBarSubTitle = 'N/A';
 
-  /// The learned word folder service
-  final _learnedWordFolderService = LearnedWordFolderService.getInstance();
+  /// The playlist folder service
+  final _playlistFolderService = PlaylistFolderService.getInstance();
 
-  /// The learned word folder item service
-  final _learnedWordFolderItemService =
-      LearnedWordFolderItemService.getInstance();
+  /// The playlist folder item service
+  final _playlistFolderItemService = PlaylistFolderItemService.getInstance();
 
   /// The datetime format
   final _datetimeFormat = DateFormat('yyyy/MM/dd HH:mm');
@@ -78,7 +77,7 @@ class _LearnedWordFolderViewState extends State<LearnedWordFolderView> {
   Widget build(BuildContext context) => Scaffold(
         body: CommonNestedScrollView(
           title: CommonAppBarTitles(
-            title: 'Learned Word Folder',
+            title: 'Playlist Folder',
             subTitle: _appBarSubTitle,
           ),
           actions: [
@@ -88,7 +87,7 @@ class _LearnedWordFolderViewState extends State<LearnedWordFolderView> {
               onPressed: () async {
                 await showCreateNewFolderDialog(
                   context: context,
-                  folderType: FolderType.word,
+                  folderType: FolderType.voice,
                 );
 
                 super.setState(() {});
@@ -102,7 +101,7 @@ class _LearnedWordFolderViewState extends State<LearnedWordFolderView> {
                 return const Loading();
               }
 
-              final List<LearnedWordFolder> folders = snapshot.data;
+              final List<PlaylistFolder> folders = snapshot.data;
 
               if (folders.isEmpty) {
                 return Column(
@@ -121,7 +120,7 @@ class _LearnedWordFolderViewState extends State<LearnedWordFolderView> {
                       onPressed: () async {
                         await showCreateNewFolderDialog(
                           context: context,
-                          folderType: FolderType.word,
+                          folderType: FolderType.voice,
                         );
 
                         super.setState(() {});
@@ -153,7 +152,7 @@ class _LearnedWordFolderViewState extends State<LearnedWordFolderView> {
                             mainAxisAlignment: MainAxisAlignment.spaceBetween,
                             children: [
                               FutureBuilder(
-                                future: _learnedWordFolderItemService
+                                future: _playlistFolderItemService
                                     .countByFolderIdAndUserIdAndFromLanguageAndLearningLanguage(
                                   folderId: folder.id,
                                   userId: folder.userId,
@@ -239,9 +238,9 @@ class _LearnedWordFolderViewState extends State<LearnedWordFolderView> {
                                     content:
                                         'Are you sure you want to delete the folder "${folder.name}"?',
                                     onPressedOk: () async {
-                                      await _learnedWordFolderService
+                                      await _playlistFolderService
                                           .delete(folder);
-                                      await _learnedWordFolderItemService
+                                      await _playlistFolderItemService
                                           .deleteByFolderId(
                                               folderId: folder.id);
 
@@ -308,14 +307,14 @@ class _LearnedWordFolderViewState extends State<LearnedWordFolderView> {
         ),
       );
 
-  Future<List<LearnedWordFolder>> _fetchDataSource() async {
+  Future<List<PlaylistFolder>> _fetchDataSource() async {
     final userId = await CommonSharedPreferencesKey.userId.getString();
     final fromLanguage =
         await CommonSharedPreferencesKey.currentFromLanguage.getString();
     final learningLanguage =
         await CommonSharedPreferencesKey.currentLearningLanguage.getString();
 
-    return await _learnedWordFolderService
+    return await _playlistFolderService
         .findByUserIdAndFromLanguageAndLearningLanguage(
       userId: userId,
       fromLanguage: fromLanguage,

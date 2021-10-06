@@ -19,12 +19,14 @@ late AwesomeDialog _dialog;
 final _folderName = TextEditingController();
 final _remarks = TextEditingController();
 
-Future<T?> showCreateNewFolderDialog<T>({
+Future<T?> showEditFolderDialog<T>({
   required BuildContext context,
+  required int folderId,
   required FolderType folderType,
 }) async {
-  _folderName.text = '';
-  _remarks.text = '';
+  final folder = await _learnedWordFolderService.findById(folderId);
+  _folderName.text = folder.alias.isEmpty ? folder.name : folder.alias;
+  _remarks.text = folder.remarks;
 
   _dialog = AwesomeDialog(
     context: context,
@@ -40,7 +42,7 @@ Future<T?> showCreateNewFolderDialog<T>({
               children: <Widget>[
                 const Center(
                   child: Text(
-                    'Create New Folder',
+                    'Edit Folder',
                     style: TextStyle(
                       fontSize: 20,
                     ),
@@ -74,7 +76,7 @@ Future<T?> showCreateNewFolderDialog<T>({
                 ),
                 AnimatedButton(
                   isFixedHeight: false,
-                  text: 'Create',
+                  text: 'Apply Changes',
                   color: Theme.of(context).colorScheme.secondaryVariant,
                   pressEvent: () async {
                     final trimmedFolderName = _folderName.text.trim();
@@ -95,25 +97,27 @@ Future<T?> showCreateNewFolderDialog<T>({
                         .currentLearningLanguage
                         .getString();
 
-                    if (await _isFolderDuplicated(
-                      folderName: trimmedFolderName,
-                      userId: userId,
-                      fromLanguage: fromLanguage,
-                      learningLanguage: learningLanguage,
-                    )) {
-                      await showInputErrorDialog(
-                          context: context,
-                          content:
-                              'The folder "$trimmedFolderName" already exists.');
-                      return;
+                    if (folder.name != trimmedFolderName) {
+                      if (await _isFolderDuplicated(
+                        folderType: folderType,
+                        folderName: trimmedFolderName,
+                        userId: userId,
+                        fromLanguage: fromLanguage,
+                        learningLanguage: learningLanguage,
+                      )) {
+                        await showInputErrorDialog(
+                            context: context,
+                            content:
+                                'The folder "$trimmedFolderName" already exists.');
+                        return;
+                      }
                     }
 
-                    await _createNewFolder(
-                      folderName: trimmedFolderName,
-                      userId: userId,
-                      fromLanguage: fromLanguage,
-                      learningLanguage: learningLanguage,
-                    );
+                    folder.alias = _folderName.text;
+                    folder.remarks = _remarks.text;
+                    folder.updatedAt = DateTime.now();
+
+                    await _updateWordFolder(folder: folder);
 
                     _dialog.dismiss();
                   },
@@ -141,6 +145,7 @@ Future<T?> showCreateNewFolderDialog<T>({
 }
 
 Future<bool> _isFolderDuplicated({
+  required FolderType folderType,
   required String folderName,
   required String userId,
   required String fromLanguage,
@@ -155,24 +160,7 @@ Future<bool> _isFolderDuplicated({
   );
 }
 
-Future<void> _createNewFolder({
-  required String folderName,
-  required String userId,
-  required String fromLanguage,
-  required String learningLanguage,
+Future<void> _updateWordFolder({
+  required LearnedWordFolder folder,
 }) async =>
-    await _learnedWordFolderService.insert(
-      LearnedWordFolder.from(
-        parentFolderId: -1,
-        name: folderName,
-        alias: '',
-        remarks: _remarks.text,
-        userId: userId,
-        fromLanguage: fromLanguage,
-        learningLanguage: learningLanguage,
-        sortOrder: 2,
-        deleted: false,
-        createdAt: DateTime.now(),
-        updatedAt: DateTime.now(),
-      ),
-    );
+    await _learnedWordFolderService.update(folder);

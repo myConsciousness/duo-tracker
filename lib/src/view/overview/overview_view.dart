@@ -10,6 +10,7 @@ import 'package:duo_tracker/src/component/common_app_bar_titles.dart';
 import 'package:duo_tracker/src/component/common_divider.dart';
 import 'package:duo_tracker/src/component/common_nested_scroll_view.dart';
 import 'package:duo_tracker/src/component/const/filter_pattern.dart';
+import 'package:duo_tracker/src/component/const/folder_type.dart';
 import 'package:duo_tracker/src/component/const/match_pattern.dart';
 import 'package:duo_tracker/src/component/dialog/loading_dialog.dart';
 import 'package:duo_tracker/src/component/dialog/network_error_dialog.dart';
@@ -29,7 +30,7 @@ import 'package:duo_tracker/src/repository/service/learned_word_service.dart';
 import 'package:duo_tracker/src/http/utils/duolingo_api_utils.dart';
 import 'package:duo_tracker/src/utils/language_converter.dart';
 import 'package:duo_tracker/src/view/overview/lesson_tips_view.dart';
-import 'package:duo_tracker/src/view/overview/overview_tab_view.dart';
+import 'package:duo_tracker/src/view/overview/overview_tab_type.dart';
 import 'package:duo_tracker/src/view/overview/word_filter.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
@@ -535,6 +536,7 @@ class _OverviewViewState extends State<OverviewView> {
                 await showSelectFolderDialog(
                   context: context,
                   wordId: learnedWord.wordId,
+                  folderType: FolderType.word,
                 );
               },
             ),
