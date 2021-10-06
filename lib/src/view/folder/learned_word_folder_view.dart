@@ -189,7 +189,7 @@ class _LearnedWordFolderViewState extends State<LearnedWordFolderView> {
                               Expanded(
                                 child: ListTile(
                                   leading: Icon(
-                                    Icons.folder_open,
+                                    Icons.text_fields,
                                     color:
                                         Theme.of(context).colorScheme.secondary,
                                   ),

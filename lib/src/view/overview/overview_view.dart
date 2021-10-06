@@ -536,7 +536,6 @@ class _OverviewViewState extends State<OverviewView> {
                 await showSelectFolderDialog(
                   context: context,
                   wordId: learnedWord.wordId,
-                  folderType: FolderType.word,
                 );
               },
             ),

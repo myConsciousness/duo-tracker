@@ -6,13 +6,16 @@ import 'package:awesome_dialog/awesome_dialog.dart';
 import 'package:duo_tracker/src/component/common_text_field.dart';
 import 'package:duo_tracker/src/component/const/folder_type.dart';
 import 'package:duo_tracker/src/component/dialog/input_error_dialog.dart';
-import 'package:duo_tracker/src/repository/model/learned_word_folder_model.dart';
 import 'package:duo_tracker/src/repository/preference/common_shared_preferences_key.dart';
 import 'package:duo_tracker/src/repository/service/learned_word_folder_service.dart';
+import 'package:duo_tracker/src/repository/service/playlist_folder_service.dart';
 import 'package:flutter/material.dart';
 
 /// The learned word folder service
 final _learnedWordFolderService = LearnedWordFolderService.getInstance();
+
+/// The playlist folder servive
+final _playlistFolderService = PlaylistFolderService.getInstance();
 
 late AwesomeDialog _dialog;
 
@@ -24,7 +27,10 @@ Future<T?> showEditFolderDialog<T>({
   required int folderId,
   required FolderType folderType,
 }) async {
-  final folder = await _learnedWordFolderService.findById(folderId);
+  final dynamic folder = folderType == FolderType.word
+      ? await _learnedWordFolderService.findById(folderId)
+      : await _playlistFolderService.findById(folderId);
+
   _folderName.text = folder.alias.isEmpty ? folder.name : folder.alias;
   _remarks.text = folder.remarks;
 
@@ -40,10 +46,10 @@ Future<T?> showEditFolderDialog<T>({
           child: SingleChildScrollView(
             child: ListBody(
               children: <Widget>[
-                const Center(
+                Center(
                   child: Text(
-                    'Edit Folder',
-                    style: TextStyle(
+                    _getDialogTitle(folderType: folderType),
+                    style: const TextStyle(
                       fontSize: 20,
                     ),
                   ),
@@ -117,7 +123,10 @@ Future<T?> showEditFolderDialog<T>({
                     folder.remarks = _remarks.text;
                     folder.updatedAt = DateTime.now();
 
-                    await _updateWordFolder(folder: folder);
+                    await _updateFolder(
+                      folderType: folderType,
+                      folder: folder,
+                    );
 
                     _dialog.dismiss();
                   },
@@ -144,6 +153,17 @@ Future<T?> showEditFolderDialog<T>({
   await _dialog.show();
 }
 
+String _getDialogTitle({
+  required FolderType folderType,
+}) {
+  switch (folderType) {
+    case FolderType.word:
+      return 'Edit Word Folder';
+    case FolderType.voice:
+      return 'Edit Playlist Folder';
+  }
+}
+
 Future<bool> _isFolderDuplicated({
   required FolderType folderType,
   required String folderName,
@@ -151,16 +171,30 @@ Future<bool> _isFolderDuplicated({
   required String fromLanguage,
   required String learningLanguage,
 }) async {
-  return await _learnedWordFolderService
-      .checkExistByFolderNameAndUserIdAndFromLanguageAndLearningLanguage(
-    folderName: folderName,
-    userId: userId,
-    fromLanguage: fromLanguage,
-    learningLanguage: learningLanguage,
-  );
+  switch (folderType) {
+    case FolderType.word:
+      return await _learnedWordFolderService
+          .checkExistByFolderNameAndUserIdAndFromLanguageAndLearningLanguage(
+        folderName: folderName,
+        userId: userId,
+        fromLanguage: fromLanguage,
+        learningLanguage: learningLanguage,
+      );
+    case FolderType.voice:
+      return await _playlistFolderService
+          .checkExistByFolderNameAndUserIdAndFromLanguageAndLearningLanguage(
+        folderName: folderName,
+        userId: userId,
+        fromLanguage: fromLanguage,
+        learningLanguage: learningLanguage,
+      );
+  }
 }
 
-Future<void> _updateWordFolder({
-  required LearnedWordFolder folder,
+Future<void> _updateFolder({
+  required FolderType folderType,
+  required dynamic folder,
 }) async =>
-    await _learnedWordFolderService.update(folder);
+    folderType == FolderType.word
+        ? await _learnedWordFolderService.update(folder)
+        : await _playlistFolderService.update(folder);

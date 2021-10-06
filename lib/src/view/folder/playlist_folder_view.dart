@@ -15,7 +15,7 @@ import 'package:duo_tracker/src/repository/preference/common_shared_preferences_
 import 'package:duo_tracker/src/repository/service/playlist_folder_item_service.dart';
 import 'package:duo_tracker/src/repository/service/playlist_folder_service.dart';
 import 'package:duo_tracker/src/utils/language_converter.dart';
-import 'package:duo_tracker/src/view/folder/learned_word_folder_items_view.dart';
+import 'package:duo_tracker/src/view/folder/playlist_folder_items_view.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 
@@ -188,7 +188,7 @@ class _PlaylistFolderViewState extends State<PlaylistFolderView> {
                               Expanded(
                                 child: ListTile(
                                   leading: Icon(
-                                    Icons.folder_open,
+                                    Icons.music_note,
                                     color:
                                         Theme.of(context).colorScheme.secondary,
                                   ),
@@ -205,7 +205,7 @@ class _PlaylistFolderViewState extends State<PlaylistFolderView> {
                                           await showEditFolderDialog(
                                             context: context,
                                             folderId: folder.id,
-                                            folderType: FolderType.word,
+                                            folderType: FolderType.voice,
                                           );
 
                                           super.setState(() {});
@@ -218,8 +218,7 @@ class _PlaylistFolderViewState extends State<PlaylistFolderView> {
                                     await Navigator.push(
                                       context,
                                       MaterialPageRoute(
-                                        builder: (_) =>
-                                            LearnedWordFolderItemsView(
+                                        builder: (_) => PlaylistFolderItemsView(
                                           folderId: folder.id,
                                           folderName: folder.name,
                                         ),
