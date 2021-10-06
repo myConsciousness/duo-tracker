@@ -13,6 +13,7 @@ import 'package:duo_tracker/src/view/duo_tracker_home_view.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:new_version/new_version.dart';
 import 'package:provider/provider.dart';
 
 class DuoTracker extends StatefulWidget {

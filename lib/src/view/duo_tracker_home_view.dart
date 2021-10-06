@@ -11,10 +11,47 @@ import 'package:duo_tracker/src/view/settings/settings_view.dart';
 import 'package:duo_tracker/src/view/shop/shop_view.dart';
 import 'package:duo_tracker/src/view/user/user_account_tab_view.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_flavor/flutter_flavor.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+import 'package:new_version/new_version.dart';
 
-class DuoTrackerHomeView extends StatelessWidget {
+class DuoTrackerHomeView extends StatefulWidget {
   const DuoTrackerHomeView({Key? key}) : super(key: key);
+
+  @override
+  _DuoTrackerHomeViewState createState() => _DuoTrackerHomeViewState();
+}
+
+class _DuoTrackerHomeViewState extends State<DuoTrackerHomeView> {
+  @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+  }
+
+  @override
+  void dispose() {
+    super.dispose();
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    _checkVersion();
+  }
+
+  void _checkVersion() async {
+    final newVersion =
+        NewVersion(androidId: FlavorConfig.instance.variables['androidId']);
+    final status = await newVersion.getVersionStatus();
+
+    newVersion.showUpdateDialog(
+      context: context,
+      versionStatus: status!,
+      dialogTitle: 'New Version Is Available!',
+      updateButtonText: 'Update Right Now',
+      dismissButtonText: 'Skip',
+    );
+  }
 
   @override
   Widget build(BuildContext context) => const CommonDefaultTabController(
