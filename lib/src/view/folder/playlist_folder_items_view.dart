@@ -6,8 +6,10 @@ import 'package:audioplayers/audioplayers.dart';
 import 'package:clipboard/clipboard.dart';
 import 'package:duo_tracker/src/component/common_app_bar_titles.dart';
 import 'package:duo_tracker/src/component/common_nested_scroll_view.dart';
+import 'package:duo_tracker/src/component/dialog/network_error_dialog.dart';
 import 'package:duo_tracker/src/component/loading.dart';
 import 'package:duo_tracker/src/component/snackbar/info_snack_bar.dart';
+import 'package:duo_tracker/src/http/network.dart';
 import 'package:duo_tracker/src/repository/model/learned_word_model.dart';
 import 'package:duo_tracker/src/repository/model/playlist_folder_item_model.dart';
 import 'package:duo_tracker/src/repository/model/word_hint_model.dart';
@@ -134,6 +136,11 @@ class _PlaylistFolderItemsViewState extends State<PlaylistFolderItemsView> {
           color: Theme.of(context).colorScheme.secondary,
         ),
         onPressed: () async {
+          if (!await Network.isConnected()) {
+            await showNetworkErrorDialog(context: context);
+            return;
+          }
+
           await _playAudio(
             learnedWord: learnedWord,
           );
@@ -250,6 +257,11 @@ class _PlaylistFolderItemsViewState extends State<PlaylistFolderItemsView> {
               tooltip: 'Play All',
               icon: const Icon(Icons.play_circle),
               onPressed: () async {
+                if (!await Network.isConnected()) {
+                  await showNetworkErrorDialog(context: context);
+                  return;
+                }
+
                 for (final audio in _playlist) {
                   await _playAudio(
                     learnedWord: audio.learnedWord!,

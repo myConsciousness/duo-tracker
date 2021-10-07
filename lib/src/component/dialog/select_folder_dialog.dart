@@ -3,6 +3,7 @@
 // BSD-style license that can be found in the LICENSE file.
 
 import 'package:awesome_dialog/awesome_dialog.dart';
+import 'package:duo_tracker/src/component/add_new_folder_button.dart';
 import 'package:duo_tracker/src/component/common_two_grids_radio_list_tile.dart';
 import 'package:duo_tracker/src/component/const/folder_type.dart';
 import 'package:duo_tracker/src/component/dialog/create_new_folder_dialog.dart';
@@ -101,10 +102,16 @@ Future<T?> showSelectFolderDialog<T>({
                       final List<dynamic> folders = snapshot.data;
 
                       if (folders.isEmpty) {
-                        return _buildAddNewFolderButton(
-                          context: context,
-                          folderType: _selectedFolderType,
-                          setState: setState,
+                        return AddNewFolderButton(
+                          folderType: FolderType.word,
+                          onPressedCreate: () async {
+                            await showCreateNewFolderDialog(
+                              context: context,
+                              folderType: _selectedFolderType,
+                            );
+
+                            setState(() {});
+                          },
                         );
                       }
 
@@ -197,36 +204,6 @@ Future<T?> showSelectFolderDialog<T>({
 
   await _dialog.show();
 }
-
-Widget _buildAddNewFolderButton({
-  required BuildContext context,
-  required FolderType folderType,
-  required Function(void Function()) setState,
-}) =>
-    Column(
-      mainAxisAlignment: MainAxisAlignment.center,
-      crossAxisAlignment: CrossAxisAlignment.center,
-      children: [
-        const Center(
-          child: Text('No Folders'),
-        ),
-        ElevatedButton(
-          child: const Text('Add New Folder'),
-          style: ElevatedButton.styleFrom(
-            primary: Theme.of(context).colorScheme.secondaryVariant,
-            onPrimary: Colors.white,
-          ),
-          onPressed: () async {
-            await showCreateNewFolderDialog(
-              context: context,
-              folderType: folderType,
-            );
-
-            setState(() {});
-          },
-        ),
-      ],
-    );
 
 Future<void> _addFolderItem({
   required FolderType folderType,

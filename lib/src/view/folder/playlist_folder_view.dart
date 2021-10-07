@@ -2,6 +2,7 @@
 // Use of this source code is governed by a
 // BSD-style license that can be found in the LICENSE file.
 
+import 'package:duo_tracker/src/component/add_new_folder_button.dart';
 import 'package:duo_tracker/src/component/common_app_bar_titles.dart';
 import 'package:duo_tracker/src/component/common_divider.dart';
 import 'package:duo_tracker/src/component/common_nested_scroll_view.dart';
@@ -104,29 +105,16 @@ class _PlaylistFolderViewState extends State<PlaylistFolderView> {
               final List<PlaylistFolder> folders = snapshot.data;
 
               if (folders.isEmpty) {
-                return Column(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  crossAxisAlignment: CrossAxisAlignment.center,
-                  children: [
-                    const Center(
-                      child: Text('No Folders'),
-                    ),
-                    ElevatedButton(
-                      child: const Text('Add New Folder'),
-                      style: ElevatedButton.styleFrom(
-                        primary: Theme.of(context).colorScheme.secondaryVariant,
-                        onPrimary: Colors.white,
-                      ),
-                      onPressed: () async {
-                        await showCreateNewFolderDialog(
-                          context: context,
-                          folderType: FolderType.voice,
-                        );
+                return AddNewFolderButton(
+                  folderType: FolderType.word,
+                  onPressedCreate: () async {
+                    await showCreateNewFolderDialog(
+                      context: context,
+                      folderType: FolderType.voice,
+                    );
 
-                        super.setState(() {});
-                      },
-                    ),
-                  ],
+                    super.setState(() {});
+                  },
                 );
               }
 

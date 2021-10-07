@@ -177,7 +177,7 @@ class _OverviewViewState extends State<OverviewView> {
             FutureBuilder(
               future: BannerAdUtils.canShow(
                 index: index,
-                interval: 5,
+                interval: 10,
               ),
               builder: (BuildContext context, AsyncSnapshot snapshot) {
                 if (!snapshot.hasData || !snapshot.data) {
@@ -405,6 +405,11 @@ class _OverviewViewState extends State<OverviewView> {
           color: Theme.of(context).colorScheme.secondary,
         ),
         onPressed: () async {
+          if (!await Network.isConnected()) {
+            await showNetworkErrorDialog(context: context);
+            return;
+          }
+
           for (final ttsVoiceUrl in learnedWord.ttsVoiceUrls) {
             // Play all voices.
             // Requires a time to wait for each word to play.
