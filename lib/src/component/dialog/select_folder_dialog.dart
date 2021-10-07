@@ -21,6 +21,7 @@ late AwesomeDialog _dialog;
 late List<bool> _checkMarkers;
 late List<bool> _checkMarkersOriginal;
 late List<int> _folderIds;
+late bool _refreshCheckMarkers;
 
 /// The learned word folder service
 final _learnedWordFolderService = LearnedWordFolderService.getInstance();
@@ -45,6 +46,7 @@ Future<T?> showSelectFolderDialog<T>({
   _checkMarkers = [];
   _checkMarkersOriginal = [];
   _folderIds = [];
+  _refreshCheckMarkers = true;
 
   _selectedFolderType = FolderType.word;
 
@@ -80,6 +82,7 @@ Future<T?> showSelectFolderDialog<T>({
                   onChanged: (value) {
                     setState(() {
                       _selectedFolderType = value;
+                      _refreshCheckMarkers = true;
                     });
                   },
                 ),
@@ -366,11 +369,15 @@ Future<List<dynamic>> _fetchDataSource({
     folderType: folderType,
   );
 
-  await _createCheckMarkers(
-    folderType: folderType,
-    folders: folders,
-    wordId: wordId,
-  );
+  if (_refreshCheckMarkers) {
+    await _createCheckMarkers(
+      folderType: folderType,
+      folders: folders,
+      wordId: wordId,
+    );
+
+    _refreshCheckMarkers = false;
+  }
 
   return folders;
 }
