@@ -2,6 +2,7 @@
 // Use of this source code is governed by a
 // BSD-style license that can be found in the LICENSE file.
 
+import 'package:duo_tracker/src/admob/banner_ad_utils.dart';
 import 'package:duo_tracker/src/component/add_new_folder_button.dart';
 import 'package:duo_tracker/src/component/common_app_bar_titles.dart';
 import 'package:duo_tracker/src/component/common_divider.dart';
@@ -18,6 +19,7 @@ import 'package:duo_tracker/src/repository/service/playlist_folder_service.dart'
 import 'package:duo_tracker/src/utils/language_converter.dart';
 import 'package:duo_tracker/src/view/folder/playlist_folder_items_view.dart';
 import 'package:flutter/material.dart';
+import 'package:google_mobile_ads/google_mobile_ads.dart';
 import 'package:intl/intl.dart';
 
 class PlaylistFolderView extends StatefulWidget {
@@ -31,11 +33,8 @@ class _PlaylistFolderViewState extends State<PlaylistFolderView> {
   /// The app bar subtitle
   String _appBarSubTitle = 'N/A';
 
-  /// The playlist folder service
-  final _playlistFolderService = PlaylistFolderService.getInstance();
-
-  /// The playlist folder item service
-  final _playlistFolderItemService = PlaylistFolderItemService.getInstance();
+  /// The banner ads
+  final List<BannerAd> _bannerAds = <BannerAd>[];
 
   /// The datetime format
   final _datetimeFormat = DateFormat('yyyy/MM/dd HH:mm');
@@ -43,11 +42,11 @@ class _PlaylistFolderViewState extends State<PlaylistFolderView> {
   /// The format for numeric text
   final _numericTextFormat = NumberFormat('#,###');
 
-  @override
-  void initState() {
-    super.initState();
-    _buildAppBarSubTitle();
-  }
+  /// The playlist folder item service
+  final _playlistFolderItemService = PlaylistFolderItemService.getInstance();
+
+  /// The playlist folder service
+  final _playlistFolderService = PlaylistFolderService.getInstance();
 
   @override
   void didChangeDependencies() {
@@ -56,7 +55,23 @@ class _PlaylistFolderViewState extends State<PlaylistFolderView> {
 
   @override
   void dispose() {
+    for (final bannerAd in _bannerAds) {
+      bannerAd.dispose();
+    }
+
     super.dispose();
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    _buildAppBarSubTitle();
+  }
+
+  BannerAd _loadBannerAd() {
+    final BannerAd bannerAd = BannerAdUtils.loadBannerAd();
+    _bannerAds.add(bannerAd);
+    return bannerAd;
   }
 
   Future<void> _buildAppBarSubTitle() async {
@@ -74,179 +89,142 @@ class _PlaylistFolderViewState extends State<PlaylistFolderView> {
     });
   }
 
-  @override
-  Widget build(BuildContext context) => Scaffold(
-        body: CommonNestedScrollView(
-          title: CommonAppBarTitles(
-            title: 'Playlist Folders',
-            subTitle: _appBarSubTitle,
+  Widget _buildFolderCard({
+    required PlaylistFolder folder,
+  }) =>
+      Card(
+        elevation: 5,
+        shape: const RoundedRectangleBorder(
+          borderRadius: BorderRadius.vertical(
+            top: Radius.circular(30),
+            bottom: Radius.circular(30),
           ),
-          actions: [
-            IconButton(
-              tooltip: 'Add Folder',
-              icon: const Icon(Icons.add),
-              onPressed: () async {
-                await showCreateNewFolderDialog(
-                  context: context,
-                  folderType: FolderType.voice,
-                );
+        ),
+        child: Padding(
+          padding: const EdgeInsets.all(20),
+          child: _buildFolderCardContent(
+            folder: folder,
+          ),
+        ),
+      );
 
-                super.setState(() {});
-              },
+  Widget _buildFolderCardHeaderSection({
+    required PlaylistFolder folder,
+  }) =>
+      Row(
+        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        children: [
+          FutureBuilder(
+            future: _playlistFolderItemService
+                .countByFolderIdAndUserIdAndFromLanguageAndLearningLanguage(
+              folderId: folder.id,
+              userId: folder.userId,
+              fromLanguage: folder.fromLanguage,
+              learningLanguage: folder.learningLanguage,
             ),
-          ],
-          body: FutureBuilder(
-            future: _fetchDataSource(),
-            builder: (BuildContext context, AsyncSnapshot snapshot) {
-              if (!snapshot.hasData) {
+            builder: (BuildContext context, AsyncSnapshot itemCountSnapshot) {
+              if (!itemCountSnapshot.hasData) {
                 return const Loading();
               }
 
-              final List<PlaylistFolder> folders = snapshot.data;
+              return _buildCardHeaderText(
+                title: _numericTextFormat.format(itemCountSnapshot.data),
+                subTitle: 'Folder Items',
+              );
+            },
+          ),
+          _buildCardHeaderText(
+            title: _datetimeFormat.format(folder.createdAt),
+            subTitle: 'Created At',
+          ),
+          _buildCardHeaderText(
+            title: _datetimeFormat.format(folder.updatedAt),
+            subTitle: 'Updated At',
+          ),
+        ],
+      );
 
-              if (folders.isEmpty) {
-                return AddNewFolderButton(
-                  folderType: FolderType.word,
-                  onPressedCreate: () async {
-                    await showCreateNewFolderDialog(
-                      context: context,
-                      folderType: FolderType.voice,
-                    );
+  Widget _buildFolderCardBodySection({
+    required PlaylistFolder folder,
+  }) =>
+      Row(
+        children: [
+          Expanded(
+            child: ListTile(
+              leading: Icon(
+                Icons.music_note,
+                color: Theme.of(context).colorScheme.secondary,
+              ),
+              title: Row(
+                children: [
+                  Text(
+                    folder.alias.isEmpty ? folder.name : folder.alias,
+                  ),
+                  IconButton(
+                    icon: const Icon(Icons.edit, size: 20),
+                    onPressed: () async {
+                      await showEditFolderDialog(
+                        context: context,
+                        folderId: folder.id,
+                        folderType: FolderType.voice,
+                      );
 
-                    super.setState(() {});
-                  },
-                );
-              }
-
-              return ListView.builder(
-                itemCount: folders.length,
-                itemBuilder: (BuildContext context, int index) {
-                  final folder = folders[index];
-                  return Card(
-                    elevation: 5,
-                    shape: const RoundedRectangleBorder(
-                      borderRadius: BorderRadius.vertical(
-                        top: Radius.circular(30),
-                        bottom: Radius.circular(30),
-                      ),
+                      super.setState(() {});
+                    },
+                  ),
+                ],
+              ),
+              subtitle: Text(folder.remarks),
+              onTap: () async {
+                await Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (_) => PlaylistFolderItemsView(
+                      folderId: folder.id,
+                      folderName: folder.name,
                     ),
-                    child: Padding(
-                      padding: const EdgeInsets.all(20),
-                      child: Column(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        crossAxisAlignment: CrossAxisAlignment.center,
-                        children: [
-                          Row(
-                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                            children: [
-                              FutureBuilder(
-                                future: _playlistFolderItemService
-                                    .countByFolderIdAndUserIdAndFromLanguageAndLearningLanguage(
-                                  folderId: folder.id,
-                                  userId: folder.userId,
-                                  fromLanguage: folder.fromLanguage,
-                                  learningLanguage: folder.learningLanguage,
-                                ),
-                                builder: (BuildContext context,
-                                    AsyncSnapshot itemCountSnapshot) {
-                                  if (!itemCountSnapshot.hasData) {
-                                    return const Loading();
-                                  }
+                  ),
+                ).then((value) => super.setState(() {}));
+              },
+            ),
+          ),
+          IconButton(
+            tooltip: 'Delete Folder',
+            icon: const Icon(Icons.delete),
+            onPressed: () async {
+              await showConfirmDialog(
+                context: context,
+                title: 'Delete Folder',
+                content:
+                    'Are you sure you want to delete the folder "${folder.name}"?',
+                onPressedOk: () async {
+                  await _playlistFolderService.delete(folder);
+                  await _playlistFolderItemService.deleteByFolderId(
+                      folderId: folder.id);
 
-                                  return _buildCardHeaderText(
-                                    title: _numericTextFormat
-                                        .format(itemCountSnapshot.data),
-                                    subTitle: 'Folder Items',
-                                  );
-                                },
-                              ),
-                              _buildCardHeaderText(
-                                title: _datetimeFormat.format(folder.createdAt),
-                                subTitle: 'Created At',
-                              ),
-                              _buildCardHeaderText(
-                                title: _datetimeFormat.format(folder.updatedAt),
-                                subTitle: 'Updated At',
-                              ),
-                            ],
-                          ),
-                          const CommonDivider(),
-                          Row(
-                            children: [
-                              Expanded(
-                                child: ListTile(
-                                  leading: Icon(
-                                    Icons.music_note,
-                                    color:
-                                        Theme.of(context).colorScheme.secondary,
-                                  ),
-                                  title: Row(
-                                    children: [
-                                      Text(
-                                        folder.alias.isEmpty
-                                            ? folder.name
-                                            : folder.alias,
-                                      ),
-                                      IconButton(
-                                        icon: const Icon(Icons.edit, size: 20),
-                                        onPressed: () async {
-                                          await showEditFolderDialog(
-                                            context: context,
-                                            folderId: folder.id,
-                                            folderType: FolderType.voice,
-                                          );
-
-                                          super.setState(() {});
-                                        },
-                                      ),
-                                    ],
-                                  ),
-                                  subtitle: Text(folder.remarks),
-                                  onTap: () async {
-                                    await Navigator.push(
-                                      context,
-                                      MaterialPageRoute(
-                                        builder: (_) => PlaylistFolderItemsView(
-                                          folderId: folder.id,
-                                          folderName: folder.name,
-                                        ),
-                                      ),
-                                    ).then((value) => super.setState(() {}));
-                                  },
-                                ),
-                              ),
-                              IconButton(
-                                tooltip: 'Delete Folder',
-                                icon: const Icon(Icons.delete),
-                                onPressed: () async {
-                                  await showConfirmDialog(
-                                    context: context,
-                                    title: 'Delete Folder',
-                                    content:
-                                        'Are you sure you want to delete the folder "${folder.name}"?',
-                                    onPressedOk: () async {
-                                      await _playlistFolderService
-                                          .delete(folder);
-                                      await _playlistFolderItemService
-                                          .deleteByFolderId(
-                                              folderId: folder.id);
-
-                                      super.setState(() {});
-                                    },
-                                  );
-                                },
-                              ),
-                            ],
-                          ),
-                        ],
-                      ),
-                    ),
-                  );
+                  super.setState(() {});
                 },
               );
             },
           ),
-        ),
+        ],
+      );
+
+  Widget _buildFolderCardContent({
+    required PlaylistFolder folder,
+  }) =>
+      Column(
+        mainAxisAlignment: MainAxisAlignment.center,
+        crossAxisAlignment: CrossAxisAlignment.center,
+        children: [
+          _buildFolderCardHeaderSection(
+            folder: folder,
+          ),
+          const CommonDivider(),
+          _buildFolderCardBodySection(
+            folder: folder,
+          ),
+        ],
       );
 
   Widget _buildCardHeaderText({
@@ -308,4 +286,86 @@ class _PlaylistFolderViewState extends State<PlaylistFolderView> {
       learningLanguage: learningLanguage,
     );
   }
+
+  Widget _buildFolderCardListView({
+    required List<PlaylistFolder> folders,
+  }) =>
+      ListView.builder(
+        itemCount: folders.length,
+        itemBuilder: (BuildContext context, int index) {
+          final folder = folders[index];
+          return Column(
+            children: [
+              FutureBuilder(
+                future: BannerAdUtils.canShow(
+                  index: index,
+                  interval: 3,
+                ),
+                builder: (BuildContext context, AsyncSnapshot snapshot) {
+                  if (!snapshot.hasData || !snapshot.data) {
+                    return Container();
+                  }
+
+                  return BannerAdUtils.createBannerAdWidget(_loadBannerAd());
+                },
+              ),
+              _buildFolderCard(
+                folder: folder,
+              ),
+            ],
+          );
+        },
+      );
+
+  @override
+  Widget build(BuildContext context) => Scaffold(
+        body: CommonNestedScrollView(
+          title: CommonAppBarTitles(
+            title: 'Playlist Folders',
+            subTitle: _appBarSubTitle,
+          ),
+          actions: [
+            IconButton(
+              tooltip: 'Add Folder',
+              icon: const Icon(Icons.add),
+              onPressed: () async {
+                await showCreateNewFolderDialog(
+                  context: context,
+                  folderType: FolderType.voice,
+                );
+
+                super.setState(() {});
+              },
+            ),
+          ],
+          body: FutureBuilder(
+            future: _fetchDataSource(),
+            builder: (BuildContext context, AsyncSnapshot snapshot) {
+              if (!snapshot.hasData) {
+                return const Loading();
+              }
+
+              final List<PlaylistFolder> folders = snapshot.data;
+
+              if (folders.isEmpty) {
+                return AddNewFolderButton(
+                  folderType: FolderType.word,
+                  onPressedCreate: () async {
+                    await showCreateNewFolderDialog(
+                      context: context,
+                      folderType: FolderType.voice,
+                    );
+
+                    super.setState(() {});
+                  },
+                );
+              }
+
+              return _buildFolderCardListView(
+                folders: folders,
+              );
+            },
+          ),
+        ),
+      );
 }
