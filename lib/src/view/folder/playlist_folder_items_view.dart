@@ -14,7 +14,6 @@ import 'package:duo_tracker/src/repository/model/word_hint_model.dart';
 import 'package:duo_tracker/src/repository/preference/common_shared_preferences_key.dart';
 import 'package:duo_tracker/src/repository/service/playlist_folder_item_service.dart';
 import 'package:flutter/material.dart';
-import 'package:intl/intl.dart';
 
 class PlaylistFolderItemsView extends StatefulWidget {
   const PlaylistFolderItemsView({
@@ -38,11 +37,11 @@ class _PlaylistFolderItemsViewState extends State<PlaylistFolderItemsView> {
   /// The audio player
   final _audioPlayer = AudioPlayer();
 
-  /// The date format
-  final _datetimeFormat = DateFormat('yyyy/MM/dd HH:mm');
-
   /// The learned word folder item service
   final _playlistFolderItemService = PlaylistFolderItemService.getInstance();
+
+  /// The playlist
+  late List<PlaylistFolderItem> _playlist;
 
   @override
   void didChangeDependencies() {
@@ -77,75 +76,45 @@ class _PlaylistFolderItemsViewState extends State<PlaylistFolderItemsView> {
           ),
           child: Padding(
             padding: const EdgeInsets.fromLTRB(20, 10, 20, 10),
-            child: Column(
-              mainAxisAlignment: MainAxisAlignment.center,
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.start,
               children: [
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    _buildCardHeaderText(
-                      title: '${learnedWord!.sortOrder + 1}',
-                      subTitle: 'Index',
+                Expanded(
+                  child: ListTile(
+                    leading: _buildCardLeading(
+                      learnedWord: learnedWord!,
                     ),
-                    _buildCardHeaderText(
-                      title: learnedWord.skillUrlTitle,
-                      subTitle: 'Lesson',
-                    ),
-                    _buildCardHeaderText(
-                      title: '${learnedWord.strengthBars}',
-                      subTitle: 'Strength',
-                    ),
-                    _buildCardHeaderText(
-                      title: _datetimeFormat.format(
-                        DateTime.fromMillisecondsSinceEpoch(
-                            learnedWord.lastPracticedMs),
-                      ),
-                      subTitle: 'Last practiced at',
-                    ),
-                  ],
-                ),
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.start,
-                  children: [
-                    Expanded(
-                      child: ListTile(
-                        leading: _buildCardLeading(
+                    title: Row(
+                      children: [
+                        _buildCardTitleText(
                           learnedWord: learnedWord,
                         ),
-                        title: Row(
-                          children: [
-                            _buildCardTitleText(
-                              learnedWord: learnedWord,
-                            ),
-                            IconButton(
-                              tooltip: 'Copy Word',
-                              icon: const Icon(Icons.copy_all, size: 20),
-                              onPressed: () async {
-                                await FlutterClipboard.copy(
-                                    learnedWord.wordString);
-                                InfoSnackbar.from(context: context).show(
-                                    content:
-                                        'Copied "${learnedWord.wordString}" to clipboard.');
-                              },
-                            )
-                          ],
-                        ),
-                        subtitle: _buildCardHintText(
-                          wordHints: learnedWord.wordHints,
-                        ),
-                      ),
+                        IconButton(
+                          tooltip: 'Copy Word',
+                          icon: const Icon(Icons.copy_all, size: 20),
+                          onPressed: () async {
+                            await FlutterClipboard.copy(learnedWord.wordString);
+                            InfoSnackbar.from(context: context).show(
+                                content:
+                                    'Copied "${learnedWord.wordString}" to clipboard.');
+                          },
+                        )
+                      ],
                     ),
-                    IconButton(
-                      icon: const Icon(Icons.delete),
-                      onPressed: () async {
-                        await _playlistFolderItemService.delete(
-                          playlistFolderItem,
-                        );
+                    subtitle: _buildCardHintText(
+                      wordHints: learnedWord.wordHints,
+                    ),
+                  ),
+                ),
+                IconButton(
+                  icon: const Icon(Icons.delete),
+                  onPressed: () async {
+                    await _playlistFolderItemService.delete(
+                      playlistFolderItem,
+                    );
 
-                        super.setState(() {});
-                      },
-                    ),
-                  ],
+                    super.setState(() {});
+                  },
                 ),
               ],
             ),
@@ -165,14 +134,22 @@ class _PlaylistFolderItemsViewState extends State<PlaylistFolderItemsView> {
           color: Theme.of(context).colorScheme.secondary,
         ),
         onPressed: () async {
-          for (final ttsVoiceUrl in learnedWord.ttsVoiceUrls) {
-            // Play all voices.
-            // Requires a time to wait for each word to play.
-            await _audioPlayer.play(ttsVoiceUrl, volume: 2.0);
-            await Future.delayed(const Duration(seconds: 1), () {});
-          }
+          await _playAudio(
+            learnedWord: learnedWord,
+          );
         },
       );
+
+  Future<void> _playAudio({
+    required LearnedWord learnedWord,
+  }) async {
+    for (final ttsVoiceUrl in learnedWord.ttsVoiceUrls) {
+      // Play all voices.
+      // Requires a time to wait for each word to play.
+      await _audioPlayer.play(ttsVoiceUrl, volume: 2.0);
+      await Future.delayed(const Duration(seconds: 1), () {});
+    }
+  }
 
   Widget _buildCardTitleText({
     required LearnedWord learnedWord,
@@ -239,36 +216,6 @@ class _PlaylistFolderItemsViewState extends State<PlaylistFolderItemsView> {
         ),
       );
 
-  Text _buildTextSecondaryColor({
-    required String text,
-    required double fontSize,
-    double opacity = 1.0,
-  }) =>
-      Text(
-        text,
-        style: TextStyle(
-          color: Theme.of(context).colorScheme.secondary.withOpacity(opacity),
-          fontSize: fontSize,
-        ),
-      );
-
-  Widget _buildCardHeaderText({
-    required String title,
-    required String subTitle,
-  }) =>
-      Column(
-        children: [
-          _buildTextSecondaryColor(
-            text: subTitle,
-            fontSize: 12,
-          ),
-          _buildText(
-            text: title,
-            fontSize: 14,
-          ),
-        ],
-      );
-
   Future<List<PlaylistFolderItem>> _fetchDataSource({
     required int folderId,
   }) async {
@@ -278,13 +225,17 @@ class _PlaylistFolderItemsViewState extends State<PlaylistFolderItemsView> {
     final learningLanguage =
         await CommonSharedPreferencesKey.currentLearningLanguage.getString();
 
-    return await _playlistFolderItemService
+    final playlistFodlerItems = await _playlistFolderItemService
         .findByFolderIdAndUserIdAndFromLanguageAndLearningLanguage(
       folderId: folderId,
       userId: userId,
       fromLanguage: fromLanguage,
       learningLanguage: learningLanguage,
     );
+
+    _playlist = playlistFodlerItems;
+
+    return playlistFodlerItems;
   }
 
   @override
@@ -294,8 +245,23 @@ class _PlaylistFolderItemsViewState extends State<PlaylistFolderItemsView> {
             title: 'Voice Playlist',
             subTitle: 'Folder: ${widget.folderName}',
           ),
+          actions: [
+            IconButton(
+              tooltip: 'Play All',
+              icon: const Icon(Icons.play_circle),
+              onPressed: () async {
+                for (final audio in _playlist) {
+                  await _playAudio(
+                    learnedWord: audio.learnedWord!,
+                  );
+                }
+              },
+            ),
+          ],
           body: FutureBuilder(
-            future: _fetchDataSource(folderId: widget.folderId),
+            future: _fetchDataSource(
+              folderId: widget.folderId,
+            ),
             builder: (BuildContext context, AsyncSnapshot snapshot) {
               if (!snapshot.hasData) {
                 return const Loading();
