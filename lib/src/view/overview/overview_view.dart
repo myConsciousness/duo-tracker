@@ -12,7 +12,6 @@ import 'package:duo_tracker/src/component/const/match_pattern.dart';
 import 'package:duo_tracker/src/component/dialog/loading_dialog.dart';
 import 'package:duo_tracker/src/component/dialog/network_error_dialog.dart';
 import 'package:duo_tracker/src/component/dialog/select_filter_method_dialog.dart';
-import 'package:duo_tracker/src/component/dialog/select_folder_dialog.dart';
 import 'package:duo_tracker/src/component/dialog/select_search_method_dialog.dart';
 import 'package:duo_tracker/src/component/dialog/switch_language_dialog.dart';
 import 'package:duo_tracker/src/component/dialog/select_sort_method_dialog.dart';
@@ -24,7 +23,6 @@ import 'package:duo_tracker/src/repository/preference/interstitial_ad_shared_pre
 import 'package:duo_tracker/src/repository/service/learned_word_service.dart';
 import 'package:duo_tracker/src/http/utils/duolingo_api_utils.dart';
 import 'package:duo_tracker/src/utils/language_converter.dart';
-import 'package:duo_tracker/src/view/overview/lesson_tips_view.dart';
 import 'package:duo_tracker/src/view/overview/overview_tab_type.dart';
 import 'package:duo_tracker/src/view/overview/word_filter.dart';
 import 'package:flutter/cupertino.dart';
@@ -180,9 +178,6 @@ class _OverviewViewState extends State<OverviewView> {
             ),
           CommonLearnedWordCard(
             learnedWord: learnedWord,
-            actions: _createCardActions(
-              learnedWord: learnedWord,
-            ),
           ),
         ],
       ),
@@ -221,86 +216,6 @@ class _OverviewViewState extends State<OverviewView> {
       _appBarSubTitle = '$fromLanguageName → $learningLanguageName';
     });
   }
-
-  List<Widget> _createCardActions({
-    required LearnedWord learnedWord,
-  }) =>
-      <Widget>[
-        Row(
-          mainAxisAlignment: MainAxisAlignment.start,
-          children: [
-            IconButton(
-              tooltip: learnedWord.deleted ? 'Restore' : 'Delete',
-              icon: learnedWord.deleted
-                  ? const Icon(Icons.restore_from_trash)
-                  : const Icon(Icons.delete),
-              onPressed: () async {
-                learnedWord.deleted = !learnedWord.deleted;
-                learnedWord.updatedAt = DateTime.now();
-
-                await _learnedWordService.update(learnedWord);
-                super.setState(() {});
-              },
-            ),
-            if (!learnedWord.deleted)
-              IconButton(
-                tooltip: learnedWord.completed ? 'Undo' : 'Complete',
-                icon: learnedWord.completed
-                    ? const Icon(Icons.undo)
-                    : const Icon(Icons.done),
-                onPressed: () async {
-                  learnedWord.completed = !learnedWord.completed;
-                  learnedWord.updatedAt = DateTime.now();
-
-                  await _learnedWordService.update(learnedWord);
-                  super.setState(() {});
-                },
-              ),
-          ],
-        ),
-        Row(
-          mainAxisAlignment: MainAxisAlignment.end,
-          children: [
-            if (learnedWord.tipsAndNotes.isNotEmpty)
-              IconButton(
-                tooltip: 'Show Tips & Notes',
-                icon: const Icon(Icons.more),
-                onPressed: () => Navigator.push(
-                  context,
-                  MaterialPageRoute(
-                    builder: (_) => LessonTipsView(
-                      lessonName: learnedWord.skill,
-                      html: learnedWord.tipsAndNotes,
-                    ),
-                  ),
-                ),
-              ),
-            IconButton(
-              tooltip: 'Store In Folder',
-              icon: const Icon(Icons.create_new_folder),
-              onPressed: () async {
-                await showSelectFolderDialog(
-                  context: context,
-                  wordId: learnedWord.wordId,
-                );
-              },
-            ),
-            //! It will be forcibly redirected to the official app side to the learning page.
-            // IconButton(
-            //   tooltip: 'Learn at Duolingo',
-            //   icon: const Icon(Icons.school),
-            //   onPressed: () async =>
-            //       await DuolingoPageLauncher.learnWord.build.execute(
-            //     context: context,
-            //     params: {
-            //       'learningLanguage': learnedWord.formalLearningLanguage,
-            //       'skillUrlTitle': learnedWord.skillUrlTitle,
-            //     },
-            //   ),
-            // ),
-          ],
-        ),
-      ];
 
   String get _appBarTitle {
     switch (widget.overviewTabType) {

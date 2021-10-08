@@ -2,7 +2,6 @@
 // Use of this source code is governed by a
 // BSD-style license that can be found in the LICENSE file.
 
-import 'package:audioplayers/audioplayers.dart';
 import 'package:duo_tracker/src/component/common_app_bar_titles.dart';
 import 'package:duo_tracker/src/component/common_learned_word_card.dart';
 import 'package:duo_tracker/src/component/common_nested_scroll_view.dart';
@@ -11,7 +10,6 @@ import 'package:duo_tracker/src/repository/model/learned_word_folder_item_model.
 import 'package:duo_tracker/src/repository/preference/common_shared_preferences_key.dart';
 import 'package:duo_tracker/src/repository/service/learned_word_folder_item_service.dart';
 import 'package:flutter/material.dart';
-import 'package:intl/intl.dart';
 
 class LearnedWordFolderItemsView extends StatefulWidget {
   const LearnedWordFolderItemsView({
@@ -33,14 +31,6 @@ class LearnedWordFolderItemsView extends StatefulWidget {
 
 class _LearnedWordFolderItemsViewState
     extends State<LearnedWordFolderItemsView> {
-  static const unavailableText = 'N/A';
-
-  /// The audio player
-  final _audioPlayer = AudioPlayer();
-
-  /// The date format
-  final _datetimeFormat = DateFormat('yyyy/MM/dd HH:mm');
-
   /// The learned word folder item service
   final _learnedWordFolderItemService =
       LearnedWordFolderItemService.getInstance();
@@ -103,7 +93,11 @@ class _LearnedWordFolderItemsViewState
               return ListView.builder(
                 itemCount: items.length,
                 itemBuilder: (_, int index) => CommonLearnedWordCard(
-                    learnedWord: items[index].learnedWord!),
+                  learnedWord: items[index].learnedWord!,
+                  showBottomActions: false,
+                  isFolder: true,
+                  deleteItem: items[index],
+                ),
               );
             },
           ),
