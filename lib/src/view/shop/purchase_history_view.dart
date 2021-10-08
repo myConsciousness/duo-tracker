@@ -3,6 +3,7 @@
 // BSD-style license that can be found in the LICENSE file.
 
 import 'package:duo_tracker/src/admob/banner_ad_utils.dart';
+import 'package:duo_tracker/src/component/common_card_header_text.dart';
 import 'package:duo_tracker/src/component/common_divider.dart';
 import 'package:duo_tracker/src/component/common_nested_scroll_view.dart';
 import 'package:duo_tracker/src/component/loading.dart';
@@ -60,51 +61,6 @@ class _PurchaseHistoryViewState extends State<PurchaseHistoryView> {
     _bannerAds.add(bannerAd);
     return bannerAd;
   }
-
-  Widget _buildCardHeaderText({
-    required String title,
-    required String subTitle,
-  }) =>
-      Column(
-        children: [
-          _buildTextSecondaryColor(
-            text: subTitle,
-            fontSize: 12,
-          ),
-          _buildText(
-            text: title,
-            fontSize: 14,
-          ),
-        ],
-      );
-
-  Text _buildText({
-    required String text,
-    required double fontSize,
-    double opacity = 1.0,
-    bool boldText = false,
-  }) =>
-      Text(
-        text,
-        style: TextStyle(
-          color: Theme.of(context).colorScheme.onSurface.withOpacity(opacity),
-          fontSize: fontSize,
-          fontWeight: boldText ? FontWeight.bold : FontWeight.normal,
-        ),
-      );
-
-  Text _buildTextSecondaryColor({
-    required String text,
-    required double fontSize,
-    double opacity = 1.0,
-  }) =>
-      Text(
-        text,
-        style: TextStyle(
-          color: Theme.of(context).colorScheme.secondary.withOpacity(opacity),
-          fontSize: fontSize,
-        ),
-      );
 
   Future<List<PurchaseHistory>> _fetchDataSource() {
     switch (widget.purchaseHistoryTabType) {
@@ -182,20 +138,20 @@ class _PurchaseHistoryViewState extends State<PurchaseHistoryView> {
                                 mainAxisAlignment:
                                     MainAxisAlignment.spaceBetween,
                                 children: [
-                                  _buildCardHeaderText(
+                                  CommonCardHeaderText(
                                     title:
                                         '${purchaseHistory.validPeriodInMinutes} min',
-                                    subTitle: 'Valid Period',
+                                    subtitle: 'Valid Period',
                                   ),
-                                  _buildCardHeaderText(
+                                  CommonCardHeaderText(
                                     title: _datetimeFormat
                                         .format(purchaseHistory.purchasedAt),
-                                    subTitle: 'Purchased At',
+                                    subtitle: 'Purchased At',
                                   ),
-                                  _buildCardHeaderText(
+                                  CommonCardHeaderText(
                                     title: _datetimeFormat
                                         .format(purchaseHistory.expiredAt),
-                                    subTitle: 'Expired At',
+                                    subtitle: 'Expired At',
                                   ),
                                 ],
                               ),

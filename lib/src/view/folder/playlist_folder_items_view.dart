@@ -6,6 +6,7 @@ import 'package:audioplayers/audioplayers.dart';
 import 'package:clipboard/clipboard.dart';
 import 'package:duo_tracker/src/component/common_app_bar_titles.dart';
 import 'package:duo_tracker/src/component/common_nested_scroll_view.dart';
+import 'package:duo_tracker/src/component/common_text.dart';
 import 'package:duo_tracker/src/component/dialog/network_error_dialog.dart';
 import 'package:duo_tracker/src/component/loading.dart';
 import 'package:duo_tracker/src/component/snackbar/info_snack_bar.dart';
@@ -163,26 +164,26 @@ class _PlaylistFolderItemsViewState extends State<PlaylistFolderItemsView> {
   }) {
     if (learnedWord.normalizedString.isEmpty ||
         learnedWord.normalizedString.endsWith(' ')) {
-      return _buildText(
+      return CommonText(
         text: learnedWord.wordString,
         fontSize: 18,
-        boldText: true,
+        bold: true,
       );
     }
 
     if (learnedWord.wordString == learnedWord.normalizedString) {
-      return _buildText(
+      return CommonText(
         text: learnedWord.wordString,
         fontSize: 18,
-        boldText: true,
+        bold: true,
       );
     }
 
     return Flexible(
-      child: _buildText(
+      child: CommonText(
         text: '${learnedWord.wordString} (${learnedWord.normalizedString})',
         fontSize: 18,
-        boldText: true,
+        bold: true,
       ),
     );
   }
@@ -190,11 +191,11 @@ class _PlaylistFolderItemsViewState extends State<PlaylistFolderItemsView> {
   Widget _buildCardHintText({
     required List<WordHint> wordHints,
   }) {
-    final hintTexts = <Text>[];
+    final hintTexts = <CommonText>[];
 
     for (final wordHint in wordHints) {
       hintTexts.add(
-        _buildText(
+        CommonText(
           text: '${wordHint.value} : ${wordHint.hint}',
           fontSize: 13,
           opacity: 0.7,
@@ -207,21 +208,6 @@ class _PlaylistFolderItemsViewState extends State<PlaylistFolderItemsView> {
       children: hintTexts,
     );
   }
-
-  Text _buildText({
-    required String text,
-    required double fontSize,
-    double opacity = 1.0,
-    bool boldText = false,
-  }) =>
-      Text(
-        text,
-        style: TextStyle(
-          color: Theme.of(context).colorScheme.onSurface.withOpacity(opacity),
-          fontSize: fontSize,
-          fontWeight: boldText ? FontWeight.bold : FontWeight.normal,
-        ),
-      );
 
   Future<List<PlaylistFolderItem>> _fetchDataSource({
     required int folderId,

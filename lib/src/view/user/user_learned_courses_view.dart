@@ -2,6 +2,7 @@
 // Use of this source code is governed by a
 // BSD-style license that can be found in the LICENSE file.
 
+import 'package:duo_tracker/src/component/common_card_header_text.dart';
 import 'package:duo_tracker/src/component/loading.dart';
 import 'package:duo_tracker/src/component/text_with_horizontal_divider.dart';
 import 'package:duo_tracker/src/repository/model/course_model.dart';
@@ -62,53 +63,6 @@ class _UserLearnedCoursesViewState extends State<UserLearnedCoursesView> {
     );
   }
 
-  Text _buildText({
-    required String text,
-    required double fontSize,
-    double opacity = 1.0,
-    bool boldText = false,
-  }) =>
-      Text(
-        text,
-        style: TextStyle(
-          color: Theme.of(context).colorScheme.onSurface.withOpacity(opacity),
-          fontSize: fontSize,
-          fontWeight: boldText ? FontWeight.bold : FontWeight.normal,
-        ),
-      );
-
-  Text _buildTextSecondaryColor({
-    required String text,
-    required double fontSize,
-    double opacity = 1.0,
-    FontWeight fontWeight = FontWeight.normal,
-  }) =>
-      Text(
-        text,
-        style: TextStyle(
-          color: Theme.of(context).colorScheme.secondary.withOpacity(opacity),
-          fontSize: fontSize,
-          fontWeight: fontWeight,
-        ),
-      );
-
-  Widget _buildCardHeaderText({
-    required String title,
-    required String subTitle,
-  }) =>
-      Column(
-        children: [
-          _buildTextSecondaryColor(
-            text: subTitle,
-            fontSize: 12,
-          ),
-          _buildText(
-            text: title,
-            fontSize: 14,
-          ),
-        ],
-      );
-
   int _getTotalXp({required List<Course> courses}) {
     int totalXp = 0;
     for (final Course course in courses) {
@@ -152,24 +106,24 @@ class _UserLearnedCoursesViewState extends State<UserLearnedCoursesView> {
                   Row(
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
-                      _buildCardHeaderText(
+                      CommonCardHeaderText(
+                        subtitle: 'Total XP',
                         title: _numericTextFormat.format(
                           _getTotalXp(
                             courses: courses!,
                           ),
                         ),
-                        subTitle: 'Total XP',
                       ),
                       const SizedBox(
                         width: 50,
                       ),
-                      _buildCardHeaderText(
+                      CommonCardHeaderText(
+                        subtitle: 'Total Crowns',
                         title: _numericTextFormat.format(
                           _getTotalCrowns(
                             courses: courses,
                           ),
                         ),
-                        subTitle: 'Total Crowns',
                       ),
                       const SizedBox(
                         width: 10,
@@ -229,16 +183,16 @@ class _UserLearnedCoursesViewState extends State<UserLearnedCoursesView> {
                         ),
                       ),
                     ),
-                    _buildCardHeaderText(
+                    CommonCardHeaderText(
+                      subtitle: 'XP',
                       title: _numericTextFormat.format(course.xp),
-                      subTitle: 'XP',
                     ),
                     const SizedBox(
                       width: 20,
                     ),
-                    _buildCardHeaderText(
+                    CommonCardHeaderText(
+                      subtitle: 'Crowns',
                       title: _numericTextFormat.format(course.crowns),
-                      subTitle: 'Crowns',
                     ),
                     const SizedBox(
                       width: 10,

@@ -5,8 +5,10 @@
 import 'package:audioplayers/audioplayers.dart';
 import 'package:clipboard/clipboard.dart';
 import 'package:duo_tracker/src/component/common_app_bar_titles.dart';
+import 'package:duo_tracker/src/component/common_card_header_text.dart';
 import 'package:duo_tracker/src/component/common_divider.dart';
 import 'package:duo_tracker/src/component/common_nested_scroll_view.dart';
+import 'package:duo_tracker/src/component/common_text.dart';
 import 'package:duo_tracker/src/component/loading.dart';
 import 'package:duo_tracker/src/component/snackbar/info_snack_bar.dart';
 import 'package:duo_tracker/src/repository/model/learned_word_folder_item_model.dart';
@@ -88,24 +90,24 @@ class _LearnedWordFolderItemsViewState
                 Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
-                    _buildCardHeaderText(
+                    CommonCardHeaderText(
+                      subtitle: 'Index',
                       title: '${learnedWord!.sortOrder + 1}',
-                      subTitle: 'Index',
                     ),
-                    _buildCardHeaderText(
+                    CommonCardHeaderText(
+                      subtitle: 'Lesson',
                       title: learnedWord.skillUrlTitle,
-                      subTitle: 'Lesson',
                     ),
-                    _buildCardHeaderText(
+                    CommonCardHeaderText(
+                      subtitle: 'Strength',
                       title: '${learnedWord.strengthBars}',
-                      subTitle: 'Strength',
                     ),
-                    _buildCardHeaderText(
+                    CommonCardHeaderText(
+                      subtitle: 'Last practiced at',
                       title: _datetimeFormat.format(
                         DateTime.fromMillisecondsSinceEpoch(
                             learnedWord.lastPracticedMs),
                       ),
-                      subTitle: 'Last practiced at',
                     ),
                   ],
                 ),
@@ -116,28 +118,28 @@ class _LearnedWordFolderItemsViewState
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     crossAxisAlignment: CrossAxisAlignment.center,
                     children: [
-                      _buildCardHeaderText(
+                      CommonCardHeaderText(
+                        subtitle: 'Pos',
                         title: learnedWord.pos.isEmpty
                             ? unavailableText
                             : learnedWord.pos,
-                        subTitle: 'Pos',
                       ),
-                      _buildCardHeaderText(
+                      CommonCardHeaderText(
+                        subtitle: 'Infinitive',
                         title: learnedWord.infinitive.isEmpty
                             ? unavailableText
                             : learnedWord.infinitive,
-                        subTitle: 'Infinitive',
                       ),
-                      _buildCardHeaderText(
+                      CommonCardHeaderText(
+                        subtitle: 'Gender',
                         title: learnedWord.gender.isEmpty
                             ? unavailableText
                             : learnedWord.gender,
-                        subTitle: 'Gender',
                       ),
-                      _buildCardHeaderText(
+                      CommonCardHeaderText(
+                        subtitle: 'Proficiency',
                         title:
                             '${(learnedWord.strength * 100.0).toStringAsFixed(2)} %',
-                        subTitle: 'Proficiency',
                       ),
                     ],
                   ),
@@ -218,26 +220,26 @@ class _LearnedWordFolderItemsViewState
   }) {
     if (learnedWord.normalizedString.isEmpty ||
         learnedWord.normalizedString.endsWith(' ')) {
-      return _buildText(
+      return CommonText(
         text: learnedWord.wordString,
         fontSize: 18,
-        boldText: true,
+        bold: true,
       );
     }
 
     if (learnedWord.wordString == learnedWord.normalizedString) {
-      return _buildText(
+      return CommonText(
         text: learnedWord.wordString,
         fontSize: 18,
-        boldText: true,
+        bold: true,
       );
     }
 
     return Flexible(
-      child: _buildText(
+      child: CommonText(
         text: '${learnedWord.wordString} (${learnedWord.normalizedString})',
         fontSize: 18,
-        boldText: true,
+        bold: true,
       ),
     );
   }
@@ -245,11 +247,11 @@ class _LearnedWordFolderItemsViewState
   Widget _buildCardHintText({
     required List<WordHint> wordHints,
   }) {
-    final hintTexts = <Text>[];
+    final hintTexts = <CommonText>[];
 
     for (final wordHint in wordHints) {
       hintTexts.add(
-        _buildText(
+        CommonText(
           text: '${wordHint.value} : ${wordHint.hint}',
           fontSize: 13,
           opacity: 0.7,
@@ -262,51 +264,6 @@ class _LearnedWordFolderItemsViewState
       children: hintTexts,
     );
   }
-
-  Text _buildText({
-    required String text,
-    required double fontSize,
-    double opacity = 1.0,
-    bool boldText = false,
-  }) =>
-      Text(
-        text,
-        style: TextStyle(
-          color: Theme.of(context).colorScheme.onSurface.withOpacity(opacity),
-          fontSize: fontSize,
-          fontWeight: boldText ? FontWeight.bold : FontWeight.normal,
-        ),
-      );
-
-  Text _buildTextSecondaryColor({
-    required String text,
-    required double fontSize,
-    double opacity = 1.0,
-  }) =>
-      Text(
-        text,
-        style: TextStyle(
-          color: Theme.of(context).colorScheme.secondary.withOpacity(opacity),
-          fontSize: fontSize,
-        ),
-      );
-
-  Widget _buildCardHeaderText({
-    required String title,
-    required String subTitle,
-  }) =>
-      Column(
-        children: [
-          _buildTextSecondaryColor(
-            text: subTitle,
-            fontSize: 12,
-          ),
-          _buildText(
-            text: title,
-            fontSize: 14,
-          ),
-        ],
-      );
 
   Future<List<LearnedWordFolderItem>> _fetchDataSource({
     required int folderId,

@@ -4,6 +4,7 @@
 
 import 'package:duo_tracker/src/admob/banner_ad_utils.dart';
 import 'package:duo_tracker/src/component/chart/radical_bar_chart.dart';
+import 'package:duo_tracker/src/component/common_card_header_text.dart';
 import 'package:duo_tracker/src/component/common_divider.dart';
 import 'package:duo_tracker/src/component/dialog/auth_dialog.dart';
 import 'package:duo_tracker/src/component/dialog/loading_dialog.dart';
@@ -106,35 +107,6 @@ class _UserOverviewViewState extends State<UserOverviewView> {
       defaultValue: 14.0,
     );
   }
-
-  Widget _buildCardText({
-    required String title,
-    required String subTitle,
-  }) =>
-      Expanded(
-        child: Column(
-          children: <Widget>[
-            Text(
-              title,
-              style: TextStyle(
-                color: Theme.of(context).colorScheme.secondary,
-                fontSize: 14,
-                fontWeight: FontWeight.bold,
-              ),
-            ),
-            const SizedBox(
-              height: 5,
-            ),
-            Text(
-              subTitle,
-              style: TextStyle(
-                fontSize: 13,
-                color: Theme.of(context).colorScheme.onSurface,
-              ),
-            )
-          ],
-        ),
-      );
 
   Future<User> _findUser() async {
     final userId = await CommonSharedPreferencesKey.userId.getString();
@@ -260,14 +232,19 @@ class _UserOverviewViewState extends State<UserOverviewView> {
             crossAxisAlignment: CrossAxisAlignment.center,
             children: [
               Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                crossAxisAlignment: CrossAxisAlignment.center,
                 children: <Widget>[
-                  _buildCardText(
-                    title: 'Score',
-                    subTitle: '$achievementScore / 160',
+                  CommonCardHeaderText(
+                    subtitle: 'Score',
+                    title: '$achievementScore / 160',
                   ),
-                  _buildCardText(
-                    title: 'Grade',
-                    subTitle: LearningScoreConverter.toGrade(
+                  const SizedBox(
+                    width: 60,
+                  ),
+                  CommonCardHeaderText(
+                    subtitle: 'Grade',
+                    title: LearningScoreConverter.toGrade(
                       score: achievementScore,
                     ),
                   ),
@@ -275,22 +252,24 @@ class _UserOverviewViewState extends State<UserOverviewView> {
               ),
               const CommonDivider(),
               Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                crossAxisAlignment: CrossAxisAlignment.center,
                 children: <Widget>[
-                  _buildCardText(
-                    title: 'Daily XP',
-                    subTitle: _numericTextFormat.format(_goalDailyXp),
+                  CommonCardHeaderText(
+                    subtitle: 'Daily XP',
+                    title: _numericTextFormat.format(_goalDailyXp),
                   ),
-                  _buildCardText(
-                    title: 'Weekly XP',
-                    subTitle: _numericTextFormat.format(_goalWeeklyXp),
+                  CommonCardHeaderText(
+                    subtitle: 'Weekly XP',
+                    title: _numericTextFormat.format(_goalWeeklyXp),
                   ),
-                  _buildCardText(
-                    title: 'Monthly XP',
-                    subTitle: _numericTextFormat.format(_goalMonthlyXp),
+                  CommonCardHeaderText(
+                    subtitle: 'Monthly XP',
+                    title: _numericTextFormat.format(_goalMonthlyXp),
                   ),
-                  _buildCardText(
-                    title: 'Streak',
-                    subTitle: _numericTextFormat.format(_goalStreak),
+                  CommonCardHeaderText(
+                    subtitle: 'Streak',
+                    title: _numericTextFormat.format(_goalStreak),
                   ),
                 ],
               ),
@@ -323,16 +302,21 @@ class _UserOverviewViewState extends State<UserOverviewView> {
             clipBehavior: Clip.antiAlias,
             elevation: 0,
             child: Row(
+              mainAxisAlignment: MainAxisAlignment.center,
+              crossAxisAlignment: CrossAxisAlignment.center,
               children: <Widget>[
-                _buildCardText(
-                  title: 'Learning',
-                  subTitle: LanguageConverter.toNameWithFormal(
+                CommonCardHeaderText(
+                  subtitle: 'Learning',
+                  title: LanguageConverter.toNameWithFormal(
                     languageCode: user.learningLanguage,
                   ),
                 ),
-                _buildCardText(
-                  title: 'From',
-                  subTitle: LanguageConverter.toNameWithFormal(
+                const SizedBox(
+                  width: 60,
+                ),
+                CommonCardHeaderText(
+                  subtitle: 'From',
+                  title: LanguageConverter.toNameWithFormal(
                     languageCode: user.fromLanguage,
                   ),
                 ),
@@ -355,7 +339,7 @@ class _UserOverviewViewState extends State<UserOverviewView> {
           ),
         ),
         child: Padding(
-          padding: const EdgeInsets.all(10),
+          padding: const EdgeInsets.fromLTRB(20, 10, 20, 10),
           child: Card(
             clipBehavior: Clip.antiAlias,
             elevation: 0,
@@ -364,43 +348,47 @@ class _UserOverviewViewState extends State<UserOverviewView> {
               crossAxisAlignment: CrossAxisAlignment.center,
               children: [
                 Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  crossAxisAlignment: CrossAxisAlignment.center,
                   children: <Widget>[
-                    _buildCardText(
-                      title: 'Lingots',
-                      subTitle: _numericTextFormat.format(user.lingots),
+                    CommonCardHeaderText(
+                      subtitle: 'Lingots',
+                      title: _numericTextFormat.format(user.lingots),
                     ),
-                    _buildCardText(
-                      title: 'Gems',
-                      subTitle: _numericTextFormat.format(user.gems),
+                    CommonCardHeaderText(
+                      subtitle: 'Gems',
+                      title: _numericTextFormat.format(user.gems),
                     ),
-                    _buildCardText(
-                      title: 'XP Goal',
-                      subTitle: '${user.xpGoal}',
+                    CommonCardHeaderText(
+                      subtitle: 'XP Goal',
+                      title: '${user.xpGoal}',
                     ),
-                    _buildCardText(
-                      title: 'Streak',
-                      subTitle: '${user.streak}',
+                    CommonCardHeaderText(
+                      subtitle: 'Streak',
+                      title: '${user.streak}',
                     ),
                   ],
                 ),
                 const CommonDivider(),
                 Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  crossAxisAlignment: CrossAxisAlignment.center,
                   children: <Widget>[
-                    _buildCardText(
-                      title: 'Daily XP',
-                      subTitle: _numericTextFormat.format(user.weeklyXp / 7.0),
+                    CommonCardHeaderText(
+                      subtitle: 'Daily XP',
+                      title: _numericTextFormat.format(user.weeklyXp / 7.0),
                     ),
-                    _buildCardText(
-                      title: 'Weekly XP',
-                      subTitle: _numericTextFormat.format(user.weeklyXp),
+                    CommonCardHeaderText(
+                      subtitle: 'Weekly XP',
+                      title: _numericTextFormat.format(user.weeklyXp),
                     ),
-                    _buildCardText(
-                      title: 'Monthly XP',
-                      subTitle: _numericTextFormat.format(user.monthlyXp),
+                    CommonCardHeaderText(
+                      subtitle: 'Monthly XP',
+                      title: _numericTextFormat.format(user.monthlyXp),
                     ),
-                    _buildCardText(
-                      title: 'Total XP',
-                      subTitle: _numericTextFormat.format(user.totalXp),
+                    CommonCardHeaderText(
+                      subtitle: 'Total XP',
+                      title: _numericTextFormat.format(user.totalXp),
                     ),
                   ],
                 ),

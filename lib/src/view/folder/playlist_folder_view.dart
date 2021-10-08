@@ -5,6 +5,7 @@
 import 'package:duo_tracker/src/admob/banner_ad_utils.dart';
 import 'package:duo_tracker/src/component/add_new_folder_button.dart';
 import 'package:duo_tracker/src/component/common_app_bar_titles.dart';
+import 'package:duo_tracker/src/component/common_card_header_text.dart';
 import 'package:duo_tracker/src/component/common_divider.dart';
 import 'package:duo_tracker/src/component/common_nested_scroll_view.dart';
 import 'package:duo_tracker/src/component/const/folder_type.dart';
@@ -127,19 +128,19 @@ class _PlaylistFolderViewState extends State<PlaylistFolderView> {
                 return const Loading();
               }
 
-              return _buildCardHeaderText(
+              return CommonCardHeaderText(
+                subtitle: 'Folder Items',
                 title: _numericTextFormat.format(itemCountSnapshot.data),
-                subTitle: 'Folder Items',
               );
             },
           ),
-          _buildCardHeaderText(
+          CommonCardHeaderText(
+            subtitle: 'Created At',
             title: _datetimeFormat.format(folder.createdAt),
-            subTitle: 'Created At',
           ),
-          _buildCardHeaderText(
+          CommonCardHeaderText(
+            subtitle: 'Updated At',
             title: _datetimeFormat.format(folder.updatedAt),
-            subTitle: 'Updated At',
           ),
         ],
       );
@@ -225,51 +226,6 @@ class _PlaylistFolderViewState extends State<PlaylistFolderView> {
             folder: folder,
           ),
         ],
-      );
-
-  Widget _buildCardHeaderText({
-    required String title,
-    required String subTitle,
-  }) =>
-      Column(
-        children: [
-          _buildTextSecondaryColor(
-            text: subTitle,
-            fontSize: 12,
-          ),
-          _buildText(
-            text: title,
-            fontSize: 14,
-          ),
-        ],
-      );
-
-  Text _buildText({
-    required String text,
-    required double fontSize,
-    double opacity = 1.0,
-    bool boldText = false,
-  }) =>
-      Text(
-        text,
-        style: TextStyle(
-          color: Theme.of(context).colorScheme.onSurface.withOpacity(opacity),
-          fontSize: fontSize,
-          fontWeight: boldText ? FontWeight.bold : FontWeight.normal,
-        ),
-      );
-
-  Text _buildTextSecondaryColor({
-    required String text,
-    required double fontSize,
-    double opacity = 1.0,
-  }) =>
-      Text(
-        text,
-        style: TextStyle(
-          color: Theme.of(context).colorScheme.secondary.withOpacity(opacity),
-          fontSize: fontSize,
-        ),
       );
 
   Future<List<PlaylistFolder>> _fetchDataSource() async {
