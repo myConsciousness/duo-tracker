@@ -276,12 +276,6 @@ class _UserOverviewViewState extends State<UserOverviewView> {
             ],
           ),
         ),
-        shape: const RoundedRectangleBorder(
-          borderRadius: BorderRadius.vertical(
-            top: Radius.circular(30),
-            bottom: Radius.circular(30),
-          ),
-        ),
       );
 
   Widget _buildStatusCard({
