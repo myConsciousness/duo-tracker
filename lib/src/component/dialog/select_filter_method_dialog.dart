@@ -48,7 +48,7 @@ Future<T?> showSelectFilterMethodDialog<T>({
     dialogType: DialogType.QUESTION,
     btnOkColor: Theme.of(context).colorScheme.secondary,
     body: StatefulBuilder(
-      builder: (BuildContext context, setState) => Container(
+      builder: (BuildContext context, setState) => Padding(
         padding: const EdgeInsets.all(13),
         child: Center(
           child: SingleChildScrollView(
@@ -104,9 +104,13 @@ Future<T?> showSelectFilterMethodDialog<T>({
                 const SizedBox(
                   height: 5,
                 ),
-                Container(
+                Padding(
                   padding: const EdgeInsets.only(
-                      top: 0, bottom: 0, left: 10, right: 10),
+                    top: 0,
+                    bottom: 0,
+                    left: 10,
+                    right: 10,
+                  ),
                   child: SingleChildScrollView(
                     child: Wrap(
                       alignment: WrapAlignment.start,
@@ -280,7 +284,7 @@ class _ChoiceChipWidget<T> extends StatelessWidget {
       : const TextStyle(color: Colors.black);
 
   @override
-  Widget build(BuildContext context) => Container(
+  Widget build(BuildContext context) => Padding(
         padding: const EdgeInsets.symmetric(horizontal: 10),
         child: ChoiceChip(
           label: Text(

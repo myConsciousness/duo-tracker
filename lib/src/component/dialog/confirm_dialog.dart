@@ -17,7 +17,7 @@ Future<void> showConfirmDialog<T>({
     context: context,
     animType: AnimType.SCALE,
     dialogType: DialogType.QUESTION,
-    body: Container(
+    body: Padding(
       padding: const EdgeInsets.all(13),
       child: Center(
         child: SingleChildScrollView(

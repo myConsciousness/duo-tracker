@@ -54,7 +54,7 @@ Future<T?> showSwitchLanguageDialog<T>({
     animType: AnimType.SCALE,
     dialogType: DialogType.QUESTION,
     body: StatefulBuilder(
-      builder: (BuildContext context, setState) => Container(
+      builder: (BuildContext context, setState) => Padding(
         padding: const EdgeInsets.all(13),
         child: Center(
           child: SingleChildScrollView(

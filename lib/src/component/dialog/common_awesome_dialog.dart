@@ -17,7 +17,7 @@ Future<void> showCommonAwesomeDialog<T>({
     context: context,
     animType: AnimType.SCALE,
     dialogType: dialogType,
-    body: Container(
+    body: Padding(
       padding: const EdgeInsets.all(13),
       child: Center(
         child: SingleChildScrollView(

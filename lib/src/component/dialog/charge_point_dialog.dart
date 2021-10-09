@@ -17,7 +17,7 @@ Future<T?> showChargePointDialog<T>({
     animType: AnimType.SCALE,
     dialogType: DialogType.INFO,
     body: StatefulBuilder(
-      builder: (BuildContext context, setState) => Container(
+      builder: (BuildContext context, setState) => Padding(
         padding: const EdgeInsets.all(13),
         child: Center(
           child: SingleChildScrollView(

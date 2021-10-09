@@ -47,7 +47,7 @@ Future<T?> showSelectFolderDialog<T>({
     dialogType: DialogType.QUESTION,
     btnOkColor: Theme.of(context).colorScheme.secondary,
     body: StatefulBuilder(
-      builder: (BuildContext context, setState) => Container(
+      builder: (BuildContext context, setState) => Padding(
         padding: const EdgeInsets.all(13),
         child: Center(
           child: SingleChildScrollView(

@@ -33,7 +33,7 @@ Future<bool> showAuthDialog({
     btnOkColor: Theme.of(context).colorScheme.secondary,
     body: WillPopScope(
       onWillPop: () async => enableNavigatorPop,
-      child: Container(
+      child: Padding(
         padding: const EdgeInsets.all(13),
         child: Center(
           child: SingleChildScrollView(

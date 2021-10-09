@@ -68,7 +68,7 @@ class _LessonTipsViewState extends State<LessonTipsView> {
               ),
             )
           ],
-          body: Container(
+          body: Padding(
             padding: const EdgeInsets.fromLTRB(5, 0, 5, 0),
             child: SingleChildScrollView(
               child: Wrap(

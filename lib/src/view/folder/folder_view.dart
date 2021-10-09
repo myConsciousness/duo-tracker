@@ -24,13 +24,13 @@ import 'package:google_mobile_ads/google_mobile_ads.dart';
 import 'package:intl/intl.dart';
 
 class FolderView extends StatefulWidget {
-  /// The folder type
-  final FolderType folderType;
-
   const FolderView({
     Key? key,
     required this.folderType,
   }) : super(key: key);
+
+  /// The folder type
+  final FolderType folderType;
 
   @override
   _FolderViewState createState() => _FolderViewState();
@@ -115,6 +115,15 @@ class _FolderViewState extends State<FolderView> {
         ),
       );
 
+  IconData get _folderIcon {
+    switch (widget.folderType) {
+      case FolderType.word:
+        return Icons.text_fields;
+      case FolderType.voice:
+        return Icons.music_note;
+    }
+  }
+
   Widget _buildFolderCardContent({
     required Folder folder,
   }) =>
@@ -161,7 +170,7 @@ class _FolderViewState extends State<FolderView> {
               Expanded(
                 child: ListTile(
                   leading: Icon(
-                    Icons.text_fields,
+                    _folderIcon,
                     color: Theme.of(context).colorScheme.secondary,
                   ),
                   title: Row(
@@ -267,11 +276,20 @@ class _FolderViewState extends State<FolderView> {
         },
       );
 
+  String get _appBarTitle {
+    switch (widget.folderType) {
+      case FolderType.word:
+        return 'Learned Word Folders';
+      case FolderType.voice:
+        return 'Playlist Folders';
+    }
+  }
+
   @override
   Widget build(BuildContext context) => Scaffold(
         body: CommonNestedScrollView(
           title: CommonAppBarTitles(
-            title: 'Learned Word Folders',
+            title: _appBarTitle,
             subTitle: _appBarSubTitle,
           ),
           actions: [
