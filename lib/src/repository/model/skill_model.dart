@@ -3,7 +3,7 @@
 // BSD-style license that can be found in the LICENSE file.
 
 import 'package:duo_tracker/src/repository/boolean_text.dart';
-import 'package:duo_tracker/src/repository/const/column/skill_column_name.dart';
+import 'package:duo_tracker/src/repository/const/column/skill_column.dart';
 
 class Skill {
   int id = -1;
@@ -64,47 +64,47 @@ class Skill {
 
   /// Returns the new instance of [Skill] based on the [map] passed as an argument.
   factory Skill.fromMap(Map<String, dynamic> map) => Skill.from(
-        id: map[SkillColumnName.id],
-        skillId: map[SkillColumnName.skillId],
-        name: map[SkillColumnName.name],
-        shortName: map[SkillColumnName.shortName],
-        urlName: map[SkillColumnName.urlName],
-        accessible: map[SkillColumnName.accessible] == BooleanText.true_,
-        iconId: map[SkillColumnName.iconId],
-        lessons: map[SkillColumnName.lessons],
-        strength: map[SkillColumnName.strength],
+        id: map[SkillColumn.id],
+        skillId: map[SkillColumn.skillId],
+        name: map[SkillColumn.name],
+        shortName: map[SkillColumn.shortName],
+        urlName: map[SkillColumn.urlName],
+        accessible: map[SkillColumn.accessible] == BooleanText.true_,
+        iconId: map[SkillColumn.iconId],
+        lessons: map[SkillColumn.lessons],
+        strength: map[SkillColumn.strength],
         lastLessonPerfect:
-            map[SkillColumnName.lastLessonPerfect] == BooleanText.true_,
-        finishedLevels: map[SkillColumnName.finishedLevels],
-        levels: map[SkillColumnName.levels],
-        tipsAndNotes: map[SkillColumnName.tipsAndNotes],
+            map[SkillColumn.lastLessonPerfect] == BooleanText.true_,
+        finishedLevels: map[SkillColumn.finishedLevels],
+        levels: map[SkillColumn.levels],
+        tipsAndNotes: map[SkillColumn.tipsAndNotes],
         createdAt: DateTime.fromMillisecondsSinceEpoch(
-          map[SkillColumnName.createdAt] ?? 0,
+          map[SkillColumn.createdAt] ?? 0,
         ),
         updatedAt: DateTime.fromMillisecondsSinceEpoch(
-          map[SkillColumnName.updatedAt] ?? 0,
+          map[SkillColumn.updatedAt] ?? 0,
         ),
       );
 
   /// Returns this [Skill] model as [Map].
   Map<String, dynamic> toMap() {
     final map = <String, dynamic>{};
-    map[SkillColumnName.skillId] = skillId;
-    map[SkillColumnName.name] = name;
-    map[SkillColumnName.shortName] = shortName;
-    map[SkillColumnName.urlName] = urlName;
-    map[SkillColumnName.accessible] =
+    map[SkillColumn.skillId] = skillId;
+    map[SkillColumn.name] = name;
+    map[SkillColumn.shortName] = shortName;
+    map[SkillColumn.urlName] = urlName;
+    map[SkillColumn.accessible] =
         accessible ? BooleanText.true_ : BooleanText.false_;
-    map[SkillColumnName.iconId] = iconId;
-    map[SkillColumnName.lessons] = lessons;
-    map[SkillColumnName.strength] = strength;
-    map[SkillColumnName.lastLessonPerfect] =
+    map[SkillColumn.iconId] = iconId;
+    map[SkillColumn.lessons] = lessons;
+    map[SkillColumn.strength] = strength;
+    map[SkillColumn.lastLessonPerfect] =
         lastLessonPerfect ? BooleanText.true_ : BooleanText.false_;
-    map[SkillColumnName.finishedLevels] = finishedLevels;
-    map[SkillColumnName.levels] = levels;
-    map[SkillColumnName.tipsAndNotes] = tipsAndNotes;
-    map[SkillColumnName.createdAt] = createdAt.millisecondsSinceEpoch;
-    map[SkillColumnName.updatedAt] = updatedAt.millisecondsSinceEpoch;
+    map[SkillColumn.finishedLevels] = finishedLevels;
+    map[SkillColumn.levels] = levels;
+    map[SkillColumn.tipsAndNotes] = tipsAndNotes;
+    map[SkillColumn.createdAt] = createdAt.millisecondsSinceEpoch;
+    map[SkillColumn.updatedAt] = updatedAt.millisecondsSinceEpoch;
     return map;
   }
 

@@ -10,3 +10,27 @@ enum FolderType {
   /// The voice
   voice
 }
+
+extension FolderTypeExt on FolderType {
+  /// Returns the code.
+  int get code {
+    switch (this) {
+      case FolderType.word:
+        return 0;
+      case FolderType.voice:
+        return 1;
+    }
+  }
+
+  static FolderType toEnum({
+    required int code,
+  }) {
+    for (final folderType in FolderType.values) {
+      if (folderType.code == code) {
+        return folderType;
+      }
+    }
+
+    return FolderType.word;
+  }
+}

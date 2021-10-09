@@ -7,15 +7,11 @@ import 'package:duo_tracker/src/component/common_text_field.dart';
 import 'package:duo_tracker/src/component/const/folder_type.dart';
 import 'package:duo_tracker/src/component/dialog/input_error_dialog.dart';
 import 'package:duo_tracker/src/repository/preference/common_shared_preferences_key.dart';
-import 'package:duo_tracker/src/repository/service/learned_word_folder_service.dart';
-import 'package:duo_tracker/src/repository/service/playlist_folder_service.dart';
+import 'package:duo_tracker/src/repository/service/folder_service.dart';
 import 'package:flutter/material.dart';
 
-/// The learned word folder service
-final _learnedWordFolderService = LearnedWordFolderService.getInstance();
-
-/// The playlist folder servive
-final _playlistFolderService = PlaylistFolderService.getInstance();
+/// The folder service
+final _folderService = FolderService.getInstance();
 
 late AwesomeDialog _dialog;
 
@@ -27,9 +23,7 @@ Future<T?> showEditFolderDialog<T>({
   required int folderId,
   required FolderType folderType,
 }) async {
-  final dynamic folder = folderType == FolderType.word
-      ? await _learnedWordFolderService.findById(folderId)
-      : await _playlistFolderService.findById(folderId);
+  final dynamic folder = await _folderService.findById(folderId);
 
   _folderName.text = folder.alias.isEmpty ? folder.name : folder.alias;
   _remarks.text = folder.remarks;
@@ -170,31 +164,18 @@ Future<bool> _isFolderDuplicated({
   required String userId,
   required String fromLanguage,
   required String learningLanguage,
-}) async {
-  switch (folderType) {
-    case FolderType.word:
-      return await _learnedWordFolderService
-          .checkExistByFolderNameAndUserIdAndFromLanguageAndLearningLanguage(
-        folderName: folderName,
-        userId: userId,
-        fromLanguage: fromLanguage,
-        learningLanguage: learningLanguage,
-      );
-    case FolderType.voice:
-      return await _playlistFolderService
-          .checkExistByFolderNameAndUserIdAndFromLanguageAndLearningLanguage(
-        folderName: folderName,
-        userId: userId,
-        fromLanguage: fromLanguage,
-        learningLanguage: learningLanguage,
-      );
-  }
-}
+}) async =>
+    await _folderService
+        .checkExistByFolderTypeAndNameAndUserIdAndFromLanguageAndLearningLanguage(
+      folderType: folderType,
+      name: folderName,
+      userId: userId,
+      fromLanguage: fromLanguage,
+      learningLanguage: learningLanguage,
+    );
 
 Future<void> _updateFolder({
   required FolderType folderType,
   required dynamic folder,
 }) async =>
-    folderType == FolderType.word
-        ? await _learnedWordFolderService.update(folder)
-        : await _playlistFolderService.update(folder);
+    await _folderService.update(folder);

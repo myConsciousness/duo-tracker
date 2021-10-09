@@ -2,7 +2,7 @@
 // Use of this source code is governed by a
 // BSD-style license that can be found in the LICENSE file.
 
-import 'package:duo_tracker/src/repository/const/column/chart_column_name.dart';
+import 'package:duo_tracker/src/repository/const/column/chart_column.dart';
 import 'package:flutter/material.dart';
 
 class ChartDataSource {
@@ -16,15 +16,15 @@ class ChartDataSource {
   /// Returns the new instance of [ChartDataSource] based on the [map] passed as an argument.
   factory ChartDataSource.fromMap(Map<String, dynamic> map) =>
       ChartDataSource.from(
-        x: map[ChartColumnName.xValue],
-        y: map[ChartColumnName.yValue],
+        x: map[ChartColumn.xValue],
+        y: map[ChartColumn.yValue],
         text: '100%',
-        pointColor: map.containsKey(ChartColumnName.colorR)
+        pointColor: map.containsKey(ChartColumn.colorR)
             ? Color.fromRGBO(
-                map[ChartColumnName.colorR],
-                map[ChartColumnName.colorG],
-                map[ChartColumnName.colorB],
-                map[ChartColumnName.colorO],
+                map[ChartColumn.colorR],
+                map[ChartColumn.colorG],
+                map[ChartColumn.colorB],
+                map[ChartColumn.colorO],
               )
             : null,
       );

@@ -2,7 +2,7 @@
 // Use of this source code is governed by a
 // BSD-style license that can be found in the LICENSE file.
 
-import 'package:duo_tracker/src/repository/const/column/learned_word_column_name.dart';
+import 'package:duo_tracker/src/repository/const/column/learned_word_column.dart';
 
 /// The enum that represents sort item.
 enum SortItem {
@@ -41,21 +41,21 @@ extension SortItemExt on SortItem {
   String get columnName {
     switch (this) {
       case SortItem.defaultIndex:
-        return LearnedWordColumnName.sortOrder;
+        return LearnedWordColumn.sortOrder;
       case SortItem.lesson:
-        return LearnedWordColumnName.skillUrlTitle;
+        return LearnedWordColumn.skillUrlTitle;
       case SortItem.strength:
-        return LearnedWordColumnName.strengthBars;
+        return LearnedWordColumn.strengthBars;
       case SortItem.pos:
-        return LearnedWordColumnName.pos;
+        return LearnedWordColumn.pos;
       case SortItem.infinitive:
-        return LearnedWordColumnName.infinitive;
+        return LearnedWordColumn.infinitive;
       case SortItem.gender:
-        return LearnedWordColumnName.gender;
+        return LearnedWordColumn.gender;
       case SortItem.proficiency:
-        return LearnedWordColumnName.strength;
+        return LearnedWordColumn.strength;
       case SortItem.lastPracticed:
-        return LearnedWordColumnName.lastPracticedMs;
+        return LearnedWordColumn.lastPracticedMs;
     }
   }
 

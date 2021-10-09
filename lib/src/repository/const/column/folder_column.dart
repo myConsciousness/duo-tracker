@@ -2,9 +2,10 @@
 // Use of this source code is governed by a
 // BSD-style license that can be found in the LICENSE file.
 
-class PlaylistFolderColumnName {
+class FolderColumn {
   static const id = 'ID';
   static const parentFolderId = 'PARENT_FOLDER_ID';
+  static const folderType = 'FOLDER_TYPE';
   static const name = 'NAME';
   static const alias = 'ALIAS';
   static const remarks = 'REMARKS';

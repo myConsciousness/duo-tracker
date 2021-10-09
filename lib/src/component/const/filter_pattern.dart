@@ -2,7 +2,7 @@
 // Use of this source code is governed by a
 // BSD-style license that can be found in the LICENSE file.
 
-import 'package:duo_tracker/src/repository/const/column/learned_word_column_name.dart';
+import 'package:duo_tracker/src/repository/const/column/learned_word_column.dart';
 
 enum FilterPattern {
   // The none
@@ -47,15 +47,15 @@ extension FilterItemExt on FilterPattern {
       case FilterPattern.none:
         throw UnimplementedError();
       case FilterPattern.lesson:
-        return LearnedWordColumnName.skillUrlTitle;
+        return LearnedWordColumn.skillUrlTitle;
       case FilterPattern.strength:
-        return LearnedWordColumnName.strengthBars;
+        return LearnedWordColumn.strengthBars;
       case FilterPattern.pos:
-        return LearnedWordColumnName.pos;
+        return LearnedWordColumn.pos;
       case FilterPattern.infinitive:
-        return LearnedWordColumnName.infinitive;
+        return LearnedWordColumn.infinitive;
       case FilterPattern.gender:
-        return LearnedWordColumnName.gender;
+        return LearnedWordColumn.gender;
     }
   }
 }

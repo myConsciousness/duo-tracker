@@ -13,24 +13,30 @@ import 'package:duo_tracker/src/component/dialog/confirm_dialog.dart';
 import 'package:duo_tracker/src/component/dialog/create_new_folder_dialog.dart';
 import 'package:duo_tracker/src/component/dialog/edit_folder_dialog.dart';
 import 'package:duo_tracker/src/component/loading.dart';
-import 'package:duo_tracker/src/repository/model/learned_word_folder_model.dart';
+import 'package:duo_tracker/src/repository/model/folder_model.dart';
 import 'package:duo_tracker/src/repository/preference/common_shared_preferences_key.dart';
-import 'package:duo_tracker/src/repository/service/learned_word_folder_item_service.dart';
-import 'package:duo_tracker/src/repository/service/learned_word_folder_service.dart';
+import 'package:duo_tracker/src/repository/service/folder_item_service.dart';
+import 'package:duo_tracker/src/repository/service/folder_service.dart';
 import 'package:duo_tracker/src/utils/language_converter.dart';
-import 'package:duo_tracker/src/view/folder/learned_word_folder_items_view.dart';
+import 'package:duo_tracker/src/view/folder/folder_items_view.dart';
 import 'package:flutter/material.dart';
 import 'package:google_mobile_ads/google_mobile_ads.dart';
 import 'package:intl/intl.dart';
 
-class LearnedWordFolderView extends StatefulWidget {
-  const LearnedWordFolderView({Key? key}) : super(key: key);
+class FolderView extends StatefulWidget {
+  /// The folder type
+  final FolderType folderType;
+
+  const FolderView({
+    Key? key,
+    required this.folderType,
+  }) : super(key: key);
 
   @override
-  _LearnedWordFolderViewState createState() => _LearnedWordFolderViewState();
+  _FolderViewState createState() => _FolderViewState();
 }
 
-class _LearnedWordFolderViewState extends State<LearnedWordFolderView> {
+class _FolderViewState extends State<FolderView> {
   /// The app bar subtitle
   String _appBarSubTitle = 'N/A';
 
@@ -40,12 +46,11 @@ class _LearnedWordFolderViewState extends State<LearnedWordFolderView> {
   /// The datetime format
   final _datetimeFormat = DateFormat('yyyy/MM/dd HH:mm');
 
-  /// The learned word folder item service
-  final _learnedWordFolderItemService =
-      LearnedWordFolderItemService.getInstance();
+  /// The folder item service
+  final _folderItemService = FolderItemService.getInstance();
 
-  /// The learned word folder service
-  final _learnedWordFolderService = LearnedWordFolderService.getInstance();
+  /// The folder service
+  final _folderService = FolderService.getInstance();
 
   /// The format for numeric text
   final _numericTextFormat = NumberFormat('#,###');
@@ -92,7 +97,7 @@ class _LearnedWordFolderViewState extends State<LearnedWordFolderView> {
   }
 
   Widget _buildFolderCard({
-    required LearnedWordFolder folder,
+    required Folder folder,
   }) =>
       Card(
         elevation: 5,
@@ -111,7 +116,7 @@ class _LearnedWordFolderViewState extends State<LearnedWordFolderView> {
       );
 
   Widget _buildFolderCardContent({
-    required LearnedWordFolder folder,
+    required Folder folder,
   }) =>
       Column(
         mainAxisAlignment: MainAxisAlignment.center,
@@ -121,7 +126,7 @@ class _LearnedWordFolderViewState extends State<LearnedWordFolderView> {
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
               FutureBuilder(
-                future: _learnedWordFolderItemService
+                future: _folderItemService
                     .countByFolderIdAndUserIdAndFromLanguageAndLearningLanguage(
                   folderId: folder.id,
                   userId: folder.userId,
@@ -183,7 +188,7 @@ class _LearnedWordFolderViewState extends State<LearnedWordFolderView> {
                     await Navigator.push(
                       context,
                       MaterialPageRoute(
-                        builder: (_) => LearnedWordFolderItemsView(
+                        builder: (_) => FolderItemsView(
                           folderId: folder.id,
                           folderName: folder.name,
                         ),
@@ -202,8 +207,8 @@ class _LearnedWordFolderViewState extends State<LearnedWordFolderView> {
                     content:
                         'Are you sure you want to delete the folder "${folder.name}"?',
                     onPressedOk: () async {
-                      await _learnedWordFolderService.delete(folder);
-                      await _learnedWordFolderItemService.deleteByFolderId(
+                      await _folderService.delete(folder);
+                      await _folderItemService.deleteByFolderId(
                           folderId: folder.id);
 
                       super.setState(() {});
@@ -216,15 +221,16 @@ class _LearnedWordFolderViewState extends State<LearnedWordFolderView> {
         ],
       );
 
-  Future<List<LearnedWordFolder>> _fetchDataSource() async {
+  Future<List<Folder>> _fetchDataSource() async {
     final userId = await CommonSharedPreferencesKey.userId.getString();
     final fromLanguage =
         await CommonSharedPreferencesKey.currentFromLanguage.getString();
     final learningLanguage =
         await CommonSharedPreferencesKey.currentLearningLanguage.getString();
 
-    return await _learnedWordFolderService
-        .findByUserIdAndFromLanguageAndLearningLanguage(
+    return await _folderService
+        .findByFolderTypeAndUserIdAndFromLanguageAndLearningLanguage(
+      folderType: widget.folderType,
       userId: userId,
       fromLanguage: fromLanguage,
       learningLanguage: learningLanguage,
@@ -232,7 +238,7 @@ class _LearnedWordFolderViewState extends State<LearnedWordFolderView> {
   }
 
   Widget _buildFolderListView({
-    required List<LearnedWordFolder> folders,
+    required List<Folder> folders,
   }) =>
       ListView.builder(
         itemCount: folders.length,
@@ -289,7 +295,7 @@ class _LearnedWordFolderViewState extends State<LearnedWordFolderView> {
                 return const Loading();
               }
 
-              final List<LearnedWordFolder> folders = snapshot.data;
+              final List<Folder> folders = snapshot.data;
 
               if (folders.isEmpty) {
                 return AddNewFolderButton(

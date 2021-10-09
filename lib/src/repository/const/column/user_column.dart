@@ -3,7 +3,7 @@
 // BSD-style license that can be found in the LICENSE file.
 
 /// The const class that manages the column name of [User] repository.
-class UserColumnName {
+class UserColumn {
   static const id = 'ID';
   static const userId = 'USER_ID';
   static const username = 'USERNAME';

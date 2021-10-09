@@ -2,7 +2,7 @@
 // Use of this source code is governed by a
 // BSD-style license that can be found in the LICENSE file.
 
-import 'package:duo_tracker/src/repository/const/column/course_column_name.dart';
+import 'package:duo_tracker/src/repository/const/column/course_column.dart';
 
 class Course {
   int id = -1;
@@ -45,32 +45,32 @@ class Course {
 
   /// Returns the new instance of [Course] based on the [map] passed as an argument.
   factory Course.fromMap(Map<String, dynamic> map) => Course.from(
-        id: map[CourseColumnName.id],
-        courseId: map[CourseColumnName.courseId],
-        title: map[CourseColumnName.title],
-        learningLanguage: map[CourseColumnName.learningLanguage],
-        fromLanguage: map[CourseColumnName.fromLanguage],
-        xp: map[CourseColumnName.xp],
-        crowns: map[CourseColumnName.crowns],
+        id: map[CourseColumn.id],
+        courseId: map[CourseColumn.courseId],
+        title: map[CourseColumn.title],
+        learningLanguage: map[CourseColumn.learningLanguage],
+        fromLanguage: map[CourseColumn.fromLanguage],
+        xp: map[CourseColumn.xp],
+        crowns: map[CourseColumn.crowns],
         createdAt: DateTime.fromMillisecondsSinceEpoch(
-          map[CourseColumnName.createdAt] ?? 0,
+          map[CourseColumn.createdAt] ?? 0,
         ),
         updatedAt: DateTime.fromMillisecondsSinceEpoch(
-          map[CourseColumnName.updatedAt] ?? 0,
+          map[CourseColumn.updatedAt] ?? 0,
         ),
       );
 
   /// Returns this [VoiceConfiguration] model as [Map].
   Map<String, dynamic> toMap() {
     final map = <String, dynamic>{};
-    map[CourseColumnName.courseId] = courseId;
-    map[CourseColumnName.title] = title;
-    map[CourseColumnName.learningLanguage] = learningLanguage;
-    map[CourseColumnName.fromLanguage] = fromLanguage;
-    map[CourseColumnName.xp] = xp;
-    map[CourseColumnName.crowns] = crowns;
-    map[CourseColumnName.createdAt] = createdAt.millisecondsSinceEpoch;
-    map[CourseColumnName.updatedAt] = updatedAt.millisecondsSinceEpoch;
+    map[CourseColumn.courseId] = courseId;
+    map[CourseColumn.title] = title;
+    map[CourseColumn.learningLanguage] = learningLanguage;
+    map[CourseColumn.fromLanguage] = fromLanguage;
+    map[CourseColumn.xp] = xp;
+    map[CourseColumn.crowns] = crowns;
+    map[CourseColumn.createdAt] = createdAt.millisecondsSinceEpoch;
+    map[CourseColumn.updatedAt] = updatedAt.millisecondsSinceEpoch;
     return map;
   }
 

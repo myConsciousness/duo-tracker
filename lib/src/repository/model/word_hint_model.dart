@@ -2,7 +2,7 @@
 // Use of this source code is governed by a
 // BSD-style license that can be found in the LICENSE file.
 
-import 'package:duo_tracker/src/repository/const/column/word_hint_column_name.dart';
+import 'package:duo_tracker/src/repository/const/column/word_hint_column.dart';
 
 class WordHint {
   int id = -1;
@@ -48,34 +48,34 @@ class WordHint {
 
   /// Returns the new instance of [WordHint] based on the [map] passed as an argument.
   factory WordHint.fromMap(Map<String, dynamic> map) => WordHint.from(
-        id: map[WordHintColumnName.id],
-        wordId: map[WordHintColumnName.wordId],
-        userId: map[WordHintColumnName.userId],
-        learningLanguage: map[WordHintColumnName.learningLanguage],
-        fromLanguage: map[WordHintColumnName.fromLanguage],
-        value: map[WordHintColumnName.value],
-        hint: map[WordHintColumnName.hint],
-        sortOrder: map[WordHintColumnName.sortOrder],
+        id: map[WordHintColumn.id],
+        wordId: map[WordHintColumn.wordId],
+        userId: map[WordHintColumn.userId],
+        learningLanguage: map[WordHintColumn.learningLanguage],
+        fromLanguage: map[WordHintColumn.fromLanguage],
+        value: map[WordHintColumn.value],
+        hint: map[WordHintColumn.hint],
+        sortOrder: map[WordHintColumn.sortOrder],
         createdAt: DateTime.fromMillisecondsSinceEpoch(
-          map[WordHintColumnName.createdAt] ?? 0,
+          map[WordHintColumn.createdAt] ?? 0,
         ),
         updatedAt: DateTime.fromMillisecondsSinceEpoch(
-          map[WordHintColumnName.updatedAt] ?? 0,
+          map[WordHintColumn.updatedAt] ?? 0,
         ),
       );
 
   /// Returns this [WordHint] model as [Map].
   Map<String, dynamic> toMap() {
     final map = <String, dynamic>{};
-    map[WordHintColumnName.wordId] = wordId;
-    map[WordHintColumnName.userId] = userId;
-    map[WordHintColumnName.learningLanguage] = learningLanguage;
-    map[WordHintColumnName.fromLanguage] = fromLanguage;
-    map[WordHintColumnName.value] = value;
-    map[WordHintColumnName.hint] = hint;
-    map[WordHintColumnName.sortOrder] = sortOrder;
-    map[WordHintColumnName.createdAt] = createdAt.millisecondsSinceEpoch;
-    map[WordHintColumnName.updatedAt] = updatedAt.millisecondsSinceEpoch;
+    map[WordHintColumn.wordId] = wordId;
+    map[WordHintColumn.userId] = userId;
+    map[WordHintColumn.learningLanguage] = learningLanguage;
+    map[WordHintColumn.fromLanguage] = fromLanguage;
+    map[WordHintColumn.value] = value;
+    map[WordHintColumn.hint] = hint;
+    map[WordHintColumn.sortOrder] = sortOrder;
+    map[WordHintColumn.createdAt] = createdAt.millisecondsSinceEpoch;
+    map[WordHintColumn.updatedAt] = updatedAt.millisecondsSinceEpoch;
     return map;
   }
 

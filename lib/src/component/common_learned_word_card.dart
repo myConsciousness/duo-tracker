@@ -10,12 +10,9 @@ import 'package:duo_tracker/src/component/dialog/network_error_dialog.dart';
 import 'package:duo_tracker/src/component/dialog/select_folder_dialog.dart';
 import 'package:duo_tracker/src/component/snackbar/info_snack_bar.dart';
 import 'package:duo_tracker/src/http/network.dart';
-import 'package:duo_tracker/src/repository/model/learned_word_folder_item_model.dart';
 import 'package:duo_tracker/src/repository/model/learned_word_model.dart';
 import 'package:duo_tracker/src/repository/model/word_hint_model.dart';
-import 'package:duo_tracker/src/repository/service/learned_word_folder_item_service.dart';
 import 'package:duo_tracker/src/repository/service/learned_word_service.dart';
-import 'package:duo_tracker/src/repository/service/playlist_folder_item_service.dart';
 import 'package:duo_tracker/src/utils/audio_player_utils.dart';
 import 'package:duo_tracker/src/view/overview/lesson_tips_view.dart';
 import 'package:flutter/material.dart';
@@ -26,25 +23,33 @@ class CommonLearnedWordCard extends StatefulWidget {
     Key? key,
     required this.learnedWord,
     this.isFolder = false,
-    this.deleteItem,
     this.showHeader = true,
     this.showBottomActions = true,
+    this.onPressedComplete,
+    this.onPressedTrash,
+    this.onPressedDeleteItem,
   }) : super(key: key);
 
-  /// The learned word
-  final LearnedWord learnedWord;
+  /// The on press action for complete button
+  final Function()? onPressedComplete;
+
+  /// The on press action for trash button
+  final Function()? onPressedTrash;
+
+  /// The on press action for delete item button
+  final Function()? onPressedDeleteItem;
 
   /// The flag that represents this is folder or not
   final bool isFolder;
 
-  /// The delete item
-  final dynamic deleteItem;
-
-  /// The flag represents show header or not
-  final bool showHeader;
+  /// The learned word
+  final LearnedWord learnedWord;
 
   /// The flag represents show bottom actions or not
   final bool showBottomActions;
+
+  /// The flag represents show header or not
+  final bool showHeader;
 
   @override
   _CommonLearnedWordCardState createState() => _CommonLearnedWordCardState();
@@ -59,13 +64,6 @@ class _CommonLearnedWordCardState extends State<CommonLearnedWordCard> {
 
   /// The learned word service
   final _learnedWordService = LearnedWordService.getInstance();
-
-  /// The learned word folder item service
-  final _learnedWordFolderItemService =
-      LearnedWordFolderItemService.getInstance();
-
-  /// The playlist folder item service
-  final _playlistFolderItemService = PlaylistFolderItemService.getInstance();
 
   Widget _buildCardLeading({
     required LearnedWord learnedWord,
@@ -137,6 +135,74 @@ class _CommonLearnedWordCardState extends State<CommonLearnedWordCard> {
       ),
     );
   }
+
+  List<Widget> _createCardActions({
+    required LearnedWord learnedWord,
+  }) =>
+      <Widget>[
+        Row(
+          mainAxisAlignment: MainAxisAlignment.start,
+          children: [
+            IconButton(
+              tooltip: learnedWord.deleted ? 'Restore' : 'Delete',
+              icon: learnedWord.deleted
+                  ? const Icon(Icons.restore_from_trash)
+                  : const Icon(Icons.delete),
+              onPressed: widget.onPressedTrash,
+            ),
+            if (!learnedWord.deleted)
+              IconButton(
+                tooltip: learnedWord.completed ? 'Undo' : 'Complete',
+                icon: learnedWord.completed
+                    ? const Icon(Icons.undo)
+                    : const Icon(Icons.done),
+                onPressed: widget.onPressedComplete,
+              ),
+          ],
+        ),
+        Row(
+          mainAxisAlignment: MainAxisAlignment.end,
+          children: [
+            if (learnedWord.tipsAndNotes.isNotEmpty)
+              IconButton(
+                tooltip: 'Show Tips & Notes',
+                icon: const Icon(Icons.more),
+                onPressed: () => Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (_) => LessonTipsView(
+                      lessonName: learnedWord.skill,
+                      html: learnedWord.tipsAndNotes,
+                    ),
+                  ),
+                ),
+              ),
+            IconButton(
+              tooltip: 'Store In Folder',
+              icon: const Icon(Icons.create_new_folder),
+              onPressed: () async {
+                await showSelectFolderDialog(
+                  context: context,
+                  wordId: learnedWord.wordId,
+                );
+              },
+            ),
+            //! It will be forcibly redirected to the official app side to the learning page.
+            // IconButton(
+            //   tooltip: 'Learn at Duolingo',
+            //   icon: const Icon(Icons.school),
+            //   onPressed: () async =>
+            //       await DuolingoPageLauncher.learnWord.build.execute(
+            //     context: context,
+            //     params: {
+            //       'learningLanguage': learnedWord.formalLearningLanguage,
+            //       'skillUrlTitle': learnedWord.skillUrlTitle,
+            //     },
+            //   ),
+            // ),
+          ],
+        ),
+      ];
 
   @override
   Widget build(BuildContext context) => Card(
@@ -267,23 +333,7 @@ class _CommonLearnedWordCardState extends State<CommonLearnedWordCard> {
                   if (widget.isFolder)
                     IconButton(
                       icon: const Icon(Icons.delete),
-                      onPressed: () async {
-                        if (widget.deleteItem == null) {
-                          throw FlutterError('The delete item is null.');
-                        }
-
-                        if (widget.deleteItem is LearnedWordFolderItem) {
-                          await _learnedWordFolderItemService.delete(
-                            widget.deleteItem,
-                          );
-                        } else {
-                          await _playlistFolderItemService.delete(
-                            widget.deleteItem,
-                          );
-                        }
-
-                        super.setState(() {});
-                      },
+                      onPressed: () async => widget.onPressedDeleteItem,
                     ),
                 ],
               ),
@@ -300,84 +350,4 @@ class _CommonLearnedWordCardState extends State<CommonLearnedWordCard> {
           ),
         ),
       );
-
-  List<Widget> _createCardActions({
-    required LearnedWord learnedWord,
-  }) =>
-      <Widget>[
-        Row(
-          mainAxisAlignment: MainAxisAlignment.start,
-          children: [
-            IconButton(
-              tooltip: learnedWord.deleted ? 'Restore' : 'Delete',
-              icon: learnedWord.deleted
-                  ? const Icon(Icons.restore_from_trash)
-                  : const Icon(Icons.delete),
-              onPressed: () async {
-                learnedWord.deleted = !learnedWord.deleted;
-                learnedWord.updatedAt = DateTime.now();
-
-                await _learnedWordService.update(learnedWord);
-                super.setState(() {});
-              },
-            ),
-            if (!learnedWord.deleted)
-              IconButton(
-                tooltip: learnedWord.completed ? 'Undo' : 'Complete',
-                icon: learnedWord.completed
-                    ? const Icon(Icons.undo)
-                    : const Icon(Icons.done),
-                onPressed: () async {
-                  learnedWord.completed = !learnedWord.completed;
-                  learnedWord.updatedAt = DateTime.now();
-
-                  await _learnedWordService.update(learnedWord);
-                  super.setState(() {});
-                },
-              ),
-          ],
-        ),
-        Row(
-          mainAxisAlignment: MainAxisAlignment.end,
-          children: [
-            if (learnedWord.tipsAndNotes.isNotEmpty)
-              IconButton(
-                tooltip: 'Show Tips & Notes',
-                icon: const Icon(Icons.more),
-                onPressed: () => Navigator.push(
-                  context,
-                  MaterialPageRoute(
-                    builder: (_) => LessonTipsView(
-                      lessonName: learnedWord.skill,
-                      html: learnedWord.tipsAndNotes,
-                    ),
-                  ),
-                ),
-              ),
-            IconButton(
-              tooltip: 'Store In Folder',
-              icon: const Icon(Icons.create_new_folder),
-              onPressed: () async {
-                await showSelectFolderDialog(
-                  context: context,
-                  wordId: learnedWord.wordId,
-                );
-              },
-            ),
-            //! It will be forcibly redirected to the official app side to the learning page.
-            // IconButton(
-            //   tooltip: 'Learn at Duolingo',
-            //   icon: const Icon(Icons.school),
-            //   onPressed: () async =>
-            //       await DuolingoPageLauncher.learnWord.build.execute(
-            //     context: context,
-            //     params: {
-            //       'learningLanguage': learnedWord.formalLearningLanguage,
-            //       'skillUrlTitle': learnedWord.skillUrlTitle,
-            //     },
-            //   ),
-            // ),
-          ],
-        ),
-      ];
 }

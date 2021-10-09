@@ -2,19 +2,19 @@
 // Use of this source code is governed by a
 // BSD-style license that can be found in the LICENSE file.
 
-import 'package:duo_tracker/src/repository/learned_word_folder_item_repository.dart';
-import 'package:duo_tracker/src/repository/model/learned_word_folder_item_model.dart';
+import 'package:duo_tracker/src/repository/folder_item_repository.dart';
+import 'package:duo_tracker/src/repository/model/folder_item_model.dart';
 import 'package:duo_tracker/src/repository/service/learned_word_service.dart';
 
-class LearnedWordFolderItemService extends LearnedWordFolderItemRepository {
+class FolderItemService extends FolderItemRepository {
   /// The internal constructor.
-  LearnedWordFolderItemService._internal();
+  FolderItemService._internal();
 
-  /// Returns the singleton instance of [LearnedWordFolderItemService].
-  factory LearnedWordFolderItemService.getInstance() => _singletonInstance;
+  /// Returns the singleton instance of [FolderItemService].
+  factory FolderItemService.getInstance() => _singletonInstance;
 
-  /// The singleton instance of this [LearnedWordFolderItemService].
-  static final _singletonInstance = LearnedWordFolderItemService._internal();
+  /// The singleton instance of this [FolderItemService].
+  static final _singletonInstance = FolderItemService._internal();
 
   /// The learned word service
   final _learnedWordService = LearnedWordService.getInstance();
@@ -78,14 +78,13 @@ class LearnedWordFolderItemService extends LearnedWordFolderItemRepository {
           );
 
   @override
-  Future<void> delete(LearnedWordFolderItem model) async =>
-      await super.database.then(
-            (database) => database.delete(
-              table,
-              where: 'ID = ?',
-              whereArgs: [model.id],
-            ),
-          );
+  Future<void> delete(FolderItem model) async => await super.database.then(
+        (database) => database.delete(
+          table,
+          where: 'ID = ?',
+          whereArgs: [model.id],
+        ),
+      );
 
   @override
   Future<void> deleteAll() async => await super.database.then(
@@ -131,21 +130,20 @@ class LearnedWordFolderItemService extends LearnedWordFolderItemRepository {
               );
 
   @override
-  Future<List<LearnedWordFolderItem>> findAll() async =>
-      await super.database.then(
-            (database) => database.query(table).then(
-                  (v) => v
-                      .map(
-                        (e) => e.isNotEmpty
-                            ? LearnedWordFolderItem.fromMap(e)
-                            : LearnedWordFolderItem.empty(),
-                      )
-                      .toList(),
-                ),
-          );
+  Future<List<FolderItem>> findAll() async => await super.database.then(
+        (database) => database.query(table).then(
+              (v) => v
+                  .map(
+                    (e) => e.isNotEmpty
+                        ? FolderItem.fromMap(e)
+                        : FolderItem.empty(),
+                  )
+                  .toList(),
+            ),
+      );
 
   @override
-  Future<List<LearnedWordFolderItem>>
+  Future<List<FolderItem>>
       findByFolderIdAndUserIdAndFromLanguageAndLearningLanguage({
     required int folderId,
     required String userId,
@@ -170,8 +168,8 @@ class LearnedWordFolderItemService extends LearnedWordFolderItemRepository {
                 (v) => v
                     .map(
                       (e) => e.isNotEmpty
-                          ? LearnedWordFolderItem.fromMap(e)
-                          : LearnedWordFolderItem.empty(),
+                          ? FolderItem.fromMap(e)
+                          : FolderItem.empty(),
                     )
                     .toList(),
               ),
@@ -186,21 +184,20 @@ class LearnedWordFolderItemService extends LearnedWordFolderItemRepository {
   }
 
   @override
-  Future<LearnedWordFolderItem> findById(int id) async =>
-      await super.database.then(
-            (database) => database.query(
-              table,
-              where: 'ID = ?',
-              whereArgs: [id],
-            ).then(
-              (entity) => entity.isNotEmpty
-                  ? LearnedWordFolderItem.fromMap(entity[0])
-                  : LearnedWordFolderItem.empty(),
-            ),
-          );
+  Future<FolderItem> findById(int id) async => await super.database.then(
+        (database) => database.query(
+          table,
+          where: 'ID = ?',
+          whereArgs: [id],
+        ).then(
+          (entity) => entity.isNotEmpty
+              ? FolderItem.fromMap(entity[0])
+              : FolderItem.empty(),
+        ),
+      );
 
   @override
-  Future<LearnedWordFolderItem> insert(LearnedWordFolderItem model) async {
+  Future<FolderItem> insert(FolderItem model) async {
     await super.database.then(
           (database) => database
               .insert(
@@ -216,24 +213,23 @@ class LearnedWordFolderItemService extends LearnedWordFolderItemRepository {
   }
 
   @override
-  Future<LearnedWordFolderItem> replace(LearnedWordFolderItem model) async {
+  Future<FolderItem> replace(FolderItem model) async {
     await delete(model);
     return await insert(model);
   }
 
   @override
-  String get table => 'LEARNED_WORD_FOLDER_ITEM';
+  String get table => 'FOLDER_ITEM';
 
   @override
-  Future<void> update(LearnedWordFolderItem model) async =>
-      await super.database.then(
-            (database) => database.update(
-              table,
-              model.toMap(),
-              where: 'ID = ?',
-              whereArgs: [
-                model.id,
-              ],
-            ),
-          );
+  Future<void> update(FolderItem model) async => await super.database.then(
+        (database) => database.update(
+          table,
+          model.toMap(),
+          where: 'ID = ?',
+          whereArgs: [
+            model.id,
+          ],
+        ),
+      );
 }

@@ -178,6 +178,20 @@ class _OverviewViewState extends State<OverviewView> {
             ),
           CommonLearnedWordCard(
             learnedWord: learnedWord,
+            onPressedComplete: () async {
+              learnedWord.completed = !learnedWord.completed;
+              learnedWord.updatedAt = DateTime.now();
+
+              await _learnedWordService.update(learnedWord);
+              super.setState(() {});
+            },
+            onPressedTrash: () async {
+              learnedWord.deleted = !learnedWord.deleted;
+              learnedWord.updatedAt = DateTime.now();
+
+              await _learnedWordService.update(learnedWord);
+              super.setState(() {});
+            },
           ),
         ],
       ),

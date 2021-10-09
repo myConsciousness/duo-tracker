@@ -2,28 +2,28 @@
 // Use of this source code is governed by a
 // BSD-style license that can be found in the LICENSE file.
 
-import 'package:duo_tracker/src/repository/learned_word_folder_repository.dart';
-import 'package:duo_tracker/src/repository/model/learned_word_folder_model.dart';
+import 'package:duo_tracker/src/component/const/folder_type.dart';
+import 'package:duo_tracker/src/repository/folder_repository.dart';
+import 'package:duo_tracker/src/repository/model/folder_model.dart';
 
-class LearnedWordFolderService extends LearnedWordFolderRepository {
+class FolderService extends FolderRepository {
   /// The internal constructor.
-  LearnedWordFolderService._internal();
+  FolderService._internal();
 
-  /// Returns the singleton instance of [LearnedWordFolderService].
-  factory LearnedWordFolderService.getInstance() => _singletonInstance;
+  /// Returns the singleton instance of [FolderService].
+  factory FolderService.getInstance() => _singletonInstance;
 
-  /// The singleton instance of this [LearnedWordFolderService].
-  static final _singletonInstance = LearnedWordFolderService._internal();
+  /// The singleton instance of this [FolderService].
+  static final _singletonInstance = FolderService._internal();
 
   @override
-  Future<void> delete(LearnedWordFolder model) async =>
-      await super.database.then(
-            (database) => database.delete(
-              table,
-              where: 'ID = ?',
-              whereArgs: [model.id],
-            ),
-          );
+  Future<void> delete(Folder model) async => await super.database.then(
+        (database) => database.delete(
+          table,
+          where: 'ID = ?',
+          whereArgs: [model.id],
+        ),
+      );
 
   @override
   Future<void> deleteAll() async => await super.database.then(
@@ -33,30 +33,27 @@ class LearnedWordFolderService extends LearnedWordFolderRepository {
       );
 
   @override
-  Future<List<LearnedWordFolder>> findAll() async => await super.database.then(
+  Future<List<Folder>> findAll() async => await super.database.then(
         (database) => database.query(table).then(
               (v) => v
                   .map(
-                    (e) => e.isNotEmpty
-                        ? LearnedWordFolder.fromMap(e)
-                        : LearnedWordFolder.empty(),
+                    (e) => e.isNotEmpty ? Folder.fromMap(e) : Folder.empty(),
                   )
                   .toList(),
             ),
       );
 
   @override
-  Future<LearnedWordFolder> findById(int id) async => await super.database.then(
+  Future<Folder> findById(int id) async => await super.database.then(
         (database) =>
             database.query(table, where: 'ID = ?', whereArgs: [id]).then(
-          (entity) => entity.isNotEmpty
-              ? LearnedWordFolder.fromMap(entity[0])
-              : LearnedWordFolder.empty(),
+          (entity) =>
+              entity.isNotEmpty ? Folder.fromMap(entity[0]) : Folder.empty(),
         ),
       );
 
   @override
-  Future<LearnedWordFolder> insert(LearnedWordFolder model) async {
+  Future<Folder> insert(Folder model) async {
     await super.database.then(
           (database) => database
               .insert(
@@ -72,30 +69,30 @@ class LearnedWordFolderService extends LearnedWordFolderRepository {
   }
 
   @override
-  Future<LearnedWordFolder> replace(LearnedWordFolder model) async {
+  Future<Folder> replace(Folder model) async {
     await delete(model);
     return await insert(model);
   }
 
   @override
-  String get table => 'LEARNED_WORD_FOLDER';
+  String get table => 'FOLDER';
 
   @override
-  Future<void> update(LearnedWordFolder model) async =>
-      await super.database.then(
-            (database) => database.update(
-              table,
-              model.toMap(),
-              where: 'ID = ?',
-              whereArgs: [
-                model.id,
-              ],
-            ),
-          );
+  Future<void> update(Folder model) async => await super.database.then(
+        (database) => database.update(
+          table,
+          model.toMap(),
+          where: 'ID = ?',
+          whereArgs: [
+            model.id,
+          ],
+        ),
+      );
 
   @override
-  Future<List<LearnedWordFolder>>
-      findByUserIdAndFromLanguageAndLearningLanguage({
+  Future<List<Folder>>
+      findByFolderTypeAndUserIdAndFromLanguageAndLearningLanguage({
+    required FolderType folderType,
     required String userId,
     required String fromLanguage,
     required String learningLanguage,
@@ -105,8 +102,9 @@ class LearnedWordFolderService extends LearnedWordFolderRepository {
                     .query(
                       table,
                       where:
-                          'USER_ID = ? AND FROM_LANGUAGE = ? AND LEARNING_LANGUAGE = ?',
+                          'FOLDER_TYPE = ? AND USER_ID = ? AND FROM_LANGUAGE = ? AND LEARNING_LANGUAGE = ?',
                       whereArgs: [
+                        folderType.code,
                         userId,
                         fromLanguage,
                         learningLanguage,
@@ -117,8 +115,8 @@ class LearnedWordFolderService extends LearnedWordFolderRepository {
                       (v) => v
                           .map(
                             (e) => e.isNotEmpty
-                                ? LearnedWordFolder.fromMap(e)
-                                : LearnedWordFolder.empty(),
+                                ? Folder.fromMap(e)
+                                : Folder.empty(),
                           )
                           .toList(),
                     ),
@@ -126,8 +124,9 @@ class LearnedWordFolderService extends LearnedWordFolderRepository {
 
   @override
   Future<bool>
-      checkExistByFolderNameAndUserIdAndFromLanguageAndLearningLanguage({
-    required String folderName,
+      checkExistByFolderTypeAndNameAndUserIdAndFromLanguageAndLearningLanguage({
+    required FolderType folderType,
+    required String name,
     required String userId,
     required String fromLanguage,
     required String learningLanguage,
@@ -139,12 +138,14 @@ class LearnedWordFolderService extends LearnedWordFolderRepository {
                 $table
               WHERE
                 1 = 1
+                AND FOLDER_TYPE = ?
                 AND NAME = ?
                 AND USER_ID = ?
                 AND FROM_LANGUAGE = ?
                 AND LEARNING_LANGUAGE = ?
               ''', [
-                folderName,
+                folderType.code,
+                name,
                 userId,
                 fromLanguage,
                 learningLanguage

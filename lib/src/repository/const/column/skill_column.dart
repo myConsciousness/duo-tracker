@@ -3,7 +3,7 @@
 // BSD-style license that can be found in the LICENSE file.
 
 /// The const class that manages the column name of [Skill] repository.
-class SkillColumnName {
+class SkillColumn {
   static const id = 'ID';
   static const skillId = 'SKILL_ID';
   static const name = 'NAME';

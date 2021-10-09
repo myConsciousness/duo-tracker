@@ -3,7 +3,7 @@
 // BSD-style license that can be found in the LICENSE file.
 
 /// The const class that manages the column name of [Chart] non‐persistency repository.
-class ChartColumnName {
+class ChartColumn {
   static const xValue = 'X_VALUE';
   static const yValue = 'Y_VALUE';
   static const colorR = 'COLOR_R';

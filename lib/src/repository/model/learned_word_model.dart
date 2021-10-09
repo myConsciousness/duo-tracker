@@ -3,7 +3,7 @@
 // BSD-style license that can be found in the LICENSE file.
 
 import 'package:duo_tracker/src/repository/boolean_text.dart';
-import 'package:duo_tracker/src/repository/const/column/learned_word_column_name.dart';
+import 'package:duo_tracker/src/repository/const/column/learned_word_column.dart';
 import 'package:duo_tracker/src/repository/model/word_hint_model.dart';
 
 class LearnedWord {
@@ -107,70 +107,69 @@ class LearnedWord {
 
   /// Returns the new instance of [LearnedWord] based on the [map] passed as an argument.
   factory LearnedWord.fromMap(Map<String, dynamic> map) => LearnedWord.from(
-        id: map[LearnedWordColumnName.id],
-        wordId: map[LearnedWordColumnName.wordId],
-        userId: map[LearnedWordColumnName.userId],
-        languageString: map[LearnedWordColumnName.languageString],
-        learningLanguage: map[LearnedWordColumnName.learningLanguage],
-        fromLanguage: map[LearnedWordColumnName.fromLanguage],
-        formalLearningLanguage:
-            map[LearnedWordColumnName.formalLearningLanguage],
-        formalFromLanguage: map[LearnedWordColumnName.formalFromLanguage],
-        lexemeId: map[LearnedWordColumnName.lexemeId],
-        strengthBars: map[LearnedWordColumnName.strengthBars],
-        infinitive: map[LearnedWordColumnName.infinitive],
-        wordString: map[LearnedWordColumnName.wordString],
-        normalizedString: map[LearnedWordColumnName.normalizedString],
-        pos: map[LearnedWordColumnName.pos],
-        lastPracticedMs: map[LearnedWordColumnName.lastPracticedMs],
-        skill: map[LearnedWordColumnName.skill],
-        lastPracticed: map[LearnedWordColumnName.lastPracticed],
-        strength: map[LearnedWordColumnName.strength],
-        skillUrlTitle: map[LearnedWordColumnName.skillUrlTitle],
-        gender: map[LearnedWordColumnName.gender],
-        bookmarked: map[LearnedWordColumnName.bookmarked] == BooleanText.true_,
-        completed: map[LearnedWordColumnName.completed] == BooleanText.true_,
-        deleted: map[LearnedWordColumnName.deleted] == BooleanText.true_,
-        sortOrder: map[LearnedWordColumnName.sortOrder],
+        id: map[LearnedWordColumn.id],
+        wordId: map[LearnedWordColumn.wordId],
+        userId: map[LearnedWordColumn.userId],
+        languageString: map[LearnedWordColumn.languageString],
+        learningLanguage: map[LearnedWordColumn.learningLanguage],
+        fromLanguage: map[LearnedWordColumn.fromLanguage],
+        formalLearningLanguage: map[LearnedWordColumn.formalLearningLanguage],
+        formalFromLanguage: map[LearnedWordColumn.formalFromLanguage],
+        lexemeId: map[LearnedWordColumn.lexemeId],
+        strengthBars: map[LearnedWordColumn.strengthBars],
+        infinitive: map[LearnedWordColumn.infinitive],
+        wordString: map[LearnedWordColumn.wordString],
+        normalizedString: map[LearnedWordColumn.normalizedString],
+        pos: map[LearnedWordColumn.pos],
+        lastPracticedMs: map[LearnedWordColumn.lastPracticedMs],
+        skill: map[LearnedWordColumn.skill],
+        lastPracticed: map[LearnedWordColumn.lastPracticed],
+        strength: map[LearnedWordColumn.strength],
+        skillUrlTitle: map[LearnedWordColumn.skillUrlTitle],
+        gender: map[LearnedWordColumn.gender],
+        bookmarked: map[LearnedWordColumn.bookmarked] == BooleanText.true_,
+        completed: map[LearnedWordColumn.completed] == BooleanText.true_,
+        deleted: map[LearnedWordColumn.deleted] == BooleanText.true_,
+        sortOrder: map[LearnedWordColumn.sortOrder],
         createdAt: DateTime.fromMillisecondsSinceEpoch(
-          map[LearnedWordColumnName.createdAt] ?? 0,
+          map[LearnedWordColumn.createdAt] ?? 0,
         ),
         updatedAt: DateTime.fromMillisecondsSinceEpoch(
-          map[LearnedWordColumnName.updatedAt] ?? 0,
+          map[LearnedWordColumn.updatedAt] ?? 0,
         ),
       );
 
   /// Returns this [LearnedWord] model as [Map].
   Map<String, dynamic> toMap() {
     final map = <String, dynamic>{};
-    map[LearnedWordColumnName.wordId] = wordId;
-    map[LearnedWordColumnName.userId] = userId;
-    map[LearnedWordColumnName.languageString] = languageString;
-    map[LearnedWordColumnName.learningLanguage] = learningLanguage;
-    map[LearnedWordColumnName.fromLanguage] = fromLanguage;
-    map[LearnedWordColumnName.formalLearningLanguage] = formalLearningLanguage;
-    map[LearnedWordColumnName.formalFromLanguage] = formalFromLanguage;
-    map[LearnedWordColumnName.lexemeId] = lexemeId;
-    map[LearnedWordColumnName.strengthBars] = strengthBars;
-    map[LearnedWordColumnName.infinitive] = infinitive;
-    map[LearnedWordColumnName.wordString] = wordString;
-    map[LearnedWordColumnName.normalizedString] = normalizedString;
-    map[LearnedWordColumnName.pos] = pos;
-    map[LearnedWordColumnName.lastPracticedMs] = lastPracticedMs;
-    map[LearnedWordColumnName.skill] = skill;
-    map[LearnedWordColumnName.lastPracticed] = lastPracticed;
-    map[LearnedWordColumnName.strength] = strength;
-    map[LearnedWordColumnName.skillUrlTitle] = skillUrlTitle;
-    map[LearnedWordColumnName.gender] = gender;
-    map[LearnedWordColumnName.bookmarked] =
+    map[LearnedWordColumn.wordId] = wordId;
+    map[LearnedWordColumn.userId] = userId;
+    map[LearnedWordColumn.languageString] = languageString;
+    map[LearnedWordColumn.learningLanguage] = learningLanguage;
+    map[LearnedWordColumn.fromLanguage] = fromLanguage;
+    map[LearnedWordColumn.formalLearningLanguage] = formalLearningLanguage;
+    map[LearnedWordColumn.formalFromLanguage] = formalFromLanguage;
+    map[LearnedWordColumn.lexemeId] = lexemeId;
+    map[LearnedWordColumn.strengthBars] = strengthBars;
+    map[LearnedWordColumn.infinitive] = infinitive;
+    map[LearnedWordColumn.wordString] = wordString;
+    map[LearnedWordColumn.normalizedString] = normalizedString;
+    map[LearnedWordColumn.pos] = pos;
+    map[LearnedWordColumn.lastPracticedMs] = lastPracticedMs;
+    map[LearnedWordColumn.skill] = skill;
+    map[LearnedWordColumn.lastPracticed] = lastPracticed;
+    map[LearnedWordColumn.strength] = strength;
+    map[LearnedWordColumn.skillUrlTitle] = skillUrlTitle;
+    map[LearnedWordColumn.gender] = gender;
+    map[LearnedWordColumn.bookmarked] =
         bookmarked ? BooleanText.true_ : BooleanText.false_;
-    map[LearnedWordColumnName.completed] =
+    map[LearnedWordColumn.completed] =
         completed ? BooleanText.true_ : BooleanText.false_;
-    map[LearnedWordColumnName.deleted] =
+    map[LearnedWordColumn.deleted] =
         deleted ? BooleanText.true_ : BooleanText.false_;
-    map[LearnedWordColumnName.sortOrder] = sortOrder;
-    map[LearnedWordColumnName.createdAt] = createdAt.millisecondsSinceEpoch;
-    map[LearnedWordColumnName.updatedAt] = updatedAt.millisecondsSinceEpoch;
+    map[LearnedWordColumn.sortOrder] = sortOrder;
+    map[LearnedWordColumn.createdAt] = createdAt.millisecondsSinceEpoch;
+    map[LearnedWordColumn.updatedAt] = updatedAt.millisecondsSinceEpoch;
     return map;
   }
 

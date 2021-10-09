@@ -2,7 +2,7 @@
 // Use of this source code is governed by a
 // BSD-style license that can be found in the LICENSE file.
 
-import 'package:duo_tracker/src/repository/const/column/purchase_history_column_name.dart';
+import 'package:duo_tracker/src/repository/const/column/purchase_history_column.dart';
 
 class PurchaseHistory {
   int id = -1;
@@ -46,38 +46,36 @@ class PurchaseHistory {
   /// Returns the new instance of [PurchaseHistory] based on the [map] passed as an argument.
   factory PurchaseHistory.fromMap(Map<String, dynamic> map) =>
       PurchaseHistory.from(
-        id: map[PurchaseHistoryColumnName.id],
-        productName: map[PurchaseHistoryColumnName.productName],
-        price: map[PurchaseHistoryColumnName.price],
-        priceType: map[PurchaseHistoryColumnName.priceType],
-        validPeriodInMinutes:
-            map[PurchaseHistoryColumnName.validPeriodInMinutes],
+        id: map[PurchaseHistoryColumn.id],
+        productName: map[PurchaseHistoryColumn.productName],
+        price: map[PurchaseHistoryColumn.price],
+        priceType: map[PurchaseHistoryColumn.priceType],
+        validPeriodInMinutes: map[PurchaseHistoryColumn.validPeriodInMinutes],
         purchasedAt: DateTime.fromMillisecondsSinceEpoch(
-          map[PurchaseHistoryColumnName.purchasedAt] ?? 0,
+          map[PurchaseHistoryColumn.purchasedAt] ?? 0,
         ),
         expiredAt: DateTime.fromMillisecondsSinceEpoch(
-          map[PurchaseHistoryColumnName.expiredAt] ?? 0,
+          map[PurchaseHistoryColumn.expiredAt] ?? 0,
         ),
         createdAt: DateTime.fromMillisecondsSinceEpoch(
-          map[PurchaseHistoryColumnName.createdAt] ?? 0,
+          map[PurchaseHistoryColumn.createdAt] ?? 0,
         ),
         updatedAt: DateTime.fromMillisecondsSinceEpoch(
-          map[PurchaseHistoryColumnName.updatedAt] ?? 0,
+          map[PurchaseHistoryColumn.updatedAt] ?? 0,
         ),
       );
 
   /// Returns this [PurchaseHistory] model as [Map].
   Map<String, dynamic> toMap() {
     final map = <String, dynamic>{};
-    map[PurchaseHistoryColumnName.productName] = productName;
-    map[PurchaseHistoryColumnName.price] = price;
-    map[PurchaseHistoryColumnName.priceType] = priceType;
-    map[PurchaseHistoryColumnName.validPeriodInMinutes] = validPeriodInMinutes;
-    map[PurchaseHistoryColumnName.purchasedAt] =
-        purchasedAt.millisecondsSinceEpoch;
-    map[PurchaseHistoryColumnName.expiredAt] = expiredAt.millisecondsSinceEpoch;
-    map[PurchaseHistoryColumnName.createdAt] = createdAt.millisecondsSinceEpoch;
-    map[PurchaseHistoryColumnName.updatedAt] = updatedAt.millisecondsSinceEpoch;
+    map[PurchaseHistoryColumn.productName] = productName;
+    map[PurchaseHistoryColumn.price] = price;
+    map[PurchaseHistoryColumn.priceType] = priceType;
+    map[PurchaseHistoryColumn.validPeriodInMinutes] = validPeriodInMinutes;
+    map[PurchaseHistoryColumn.purchasedAt] = purchasedAt.millisecondsSinceEpoch;
+    map[PurchaseHistoryColumn.expiredAt] = expiredAt.millisecondsSinceEpoch;
+    map[PurchaseHistoryColumn.createdAt] = createdAt.millisecondsSinceEpoch;
+    map[PurchaseHistoryColumn.updatedAt] = updatedAt.millisecondsSinceEpoch;
     return map;
   }
 

@@ -6,18 +6,13 @@ import 'package:awesome_dialog/awesome_dialog.dart';
 import 'package:duo_tracker/src/component/common_text_field.dart';
 import 'package:duo_tracker/src/component/const/folder_type.dart';
 import 'package:duo_tracker/src/component/dialog/input_error_dialog.dart';
-import 'package:duo_tracker/src/repository/model/learned_word_folder_model.dart';
-import 'package:duo_tracker/src/repository/model/playlist_folder_model.dart';
+import 'package:duo_tracker/src/repository/model/folder_model.dart';
 import 'package:duo_tracker/src/repository/preference/common_shared_preferences_key.dart';
-import 'package:duo_tracker/src/repository/service/learned_word_folder_service.dart';
-import 'package:duo_tracker/src/repository/service/playlist_folder_service.dart';
+import 'package:duo_tracker/src/repository/service/folder_service.dart';
 import 'package:flutter/material.dart';
 
-/// The learned word folder service
-final _learnedWordFolderService = LearnedWordFolderService.getInstance();
-
-/// The playlist folder service
-final _playlistFolderService = PlaylistFolderService.getInstance();
+/// The folder service
+final _folderService = FolderService.getInstance();
 
 late AwesomeDialog _dialog;
 
@@ -166,26 +161,15 @@ Future<bool> _isFolderDuplicated({
   required String userId,
   required String fromLanguage,
   required String learningLanguage,
-}) async {
-  switch (folderType) {
-    case FolderType.word:
-      return await _learnedWordFolderService
-          .checkExistByFolderNameAndUserIdAndFromLanguageAndLearningLanguage(
-        folderName: folderName,
-        userId: userId,
-        fromLanguage: fromLanguage,
-        learningLanguage: learningLanguage,
-      );
-    case FolderType.voice:
-      return await _playlistFolderService
-          .checkExistByFolderNameAndUserIdAndFromLanguageAndLearningLanguage(
-        folderName: folderName,
-        userId: userId,
-        fromLanguage: fromLanguage,
-        learningLanguage: learningLanguage,
-      );
-  }
-}
+}) async =>
+    await _folderService
+        .checkExistByFolderTypeAndNameAndUserIdAndFromLanguageAndLearningLanguage(
+      folderType: folderType,
+      name: folderName,
+      userId: userId,
+      fromLanguage: fromLanguage,
+      learningLanguage: learningLanguage,
+    );
 
 Future<void> _createNewFolder({
   required FolderType folderType,
@@ -193,41 +177,20 @@ Future<void> _createNewFolder({
   required String userId,
   required String fromLanguage,
   required String learningLanguage,
-}) async {
-  switch (folderType) {
-    case FolderType.word:
-      await _learnedWordFolderService.insert(
-        LearnedWordFolder.from(
-          parentFolderId: -1,
-          name: folderName,
-          alias: '',
-          remarks: _remarks.text,
-          userId: userId,
-          fromLanguage: fromLanguage,
-          learningLanguage: learningLanguage,
-          sortOrder: 2,
-          deleted: false,
-          createdAt: DateTime.now(),
-          updatedAt: DateTime.now(),
-        ),
-      );
-      break;
-    case FolderType.voice:
-      await _playlistFolderService.insert(
-        PlaylistFolder.from(
-          parentFolderId: -1,
-          name: folderName,
-          alias: '',
-          remarks: _remarks.text,
-          userId: userId,
-          fromLanguage: fromLanguage,
-          learningLanguage: learningLanguage,
-          sortOrder: 2,
-          deleted: false,
-          createdAt: DateTime.now(),
-          updatedAt: DateTime.now(),
-        ),
-      );
-      break;
-  }
-}
+}) async =>
+    await _folderService.insert(
+      Folder.from(
+        parentFolderId: -1,
+        folderType: folderType,
+        name: folderName,
+        alias: '',
+        remarks: _remarks.text,
+        userId: userId,
+        fromLanguage: fromLanguage,
+        learningLanguage: learningLanguage,
+        sortOrder: 2,
+        deleted: false,
+        createdAt: DateTime.now(),
+        updatedAt: DateTime.now(),
+      ),
+    );

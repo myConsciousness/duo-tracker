@@ -3,7 +3,7 @@
 // BSD-style license that can be found in the LICENSE file.
 
 /// The const class that manages the column name of [VoiceConfiguration] repository.
-class VoiceConfigurationColumnName {
+class VoiceConfigurationColumn {
   static const id = 'ID';
   static const language = 'LANGUAGE';
   static const voiceType = 'VOICE_TYPE';

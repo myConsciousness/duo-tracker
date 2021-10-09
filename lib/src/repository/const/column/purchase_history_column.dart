@@ -3,7 +3,7 @@
 // BSD-style license that can be found in the LICENSE file.
 
 /// The const class that manages the column name of [PurchaseHistory] repository.
-class PurchaseHistoryColumnName {
+class PurchaseHistoryColumn {
   static const id = 'ID';
   static const productName = 'PRODUCT_NAME';
   static const price = 'PRICE';

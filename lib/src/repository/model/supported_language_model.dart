@@ -2,7 +2,7 @@
 // Use of this source code is governed by a
 // BSD-style license that can be found in the LICENSE file.
 
-import 'package:duo_tracker/src/repository/const/column/supported_language_column_name.dart';
+import 'package:duo_tracker/src/repository/const/column/supported_language_column.dart';
 
 class SupportedLanguage {
   int id = -1;
@@ -34,26 +34,24 @@ class SupportedLanguage {
   /// Returns the new instance of [SupportedLanguage] based on the [map] passed as an argument.
   factory SupportedLanguage.fromMap(Map<String, dynamic> map) =>
       SupportedLanguage.from(
-        id: map[SupportedLanguageColumnName.id],
-        fromLanguage: map[SupportedLanguageColumnName.fromLanguage],
-        learningLanguage: map[SupportedLanguageColumnName.learningLanguage],
+        id: map[SupportedLanguageColumn.id],
+        fromLanguage: map[SupportedLanguageColumn.fromLanguage],
+        learningLanguage: map[SupportedLanguageColumn.learningLanguage],
         createdAt: DateTime.fromMillisecondsSinceEpoch(
-          map[SupportedLanguageColumnName.createdAt] ?? 0,
+          map[SupportedLanguageColumn.createdAt] ?? 0,
         ),
         updatedAt: DateTime.fromMillisecondsSinceEpoch(
-          map[SupportedLanguageColumnName.updatedAt] ?? 0,
+          map[SupportedLanguageColumn.updatedAt] ?? 0,
         ),
       );
 
   /// Returns this [SupportedLanguage] model as [Map].
   Map<String, dynamic> toMap() {
     final map = <String, dynamic>{};
-    map[SupportedLanguageColumnName.fromLanguage] = fromLanguage;
-    map[SupportedLanguageColumnName.learningLanguage] = learningLanguage;
-    map[SupportedLanguageColumnName.createdAt] =
-        createdAt.millisecondsSinceEpoch;
-    map[SupportedLanguageColumnName.updatedAt] =
-        updatedAt.millisecondsSinceEpoch;
+    map[SupportedLanguageColumn.fromLanguage] = fromLanguage;
+    map[SupportedLanguageColumn.learningLanguage] = learningLanguage;
+    map[SupportedLanguageColumn.createdAt] = createdAt.millisecondsSinceEpoch;
+    map[SupportedLanguageColumn.updatedAt] = updatedAt.millisecondsSinceEpoch;
     return map;
   }
 

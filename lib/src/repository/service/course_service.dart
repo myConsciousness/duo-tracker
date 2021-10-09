@@ -2,7 +2,7 @@
 // Use of this source code is governed by a
 // BSD-style license that can be found in the LICENSE file.
 
-import 'package:duo_tracker/src/repository/const/column/course_column_name.dart';
+import 'package:duo_tracker/src/repository/const/column/course_column.dart';
 import 'package:duo_tracker/src/repository/course_repository.dart';
 import 'package:duo_tracker/src/repository/model/course_model.dart';
 
@@ -107,7 +107,7 @@ class CourseService extends CourseRepository {
                 .query(
                   table,
                   orderBy:
-                      '${CourseColumnName.fromLanguage}, ${CourseColumnName.xp} DESC',
+                      '${CourseColumn.fromLanguage}, ${CourseColumn.xp} DESC',
                 )
                 .then(
                   (v) => v

@@ -2,7 +2,7 @@
 // Use of this source code is governed by a
 // BSD-style license that can be found in the LICENSE file.
 
-import 'package:duo_tracker/src/repository/const/column/voice_configuration_column_name.dart';
+import 'package:duo_tracker/src/repository/const/column/voice_configuration_column.dart';
 
 class VoiceConfiguration {
   int id = -1;
@@ -43,32 +43,30 @@ class VoiceConfiguration {
   /// Returns the new instance of [VoiceConfiguration] based on the [map] passed as an argument.
   factory VoiceConfiguration.fromMap(Map<String, dynamic> map) =>
       VoiceConfiguration.from(
-        id: map[VoiceConfigurationColumnName.id],
-        language: map[VoiceConfigurationColumnName.language],
-        voiceType: map[VoiceConfigurationColumnName.voiceType],
-        ttsBaseUrlHttps: map[VoiceConfigurationColumnName.ttsBaseUrlHttps],
-        ttsBaseUrlHttp: map[VoiceConfigurationColumnName.ttsBaseUrlHttp],
-        path: map[VoiceConfigurationColumnName.path],
+        id: map[VoiceConfigurationColumn.id],
+        language: map[VoiceConfigurationColumn.language],
+        voiceType: map[VoiceConfigurationColumn.voiceType],
+        ttsBaseUrlHttps: map[VoiceConfigurationColumn.ttsBaseUrlHttps],
+        ttsBaseUrlHttp: map[VoiceConfigurationColumn.ttsBaseUrlHttp],
+        path: map[VoiceConfigurationColumn.path],
         createdAt: DateTime.fromMillisecondsSinceEpoch(
-          map[VoiceConfigurationColumnName.createdAt] ?? 0,
+          map[VoiceConfigurationColumn.createdAt] ?? 0,
         ),
         updatedAt: DateTime.fromMillisecondsSinceEpoch(
-          map[VoiceConfigurationColumnName.updatedAt] ?? 0,
+          map[VoiceConfigurationColumn.updatedAt] ?? 0,
         ),
       );
 
   /// Returns this [VoiceConfiguration] model as [Map].
   Map<String, dynamic> toMap() {
     final map = <String, dynamic>{};
-    map[VoiceConfigurationColumnName.language] = language;
-    map[VoiceConfigurationColumnName.voiceType] = voiceType;
-    map[VoiceConfigurationColumnName.ttsBaseUrlHttps] = ttsBaseUrlHttps;
-    map[VoiceConfigurationColumnName.ttsBaseUrlHttp] = ttsBaseUrlHttp;
-    map[VoiceConfigurationColumnName.path] = path;
-    map[VoiceConfigurationColumnName.createdAt] =
-        createdAt.millisecondsSinceEpoch;
-    map[VoiceConfigurationColumnName.updatedAt] =
-        updatedAt.millisecondsSinceEpoch;
+    map[VoiceConfigurationColumn.language] = language;
+    map[VoiceConfigurationColumn.voiceType] = voiceType;
+    map[VoiceConfigurationColumn.ttsBaseUrlHttps] = ttsBaseUrlHttps;
+    map[VoiceConfigurationColumn.ttsBaseUrlHttp] = ttsBaseUrlHttp;
+    map[VoiceConfigurationColumn.path] = path;
+    map[VoiceConfigurationColumn.createdAt] = createdAt.millisecondsSinceEpoch;
+    map[VoiceConfigurationColumn.updatedAt] = updatedAt.millisecondsSinceEpoch;
     return map;
   }
 
