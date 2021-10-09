@@ -6,6 +6,7 @@ import 'package:clipboard/clipboard.dart';
 import 'package:duo_tracker/src/component/common_card_header_text.dart';
 import 'package:duo_tracker/src/component/common_divider.dart';
 import 'package:duo_tracker/src/component/common_text.dart';
+import 'package:duo_tracker/src/component/const/folder_type.dart';
 import 'package:duo_tracker/src/component/dialog/network_error_dialog.dart';
 import 'package:duo_tracker/src/component/dialog/select_folder_dialog.dart';
 import 'package:duo_tracker/src/component/snackbar/info_snack_bar.dart';
@@ -22,9 +23,7 @@ class CommonLearnedWordCard extends StatefulWidget {
   const CommonLearnedWordCard({
     Key? key,
     required this.learnedWord,
-    this.isFolder = false,
-    this.showHeader = true,
-    this.showBottomActions = true,
+    required this.folderType,
     this.onPressedComplete,
     this.onPressedTrash,
     this.onPressedDeleteItem,
@@ -39,17 +38,11 @@ class CommonLearnedWordCard extends StatefulWidget {
   /// The on press action for delete item button
   final Function()? onPressedDeleteItem;
 
-  /// The flag that represents this is folder or not
-  final bool isFolder;
-
   /// The learned word
   final LearnedWord learnedWord;
 
-  /// The flag represents show bottom actions or not
-  final bool showBottomActions;
-
-  /// The flag represents show header or not
-  final bool showHeader;
+  /// The folder type
+  final FolderType folderType;
 
   @override
   _CommonLearnedWordCardState createState() => _CommonLearnedWordCardState();
@@ -204,6 +197,12 @@ class _CommonLearnedWordCardState extends State<CommonLearnedWordCard> {
         ),
       ];
 
+  bool _canShowHeader() =>
+      widget.folderType == FolderType.none ||
+      widget.folderType == FolderType.word;
+
+  bool _canShowBottomActions() => widget.folderType == FolderType.none;
+
   @override
   Widget build(BuildContext context) => Card(
         clipBehavior: Clip.antiAlias,
@@ -219,7 +218,7 @@ class _CommonLearnedWordCardState extends State<CommonLearnedWordCard> {
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
-              if (widget.showHeader)
+              if (_canShowHeader())
                 Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
@@ -244,8 +243,8 @@ class _CommonLearnedWordCardState extends State<CommonLearnedWordCard> {
                     ),
                   ],
                 ),
-              if (widget.showHeader) const CommonDivider(),
-              if (widget.showHeader)
+              if (_canShowHeader()) const CommonDivider(),
+              if (_canShowHeader())
                 Container(
                   padding: const EdgeInsets.fromLTRB(20, 0, 20, 0),
                   child: Row(
@@ -278,7 +277,7 @@ class _CommonLearnedWordCardState extends State<CommonLearnedWordCard> {
                     ],
                   ),
                 ),
-              if (widget.showHeader) const CommonDivider(),
+              if (_canShowHeader()) const CommonDivider(),
               Row(
                 mainAxisAlignment: MainAxisAlignment.start,
                 children: [
@@ -310,7 +309,8 @@ class _CommonLearnedWordCardState extends State<CommonLearnedWordCard> {
                       ),
                     ),
                   ),
-                  if (!widget.isFolder && !widget.learnedWord.deleted)
+                  if (widget.folderType == FolderType.none &&
+                      !widget.learnedWord.deleted)
                     IconButton(
                       tooltip: widget.learnedWord.bookmarked
                           ? 'Remove Bookmark'
@@ -330,15 +330,15 @@ class _CommonLearnedWordCardState extends State<CommonLearnedWordCard> {
                         super.setState(() {});
                       },
                     ),
-                  if (widget.isFolder)
+                  if (widget.folderType != FolderType.none)
                     IconButton(
                       icon: const Icon(Icons.delete),
                       onPressed: () async => widget.onPressedDeleteItem,
                     ),
                 ],
               ),
-              if (widget.showBottomActions) const CommonDivider(),
-              if (widget.showBottomActions)
+              if (_canShowBottomActions()) const CommonDivider(),
+              if (_canShowBottomActions())
                 Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   crossAxisAlignment: CrossAxisAlignment.end,

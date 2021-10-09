@@ -8,6 +8,7 @@ import 'package:duo_tracker/src/component/common_app_bar_titles.dart';
 import 'package:duo_tracker/src/component/common_learned_word_card.dart';
 import 'package:duo_tracker/src/component/common_nested_scroll_view.dart';
 import 'package:duo_tracker/src/component/const/filter_pattern.dart';
+import 'package:duo_tracker/src/component/const/folder_type.dart';
 import 'package:duo_tracker/src/component/const/match_pattern.dart';
 import 'package:duo_tracker/src/component/dialog/loading_dialog.dart';
 import 'package:duo_tracker/src/component/dialog/network_error_dialog.dart';
@@ -178,6 +179,7 @@ class _OverviewViewState extends State<OverviewView> {
             ),
           CommonLearnedWordCard(
             learnedWord: learnedWord,
+            folderType: FolderType.none,
             onPressedComplete: () async {
               learnedWord.completed = !learnedWord.completed;
               learnedWord.updatedAt = DateTime.now();

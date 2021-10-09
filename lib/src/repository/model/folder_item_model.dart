@@ -10,6 +10,7 @@ class FolderItem {
   int id = -1;
   int folderId;
   String wordId;
+  int sentenceGroupId;
   String alias;
   String remarks;
   String userId;
@@ -31,6 +32,7 @@ class FolderItem {
       : _empty = true,
         folderId = -1,
         wordId = '',
+        sentenceGroupId = -1,
         alias = '',
         remarks = '',
         userId = '',
@@ -46,6 +48,7 @@ class FolderItem {
     this.id = -1,
     required this.folderId,
     required this.wordId,
+    required this.sentenceGroupId,
     required this.alias,
     required this.remarks,
     required this.userId,
@@ -62,6 +65,7 @@ class FolderItem {
         id: map[FolderItemColumn.id],
         folderId: map[FolderItemColumn.folderId],
         wordId: map[FolderItemColumn.wordId],
+        sentenceGroupId: map[FolderItemColumn.sentenceGroupId],
         alias: map[FolderItemColumn.alias],
         remarks: map[FolderItemColumn.remarks],
         userId: map[FolderItemColumn.userId],
@@ -82,6 +86,7 @@ class FolderItem {
     final map = <String, dynamic>{};
     map[FolderItemColumn.folderId] = folderId;
     map[FolderItemColumn.wordId] = wordId;
+    map[FolderItemColumn.sentenceGroupId] = sentenceGroupId;
     map[FolderItemColumn.alias] = alias;
     map[FolderItemColumn.remarks] = remarks;
     map[FolderItemColumn.userId] = userId;

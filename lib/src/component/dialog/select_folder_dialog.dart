@@ -93,7 +93,6 @@ Future<T?> showSelectFolderDialog<T>({
 
                       if (folders.isEmpty) {
                         return AddNewFolderButton(
-                          folderType: FolderType.word,
                           onPressedCreate: () async {
                             await showCreateNewFolderDialog(
                               context: context,
@@ -207,6 +206,7 @@ Future<void> _addFolderItem({
       FolderItem.from(
         folderId: folderId,
         wordId: wordId,
+        sentenceGroupId: -1,
         alias: '',
         remarks: '',
         userId: userId,

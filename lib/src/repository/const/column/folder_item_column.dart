@@ -6,6 +6,7 @@ class FolderItemColumn {
   static const id = 'ID';
   static const folderId = 'FOLDER_ID';
   static const wordId = 'WORD_ID';
+  static const sentenceGroupId = 'SENTENCE_GROUP_ID';
   static const alias = 'ALIAS';
   static const remarks = 'REMARKS';
   static const userId = 'USER_ID';

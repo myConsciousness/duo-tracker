@@ -117,6 +117,8 @@ class _FolderViewState extends State<FolderView> {
 
   IconData get _folderIcon {
     switch (widget.folderType) {
+      case FolderType.none:
+        throw UnimplementedError();
       case FolderType.word:
         return Icons.text_fields;
       case FolderType.voice:
@@ -198,6 +200,7 @@ class _FolderViewState extends State<FolderView> {
                       context,
                       MaterialPageRoute(
                         builder: (_) => FolderItemsView(
+                          folderType: widget.folderType,
                           folderId: folder.id,
                           folderName: folder.name,
                         ),
@@ -278,6 +281,8 @@ class _FolderViewState extends State<FolderView> {
 
   String get _appBarTitle {
     switch (widget.folderType) {
+      case FolderType.none:
+        throw UnimplementedError();
       case FolderType.word:
         return 'Learned Word Folders';
       case FolderType.voice:
@@ -299,7 +304,7 @@ class _FolderViewState extends State<FolderView> {
               onPressed: () async {
                 await showCreateNewFolderDialog(
                   context: context,
-                  folderType: FolderType.word,
+                  folderType: widget.folderType,
                 );
 
                 super.setState(() {});
@@ -317,11 +322,10 @@ class _FolderViewState extends State<FolderView> {
 
               if (folders.isEmpty) {
                 return AddNewFolderButton(
-                  folderType: FolderType.word,
                   onPressedCreate: () async {
                     await showCreateNewFolderDialog(
                       context: context,
-                      folderType: FolderType.word,
+                      folderType: widget.folderType,
                     );
 
                     super.setState(() {});

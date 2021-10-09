@@ -5,6 +5,7 @@
 import 'package:duo_tracker/src/component/common_app_bar_titles.dart';
 import 'package:duo_tracker/src/component/common_learned_word_card.dart';
 import 'package:duo_tracker/src/component/common_nested_scroll_view.dart';
+import 'package:duo_tracker/src/component/const/folder_type.dart';
 import 'package:duo_tracker/src/component/loading.dart';
 import 'package:duo_tracker/src/repository/model/folder_item_model.dart';
 import 'package:duo_tracker/src/repository/preference/common_shared_preferences_key.dart';
@@ -14,9 +15,13 @@ import 'package:flutter/material.dart';
 class FolderItemsView extends StatefulWidget {
   const FolderItemsView({
     Key? key,
+    required this.folderType,
     required this.folderId,
     required this.folderName,
   }) : super(key: key);
+
+  /// The folder type
+  final FolderType folderType;
 
   /// The folder code
   final int folderId;
@@ -65,11 +70,22 @@ class _FolderItemsViewState extends State<FolderItemsView> {
     );
   }
 
+  String get _appBarTitle {
+    switch (widget.folderType) {
+      case FolderType.none:
+        throw UnimplementedError();
+      case FolderType.word:
+        return 'Words List';
+      case FolderType.voice:
+        return 'Voice Playlist';
+    }
+  }
+
   @override
   Widget build(BuildContext context) => Scaffold(
         body: CommonNestedScrollView(
           title: CommonAppBarTitles(
-            title: 'Stored Learned Words',
+            title: _appBarTitle,
             subTitle: 'Folder: ${widget.folderName}',
           ),
           body: FutureBuilder(
@@ -91,8 +107,7 @@ class _FolderItemsViewState extends State<FolderItemsView> {
                 itemCount: items.length,
                 itemBuilder: (_, int index) => CommonLearnedWordCard(
                   learnedWord: items[index].learnedWord!,
-                  showBottomActions: false,
-                  isFolder: true,
+                  folderType: widget.folderType,
                   onPressedDeleteItem: () async {
                     await _learnedWordFolderItemService.delete(
                       items[index],

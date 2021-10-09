@@ -4,6 +4,9 @@
 
 /// The enum that manages folder type.
 enum FolderType {
+  /// The none
+  none,
+
   /// The word
   word,
 
@@ -15,6 +18,8 @@ extension FolderTypeExt on FolderType {
   /// Returns the code.
   int get code {
     switch (this) {
+      case FolderType.none:
+        return -1;
       case FolderType.word:
         return 0;
       case FolderType.voice:
@@ -31,6 +36,6 @@ extension FolderTypeExt on FolderType {
       }
     }
 
-    return FolderType.word;
+    return FolderType.none;
   }
 }

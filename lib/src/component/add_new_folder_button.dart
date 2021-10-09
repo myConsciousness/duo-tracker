@@ -2,19 +2,14 @@
 // Use of this source code is governed by a
 // BSD-style license that can be found in the LICENSE file.
 
-import 'package:duo_tracker/src/component/const/folder_type.dart';
 import 'package:flutter/material.dart';
 
 class AddNewFolderButton extends StatefulWidget {
-  /// The folder type
-  final FolderType folderType;
-
   /// The action on pressed create
   final Function()? onPressedCreate;
 
   const AddNewFolderButton({
     Key? key,
-    required this.folderType,
     this.onPressedCreate,
   }) : super(key: key);
 

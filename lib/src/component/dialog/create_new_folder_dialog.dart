@@ -148,6 +148,8 @@ String _getDialogTitle({
   required FolderType folderType,
 }) {
   switch (folderType) {
+    case FolderType.none:
+      throw UnimplementedError();
     case FolderType.word:
       return 'Create New Word Folder';
     case FolderType.voice:
