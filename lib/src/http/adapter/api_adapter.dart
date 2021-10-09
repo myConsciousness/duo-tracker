@@ -63,15 +63,16 @@ abstract class ApiAdapter implements Adapter {
       case ErrorType.noUserRegistered:
         await showAuthDialog(
           context: context,
+          enableNavigatorPop: false,
         );
 
         return false;
       case ErrorType.authentication:
-        showInputErrorDialog(context: context, content: response.message);
+        await showInputErrorDialog(context: context, content: response.message);
 
         return false;
       case ErrorType.client:
-        showErrorDialog(
+        await showErrorDialog(
           context: context,
           title: 'Client Error',
           content: response.message.isEmpty
@@ -81,7 +82,7 @@ abstract class ApiAdapter implements Adapter {
 
         return false;
       case ErrorType.server:
-        showErrorDialog(
+        await showErrorDialog(
           context: context,
           title: 'Server Error',
           content: response.message.isEmpty
@@ -91,7 +92,7 @@ abstract class ApiAdapter implements Adapter {
 
         return false;
       case ErrorType.unknown:
-        showErrorDialog(
+        await showErrorDialog(
           context: context,
           title: 'Unknown Error',
           content: response.message.isEmpty

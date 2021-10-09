@@ -20,6 +20,7 @@ late bool _authenticated;
 Future<bool> showAuthDialog({
   required BuildContext context,
   bool dismissOnTouchOutside = false,
+  bool enableNavigatorPop = true,
 }) async {
   _authenticating = false;
   _authenticated = false;
@@ -30,90 +31,93 @@ Future<bool> showAuthDialog({
     dialogType: DialogType.SUCCES,
     dismissOnTouchOutside: dismissOnTouchOutside,
     btnOkColor: Theme.of(context).colorScheme.secondary,
-    body: Container(
-      padding: const EdgeInsets.all(13),
-      child: Center(
-        child: SingleChildScrollView(
-          child: ListBody(
-            children: <Widget>[
-              const Center(
-                child: Text(
-                  'Authenticate Duolingo Account',
-                  style: TextStyle(fontSize: 20),
+    body: WillPopScope(
+      onWillPop: () async => enableNavigatorPop,
+      child: Container(
+        padding: const EdgeInsets.all(13),
+        child: Center(
+          child: SingleChildScrollView(
+            child: ListBody(
+              children: <Widget>[
+                const Center(
+                  child: Text(
+                    'Authenticate Duolingo Account',
+                    style: TextStyle(fontSize: 20),
+                  ),
                 ),
-              ),
-              const SizedBox(
-                height: 20,
-              ),
-              CommonTextField(
-                controller: _usernameController,
-                hintText: 'Username or Email (required)',
-                prefixIcon: Icon(
-                  Icons.person,
-                  color: Theme.of(context).colorScheme.secondary,
+                const SizedBox(
+                  height: 20,
                 ),
-                onChanged: (text) {
-                  _usernameController.text = text;
-                },
-              ),
-              const SizedBox(
-                height: 20,
-              ),
-              CommonTextField(
-                controller: _passwordController,
-                hintText: 'Password (required)',
-                maskText: true,
-                prefixIcon: Icon(
-                  Icons.lock,
-                  color: Theme.of(context).colorScheme.secondary,
+                CommonTextField(
+                  controller: _usernameController,
+                  hintText: 'Username or Email (required)',
+                  prefixIcon: Icon(
+                    Icons.person,
+                    color: Theme.of(context).colorScheme.secondary,
+                  ),
+                  onChanged: (text) {
+                    _usernameController.text = text;
+                  },
                 ),
-                onChanged: (text) {
-                  _rawPassword = text;
-                },
-              ),
-              const SizedBox(
-                height: 30,
-              ),
-              AnimatedButton(
-                isFixedHeight: false,
-                text: 'Login',
-                color: Theme.of(context).colorScheme.secondaryVariant,
-                pressEvent: () async {
-                  if (_authenticating) {
-                    // Prevents multiple presses.
-                    return;
-                  }
+                const SizedBox(
+                  height: 20,
+                ),
+                CommonTextField(
+                  controller: _passwordController,
+                  hintText: 'Password (required)',
+                  maskText: true,
+                  prefixIcon: Icon(
+                    Icons.lock,
+                    color: Theme.of(context).colorScheme.secondary,
+                  ),
+                  onChanged: (text) {
+                    _rawPassword = text;
+                  },
+                ),
+                const SizedBox(
+                  height: 30,
+                ),
+                AnimatedButton(
+                  isFixedHeight: false,
+                  text: 'Login',
+                  color: Theme.of(context).colorScheme.secondaryVariant,
+                  pressEvent: () async {
+                    if (_authenticating) {
+                      // Prevents multiple presses.
+                      return;
+                    }
 
-                  _authenticating = true;
+                    _authenticating = true;
 
-                  if (!await _checkInput(context: context)) {
-                    _authenticating = false;
-                    return;
-                  }
+                    if (!await _checkInput(context: context)) {
+                      _authenticating = false;
+                      return;
+                    }
 
-                  if (!await DuolingoApiUtils.authenticateAccount(
-                    context: context,
-                    username: _usernameController.text,
-                    password: _rawPassword,
-                  )) {
-                    _authenticating = false;
-                    return;
-                  }
+                    if (!await DuolingoApiUtils.authenticateAccount(
+                      context: context,
+                      username: _usernameController.text,
+                      password: _rawPassword,
+                    )) {
+                      _authenticating = false;
+                      return;
+                    }
 
-                  // Delete input information
-                  _usernameController.clear();
-                  _passwordController.clear();
-                  _rawPassword = '';
+                    // Delete input information
+                    _usernameController.clear();
+                    _passwordController.clear();
+                    _rawPassword = '';
 
-                  _authenticated = true;
+                    _authenticated = true;
 
-                  await _dialog!.dismiss();
-                },
-              ),
-              const SizedBox(
-                height: 30,
-              ),
-            ],
+                    await _dialog!.dismiss();
+                  },
+                ),
+                const SizedBox(
+                  height: 30,
+                ),
+              ],
+            ),
           ),
         ),
       ),
