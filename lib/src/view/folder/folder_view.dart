@@ -96,6 +96,22 @@ class _FolderViewState extends State<FolderView> {
     });
   }
 
+  Future<void> _sortCards({
+    required List<Folder> folders,
+    required int oldIndex,
+    required int newIndex,
+  }) async {
+    folders.insert(
+      oldIndex < newIndex ? newIndex - 1 : newIndex,
+      folders.removeAt(oldIndex),
+    );
+
+    // Update all sort orders
+    await _folderService.replaceSortOrdersByIds(
+      folders: folders,
+    );
+  }
+
   Widget _buildFolderCard({
     required Folder folder,
   }) =>
@@ -249,11 +265,19 @@ class _FolderViewState extends State<FolderView> {
   Widget _buildFolderListView({
     required List<Folder> folders,
   }) =>
-      ListView.builder(
-        itemCount: folders.length,
-        itemBuilder: (BuildContext context, int index) {
-          final folder = folders[index];
-          return Column(
+      RefreshIndicator(
+        onRefresh: () async {
+          super.setState(() {});
+        },
+        child: ReorderableListView.builder(
+          itemCount: folders.length,
+          onReorder: (oldIndex, newIndex) async => await _sortCards(
+            folders: folders,
+            oldIndex: oldIndex,
+            newIndex: newIndex,
+          ),
+          itemBuilder: (_, index) => Column(
+            key: Key('${folders[index].sortOrder}'),
             children: [
               FutureBuilder(
                 future: BannerAdUtils.canShow(
@@ -269,11 +293,11 @@ class _FolderViewState extends State<FolderView> {
                 },
               ),
               _buildFolderCard(
-                folder: folder,
+                folder: folders[index],
               ),
             ],
-          );
-        },
+          ),
+        ),
       );
 
   String get _appBarTitle {

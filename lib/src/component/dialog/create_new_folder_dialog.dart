@@ -197,7 +197,6 @@ Future<void> _createNewFolder({
         formalLearningLanguage: LanguageConverter.toFormalLanguageCode(
           languageCode: learningLanguage,
         ),
-        sortOrder: 2,
         deleted: false,
         createdAt: DateTime.now(),
         updatedAt: DateTime.now(),

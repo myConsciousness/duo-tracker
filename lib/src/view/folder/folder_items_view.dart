@@ -2,6 +2,7 @@
 // Use of this source code is governed by a
 // BSD-style license that can be found in the LICENSE file.
 
+import 'package:duo_tracker/src/admob/banner_ad_utils.dart';
 import 'package:duo_tracker/src/component/common_app_bar_titles.dart';
 import 'package:duo_tracker/src/component/common_learned_word_card.dart';
 import 'package:duo_tracker/src/component/common_nested_scroll_view.dart';
@@ -12,6 +13,7 @@ import 'package:duo_tracker/src/repository/preference/common_shared_preferences_
 import 'package:duo_tracker/src/repository/service/folder_item_service.dart';
 import 'package:duo_tracker/src/utils/audio_player_utils.dart';
 import 'package:flutter/material.dart';
+import 'package:google_mobile_ads/google_mobile_ads.dart';
 
 class FolderItemsView extends StatefulWidget {
   const FolderItemsView({
@@ -35,10 +37,13 @@ class FolderItemsView extends StatefulWidget {
 }
 
 class _FolderItemsViewState extends State<FolderItemsView> {
-  late List<FolderItem> _folderItems;
+  /// The banner ads
+  final List<BannerAd> _bannerAds = <BannerAd>[];
 
-  /// The learned word folder item service
-  final _learnedWordFolderItemService = FolderItemService.getInstance();
+  /// The folder item service
+  final _folderItemService = FolderItemService.getInstance();
+
+  late List<FolderItem> _folderItems;
 
   @override
   void didChangeDependencies() {
@@ -47,6 +52,10 @@ class _FolderItemsViewState extends State<FolderItemsView> {
 
   @override
   void dispose() {
+    for (final bannerAd in _bannerAds) {
+      bannerAd.dispose();
+    }
+
     super.dispose();
   }
 
@@ -60,7 +69,7 @@ class _FolderItemsViewState extends State<FolderItemsView> {
   }) async {
     final userId = await CommonSharedPreferencesKey.userId.getString();
 
-    return await _learnedWordFolderItemService.findByFolderIdAndUserId(
+    return await _folderItemService.findByFolderIdAndUserId(
       folderId: folderId,
       userId: userId,
     );
@@ -75,6 +84,28 @@ class _FolderItemsViewState extends State<FolderItemsView> {
       case FolderType.voice:
         return 'Voice Playlist';
     }
+  }
+
+  BannerAd _loadBannerAd() {
+    final BannerAd bannerAd = BannerAdUtils.loadBannerAd();
+    _bannerAds.add(bannerAd);
+    return bannerAd;
+  }
+
+  Future<void> _sortCards({
+    required List<FolderItem> folderItems,
+    required int oldIndex,
+    required int newIndex,
+  }) async {
+    folderItems.insert(
+      oldIndex < newIndex ? newIndex - 1 : newIndex,
+      folderItems.removeAt(oldIndex),
+    );
+
+    // Update all sort orders
+    await _folderItemService.replaceSortOrdersByIds(
+      folderItems: folderItems,
+    );
   }
 
   @override
@@ -114,18 +145,48 @@ class _FolderItemsViewState extends State<FolderItemsView> {
 
               _folderItems = List.from(items);
 
-              return ListView.builder(
-                itemCount: items.length,
-                itemBuilder: (_, int index) => CommonLearnedWordCard(
-                  learnedWord: items[index].learnedWord!,
-                  folderType: widget.folderType,
-                  onPressedDeleteItem: () async {
-                    await _learnedWordFolderItemService.delete(
-                      items[index],
-                    );
+              return RefreshIndicator(
+                onRefresh: () async {
+                  super.setState(() {});
+                },
+                child: ReorderableListView.builder(
+                  itemCount: items.length,
+                  onReorder: (oldIndex, newIndex) async => await _sortCards(
+                    folderItems: items,
+                    oldIndex: oldIndex,
+                    newIndex: newIndex,
+                  ),
+                  itemBuilder: (_, index) => Column(
+                    key: Key('${items[index].sortOrder}'),
+                    children: [
+                      FutureBuilder(
+                        future: BannerAdUtils.canShow(
+                          index: index,
+                          interval: 3,
+                        ),
+                        builder:
+                            (BuildContext context, AsyncSnapshot snapshot) {
+                          if (!snapshot.hasData || !snapshot.data) {
+                            return Container();
+                          }
 
-                    super.setState(() {});
-                  },
+                          return BannerAdUtils.createBannerAdWidget(
+                              _loadBannerAd());
+                        },
+                      ),
+                      CommonLearnedWordCard(
+                        learnedWord: items[index].learnedWord!,
+                        folderType: widget.folderType,
+                        onPressedDeleteItem: () async {
+                          await _folderItemService.delete(
+                            items[index],
+                          );
+
+                          super.setState(() {});
+                        },
+                      ),
+                    ],
+                  ),
                 ),
               );
             },

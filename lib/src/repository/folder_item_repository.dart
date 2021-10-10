@@ -31,4 +31,8 @@ abstract class FolderItemRepository extends Repository<FolderItem> {
   Future<void> deleteByFolderId({
     required int folderId,
   });
+
+  Future<void> replaceSortOrdersByIds({
+    required List<FolderItem> folderItems,
+  });
 }

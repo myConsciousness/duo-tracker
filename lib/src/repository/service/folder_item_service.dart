@@ -136,7 +136,7 @@ class FolderItemService extends FolderItemRepository {
                   folderId,
                   userId,
                 ],
-                orderBy: 'CREATED_AT DESC',
+                orderBy: 'SORT_ORDER',
               )
               .then(
                 (v) => v
@@ -172,6 +172,11 @@ class FolderItemService extends FolderItemRepository {
 
   @override
   Future<FolderItem> insert(FolderItem model) async {
+    model.sortOrder = await _findMaxSortOrderByFolderIdAndUserId(
+      folderId: model.folderId,
+      userId: model.userId,
+    );
+
     await super.database.then(
           (database) => database
               .insert(
@@ -193,6 +198,18 @@ class FolderItemService extends FolderItemRepository {
   }
 
   @override
+  Future<void> replaceSortOrdersByIds({
+    required List<FolderItem> folderItems,
+  }) async {
+    folderItems.asMap().forEach((index, folderItem) async {
+      FolderItem storedFolderItem = await findById(folderItem.id);
+      storedFolderItem.sortOrder = index;
+
+      await update(storedFolderItem);
+    });
+  }
+
+  @override
   String get table => 'FOLDER_ITEM';
 
   @override
@@ -206,4 +223,39 @@ class FolderItemService extends FolderItemRepository {
           ],
         ),
       );
+
+  Future<int> _findMaxSortOrderByFolderIdAndUserId({
+    required int folderId,
+    required String userId,
+  }) async =>
+      await super
+          .database
+          .then(
+            (database) => database.rawQuery(
+              '''
+                  SELECT
+                    CASE WHEN
+                      MAX_SORT_ORDER IS NULL THEN 0
+                      ELSE MAX_SORT_ORDER + 1
+                    END MAX_SORT_ORDER
+                  FROM
+                    (
+                      SELECT
+                        MAX(SORT_ORDER) MAX_SORT_ORDER
+                      FROM
+                        $table
+                      WHERE
+                        1 = 1
+                        AND FOLDER_ID = ?
+                        AND USER_ID = ?
+                    )
+                  ''',
+              [
+                folderId,
+                userId,
+              ],
+            ),
+          )
+          .then((entity) =>
+              entity.isEmpty ? 0 : entity[0]['MAX_SORT_ORDER'] as int);
 }

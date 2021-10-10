@@ -202,7 +202,6 @@ Future<void> _addFolderItem({
         alias: '',
         remarks: '',
         userId: userId,
-        sortOrder: 0,
         deleted: false,
         createdAt: DateTime.now(),
         updatedAt: DateTime.now(),

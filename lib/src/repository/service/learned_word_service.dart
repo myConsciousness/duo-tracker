@@ -239,13 +239,12 @@ class LearnedWordService extends LearnedWordRepository {
   @override
   Future<void> replaceSortOrdersByIds(List<LearnedWord> learnedWords) async {
     learnedWords.asMap().forEach((index, learnedWord) async {
-      LearnedWord storedLearnedWord = await findByWordIdAndUserId(
+      final storedLearnedWord = await findByWordIdAndUserId(
         learnedWord.wordId,
         learnedWord.userId,
       );
 
       storedLearnedWord.sortOrder = index;
-      storedLearnedWord.updatedAt = DateTime.now();
 
       await update(storedLearnedWord);
     });

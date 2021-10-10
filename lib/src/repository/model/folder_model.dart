@@ -57,7 +57,7 @@ class Folder {
     required this.learningLanguage,
     required this.formalFromLanguage,
     required this.formalLearningLanguage,
-    required this.sortOrder,
+    this.sortOrder = -1,
     required this.deleted,
     required this.createdAt,
     required this.updatedAt,

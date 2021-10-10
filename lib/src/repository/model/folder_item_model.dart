@@ -48,7 +48,7 @@ class FolderItem {
     required this.alias,
     required this.remarks,
     required this.userId,
-    required this.sortOrder,
+    this.sortOrder = -1,
     required this.deleted,
     required this.createdAt,
     required this.updatedAt,

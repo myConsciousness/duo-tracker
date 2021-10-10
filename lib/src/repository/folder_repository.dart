@@ -23,4 +23,8 @@ abstract class FolderRepository extends Repository<Folder> {
     required String fromLanguage,
     required String learningLanguage,
   });
+
+  Future<void> replaceSortOrdersByIds({
+    required List<Folder> folders,
+  });
 }
