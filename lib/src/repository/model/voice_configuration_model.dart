@@ -7,6 +7,7 @@ import 'package:duo_tracker/src/repository/const/column/voice_configuration_colu
 class VoiceConfiguration {
   int id = -1;
   String language;
+  String formalLanguage;
   String voiceType;
   String ttsBaseUrlHttps;
   String ttsBaseUrlHttp;
@@ -21,6 +22,7 @@ class VoiceConfiguration {
   VoiceConfiguration.empty()
       : _empty = true,
         language = '',
+        formalLanguage = '',
         voiceType = '',
         ttsBaseUrlHttps = '',
         ttsBaseUrlHttp = '',
@@ -32,6 +34,7 @@ class VoiceConfiguration {
   VoiceConfiguration.from({
     this.id = -1,
     required this.language,
+    required this.formalLanguage,
     required this.voiceType,
     required this.ttsBaseUrlHttps,
     required this.ttsBaseUrlHttp,
@@ -45,6 +48,7 @@ class VoiceConfiguration {
       VoiceConfiguration.from(
         id: map[VoiceConfigurationColumn.id],
         language: map[VoiceConfigurationColumn.language],
+        formalLanguage: map[VoiceConfigurationColumn.formalLanguage],
         voiceType: map[VoiceConfigurationColumn.voiceType],
         ttsBaseUrlHttps: map[VoiceConfigurationColumn.ttsBaseUrlHttps],
         ttsBaseUrlHttp: map[VoiceConfigurationColumn.ttsBaseUrlHttp],
@@ -61,6 +65,7 @@ class VoiceConfiguration {
   Map<String, dynamic> toMap() {
     final map = <String, dynamic>{};
     map[VoiceConfigurationColumn.language] = language;
+    map[VoiceConfigurationColumn.formalLanguage] = formalLanguage;
     map[VoiceConfigurationColumn.voiceType] = voiceType;
     map[VoiceConfigurationColumn.ttsBaseUrlHttps] = ttsBaseUrlHttps;
     map[VoiceConfigurationColumn.ttsBaseUrlHttp] = ttsBaseUrlHttp;

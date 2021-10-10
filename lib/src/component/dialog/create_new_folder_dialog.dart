@@ -9,6 +9,7 @@ import 'package:duo_tracker/src/component/dialog/input_error_dialog.dart';
 import 'package:duo_tracker/src/repository/model/folder_model.dart';
 import 'package:duo_tracker/src/repository/preference/common_shared_preferences_key.dart';
 import 'package:duo_tracker/src/repository/service/folder_service.dart';
+import 'package:duo_tracker/src/utils/language_converter.dart';
 import 'package:flutter/material.dart';
 
 /// The folder service
@@ -190,6 +191,12 @@ Future<void> _createNewFolder({
         userId: userId,
         fromLanguage: fromLanguage,
         learningLanguage: learningLanguage,
+        formalFromLanguage: LanguageConverter.toFormalLanguageCode(
+          languageCode: fromLanguage,
+        ),
+        formalLearningLanguage: LanguageConverter.toFormalLanguageCode(
+          languageCode: learningLanguage,
+        ),
         sortOrder: 2,
         deleted: false,
         createdAt: DateTime.now(),

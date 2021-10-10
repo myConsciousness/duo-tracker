@@ -10,6 +10,7 @@ import 'package:duo_tracker/src/component/loading.dart';
 import 'package:duo_tracker/src/repository/model/folder_item_model.dart';
 import 'package:duo_tracker/src/repository/preference/common_shared_preferences_key.dart';
 import 'package:duo_tracker/src/repository/service/folder_item_service.dart';
+import 'package:duo_tracker/src/utils/audio_player_utils.dart';
 import 'package:flutter/material.dart';
 
 class FolderItemsView extends StatefulWidget {
@@ -20,20 +21,22 @@ class FolderItemsView extends StatefulWidget {
     required this.folderName,
   }) : super(key: key);
 
-  /// The folder type
-  final FolderType folderType;
-
   /// The folder code
   final int folderId;
 
   /// The folder name
   final String folderName;
 
+  /// The folder type
+  final FolderType folderType;
+
   @override
   _FolderItemsViewState createState() => _FolderItemsViewState();
 }
 
 class _FolderItemsViewState extends State<FolderItemsView> {
+  late List<FolderItem> _folderItems;
+
   /// The learned word folder item service
   final _learnedWordFolderItemService = FolderItemService.getInstance();
 
@@ -56,17 +59,10 @@ class _FolderItemsViewState extends State<FolderItemsView> {
     required int folderId,
   }) async {
     final userId = await CommonSharedPreferencesKey.userId.getString();
-    final fromLanguage =
-        await CommonSharedPreferencesKey.currentFromLanguage.getString();
-    final learningLanguage =
-        await CommonSharedPreferencesKey.currentLearningLanguage.getString();
 
-    return await _learnedWordFolderItemService
-        .findByFolderIdAndUserIdAndFromLanguageAndLearningLanguage(
+    return await _learnedWordFolderItemService.findByFolderIdAndUserId(
       folderId: folderId,
       userId: userId,
-      fromLanguage: fromLanguage,
-      learningLanguage: learningLanguage,
     );
   }
 
@@ -88,6 +84,19 @@ class _FolderItemsViewState extends State<FolderItemsView> {
             title: _appBarTitle,
             subTitle: 'Folder: ${widget.folderName}',
           ),
+          actions: [
+            if (widget.folderType == FolderType.voice)
+              IconButton(
+                icon: const Icon(Icons.play_circle),
+                onPressed: () async {
+                  for (final folderItem in _folderItems) {
+                    await AudioPlayerUtils.play(
+                      ttsVoiceUrls: folderItem.learnedWord!.ttsVoiceUrls,
+                    );
+                  }
+                },
+              ),
+          ],
           body: FutureBuilder(
             future: _fetchDataSource(folderId: widget.folderId),
             builder: (BuildContext context, AsyncSnapshot snapshot) {
@@ -102,6 +111,8 @@ class _FolderItemsViewState extends State<FolderItemsView> {
                   child: Text('No Items'),
                 );
               }
+
+              _folderItems = List.from(items);
 
               return ListView.builder(
                 itemCount: items.length,

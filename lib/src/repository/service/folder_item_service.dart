@@ -20,15 +20,12 @@ class FolderItemService extends FolderItemRepository {
   final _learnedWordService = LearnedWordService.getInstance();
 
   @override
-  Future<bool>
-      checkExistByFolderIdAndWordIdAndUserIdAndFromLanguageAndLearningLanguage({
+  Future<bool> checkExistByFolderIdAndWordIdAndUserId({
     required int folderId,
     required String wordId,
     required String userId,
-    required String fromLanguage,
-    required String learningLanguage,
   }) async =>
-          await super.database.then((database) => database.rawQuery('''
+      await super.database.then((database) => database.rawQuery('''
               SELECT
                 COUNT(*) COUNT
               FROM
@@ -38,24 +35,17 @@ class FolderItemService extends FolderItemRepository {
                 AND FOLDER_ID = ?
                 AND WORD_ID = ?
                 AND USER_ID = ?
-                AND FROM_LANGUAGE = ?
-                AND LEARNING_LANGUAGE = ?
               ''', [
-                folderId,
-                wordId,
-                userId,
-                fromLanguage,
-                learningLanguage
-              ]).then(
-                  (entity) => entity.isEmpty ? 0 : entity[0]['COUNT'] as int)) >
-          0;
+            folderId,
+            wordId,
+            userId,
+          ]).then((entity) => entity.isEmpty ? 0 : entity[0]['COUNT'] as int)) >
+      0;
 
   @override
-  Future<int> countByFolderIdAndUserIdAndFromLanguageAndLearningLanguage({
+  Future<int> countByFolderIdAndUserId({
     required int folderId,
     required String userId,
-    required String fromLanguage,
-    required String learningLanguage,
   }) async =>
       await super.database.then(
             (database) => database.rawQuery('''
@@ -67,13 +57,9 @@ class FolderItemService extends FolderItemRepository {
                 1 = 1
                 AND FOLDER_ID = ?
                 AND USER_ID = ?
-                AND FROM_LANGUAGE = ?
-                AND LEARNING_LANGUAGE = ?
               ''', [
               folderId,
               userId,
-              fromLanguage,
-              learningLanguage,
             ]).then((entity) => entity.isEmpty ? 0 : entity[0]['COUNT'] as int),
           );
 
@@ -106,28 +92,22 @@ class FolderItemService extends FolderItemRepository {
           );
 
   @override
-  Future<void>
-      deleteByFolderIdAndWordIdAndUserIdAndFromLanguageAndLearningLanguage({
+  Future<void> deleteByFolderIdAndWordIdAndUserId({
     required int folderId,
     required String wordId,
     required String userId,
-    required String fromLanguage,
-    required String learningLanguage,
   }) async =>
-          await super.database.then(
-                (database) => database.delete(
-                  table,
-                  where:
-                      'FOLDER_ID = ? AND WORD_ID = ? AND USER_ID = ? AND FROM_LANGUAGE = ? AND LEARNING_LANGUAGE = ?',
-                  whereArgs: [
-                    folderId,
-                    wordId,
-                    userId,
-                    fromLanguage,
-                    learningLanguage,
-                  ],
-                ),
-              );
+      await super.database.then(
+            (database) => database.delete(
+              table,
+              where: 'FOLDER_ID = ? AND WORD_ID = ? AND USER_ID = ?',
+              whereArgs: [
+                folderId,
+                wordId,
+                userId,
+              ],
+            ),
+          );
 
   @override
   Future<List<FolderItem>> findAll() async => await super.database.then(
@@ -143,24 +123,18 @@ class FolderItemService extends FolderItemRepository {
       );
 
   @override
-  Future<List<FolderItem>>
-      findByFolderIdAndUserIdAndFromLanguageAndLearningLanguage({
+  Future<List<FolderItem>> findByFolderIdAndUserId({
     required int folderId,
     required String userId,
-    required String fromLanguage,
-    required String learningLanguage,
   }) async {
     final learnedWordFolderItems = await super.database.then(
           (database) => database
               .query(
                 table,
-                where:
-                    'FOLDER_ID = ? AND USER_ID = ? AND FROM_LANGUAGE = ? AND LEARNING_LANGUAGE = ?',
+                where: 'FOLDER_ID = ? AND USER_ID = ?',
                 whereArgs: [
                   folderId,
                   userId,
-                  fromLanguage,
-                  learningLanguage,
                 ],
                 orderBy: 'CREATED_AT DESC',
               )

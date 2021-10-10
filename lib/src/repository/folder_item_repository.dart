@@ -6,37 +6,26 @@ import 'package:duo_tracker/src/repository/model/folder_item_model.dart';
 import 'package:duo_tracker/src/repository/repository.dart';
 
 abstract class FolderItemRepository extends Repository<FolderItem> {
-  Future<List<FolderItem>>
-      findByFolderIdAndUserIdAndFromLanguageAndLearningLanguage({
+  Future<List<FolderItem>> findByFolderIdAndUserId({
     required int folderId,
     required String userId,
-    required String fromLanguage,
-    required String learningLanguage,
   });
 
-  Future<int> countByFolderIdAndUserIdAndFromLanguageAndLearningLanguage({
+  Future<int> countByFolderIdAndUserId({
     required int folderId,
     required String userId,
-    required String fromLanguage,
-    required String learningLanguage,
   });
 
-  Future<bool>
-      checkExistByFolderIdAndWordIdAndUserIdAndFromLanguageAndLearningLanguage({
+  Future<bool> checkExistByFolderIdAndWordIdAndUserId({
     required int folderId,
     required String wordId,
     required String userId,
-    required String fromLanguage,
-    required String learningLanguage,
   });
 
-  Future<void>
-      deleteByFolderIdAndWordIdAndUserIdAndFromLanguageAndLearningLanguage({
+  Future<void> deleteByFolderIdAndWordIdAndUserId({
     required int folderId,
     required String wordId,
     required String userId,
-    required String fromLanguage,
-    required String learningLanguage,
   });
 
   Future<void> deleteByFolderId({

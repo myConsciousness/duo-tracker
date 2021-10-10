@@ -18,6 +18,8 @@ class User {
   String currentCourseId;
   String learningLanguage;
   String fromLanguage;
+  String formalLearningLanguage;
+  String formalFromLanguage;
   String timezone;
   String timezoneOffset;
   String pictureUrl;
@@ -50,6 +52,8 @@ class User {
         currentCourseId = '',
         learningLanguage = '',
         fromLanguage = '',
+        formalLearningLanguage = '',
+        formalFromLanguage = '',
         timezone = '',
         timezoneOffset = '',
         pictureUrl = '',
@@ -79,6 +83,8 @@ class User {
     required this.currentCourseId,
     required this.learningLanguage,
     required this.fromLanguage,
+    required this.formalLearningLanguage,
+    required this.formalFromLanguage,
     required this.timezone,
     required this.timezoneOffset,
     required this.pictureUrl,
@@ -109,6 +115,8 @@ class User {
         currentCourseId: map[UserColumn.currentCourseId],
         learningLanguage: map[UserColumn.learningLanguage],
         fromLanguage: map[UserColumn.fromLanguage],
+        formalLearningLanguage: map[UserColumn.formalLearningLanguage],
+        formalFromLanguage: map[UserColumn.formalFromLanguage],
         timezone: map[UserColumn.timezone],
         timezoneOffset: map[UserColumn.timezoneOffSet],
         pictureUrl: map[UserColumn.pictureUrl],
@@ -143,6 +151,8 @@ class User {
     map[UserColumn.currentCourseId] = currentCourseId;
     map[UserColumn.learningLanguage] = learningLanguage;
     map[UserColumn.fromLanguage] = fromLanguage;
+    map[UserColumn.formalLearningLanguage] = formalLearningLanguage;
+    map[UserColumn.formalFromLanguage] = formalFromLanguage;
     map[UserColumn.timezone] = timezone;
     map[UserColumn.timezoneOffSet] = timezoneOffset;
     map[UserColumn.pictureUrl] = pictureUrl;

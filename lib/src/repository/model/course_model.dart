@@ -8,8 +8,8 @@ class Course {
   int id = -1;
   String courseId;
   String title;
-  String learningLanguage;
-  String fromLanguage;
+  String formalLearningLanguage;
+  String formalFromLanguage;
   int xp;
   int crowns;
   DateTime createdAt;
@@ -23,8 +23,8 @@ class Course {
       : _empty = true,
         courseId = '',
         title = '',
-        learningLanguage = '',
-        fromLanguage = '',
+        formalLearningLanguage = '',
+        formalFromLanguage = '',
         xp = 0,
         crowns = 0,
         createdAt = DateTime.now(),
@@ -35,8 +35,8 @@ class Course {
     this.id = -1,
     required this.courseId,
     required this.title,
-    required this.learningLanguage,
-    required this.fromLanguage,
+    required this.formalLearningLanguage,
+    required this.formalFromLanguage,
     required this.xp,
     required this.crowns,
     required this.createdAt,
@@ -48,8 +48,8 @@ class Course {
         id: map[CourseColumn.id],
         courseId: map[CourseColumn.courseId],
         title: map[CourseColumn.title],
-        learningLanguage: map[CourseColumn.learningLanguage],
-        fromLanguage: map[CourseColumn.fromLanguage],
+        formalLearningLanguage: map[CourseColumn.formalLearningLanguage],
+        formalFromLanguage: map[CourseColumn.formalFromLanguage],
         xp: map[CourseColumn.xp],
         crowns: map[CourseColumn.crowns],
         createdAt: DateTime.fromMillisecondsSinceEpoch(
@@ -65,8 +65,8 @@ class Course {
     final map = <String, dynamic>{};
     map[CourseColumn.courseId] = courseId;
     map[CourseColumn.title] = title;
-    map[CourseColumn.learningLanguage] = learningLanguage;
-    map[CourseColumn.fromLanguage] = fromLanguage;
+    map[CourseColumn.formalLearningLanguage] = formalLearningLanguage;
+    map[CourseColumn.formalFromLanguage] = formalFromLanguage;
     map[CourseColumn.xp] = xp;
     map[CourseColumn.crowns] = crowns;
     map[CourseColumn.createdAt] = createdAt.millisecondsSinceEpoch;

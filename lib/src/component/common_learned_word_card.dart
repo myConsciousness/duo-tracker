@@ -291,17 +291,18 @@ class _CommonLearnedWordCardState extends State<CommonLearnedWordCard> {
                           _buildCardTitleText(
                             learnedWord: widget.learnedWord,
                           ),
-                          IconButton(
-                            tooltip: 'Copy Word',
-                            icon: const Icon(Icons.copy_all, size: 20),
-                            onPressed: () async {
-                              await FlutterClipboard.copy(
-                                  widget.learnedWord.wordString);
-                              InfoSnackbar.from(context: context).show(
-                                  content:
-                                      'Copied "${widget.learnedWord.wordString}" to clipboard.');
-                            },
-                          )
+                          if (widget.folderType != FolderType.voice)
+                            IconButton(
+                              tooltip: 'Copy Word',
+                              icon: const Icon(Icons.copy_all, size: 20),
+                              onPressed: () async {
+                                await FlutterClipboard.copy(
+                                    widget.learnedWord.wordString);
+                                InfoSnackbar.from(context: context).show(
+                                    content:
+                                        'Copied "${widget.learnedWord.wordString}" to clipboard.');
+                              },
+                            )
                         ],
                       ),
                       subtitle: _buildCardHintText(

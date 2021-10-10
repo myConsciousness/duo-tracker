@@ -10,5 +10,5 @@ abstract class CourseRepository extends Repository<Course> {
     required String courseId,
   });
 
-  Future<List<Course>> findAllOrderByFromLanguageAndXpDesc();
+  Future<List<Course>> findAllOrderByFormalFromLanguageAndXpDesc();
 }

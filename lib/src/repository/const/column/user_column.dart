@@ -16,6 +16,8 @@ class UserColumn {
   static const currentCourseId = 'CURRENT_COURSE_ID';
   static const learningLanguage = 'LEARNING_LANGUAGE';
   static const fromLanguage = 'FROM_LANGUAGE';
+  static const formalLearningLanguage = 'FORMAL_LEARNING_LANGUAGE';
+  static const formalFromLanguage = 'FORMAL_FROM_LANGUAGE';
   static const timezone = 'TIMEZONE';
   static const timezoneOffSet = 'TIMEZONE_OFFSET';
   static const pictureUrl = 'PICTURE_URL';

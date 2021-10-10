@@ -12,6 +12,7 @@ import 'package:duo_tracker/src/repository/model/supported_language_model.dart';
 import 'package:duo_tracker/src/repository/model/voice_configuration_model.dart';
 import 'package:duo_tracker/src/repository/service/supported_language_service.dart';
 import 'package:duo_tracker/src/repository/service/voice_configuration_service.dart';
+import 'package:duo_tracker/src/utils/language_converter.dart';
 import 'package:flutter/material.dart';
 
 class VersionInfoAdapter extends ApiAdapter {
@@ -67,6 +68,7 @@ class VersionInfoAdapter extends ApiAdapter {
   }) async {
     _supportedLanguageService.deleteAll();
 
+    final now = DateTime.now();
     json['supported_directions'].forEach(
       (fromLanguage, learningLanguages) {
         learningLanguages.forEach(
@@ -75,8 +77,14 @@ class VersionInfoAdapter extends ApiAdapter {
               SupportedLanguage.from(
                 fromLanguage: fromLanguage,
                 learningLanguage: learningLanguage,
-                createdAt: DateTime.now(),
-                updatedAt: DateTime.now(),
+                formalFromLanguage: LanguageConverter.toFormalLanguageCode(
+                  languageCode: fromLanguage,
+                ),
+                formalLearningLanguage: LanguageConverter.toFormalLanguageCode(
+                  languageCode: learningLanguage,
+                ),
+                createdAt: now,
+                updatedAt: now,
               ),
             );
           },
@@ -94,40 +102,30 @@ class VersionInfoAdapter extends ApiAdapter {
     final ttsBaseUrlHttp = json['tts_base_url_http'];
     final ttsVoiceConfiguration = json['tts_voice_configuration'];
 
+    // Find all supported languages from English
     final supportedLanguages =
         await _supportedLanguageService.findByFromLanguage(fromLanguage: 'en');
     final Map<String, dynamic> ttsVoiceConfigurations =
         jsonDecode(ttsVoiceConfiguration['voices']);
 
     final now = DateTime.now();
-    for (final SupportedLanguage supportedLanguage in supportedLanguages) {
+    for (final supportedLanguage in supportedLanguages) {
       final learningLanguage = supportedLanguage.learningLanguage;
-
-      if (ttsVoiceConfigurations.containsKey(learningLanguage)) {
-        _voiceConfigurationService.insert(
-          VoiceConfiguration.from(
-            language: learningLanguage,
-            voiceType: ttsVoiceConfigurations[learningLanguage],
-            ttsBaseUrlHttps: ttsBaseUrlHttps,
-            ttsBaseUrlHttp: ttsBaseUrlHttp,
-            path: 'tts',
-            createdAt: now,
-            updatedAt: now,
+      _voiceConfigurationService.insert(
+        VoiceConfiguration.from(
+          language: learningLanguage,
+          formalLanguage: LanguageConverter.toFormalLanguageCode(
+            languageCode: learningLanguage,
           ),
-        );
-      } else {
-        _voiceConfigurationService.insert(
-          VoiceConfiguration.from(
-            language: learningLanguage,
-            voiceType: learningLanguage,
-            ttsBaseUrlHttps: ttsBaseUrlHttps,
-            ttsBaseUrlHttp: ttsBaseUrlHttp,
-            path: 'tts',
-            createdAt: now,
-            updatedAt: now,
-          ),
-        );
-      }
+          voiceType:
+              ttsVoiceConfigurations[learningLanguage] ?? learningLanguage,
+          ttsBaseUrlHttps: ttsBaseUrlHttps,
+          ttsBaseUrlHttp: ttsBaseUrlHttp,
+          path: 'tts',
+          createdAt: now,
+          updatedAt: now,
+        ),
+      );
     }
   }
 }

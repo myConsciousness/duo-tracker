@@ -6,6 +6,7 @@
 class VoiceConfigurationColumn {
   static const id = 'ID';
   static const language = 'LANGUAGE';
+  static const formalLanguage = 'FORMAL_LANGUAGE';
   static const voiceType = 'VOICE_TYPE';
   static const ttsBaseUrlHttps = 'TTS_BASE_URL_HTTPS';
   static const ttsBaseUrlHttp = 'TTS_BASE_URL_HTTP';

@@ -373,19 +373,15 @@ class _OverviewViewState extends State<OverviewView> {
               return;
             }
 
-            await showLoadingDialog(
+            await showSwitchLanguageDialog(
               context: context,
-              title: 'Switching Language',
-              future: showSwitchLanguageDialog(
-                context: context,
-                onSubmitted: (fromLanguage, learningLanguage) async {
-                  await _searchLearnedWords();
+              onSubmitted: (fromLanguage, learningLanguage) async {
+                await _searchLearnedWords();
 
-                  super.setState(() {
-                    _buildAppBarSubTitle();
-                  });
-                },
-              ),
+                super.setState(() {
+                  _buildAppBarSubTitle();
+                });
+              },
             );
           },
         ),

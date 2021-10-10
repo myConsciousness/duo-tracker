@@ -8,6 +8,8 @@ class SupportedLanguage {
   int id = -1;
   String fromLanguage;
   String learningLanguage;
+  String formalFromLanguage;
+  String formalLearningLanguage;
   DateTime createdAt;
   DateTime updatedAt;
 
@@ -19,6 +21,8 @@ class SupportedLanguage {
       : _empty = true,
         fromLanguage = '',
         learningLanguage = '',
+        formalFromLanguage = '',
+        formalLearningLanguage = '',
         createdAt = DateTime.now(),
         updatedAt = DateTime.now();
 
@@ -27,6 +31,8 @@ class SupportedLanguage {
     this.id = -1,
     required this.fromLanguage,
     required this.learningLanguage,
+    required this.formalFromLanguage,
+    required this.formalLearningLanguage,
     required this.createdAt,
     required this.updatedAt,
   });
@@ -37,6 +43,9 @@ class SupportedLanguage {
         id: map[SupportedLanguageColumn.id],
         fromLanguage: map[SupportedLanguageColumn.fromLanguage],
         learningLanguage: map[SupportedLanguageColumn.learningLanguage],
+        formalFromLanguage: map[SupportedLanguageColumn.formalFromLanguage],
+        formalLearningLanguage:
+            map[SupportedLanguageColumn.formalLearningLanguage],
         createdAt: DateTime.fromMillisecondsSinceEpoch(
           map[SupportedLanguageColumn.createdAt] ?? 0,
         ),
@@ -50,6 +59,9 @@ class SupportedLanguage {
     final map = <String, dynamic>{};
     map[SupportedLanguageColumn.fromLanguage] = fromLanguage;
     map[SupportedLanguageColumn.learningLanguage] = learningLanguage;
+    map[SupportedLanguageColumn.formalFromLanguage] = formalFromLanguage;
+    map[SupportedLanguageColumn.formalLearningLanguage] =
+        formalLearningLanguage;
     map[SupportedLanguageColumn.createdAt] = createdAt.millisecondsSinceEpoch;
     map[SupportedLanguageColumn.updatedAt] = updatedAt.millisecondsSinceEpoch;
     return map;

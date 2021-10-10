@@ -9,6 +9,8 @@ class WordHintColumn {
   static const userId = 'USER_ID';
   static const learningLanguage = 'LEARNING_LANGUAGE';
   static const fromLanguage = 'FROM_LANGUAGE';
+  static const formalLearningLanguage = 'FORMAL_LEARNING_LANGUAGE';
+  static const formalFromLanguage = 'FORMAL_FROM_LANGUAGE';
   static const value = 'VALUE';
   static const hint = 'HINT';
   static const sortOrder = 'SORT_ORDER';

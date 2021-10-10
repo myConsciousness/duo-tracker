@@ -10,6 +10,8 @@ class WordHint {
   String userId;
   String learningLanguage;
   String fromLanguage;
+  String formalLearningLanguage;
+  String formalFromLanguage;
   String value;
   String hint;
   int sortOrder;
@@ -26,6 +28,8 @@ class WordHint {
         userId = '',
         learningLanguage = '',
         fromLanguage = '',
+        formalLearningLanguage = '',
+        formalFromLanguage = '',
         value = '',
         hint = '',
         sortOrder = -1,
@@ -39,6 +43,8 @@ class WordHint {
     required this.userId,
     required this.learningLanguage,
     required this.fromLanguage,
+    required this.formalLearningLanguage,
+    required this.formalFromLanguage,
     required this.value,
     required this.hint,
     this.sortOrder = -1,
@@ -53,6 +59,8 @@ class WordHint {
         userId: map[WordHintColumn.userId],
         learningLanguage: map[WordHintColumn.learningLanguage],
         fromLanguage: map[WordHintColumn.fromLanguage],
+        formalLearningLanguage: map[WordHintColumn.formalLearningLanguage],
+        formalFromLanguage: map[WordHintColumn.formalFromLanguage],
         value: map[WordHintColumn.value],
         hint: map[WordHintColumn.hint],
         sortOrder: map[WordHintColumn.sortOrder],
@@ -71,6 +79,8 @@ class WordHint {
     map[WordHintColumn.userId] = userId;
     map[WordHintColumn.learningLanguage] = learningLanguage;
     map[WordHintColumn.fromLanguage] = fromLanguage;
+    map[WordHintColumn.formalLearningLanguage] = formalLearningLanguage;
+    map[WordHintColumn.formalFromLanguage] = formalFromLanguage;
     map[WordHintColumn.value] = value;
     map[WordHintColumn.hint] = hint;
     map[WordHintColumn.sortOrder] = sortOrder;

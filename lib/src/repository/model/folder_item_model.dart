@@ -14,8 +14,6 @@ class FolderItem {
   String alias;
   String remarks;
   String userId;
-  String fromLanguage;
-  String learningLanguage;
   int sortOrder;
   bool deleted;
   DateTime createdAt;
@@ -36,8 +34,6 @@ class FolderItem {
         alias = '',
         remarks = '',
         userId = '',
-        fromLanguage = '',
-        learningLanguage = '',
         sortOrder = -1,
         deleted = false,
         createdAt = DateTime.now(),
@@ -52,8 +48,6 @@ class FolderItem {
     required this.alias,
     required this.remarks,
     required this.userId,
-    required this.fromLanguage,
-    required this.learningLanguage,
     required this.sortOrder,
     required this.deleted,
     required this.createdAt,
@@ -69,8 +63,6 @@ class FolderItem {
         alias: map[FolderItemColumn.alias],
         remarks: map[FolderItemColumn.remarks],
         userId: map[FolderItemColumn.userId],
-        fromLanguage: map[FolderItemColumn.fromLanguage],
-        learningLanguage: map[FolderItemColumn.learningLanguage],
         sortOrder: map[FolderItemColumn.sortOrder],
         deleted: map[FolderItemColumn.deleted] == BooleanText.true_,
         createdAt: DateTime.fromMillisecondsSinceEpoch(
@@ -90,8 +82,6 @@ class FolderItem {
     map[FolderItemColumn.alias] = alias;
     map[FolderItemColumn.remarks] = remarks;
     map[FolderItemColumn.userId] = userId;
-    map[FolderItemColumn.fromLanguage] = fromLanguage;
-    map[FolderItemColumn.learningLanguage] = learningLanguage;
     map[FolderItemColumn.sortOrder] = sortOrder;
     map[FolderItemColumn.deleted] =
         deleted ? BooleanText.true_ : BooleanText.false_;

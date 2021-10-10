@@ -12,6 +12,8 @@ class FolderColumn {
   static const userId = 'USER_ID';
   static const fromLanguage = 'FROM_LANGUAGE';
   static const learningLanguage = 'LEARNING_LANGUAGE';
+  static const formalFromLanguage = 'FORMAL_FROM_LANGUAGE';
+  static const formalLearningLanguage = 'FORMAL_LEARNING_LANGUAGE';
   static const sortOrder = 'SORT_ORDER';
   static const deleted = 'DELETED';
   static const createdAt = 'CREATED_AT';

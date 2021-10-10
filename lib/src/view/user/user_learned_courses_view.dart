@@ -32,10 +32,10 @@ class _UserLearnedCoursesViewState extends State<UserLearnedCoursesView> {
     final courseMatrix = <String, List<Course>>{};
 
     for (final Course course in courses) {
-      if (courseMatrix.containsKey(course.fromLanguage)) {
-        courseMatrix[course.fromLanguage]!.add(course);
+      if (courseMatrix.containsKey(course.formalFromLanguage)) {
+        courseMatrix[course.formalFromLanguage]!.add(course);
       } else {
-        courseMatrix[course.fromLanguage] = [course];
+        courseMatrix[course.formalFromLanguage] = [course];
       }
     }
 
@@ -132,7 +132,7 @@ class _UserLearnedCoursesViewState extends State<UserLearnedCoursesView> {
                   ),
                   TextWithHorizontalDivider(
                     value: LanguageConverter.toNameWithFormal(
-                      languageCode: courses[0].fromLanguage,
+                      languageCode: courses[0].formalFromLanguage,
                     ),
                     fontSize: 15,
                     textColor: Theme.of(context).colorScheme.secondary,
@@ -175,7 +175,7 @@ class _UserLearnedCoursesViewState extends State<UserLearnedCoursesView> {
                       child: ListTile(
                         title: Text(
                           LanguageConverter.toNameWithFormal(
-                            languageCode: course.learningLanguage,
+                            languageCode: course.formalLearningLanguage,
                           ),
                           style: const TextStyle(
                             fontWeight: FontWeight.bold,
@@ -212,7 +212,8 @@ class _UserLearnedCoursesViewState extends State<UserLearnedCoursesView> {
             child: Padding(
               padding: const EdgeInsets.all(20),
               child: FutureBuilder(
-                future: _courseService.findAllOrderByFromLanguageAndXpDesc(),
+                future:
+                    _courseService.findAllOrderByFormalFromLanguageAndXpDesc(),
                 builder: (BuildContext context, AsyncSnapshot snapshot) {
                   if (!snapshot.hasData) {
                     return const Loading();

@@ -14,8 +14,8 @@ import 'package:duo_tracker/src/http/utils/duolingo_api_utils.dart';
 import 'package:duo_tracker/src/utils/language_converter.dart';
 import 'package:flutter/material.dart';
 
-List<DropdownMenuItem> _selectableFromLanguageItems = [];
-List<DropdownMenuItem> _selectableLearningLanguageItems = [];
+late List<DropdownMenuItem> _selectableFromLanguageItems;
+late List<DropdownMenuItem> _selectableLearningLanguageItems;
 dynamic _selectedFromLanguage = '';
 dynamic _selectedLearningLanguage = '';
 
@@ -33,18 +33,16 @@ Future<T?> showSwitchLanguageDialog<T>({
   )?
       onSubmitted,
 }) async {
+  _selectableFromLanguageItems = [];
+  _selectableLearningLanguageItems = [];
+
   final currentFromLanguage =
       await CommonSharedPreferencesKey.currentFromLanguage.getString();
   final currentLearningLanguage =
       await CommonSharedPreferencesKey.currentLearningLanguage.getString();
 
-  if (_selectedFromLanguage.isEmpty) {
-    _selectedFromLanguage = currentFromLanguage;
-  }
-
-  if (_selectedLearningLanguage.isEmpty) {
-    _selectedLearningLanguage = currentLearningLanguage;
-  }
+  _selectedFromLanguage = currentFromLanguage;
+  _selectedLearningLanguage = currentLearningLanguage;
 
   await _refreshAvailableFromLanguages();
   await _refreshAvailableLearningLanguages(fromLanguage: currentFromLanguage);
@@ -124,7 +122,7 @@ Future<T?> showSwitchLanguageDialog<T>({
 
                     if (_selectedFromLanguage == currentFromLanguage &&
                         _selectedLearningLanguage == currentLearningLanguage) {
-                      showInputErrorDialog(
+                      await showInputErrorDialog(
                         context: context,
                         content:
                             'The selected settings have already been applied.',
@@ -291,13 +289,16 @@ Future<void> _refreshAvailableFromLanguages() async {
 Future<String> _refreshAvailableLearningLanguages({
   required String fromLanguage,
 }) async {
-  final availableLearningLanguage = await _supportedLanguageService
-      .findDistinctLearningLanguagesByFromLanguage(
-    fromLanguage: fromLanguage,
-  );
-  _selectableLearningLanguageItems = _createDropdownItems(
-    languages: availableLearningLanguage,
+  final availableLearningLanguages = await _supportedLanguageService
+      .findDistinctLearningLanguagesByFormalFromLanguage(
+    formalFromLanguage: LanguageConverter.toFormalLanguageCode(
+      languageCode: fromLanguage,
+    ),
   );
 
-  return availableLearningLanguage[0];
+  _selectableLearningLanguageItems = _createDropdownItems(
+    languages: availableLearningLanguages,
+  );
+
+  return availableLearningLanguages[0];
 }

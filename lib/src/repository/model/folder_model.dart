@@ -16,6 +16,8 @@ class Folder {
   String userId;
   String fromLanguage;
   String learningLanguage;
+  String formalFromLanguage;
+  String formalLearningLanguage;
   int sortOrder;
   bool deleted;
   DateTime createdAt;
@@ -35,6 +37,8 @@ class Folder {
         userId = '',
         fromLanguage = '',
         learningLanguage = '',
+        formalFromLanguage = '',
+        formalLearningLanguage = '',
         sortOrder = -1,
         deleted = false,
         createdAt = DateTime.now(),
@@ -51,6 +55,8 @@ class Folder {
     required this.userId,
     required this.fromLanguage,
     required this.learningLanguage,
+    required this.formalFromLanguage,
+    required this.formalLearningLanguage,
     required this.sortOrder,
     required this.deleted,
     required this.createdAt,
@@ -68,6 +74,8 @@ class Folder {
         userId: map[FolderColumn.userId],
         fromLanguage: map[FolderColumn.fromLanguage],
         learningLanguage: map[FolderColumn.learningLanguage],
+        formalFromLanguage: map[FolderColumn.formalFromLanguage],
+        formalLearningLanguage: map[FolderColumn.formalLearningLanguage],
         sortOrder: map[FolderColumn.sortOrder],
         deleted: map[FolderColumn.deleted] == BooleanText.true_,
         createdAt: DateTime.fromMillisecondsSinceEpoch(
@@ -89,6 +97,8 @@ class Folder {
     map[FolderColumn.userId] = userId;
     map[FolderColumn.fromLanguage] = fromLanguage;
     map[FolderColumn.learningLanguage] = learningLanguage;
+    map[FolderColumn.formalFromLanguage] = formalFromLanguage;
+    map[FolderColumn.formalLearningLanguage] = formalLearningLanguage;
     map[FolderColumn.sortOrder] = sortOrder;
     map[FolderColumn.deleted] =
         deleted ? BooleanText.true_ : BooleanText.false_;

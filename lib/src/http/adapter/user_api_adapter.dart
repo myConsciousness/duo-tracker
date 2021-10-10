@@ -15,6 +15,7 @@ import 'package:duo_tracker/src/repository/preference/common_shared_preferences_
 import 'package:duo_tracker/src/repository/service/course_service.dart';
 import 'package:duo_tracker/src/repository/service/skill_serviced.dart';
 import 'package:duo_tracker/src/repository/service/user_service.dart';
+import 'package:duo_tracker/src/utils/language_converter.dart';
 import 'package:flutter/material.dart';
 
 class UserApiAdapter extends ApiAdapter {
@@ -87,6 +88,12 @@ class UserApiAdapter extends ApiAdapter {
         currentCourseId: json['currentCourseId'] ?? '',
         learningLanguage: learningLanguage,
         fromLanguage: fromLanguage,
+        formalLearningLanguage: LanguageConverter.toFormalLanguageCode(
+          languageCode: learningLanguage,
+        ),
+        formalFromLanguage: LanguageConverter.toFormalLanguageCode(
+          languageCode: fromLanguage,
+        ),
         timezone: json['timezone'] ?? '',
         timezoneOffset: json['timezoneOffset'] ?? '',
         pictureUrl: json['picture'] ?? '',
@@ -121,8 +128,12 @@ class UserApiAdapter extends ApiAdapter {
         Course.from(
           courseId: course['id'],
           title: course['title'],
-          learningLanguage: course['learningLanguage'],
-          fromLanguage: course['fromLanguage'],
+          formalLearningLanguage: LanguageConverter.toFormalLanguageCode(
+            languageCode: course['learningLanguage'],
+          ),
+          formalFromLanguage: LanguageConverter.toFormalLanguageCode(
+            languageCode: course['fromLanguage'],
+          ),
           xp: course['xp'],
           crowns: course['crowns'],
           createdAt: now,

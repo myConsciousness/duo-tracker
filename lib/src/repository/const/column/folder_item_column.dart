@@ -10,8 +10,6 @@ class FolderItemColumn {
   static const alias = 'ALIAS';
   static const remarks = 'REMARKS';
   static const userId = 'USER_ID';
-  static const fromLanguage = 'FROM_LANGUAGE';
-  static const learningLanguage = 'LEARNING_LANGUAGE';
   static const sortOrder = 'SORT_ORDER';
   static const deleted = 'DELETED';
   static const createdAt = 'CREATED_AT';

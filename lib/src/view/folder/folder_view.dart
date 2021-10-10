@@ -137,12 +137,9 @@ class _FolderViewState extends State<FolderView> {
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
               FutureBuilder(
-                future: _folderItemService
-                    .countByFolderIdAndUserIdAndFromLanguageAndLearningLanguage(
+                future: _folderItemService.countByFolderIdAndUserId(
                   folderId: folder.id,
                   userId: folder.userId,
-                  fromLanguage: folder.fromLanguage,
-                  learningLanguage: folder.learningLanguage,
                 ),
                 builder:
                     (BuildContext context, AsyncSnapshot itemCountSnapshot) {

@@ -123,7 +123,7 @@ class SupportedLanguageService extends SupportedLanguageRepository {
               SL.FROM_LANGUAGE
             from
               $table SL inner join COURSE C
-              on SL.FROM_LANGUAGE = C.FROM_LANGUAGE AND SL.LEARNING_LANGUAGE = C.LEARNING_LANGUAGE
+              on SL.FORMAL_FROM_LANGUAGE = C.FORMAL_FROM_LANGUAGE AND SL.FORMAL_LEARNING_LANGUAGE = C.FORMAL_LEARNING_LANGUAGE
             ;
             ''',
             ).then(
@@ -136,8 +136,8 @@ class SupportedLanguageService extends SupportedLanguageRepository {
           );
 
   @override
-  Future<List<String>> findDistinctLearningLanguagesByFromLanguage({
-    required String fromLanguage,
+  Future<List<String>> findDistinctLearningLanguagesByFormalFromLanguage({
+    required String formalFromLanguage,
   }) async =>
       await super.database.then(
             (database) => database.rawQuery(
@@ -146,12 +146,14 @@ class SupportedLanguageService extends SupportedLanguageRepository {
               SL.LEARNING_LANGUAGE
             from
               $table SL inner join COURSE C
-              on SL.FROM_LANGUAGE = C.FROM_LANGUAGE AND SL.LEARNING_LANGUAGE = C.LEARNING_LANGUAGE
+              on SL.FORMAL_FROM_LANGUAGE = C.FORMAL_FROM_LANGUAGE AND SL.FORMAL_LEARNING_LANGUAGE = C.FORMAL_LEARNING_LANGUAGE
             where
-              SL.FROM_LANGUAGE = ?
+              SL.FORMAL_FROM_LANGUAGE = ?
             ;
             ''',
-              [fromLanguage],
+              [
+                formalFromLanguage,
+              ],
             ).then(
               (entities) => entities
                   .map(

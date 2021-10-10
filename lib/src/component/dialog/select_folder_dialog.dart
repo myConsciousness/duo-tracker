@@ -9,6 +9,7 @@ import 'package:duo_tracker/src/component/const/folder_type.dart';
 import 'package:duo_tracker/src/component/dialog/create_new_folder_dialog.dart';
 import 'package:duo_tracker/src/component/loading.dart';
 import 'package:duo_tracker/src/repository/model/folder_item_model.dart';
+import 'package:duo_tracker/src/repository/model/folder_model.dart';
 import 'package:duo_tracker/src/repository/preference/common_shared_preferences_key.dart';
 import 'package:duo_tracker/src/repository/service/folder_item_service.dart';
 import 'package:duo_tracker/src/repository/service/folder_service.dart';
@@ -89,7 +90,7 @@ Future<T?> showSelectFolderDialog<T>({
                         return const Loading();
                       }
 
-                      final List<dynamic> folders = snapshot.data;
+                      final List<Folder> folders = snapshot.data;
 
                       if (folders.isEmpty) {
                         return AddNewFolderButton(
@@ -99,7 +100,9 @@ Future<T?> showSelectFolderDialog<T>({
                               folderType: _selectedFolderType,
                             );
 
-                            setState(() {});
+                            setState(() {
+                              _refreshCheckMarkers = true;
+                            });
                           },
                         );
                       }
@@ -133,12 +136,6 @@ Future<T?> showSelectFolderDialog<T>({
                   pressEvent: () async {
                     final userId =
                         await CommonSharedPreferencesKey.userId.getString();
-                    final fromLanguage = await CommonSharedPreferencesKey
-                        .currentFromLanguage
-                        .getString();
-                    final learningLanguage = await CommonSharedPreferencesKey
-                        .currentLearningLanguage
-                        .getString();
 
                     for (final indexNum in range(0, _checkMarkers.length)) {
                       final index = indexNum.toInt();
@@ -155,17 +152,14 @@ Future<T?> showSelectFolderDialog<T>({
                           folderId: _folderIds[index],
                           wordId: wordId,
                           userId: userId,
-                          fromLanguage: fromLanguage,
-                          learningLanguage: learningLanguage,
                         );
                       } else {
                         await _removeFolderItem(
-                            folderType: _selectedFolderType,
-                            folderId: _folderIds[index],
-                            wordId: wordId,
-                            userId: userId,
-                            fromLanguage: fromLanguage,
-                            learningLanguage: learningLanguage);
+                          folderType: _selectedFolderType,
+                          folderId: _folderIds[index],
+                          wordId: wordId,
+                          userId: userId,
+                        );
                       }
                     }
 
@@ -199,8 +193,6 @@ Future<void> _addFolderItem({
   required int folderId,
   required String wordId,
   required String userId,
-  required String fromLanguage,
-  required String learningLanguage,
 }) async =>
     await _folderItemService.insert(
       FolderItem.from(
@@ -210,8 +202,6 @@ Future<void> _addFolderItem({
         alias: '',
         remarks: '',
         userId: userId,
-        fromLanguage: fromLanguage,
-        learningLanguage: learningLanguage,
         sortOrder: 0,
         deleted: false,
         createdAt: DateTime.now(),
@@ -224,16 +214,11 @@ Future<void> _removeFolderItem({
   required int folderId,
   required String wordId,
   required String userId,
-  required String fromLanguage,
-  required String learningLanguage,
 }) async =>
-    await _folderItemService
-        .deleteByFolderIdAndWordIdAndUserIdAndFromLanguageAndLearningLanguage(
+    await _folderItemService.deleteByFolderIdAndWordIdAndUserId(
       folderId: folderId,
       wordId: wordId,
       userId: userId,
-      fromLanguage: fromLanguage,
-      learningLanguage: learningLanguage,
     );
 
 Future<void> _createCheckMarkers({
@@ -264,18 +249,11 @@ Future<bool> _isFolderAlreadyChecked({
   required String wordId,
 }) async {
   final userId = await CommonSharedPreferencesKey.userId.getString();
-  final fromLanguage =
-      await CommonSharedPreferencesKey.currentFromLanguage.getString();
-  final learningLanguage =
-      await CommonSharedPreferencesKey.currentLearningLanguage.getString();
 
-  return await _folderItemService
-      .checkExistByFolderIdAndWordIdAndUserIdAndFromLanguageAndLearningLanguage(
+  return await _folderItemService.checkExistByFolderIdAndWordIdAndUserId(
     folderId: folderId,
     wordId: wordId,
     userId: userId,
-    fromLanguage: fromLanguage,
-    learningLanguage: learningLanguage,
   );
 }
 

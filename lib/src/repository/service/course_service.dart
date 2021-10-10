@@ -101,13 +101,13 @@ class CourseService extends CourseRepository {
       );
 
   @override
-  Future<List<Course>> findAllOrderByFromLanguageAndXpDesc() async =>
+  Future<List<Course>> findAllOrderByFormalFromLanguageAndXpDesc() async =>
       await super.database.then(
             (database) => database
                 .query(
                   table,
                   orderBy:
-                      '${CourseColumn.fromLanguage}, ${CourseColumn.xp} DESC',
+                      '${CourseColumn.formalFromLanguage}, ${CourseColumn.xp} DESC',
                 )
                 .then(
                   (v) => v
