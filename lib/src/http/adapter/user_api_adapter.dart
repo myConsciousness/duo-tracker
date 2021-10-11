@@ -159,12 +159,13 @@ class UserApiAdapter extends ApiAdapter {
         ['skills']) {
       for (final Map<String, dynamic> skill in skillsInternal) {
         final skillId = skill['id'];
+        final skillName = skill['name'];
         final content = skill['tipsAndNotes'] ?? '';
 
         await _skillService.insert(
           Skill.from(
             skillId: skillId,
-            name: skill['name'],
+            name: skillName,
             shortName: skill['shortName'],
             urlName: skill['urlName'],
             accessible: skill['accessible'] ?? false,
@@ -176,6 +177,7 @@ class UserApiAdapter extends ApiAdapter {
             levels: skill['levels'],
             tipsAndNotesId: await _fetchTipsAndNotesId(
               skillId: skillId,
+              skillName: skillName,
               content: content,
             ),
             createdAt: now,
@@ -188,6 +190,7 @@ class UserApiAdapter extends ApiAdapter {
 
   Future<int> _fetchTipsAndNotesId({
     required String skillId,
+    required String skillName,
     required String content,
   }) async {
     if (content.isEmpty) {
@@ -212,6 +215,7 @@ class UserApiAdapter extends ApiAdapter {
     final insertedTipsAndNotes = await _tipsAndNotesService.insert(
       TipsAndNotes.from(
           skillId: skillId,
+          skillName: skillName,
           content: content,
           bookmarked: false,
           deleted: false,

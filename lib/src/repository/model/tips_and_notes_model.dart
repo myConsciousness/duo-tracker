@@ -8,6 +8,7 @@ import 'package:duo_tracker/src/repository/const/column/tips_and_notes_column.da
 class TipsAndNotes {
   int id = -1;
   String skillId;
+  String skillName;
   String content;
   bool bookmarked;
   bool deleted;
@@ -21,6 +22,7 @@ class TipsAndNotes {
   TipsAndNotes.empty()
       : _empty = true,
         skillId = '',
+        skillName = '',
         content = '',
         bookmarked = false,
         deleted = false,
@@ -31,6 +33,7 @@ class TipsAndNotes {
   TipsAndNotes.from({
     this.id = -1,
     required this.skillId,
+    required this.skillName,
     required this.content,
     required this.bookmarked,
     required this.deleted,
@@ -42,6 +45,7 @@ class TipsAndNotes {
   factory TipsAndNotes.fromMap(Map<String, dynamic> map) => TipsAndNotes.from(
         id: map[TipsAndNotesColumn.id],
         skillId: map[TipsAndNotesColumn.skillId],
+        skillName: map[TipsAndNotesColumn.skillName],
         content: map[TipsAndNotesColumn.content],
         bookmarked: map[TipsAndNotesColumn.bookmarked] == BooleanText.true_,
         deleted: map[TipsAndNotesColumn.deleted] == BooleanText.true_,
@@ -57,6 +61,7 @@ class TipsAndNotes {
   Map<String, dynamic> toMap() {
     final map = <String, dynamic>{};
     map[TipsAndNotesColumn.skillId] = skillId;
+    map[TipsAndNotesColumn.skillName] = skillName;
     map[TipsAndNotesColumn.content] = content;
     map[TipsAndNotesColumn.bookmarked] =
         bookmarked ? BooleanText.true_ : BooleanText.false_;

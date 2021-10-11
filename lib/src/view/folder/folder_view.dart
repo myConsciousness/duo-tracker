@@ -139,6 +139,8 @@ class _FolderViewState extends State<FolderView> {
         return Icons.text_fields;
       case FolderType.voice:
         return Icons.music_note;
+      case FolderType.tipsAndNotes:
+        return Icons.more;
     }
   }
 
@@ -308,6 +310,8 @@ class _FolderViewState extends State<FolderView> {
         return 'Learned Word Folders';
       case FolderType.voice:
         return 'Playlist Folders';
+      case FolderType.tipsAndNotes:
+        return 'Tips Folders';
     }
   }
 

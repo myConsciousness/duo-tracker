@@ -157,6 +157,8 @@ String _getDialogTitle({
       return 'Edit Word Folder';
     case FolderType.voice:
       return 'Edit Playlist Folder';
+    case FolderType.tipsAndNotes:
+      return 'Edit Tips Folder';
   }
 }
 

@@ -155,6 +155,8 @@ String _getDialogTitle({
       return 'Create New Word Folder';
     case FolderType.voice:
       return 'Create New Playlist Folder';
+    case FolderType.tipsAndNotes:
+      return 'Create New Tips Folder';
   }
 }
 

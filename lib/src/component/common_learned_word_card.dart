@@ -15,7 +15,7 @@ import 'package:duo_tracker/src/repository/model/learned_word_model.dart';
 import 'package:duo_tracker/src/repository/model/word_hint_model.dart';
 import 'package:duo_tracker/src/repository/service/learned_word_service.dart';
 import 'package:duo_tracker/src/utils/audio_player_utils.dart';
-import 'package:duo_tracker/src/view/overview/lesson_tips_view.dart';
+import 'package:duo_tracker/src/view/lesson_tips_view.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 
@@ -164,8 +164,7 @@ class _CommonLearnedWordCardState extends State<CommonLearnedWordCard> {
                   context,
                   MaterialPageRoute(
                     builder: (_) => LessonTipsView(
-                      lessonName: learnedWord.skill,
-                      html: learnedWord.tipsAndNotes!.content,
+                      tipsAndNotes: learnedWord.tipsAndNotes!,
                     ),
                   ),
                 ),

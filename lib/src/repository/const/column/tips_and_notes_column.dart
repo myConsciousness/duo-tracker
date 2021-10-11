@@ -5,6 +5,7 @@
 class TipsAndNotesColumn {
   static const id = 'ID';
   static const skillId = 'SKILL_ID';
+  static const skillName = 'SKILL_NAME';
   static const content = 'CONTENT';
   static const deleted = 'DELETED';
   static const bookmarked = 'BOOKMARKED';

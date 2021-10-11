@@ -83,6 +83,8 @@ class _FolderItemsViewState extends State<FolderItemsView> {
         return 'Words List';
       case FolderType.voice:
         return 'Voice Playlist';
+      case FolderType.tipsAndNotes:
+        return 'Tips List';
     }
   }
 

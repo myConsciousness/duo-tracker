@@ -12,16 +12,18 @@ class FolderTabView extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) => const CommonDefaultTabController(
-        length: 2,
+        length: 3,
         labelFontSize: 12.0,
         unselectedLabelFontSize: 11.0,
         tabs: [
           Tab(text: 'Word'),
           Tab(text: 'Voice'),
+          Tab(text: 'Tips'),
         ],
         body: [
           FolderView(folderType: FolderType.word),
           FolderView(folderType: FolderType.voice),
+          FolderView(folderType: FolderType.tipsAndNotes),
         ],
       );
 }
