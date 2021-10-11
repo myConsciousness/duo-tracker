@@ -8,6 +8,7 @@ import 'package:duo_tracker/src/view/folder/folder_tab_view.dart';
 import 'package:duo_tracker/src/view/overview/overview_tab_view.dart';
 import 'package:duo_tracker/src/view/settings/settings_view.dart';
 import 'package:duo_tracker/src/view/shop/shop_view.dart';
+import 'package:duo_tracker/src/view/tips/tips_and_notes_tab_view.dart';
 import 'package:duo_tracker/src/view/user/user_account_tab_view.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_flavor/flutter_flavor.dart';
@@ -54,19 +55,21 @@ class _DuoTrackerHomeViewState extends State<DuoTrackerHomeView> {
 
   @override
   Widget build(BuildContext context) => const CommonDefaultTabController(
-        length: 6,
+        length: 7,
         labelFontSize: 12.0,
         unselectedLabelFontSize: 11.0,
         tabs: [
           Tab(icon: Icon(FontAwesomeIcons.listAlt, size: 16)),
+          Tab(icon: Icon(Icons.more, size: 20)),
           Tab(icon: Icon(FontAwesomeIcons.folderOpen, size: 16)),
           Tab(icon: Icon(FontAwesomeIcons.chartPie, size: 16)),
           Tab(icon: Icon(FontAwesomeIcons.userAlt, size: 16)),
           Tab(icon: Icon(FontAwesomeIcons.shoppingCart, size: 16)),
-          Tab(icon: Icon(Icons.settings)),
+          Tab(icon: Icon(Icons.settings, size: 20)),
         ],
         body: [
           OverviewTabView(),
+          TipsAndNotesTabView(),
           FolderTabView(),
           ProficiencyAnalysisView(),
           UserAccountTabView(),
