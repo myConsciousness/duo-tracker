@@ -87,24 +87,24 @@ class _LessonTipsViewState extends State<LessonTipsView> {
                   Center(
                     child: Html(
                       data: '''
-<!DOCTYPE html>
-<html>
-  <head>
-    <style>
-    table, th, td {
-      border: 1px solid black;
-      border-collapse: collapse;
-    }
-    th, td, p {
-      padding: 5px;
-      text-align: left;
-    }
-    </style>
-  </head>
-  <body>
-    ${widget.tipAndNote.content}
-  </body
-</html>
+                        <!DOCTYPE html>
+                        <html>
+                          <head>
+                            <style>
+                            table, th, td {
+                              border: 1px solid black;
+                              border-collapse: collapse;
+                            }
+                            th, td, p {
+                              padding: 5px;
+                              text-align: left;
+                            }
+                            </style>
+                          </head>
+                          <body>
+                            ${widget.tipAndNote.content}
+                          </body
+                        </html>
                   ''',
                       style: {
                         'body': Style(

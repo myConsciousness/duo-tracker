@@ -264,9 +264,10 @@ class UserApiAdapter extends ApiAdapter {
       return content;
     }
 
-    // Remove all html tags
-    final parsedContent =
-        parse(parse(content).body!.text).documentElement!.text;
+    // Remove all html tags and new lines
+    final parsedContent = parse(
+      parse(content).body!.text,
+    ).documentElement!.text.replaceAll('\n', ' ');
 
     return parsedContent.substring(0, _maxLengthTipAndNoteContent - 3) + '...';
   }
