@@ -213,6 +213,7 @@ class UserApiAdapter extends ApiAdapter {
       TipsAndNotes.from(
           skillId: skillId,
           content: content,
+          bookmarked: false,
           deleted: false,
           createdAt: now,
           updatedAt: now),

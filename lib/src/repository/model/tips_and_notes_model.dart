@@ -9,6 +9,7 @@ class TipsAndNotes {
   int id = -1;
   String skillId;
   String content;
+  bool bookmarked;
   bool deleted;
   DateTime createdAt;
   DateTime updatedAt;
@@ -21,6 +22,7 @@ class TipsAndNotes {
       : _empty = true,
         skillId = '',
         content = '',
+        bookmarked = false,
         deleted = false,
         createdAt = DateTime.now(),
         updatedAt = DateTime.now();
@@ -30,6 +32,7 @@ class TipsAndNotes {
     this.id = -1,
     required this.skillId,
     required this.content,
+    required this.bookmarked,
     required this.deleted,
     required this.createdAt,
     required this.updatedAt,
@@ -40,6 +43,7 @@ class TipsAndNotes {
         id: map[TipsAndNotesColumn.id],
         skillId: map[TipsAndNotesColumn.skillId],
         content: map[TipsAndNotesColumn.content],
+        bookmarked: map[TipsAndNotesColumn.bookmarked] == BooleanText.true_,
         deleted: map[TipsAndNotesColumn.deleted] == BooleanText.true_,
         createdAt: DateTime.fromMillisecondsSinceEpoch(
           map[TipsAndNotesColumn.createdAt] ?? 0,
@@ -54,6 +58,8 @@ class TipsAndNotes {
     final map = <String, dynamic>{};
     map[TipsAndNotesColumn.skillId] = skillId;
     map[TipsAndNotesColumn.content] = content;
+    map[TipsAndNotesColumn.bookmarked] =
+        bookmarked ? BooleanText.true_ : BooleanText.false_;
     map[TipsAndNotesColumn.deleted] =
         deleted ? BooleanText.true_ : BooleanText.false_;
     map[TipsAndNotesColumn.createdAt] = createdAt.millisecondsSinceEpoch;
