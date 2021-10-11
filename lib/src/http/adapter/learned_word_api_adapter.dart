@@ -33,6 +33,13 @@ class LearnedWordApiAdapter extends ApiAdapter {
       final String learningLanguage = jsonMap['learning_language'];
       final String fromLanguage = jsonMap['from_language'];
 
+      final formalLearningLanguage = LanguageConverter.toFormalLanguageCode(
+        languageCode: learningLanguage,
+      );
+      final formalFromLanguage = LanguageConverter.toFormalLanguageCode(
+        languageCode: fromLanguage,
+      );
+
       final userId = await CommonSharedPreferencesKey.userId.getString();
 
       int sortOrder = 0;
@@ -48,12 +55,8 @@ class LearnedWordApiAdapter extends ApiAdapter {
             languageString: languageString,
             learningLanguage: learningLanguage,
             fromLanguage: fromLanguage,
-            formalLearningLanguage: LanguageConverter.toFormalLanguageCode(
-              languageCode: learningLanguage,
-            ),
-            formalFromLanguage: LanguageConverter.toFormalLanguageCode(
-              languageCode: fromLanguage,
-            ),
+            formalLearningLanguage: formalLearningLanguage,
+            formalFromLanguage: formalFromLanguage,
             strengthBars: overview['strength_bars'] ?? -1,
             infinitive: overview['infinitive'] ?? '',
             wordString: wordString,

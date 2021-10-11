@@ -10,7 +10,7 @@ import 'package:duo_tracker/src/http/duolingo_api.dart';
 import 'package:duo_tracker/src/http/http_status.dart';
 import 'package:duo_tracker/src/repository/model/course_model.dart';
 import 'package:duo_tracker/src/repository/model/skill_model.dart';
-import 'package:duo_tracker/src/repository/model/tips_and_notes_model.dart';
+import 'package:duo_tracker/src/repository/model/tip_and_note_model.dart';
 import 'package:duo_tracker/src/repository/model/user_model.dart';
 import 'package:duo_tracker/src/repository/preference/common_shared_preferences_key.dart';
 import 'package:duo_tracker/src/repository/service/course_service.dart';
@@ -30,8 +30,8 @@ class UserApiAdapter extends ApiAdapter {
   /// The user service
   final _userService = UserService.getInstance();
 
-  /// The tips and notes service
-  final _tipsAndNotesService = TipsAndNotesService.getInstance();
+  /// The tip and note service
+  final _tipAndNoteService = TipAndNoteService.getInstance();
 
   @override
   Future<ApiResponse> doExecute({
@@ -152,7 +152,16 @@ class UserApiAdapter extends ApiAdapter {
     required Map<String, dynamic> json,
   }) async {
     await _skillService.deleteAll();
-    await _tipsAndNotesService.deleteAll();
+
+    final userId = await CommonSharedPreferencesKey.userId.getString();
+    final fromLanguage =
+        await CommonSharedPreferencesKey.currentFromLanguage.getString();
+    final learningLanguage =
+        await CommonSharedPreferencesKey.currentLearningLanguage.getString();
+    final formalFromLanguage =
+        LanguageConverter.toFormalLanguageCode(languageCode: fromLanguage);
+    final formalLearningLanguage =
+        LanguageConverter.toFormalLanguageCode(languageCode: learningLanguage);
 
     final now = DateTime.now();
     for (final List<dynamic> skillsInternal in json['currentCourse']
@@ -175,10 +184,16 @@ class UserApiAdapter extends ApiAdapter {
             lastLessonPerfect: skill['lastLessonPerfect'],
             finishedLevels: skill['finishedLevels'],
             levels: skill['levels'],
-            tipsAndNotesId: await _fetchTipsAndNotesId(
+            tipAndNoteId: await _fetchTipAndNoteId(
               skillId: skillId,
               skillName: skillName,
               content: content,
+              userId: userId,
+              fromLanguage: fromLanguage,
+              learningLanguage: learningLanguage,
+              formalFromLanguage: formalFromLanguage,
+              formalLearningLanguage: formalLearningLanguage,
+              now: now,
             ),
             createdAt: now,
             updatedAt: now,
@@ -188,41 +203,51 @@ class UserApiAdapter extends ApiAdapter {
     }
   }
 
-  Future<int> _fetchTipsAndNotesId({
+  Future<int> _fetchTipAndNoteId({
     required String skillId,
     required String skillName,
     required String content,
+    required String userId,
+    required String fromLanguage,
+    required String learningLanguage,
+    required String formalFromLanguage,
+    required String formalLearningLanguage,
+    required DateTime now,
   }) async {
     if (content.isEmpty) {
       return -1;
     }
 
-    final alreadyExist =
-        await _tipsAndNotesService.checkExistBySkillIdAndContent(
+    final alreadyExist = await _tipAndNoteService.checkExistBySkillIdAndContent(
       skillId: skillId,
       content: content,
     );
 
     if (alreadyExist) {
       // Returns stored id
-      return await _tipsAndNotesService.findIdBySkillIdAndContent(
+      return await _tipAndNoteService.findIdBySkillIdAndContent(
         skillId: skillId,
         content: content,
       );
     }
 
-    final now = DateTime.now();
-    final insertedTipsAndNotes = await _tipsAndNotesService.insert(
-      TipsAndNotes.from(
-          skillId: skillId,
-          skillName: skillName,
-          content: content,
-          bookmarked: false,
-          deleted: false,
-          createdAt: now,
-          updatedAt: now),
+    final insertedTipAndNote = await _tipAndNoteService.insert(
+      TipAndNote.from(
+        skillId: skillId,
+        skillName: skillName,
+        content: content,
+        userId: userId,
+        fromLanguage: fromLanguage,
+        learningLanguage: learningLanguage,
+        formalFromLanguage: formalFromLanguage,
+        formalLearningLanguage: formalLearningLanguage,
+        bookmarked: false,
+        deleted: false,
+        createdAt: now,
+        updatedAt: now,
+      ),
     );
 
-    return insertedTipsAndNotes.id;
+    return insertedTipAndNote.id;
   }
 }

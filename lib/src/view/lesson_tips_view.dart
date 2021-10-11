@@ -4,7 +4,7 @@
 
 import 'package:duo_tracker/src/admob/banner_ad_utils.dart';
 import 'package:duo_tracker/src/component/common_app_bar_titles.dart';
-import 'package:duo_tracker/src/repository/model/tips_and_notes_model.dart';
+import 'package:duo_tracker/src/repository/model/tip_and_note_model.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_html/flutter_html.dart';
 import 'package:google_mobile_ads/google_mobile_ads.dart';
@@ -12,11 +12,11 @@ import 'package:google_mobile_ads/google_mobile_ads.dart';
 class LessonTipsView extends StatefulWidget {
   const LessonTipsView({
     Key? key,
-    required this.tipsAndNotes,
+    required this.tipAndNote,
   }) : super(key: key);
 
-  /// The tips and notes
-  final TipsAndNotes tipsAndNotes;
+  /// The tip and note
+  final TipAndNote tipAndNote;
 
   @override
   _LessonTipsViewState createState() => _LessonTipsViewState();
@@ -59,7 +59,7 @@ class _LessonTipsViewState extends State<LessonTipsView> {
               centerTitle: true,
               title: CommonAppBarTitles(
                 title: 'Lesson Tips & Notes',
-                subTitle: widget.tipsAndNotes.skillName,
+                subTitle: widget.tipAndNote.skillName,
               ),
               shape: const RoundedRectangleBorder(
                 borderRadius: BorderRadius.vertical(
@@ -102,7 +102,7 @@ class _LessonTipsViewState extends State<LessonTipsView> {
     </style>
   </head>
   <body>
-    ${widget.tipsAndNotes.content}
+    ${widget.tipAndNote.content}
   </body
 </html>
                   ''',

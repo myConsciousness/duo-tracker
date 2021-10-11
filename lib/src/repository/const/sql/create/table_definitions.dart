@@ -68,7 +68,7 @@ class TableDefinitions {
           LAST_LESSON_PERFECT TEXT NOT NULL,
           FINISHED_LEVELS INTEGER NOT NULL,
           LEVELS INTEGER NOT NULL,
-          TIPS_AND_NOTES_ID INTEGER NOT NULL,
+          TIP_AND_NOTE_ID INTEGER NOT NULL,
           CREATED_AT INTEGER NOT NULL,
           UPDATED_AT INTEGER NOT NULL
         )
@@ -218,13 +218,19 @@ class TableDefinitions {
         )
         ''';
 
-  /// The tips and notes
-  static const tipsAndNotes = '''
-        CREATE TABLE TIPS_AND_NOTES (
+  /// The tip and note
+  static const tipAndNote = '''
+        CREATE TABLE TIP_AND_NOTE (
           ID INTEGER NOT NULL PRIMARY KEY,
           SKILL_ID TEXT NOT NULL,
           SKILL_NAME TEXT NOT NULL,
           CONTENT TEXT NOT NULL,
+          USER_ID TEXT NOT NULL,
+          FROM_LANGUAGE TEXT NOT NULL,
+          LEARNING_LANGUAGE TEXT NOT NULL,
+          FORMAL_FROM_LANGUAGE TEXT NOT NULL,
+          FORMAL_LEARNING_LANGUAGE TEXT NOT NULL,
+          SORT_ORDER INTEGER NOT NULL,
           BOOKMARKED TEXT NOT NULL,
           DELETED TEXT NOT NULL,
           CREATED_AT INTEGER NOT NULL,

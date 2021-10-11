@@ -4,7 +4,7 @@
 
 import 'package:duo_tracker/src/repository/boolean_text.dart';
 import 'package:duo_tracker/src/repository/const/column/skill_column.dart';
-import 'package:duo_tracker/src/repository/model/tips_and_notes_model.dart';
+import 'package:duo_tracker/src/repository/model/tip_and_note_model.dart';
 
 class Skill {
   int id = -1;
@@ -19,12 +19,12 @@ class Skill {
   bool lastLessonPerfect;
   int finishedLevels;
   int levels;
-  int tipsAndNotesId;
+  int tipAndNoteId;
   DateTime createdAt;
   DateTime updatedAt;
 
   /// The tips and notes
-  TipsAndNotes? tipsAndNotes;
+  TipAndNote? tipAndNote;
 
   /// The flag that represents if this model is exist
   bool _empty = false;
@@ -43,7 +43,7 @@ class Skill {
         lastLessonPerfect = false,
         finishedLevels = 0,
         levels = 0,
-        tipsAndNotesId = -1,
+        tipAndNoteId = -1,
         createdAt = DateTime.now(),
         updatedAt = DateTime.now();
 
@@ -61,7 +61,7 @@ class Skill {
     required this.lastLessonPerfect,
     required this.finishedLevels,
     required this.levels,
-    required this.tipsAndNotesId,
+    required this.tipAndNoteId,
     required this.createdAt,
     required this.updatedAt,
   });
@@ -81,7 +81,7 @@ class Skill {
             map[SkillColumn.lastLessonPerfect] == BooleanText.true_,
         finishedLevels: map[SkillColumn.finishedLevels],
         levels: map[SkillColumn.levels],
-        tipsAndNotesId: map[SkillColumn.tipsAndNotesId],
+        tipAndNoteId: map[SkillColumn.tipAndNoteId],
         createdAt: DateTime.fromMillisecondsSinceEpoch(
           map[SkillColumn.createdAt] ?? 0,
         ),
@@ -106,7 +106,7 @@ class Skill {
         lastLessonPerfect ? BooleanText.true_ : BooleanText.false_;
     map[SkillColumn.finishedLevels] = finishedLevels;
     map[SkillColumn.levels] = levels;
-    map[SkillColumn.tipsAndNotesId] = tipsAndNotesId;
+    map[SkillColumn.tipAndNoteId] = tipAndNoteId;
     map[SkillColumn.createdAt] = createdAt.millisecondsSinceEpoch;
     map[SkillColumn.updatedAt] = updatedAt.millisecondsSinceEpoch;
     return map;

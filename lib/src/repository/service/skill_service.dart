@@ -16,8 +16,8 @@ class SkillService extends SkillRepository {
   /// The singleton instance of this [SkillService].
   static final _singletonInstance = SkillService._internal();
 
-  /// The tips and notes service
-  final _tipsAndNotesService = TipsAndNotesService.getInstance();
+  /// The tip and note service
+  final _tipsAndNotesService = TipAndNoteService.getInstance();
 
   @override
   Future<void> delete(Skill model) async => await super.database.then(
@@ -65,9 +65,9 @@ class SkillService extends SkillRepository {
           ),
         );
 
-    if (skill.tipsAndNotesId > -1) {
-      skill.tipsAndNotes = await _tipsAndNotesService.findById(
-        skill.tipsAndNotesId,
+    if (skill.tipAndNoteId > -1) {
+      skill.tipAndNote = await _tipsAndNotesService.findById(
+        skill.tipAndNoteId,
       );
     }
 

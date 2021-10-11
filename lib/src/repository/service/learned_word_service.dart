@@ -158,7 +158,7 @@ class LearnedWordService extends LearnedWordRepository {
           .findByWordIdAndUserIdAndSortBySortOrder(learnedWord.wordId, userId);
 
       final skill = await _skillService.findByName(name: learnedWord.skill);
-      learnedWord.tipsAndNotes = skill.tipsAndNotes;
+      learnedWord.tipAndNote = skill.tipAndNote;
     }
   }
 

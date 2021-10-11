@@ -2,10 +2,10 @@
 // Use of this source code is governed by a
 // BSD-style license that can be found in the LICENSE file.
 
-import 'package:duo_tracker/src/repository/model/tips_and_notes_model.dart';
+import 'package:duo_tracker/src/repository/model/tip_and_note_model.dart';
 import 'package:duo_tracker/src/repository/repository.dart';
 
-abstract class TipsAndNotesRepository extends Repository<TipsAndNotes> {
+abstract class TipAndNoteRepository extends Repository<TipAndNote> {
   Future<int> findIdBySkillIdAndContent({
     required String skillId,
     required String content,
@@ -14,5 +14,9 @@ abstract class TipsAndNotesRepository extends Repository<TipsAndNotes> {
   Future<bool> checkExistBySkillIdAndContent({
     required String skillId,
     required String content,
+  });
+
+  Future<void> replaceSortOrdersByIds({
+    required List<TipAndNote> tipsAndNotes,
   });
 }

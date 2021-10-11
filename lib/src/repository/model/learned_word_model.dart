@@ -4,7 +4,7 @@
 
 import 'package:duo_tracker/src/repository/boolean_text.dart';
 import 'package:duo_tracker/src/repository/const/column/learned_word_column.dart';
-import 'package:duo_tracker/src/repository/model/tips_and_notes_model.dart';
+import 'package:duo_tracker/src/repository/model/tip_and_note_model.dart';
 import 'package:duo_tracker/src/repository/model/word_hint_model.dart';
 
 class LearnedWord {
@@ -40,8 +40,8 @@ class LearnedWord {
   /// The word hints from word hint repository
   List<WordHint> wordHints = [];
 
-  /// The tips and notes from skill repository
-  TipsAndNotes? tipsAndNotes;
+  /// The tip and note from skill repository
+  TipAndNote? tipAndNote;
 
   /// The flag that represents if this model is exist
   bool _empty = false;

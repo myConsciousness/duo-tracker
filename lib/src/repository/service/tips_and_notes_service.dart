@@ -2,95 +2,34 @@
 // Use of this source code is governed by a
 // BSD-style license that can be found in the LICENSE file.
 
-import 'package:duo_tracker/src/repository/const/column/tips_and_notes_column.dart';
-import 'package:duo_tracker/src/repository/model/tips_and_notes_model.dart';
-import 'package:duo_tracker/src/repository/tips_and_notes_repository.dart';
+import 'package:duo_tracker/src/repository/const/column/tip_and_note_column.dart';
+import 'package:duo_tracker/src/repository/model/tip_and_note_model.dart';
+import 'package:duo_tracker/src/repository/tip_and_note_repository.dart';
 
-class TipsAndNotesService extends TipsAndNotesRepository {
+class TipAndNoteService extends TipAndNoteRepository {
   /// The internal constructor.
-  TipsAndNotesService._internal();
+  TipAndNoteService._internal();
 
-  /// Returns the singleton instance of [TipsAndNotesService].
-  factory TipsAndNotesService.getInstance() => _singletonInstance;
+  /// Returns the singleton instance of [TipAndNoteService].
+  factory TipAndNoteService.getInstance() => _singletonInstance;
 
-  /// The singleton instance of this [TipsAndNotesService].
-  static final _singletonInstance = TipsAndNotesService._internal();
+  /// The singleton instance of this [TipAndNoteService].
+  static final _singletonInstance = TipAndNoteService._internal();
 
   @override
-  Future<void> delete(TipsAndNotes model) async => await super.database.then(
-        (database) => database.delete(
-          table,
-          where: 'ID = ?',
-          whereArgs: [model.id],
-        ),
+  Future<void> replaceSortOrdersByIds({
+    required List<TipAndNote> tipsAndNotes,
+  }) async {
+    tipsAndNotes.asMap().forEach((index, tipAndNote) async {
+      final storedLearnedWord = await findById(
+        tipAndNote.id,
       );
 
-  @override
-  Future<void> deleteAll() async => await super.database.then(
-        (database) => database.delete(
-          table,
-        ),
-      );
+      storedLearnedWord.sortOrder = index;
 
-  @override
-  Future<List<TipsAndNotes>> findAll() async => await super.database.then(
-        (database) => database.query(table).then(
-              (v) => v
-                  .map(
-                    (e) => e.isNotEmpty
-                        ? TipsAndNotes.fromMap(e)
-                        : TipsAndNotes.empty(),
-                  )
-                  .toList(),
-            ),
-      );
-
-  @override
-  Future<TipsAndNotes> findById(int id) async => await super.database.then(
-        (database) =>
-            database.query(table, where: 'ID = ?', whereArgs: [id]).then(
-          (entity) => entity.isNotEmpty
-              ? TipsAndNotes.fromMap(entity[0])
-              : TipsAndNotes.empty(),
-        ),
-      );
-
-  @override
-  Future<TipsAndNotes> insert(TipsAndNotes model) async {
-    await super.database.then(
-          (database) => database
-              .insert(
-                table,
-                model.toMap(),
-              )
-              .then(
-                (int id) async => model.id = id,
-              ),
-        );
-
-    return model;
+      await update(storedLearnedWord);
+    });
   }
-
-  @override
-  Future<TipsAndNotes> replace(TipsAndNotes model) async {
-    await delete(model);
-    return await insert(model);
-  }
-
-  @override
-  String get table => 'TIPS_AND_NOTES';
-
-  @override
-  Future<void> update(TipsAndNotes model) async => await super.database.then(
-        (database) => database.update(
-          table,
-          model.toMap(),
-          where: 'ID = ?',
-          whereArgs: [
-            model.id,
-          ],
-        ),
-      );
 
   @override
   Future<bool> checkExistBySkillIdAndContent({
@@ -114,6 +53,45 @@ class TipsAndNotesService extends TipsAndNotesRepository {
       0;
 
   @override
+  Future<void> delete(TipAndNote model) async => await super.database.then(
+        (database) => database.delete(
+          table,
+          where: 'ID = ?',
+          whereArgs: [model.id],
+        ),
+      );
+
+  @override
+  Future<void> deleteAll() async => await super.database.then(
+        (database) => database.delete(
+          table,
+        ),
+      );
+
+  @override
+  Future<List<TipAndNote>> findAll() async => await super.database.then(
+        (database) => database.query(table).then(
+              (v) => v
+                  .map(
+                    (e) => e.isNotEmpty
+                        ? TipAndNote.fromMap(e)
+                        : TipAndNote.empty(),
+                  )
+                  .toList(),
+            ),
+      );
+
+  @override
+  Future<TipAndNote> findById(int id) async => await super.database.then(
+        (database) =>
+            database.query(table, where: 'ID = ?', whereArgs: [id]).then(
+          (entity) => entity.isNotEmpty
+              ? TipAndNote.fromMap(entity[0])
+              : TipAndNote.empty(),
+        ),
+      );
+
+  @override
   Future<int> findIdBySkillIdAndContent({
     required String skillId,
     required String content,
@@ -122,7 +100,7 @@ class TipsAndNotesService extends TipsAndNotesRepository {
           .database
           .then((database) => database.query(table,
               columns: [
-                TipsAndNotesColumn.id,
+                TipAndNoteColumn.id,
               ],
               where: 'SKILL_ID = ? AND CONTENT = ?',
               whereArgs: [
@@ -130,5 +108,87 @@ class TipsAndNotesService extends TipsAndNotesRepository {
                 content,
               ]))
           .then((entity) =>
-              entity.isEmpty ? -1 : entity[0][TipsAndNotesColumn.id] as int);
+              entity.isEmpty ? -1 : entity[0][TipAndNoteColumn.id] as int);
+
+  @override
+  Future<TipAndNote> insert(TipAndNote model) async {
+    model.sortOrder =
+        await _findMaxSortOrderByUserIdAndFromLanguageAndLearningLanguage(
+      userId: model.userId,
+      fromLanguage: model.fromLanguage,
+      learningLanguage: model.learningLanguage,
+    );
+
+    await super.database.then(
+          (database) => database
+              .insert(
+                table,
+                model.toMap(),
+              )
+              .then(
+                (int id) async => model.id = id,
+              ),
+        );
+
+    return model;
+  }
+
+  @override
+  Future<TipAndNote> replace(TipAndNote model) async {
+    await delete(model);
+    return await insert(model);
+  }
+
+  @override
+  String get table => 'TIP_AND_NOTE';
+
+  @override
+  Future<void> update(TipAndNote model) async => await super.database.then(
+        (database) => database.update(
+          table,
+          model.toMap(),
+          where: 'ID = ?',
+          whereArgs: [
+            model.id,
+          ],
+        ),
+      );
+
+  Future<int> _findMaxSortOrderByUserIdAndFromLanguageAndLearningLanguage({
+    required String userId,
+    required String fromLanguage,
+    required String learningLanguage,
+  }) async =>
+      await super
+          .database
+          .then(
+            (database) => database.rawQuery(
+              '''
+                  SELECT
+                    CASE WHEN
+                      MAX_SORT_ORDER IS NULL THEN 0
+                      ELSE MAX_SORT_ORDER + 1
+                    END MAX_SORT_ORDER
+                  FROM
+                    (
+                      SELECT
+                        MAX(SORT_ORDER) MAX_SORT_ORDER
+                      FROM
+                        $table
+                      WHERE
+                        1 = 1
+                        AND USER_ID = ?
+                        AND FROM_LANGUAGE = ?
+                        AND LEARNING_LANGUAGE = ?
+                    )
+                  ''',
+              [
+                userId,
+                fromLanguage,
+                learningLanguage,
+              ],
+            ),
+          )
+          .then((entity) =>
+              entity.isEmpty ? 0 : entity[0]['MAX_SORT_ORDER'] as int);
 }

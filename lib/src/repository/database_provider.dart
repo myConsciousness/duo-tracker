@@ -44,7 +44,7 @@ class DatabaseProvider {
           await database.execute(TableDefinitions.folder);
           await database.execute(TableDefinitions.folderItem);
           await database.execute(TableDefinitions.learnedWordSentence);
-          await database.execute(TableDefinitions.tipsAndNotes);
+          await database.execute(TableDefinitions.tipAndNote);
         },
         onUpgrade: (Database db, int oldVersion, int newVersion) async {
           // Do nothing now

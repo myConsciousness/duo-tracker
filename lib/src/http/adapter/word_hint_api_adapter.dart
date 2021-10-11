@@ -128,6 +128,13 @@ class WordHintApiAdapter extends ApiAdapter {
     final learningLanguage = params['learningLanguage']!;
     final fromLanguage = params['fromLanguage']!;
 
+    final formalLearningLanguage = LanguageConverter.toFormalLanguageCode(
+      languageCode: learningLanguage,
+    );
+    final formalFromLanguage = LanguageConverter.toFormalLanguageCode(
+      languageCode: fromLanguage,
+    );
+
     // Refresh word hint based on word id and user id
     await _wordHintService.deleteByWordIdAndUserId(
       wordId,
@@ -144,12 +151,8 @@ class WordHintApiAdapter extends ApiAdapter {
               userId: userId,
               learningLanguage: learningLanguage,
               fromLanguage: fromLanguage,
-              formalLearningLanguage: LanguageConverter.toFormalLanguageCode(
-                languageCode: learningLanguage,
-              ),
-              formalFromLanguage: LanguageConverter.toFormalLanguageCode(
-                languageCode: fromLanguage,
-              ),
+              formalLearningLanguage: formalLearningLanguage,
+              formalFromLanguage: formalFromLanguage,
               value: value,
               hint: hint,
               createdAt: now,

@@ -156,7 +156,7 @@ class _CommonLearnedWordCardState extends State<CommonLearnedWordCard> {
         Row(
           mainAxisAlignment: MainAxisAlignment.end,
           children: [
-            if (learnedWord.tipsAndNotes != null)
+            if (learnedWord.tipAndNote != null)
               IconButton(
                 tooltip: 'Show Tips & Notes',
                 icon: const Icon(Icons.more),
@@ -164,7 +164,7 @@ class _CommonLearnedWordCardState extends State<CommonLearnedWordCard> {
                   context,
                   MaterialPageRoute(
                     builder: (_) => LessonTipsView(
-                      tipsAndNotes: learnedWord.tipsAndNotes!,
+                      tipAndNote: learnedWord.tipAndNote!,
                     ),
                   ),
                 ),
