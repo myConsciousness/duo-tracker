@@ -2,6 +2,7 @@
 // Use of this source code is governed by a
 // BSD-style license that can be found in the LICENSE file.
 
+import 'package:duo_tracker/src/admob/banner_ad_list.dart';
 import 'package:duo_tracker/src/admob/banner_ad_utils.dart';
 import 'package:duo_tracker/src/component/add_new_folder_button.dart';
 import 'package:duo_tracker/src/component/common_app_bar_titles.dart';
@@ -20,7 +21,6 @@ import 'package:duo_tracker/src/repository/service/folder_service.dart';
 import 'package:duo_tracker/src/utils/language_converter.dart';
 import 'package:duo_tracker/src/view/folder/folder_items_view.dart';
 import 'package:flutter/material.dart';
-import 'package:google_mobile_ads/google_mobile_ads.dart';
 import 'package:intl/intl.dart';
 
 class FolderView extends StatefulWidget {
@@ -40,8 +40,8 @@ class _FolderViewState extends State<FolderView> {
   /// The app bar subtitle
   String _appBarSubTitle = 'N/A';
 
-  /// The banner ads
-  final List<BannerAd> _bannerAds = <BannerAd>[];
+  /// The banner ad list
+  final _bannerAdList = BannerAdList.newInstance();
 
   /// The datetime format
   final _datetimeFormat = DateFormat('yyyy/MM/dd HH:mm');
@@ -62,10 +62,7 @@ class _FolderViewState extends State<FolderView> {
 
   @override
   void dispose() {
-    for (final bannerAd in _bannerAds) {
-      bannerAd.dispose();
-    }
-
+    _bannerAdList.dispose();
     super.dispose();
   }
 
@@ -73,12 +70,6 @@ class _FolderViewState extends State<FolderView> {
   void initState() {
     super.initState();
     _buildAppBarSubTitle();
-  }
-
-  BannerAd _loadBannerAd() {
-    final BannerAd bannerAd = BannerAdUtils.loadBannerAd();
-    _bannerAds.add(bannerAd);
-    return bannerAd;
   }
 
   Future<void> _buildAppBarSubTitle() async {
@@ -139,8 +130,6 @@ class _FolderViewState extends State<FolderView> {
         return Icons.text_fields;
       case FolderType.voice:
         return Icons.music_note;
-      case FolderType.tipsAndNotes:
-        return Icons.more;
     }
   }
 
@@ -291,7 +280,9 @@ class _FolderViewState extends State<FolderView> {
                     return Container();
                   }
 
-                  return BannerAdUtils.createBannerAdWidget(_loadBannerAd());
+                  return BannerAdUtils.createBannerAdWidget(
+                    _bannerAdList.loadNewBanner(),
+                  );
                 },
               ),
               _buildFolderCard(
@@ -310,8 +301,6 @@ class _FolderViewState extends State<FolderView> {
         return 'Learned Word Folders';
       case FolderType.voice:
         return 'Playlist Folders';
-      case FolderType.tipsAndNotes:
-        return 'Tips Folders';
     }
   }
 

@@ -2,6 +2,7 @@
 // Use of this source code is governed by a
 // BSD-style license that can be found in the LICENSE file.
 
+import 'package:duo_tracker/src/admob/banner_ad_list.dart';
 import 'package:duo_tracker/src/admob/banner_ad_utils.dart';
 import 'package:duo_tracker/src/admob/interstitial_ad_utils.dart';
 import 'package:duo_tracker/src/component/common_app_bar_titles.dart';
@@ -33,7 +34,6 @@ import 'package:flutter/rendering.dart';
 import 'package:flutter/widgets.dart';
 import 'package:flutter_speed_dial/flutter_speed_dial.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
-import 'package:google_mobile_ads/google_mobile_ads.dart';
 
 class OverviewView extends StatefulWidget {
   const OverviewView({
@@ -50,7 +50,6 @@ class OverviewView extends StatefulWidget {
 class _OverviewViewState extends State<OverviewView> {
   bool _alreadyAuthDialogOpened = false;
   String _appBarSubTitle = '';
-  final List<BannerAd> _bannerAds = <BannerAd>[];
   FilterPattern _filterPattern = FilterPattern.none;
 
   /// The learned word service
@@ -61,6 +60,9 @@ class _OverviewViewState extends State<OverviewView> {
   bool _searching = false;
   List<String> _selectedFilterItems = [];
 
+  /// The banner ad list
+  final _bannerAdList = BannerAdList.newInstance();
+
   @override
   void didChangeDependencies() {
     super.didChangeDependencies();
@@ -68,10 +70,7 @@ class _OverviewViewState extends State<OverviewView> {
 
   @override
   void dispose() {
-    for (final bannerAd in _bannerAds) {
-      bannerAd.dispose();
-    }
-
+    _bannerAdList.dispose();
     super.dispose();
   }
 
@@ -79,12 +78,6 @@ class _OverviewViewState extends State<OverviewView> {
   void initState() {
     super.initState();
     _asyncInitState();
-  }
-
-  BannerAd _loadBannerAd() {
-    final BannerAd bannerAd = BannerAdUtils.loadBannerAd();
-    _bannerAds.add(bannerAd);
-    return bannerAd;
   }
 
   Future<List<LearnedWord>> _fetchDataSource() async {
@@ -174,7 +167,9 @@ class _OverviewViewState extends State<OverviewView> {
                   return Container();
                 }
 
-                return BannerAdUtils.createBannerAdWidget(_loadBannerAd());
+                return BannerAdUtils.createBannerAdWidget(
+                  _bannerAdList.loadNewBanner(),
+                );
               },
             ),
           CommonLearnedWordCard(

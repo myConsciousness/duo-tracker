@@ -27,6 +27,16 @@ abstract class TipAndNoteRepository extends Repository<TipAndNote> {
     required String learningLanguage,
   });
 
+  Future<TipAndNote> findBySkillIdAndContentAndUserId({
+    required String skillId,
+    required String content,
+    required String userId,
+  });
+
+  Future<TipAndNote> replaceById({
+    required TipAndNote tipAndNote,
+  });
+
   Future<int> findIdBySkillIdAndContent({
     required String skillId,
     required String content,

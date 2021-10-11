@@ -2,6 +2,7 @@
 // Use of this source code is governed by a
 // BSD-style license that can be found in the LICENSE file.
 
+import 'package:duo_tracker/src/admob/banner_ad_list.dart';
 import 'package:duo_tracker/src/admob/banner_ad_utils.dart';
 import 'package:duo_tracker/src/component/common_card_header_text.dart';
 import 'package:duo_tracker/src/component/common_divider.dart';
@@ -11,7 +12,6 @@ import 'package:duo_tracker/src/repository/model/purchase_history_model.dart';
 import 'package:duo_tracker/src/repository/service/purchase_history_service.dart';
 import 'package:duo_tracker/src/view/shop/purchase_history_tab_type.dart';
 import 'package:flutter/material.dart';
-import 'package:google_mobile_ads/google_mobile_ads.dart';
 import 'package:intl/intl.dart';
 
 class PurchaseHistoryView extends StatefulWidget {
@@ -28,8 +28,8 @@ class PurchaseHistoryView extends StatefulWidget {
 }
 
 class _PurchaseHistoryViewState extends State<PurchaseHistoryView> {
-  /// The banner ads
-  final List<BannerAd> _bannerAds = <BannerAd>[];
+  /// The banner ad list
+  final _bannerAdList = BannerAdList.newInstance();
 
   /// The datetime format
   final _datetimeFormat = DateFormat('yyyy/MM/dd HH:mm');
@@ -44,22 +44,13 @@ class _PurchaseHistoryViewState extends State<PurchaseHistoryView> {
 
   @override
   void dispose() {
-    for (final bannerAd in _bannerAds) {
-      bannerAd.dispose();
-    }
-
+    _bannerAdList.dispose();
     super.dispose();
   }
 
   @override
   void initState() {
     super.initState();
-  }
-
-  BannerAd _loadBannerAd() {
-    final BannerAd bannerAd = BannerAdUtils.loadBannerAd();
-    _bannerAds.add(bannerAd);
-    return bannerAd;
   }
 
   Future<List<PurchaseHistory>> _fetchDataSource() {
@@ -116,7 +107,8 @@ class _PurchaseHistoryViewState extends State<PurchaseHistoryView> {
                           }
 
                           return BannerAdUtils.createBannerAdWidget(
-                              _loadBannerAd());
+                            _bannerAdList.loadNewBanner(),
+                          );
                         },
                       ),
                       Card(

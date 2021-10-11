@@ -58,7 +58,7 @@ class _LessonTipsViewState extends State<LessonTipsView> {
               snap: true,
               centerTitle: true,
               title: CommonAppBarTitles(
-                title: 'Lesson Tips & Notes',
+                title: 'Lesson Tip & Note',
                 subTitle: widget.tipAndNote.skillName,
               ),
               shape: const RoundedRectangleBorder(

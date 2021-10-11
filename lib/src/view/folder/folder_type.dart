@@ -12,9 +12,6 @@ enum FolderType {
 
   /// The voice
   voice,
-
-  /// The tips and notes
-  tipsAndNotes
 }
 
 extension FolderTypeExt on FolderType {
@@ -27,8 +24,6 @@ extension FolderTypeExt on FolderType {
         return 0;
       case FolderType.voice:
         return 1;
-      case FolderType.tipsAndNotes:
-        return 2;
     }
   }
 

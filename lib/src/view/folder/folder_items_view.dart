@@ -2,6 +2,7 @@
 // Use of this source code is governed by a
 // BSD-style license that can be found in the LICENSE file.
 
+import 'package:duo_tracker/src/admob/banner_ad_list.dart';
 import 'package:duo_tracker/src/admob/banner_ad_utils.dart';
 import 'package:duo_tracker/src/component/common_app_bar_titles.dart';
 import 'package:duo_tracker/src/component/common_learned_word_card.dart';
@@ -13,7 +14,6 @@ import 'package:duo_tracker/src/repository/preference/common_shared_preferences_
 import 'package:duo_tracker/src/repository/service/folder_item_service.dart';
 import 'package:duo_tracker/src/utils/audio_player_utils.dart';
 import 'package:flutter/material.dart';
-import 'package:google_mobile_ads/google_mobile_ads.dart';
 
 class FolderItemsView extends StatefulWidget {
   const FolderItemsView({
@@ -37,8 +37,8 @@ class FolderItemsView extends StatefulWidget {
 }
 
 class _FolderItemsViewState extends State<FolderItemsView> {
-  /// The banner ads
-  final List<BannerAd> _bannerAds = <BannerAd>[];
+  /// The banner ad list
+  final _bannerAdList = BannerAdList.newInstance();
 
   /// The folder item service
   final _folderItemService = FolderItemService.getInstance();
@@ -52,10 +52,7 @@ class _FolderItemsViewState extends State<FolderItemsView> {
 
   @override
   void dispose() {
-    for (final bannerAd in _bannerAds) {
-      bannerAd.dispose();
-    }
-
+    _bannerAdList.dispose();
     super.dispose();
   }
 
@@ -83,15 +80,7 @@ class _FolderItemsViewState extends State<FolderItemsView> {
         return 'Words List';
       case FolderType.voice:
         return 'Voice Playlist';
-      case FolderType.tipsAndNotes:
-        return 'Tips List';
     }
-  }
-
-  BannerAd _loadBannerAd() {
-    final BannerAd bannerAd = BannerAdUtils.loadBannerAd();
-    _bannerAds.add(bannerAd);
-    return bannerAd;
   }
 
   Future<void> _sortCards({
@@ -173,7 +162,8 @@ class _FolderItemsViewState extends State<FolderItemsView> {
                           }
 
                           return BannerAdUtils.createBannerAdWidget(
-                              _loadBannerAd());
+                            _bannerAdList.loadNewBanner(),
+                          );
                         },
                       ),
                       CommonLearnedWordCard(

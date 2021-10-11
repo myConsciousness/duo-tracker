@@ -19,11 +19,11 @@ import 'package:duo_tracker/src/repository/service/tip_and_note_service.dart';
 import 'package:duo_tracker/src/repository/service/user_service.dart';
 import 'package:duo_tracker/src/utils/language_converter.dart';
 import 'package:flutter/material.dart';
-import 'package:html/parser.dart';
+import 'package:intl/intl.dart';
 
 class UserApiAdapter extends ApiAdapter {
   /// The max length of tip and note content
-  static const _maxLengthTipAndNoteContent = 200;
+  static const _maxLengthTipAndNoteContent = 100;
 
   /// The course service
   final _courseService = CourseService.getInstance();
@@ -223,21 +223,8 @@ class UserApiAdapter extends ApiAdapter {
       return -1;
     }
 
-    final alreadyExist = await _tipAndNoteService.checkExistBySkillIdAndContent(
-      skillId: skillId,
-      content: content,
-    );
-
-    if (alreadyExist) {
-      // Returns stored id
-      return await _tipAndNoteService.findIdBySkillIdAndContent(
-        skillId: skillId,
-        content: content,
-      );
-    }
-
-    final insertedTipAndNote = await _tipAndNoteService.insert(
-      TipAndNote.from(
+    final insertedTipAndNote = await _tipAndNoteService.replaceById(
+      tipAndNote: TipAndNote.from(
         skillId: skillId,
         skillName: skillName,
         content: content,
@@ -265,9 +252,9 @@ class UserApiAdapter extends ApiAdapter {
     }
 
     // Remove all html tags and new lines
-    final parsedContent = parse(
-      parse(content).body!.text,
-    ).documentElement!.text.replaceAll('\n', ' ');
+    final parsedContent = Bidi.stripHtmlIfNeeded(
+      content,
+    ).replaceAll('\n', ' ');
 
     return parsedContent.substring(0, _maxLengthTipAndNoteContent - 3) + '...';
   }

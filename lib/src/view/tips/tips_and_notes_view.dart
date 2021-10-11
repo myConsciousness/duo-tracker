@@ -75,11 +75,14 @@ class _TipsAndNotesViewState extends State<TipsAndNotesView> {
                   Expanded(
                     child: ListTile(
                       leading: const Icon(Icons.more),
-                      title: Text(
-                        tipAndNote.skillName,
-                        style: TextStyle(
-                          color: Theme.of(context).colorScheme.secondary,
-                          fontWeight: FontWeight.bold,
+                      title: Padding(
+                        padding: const EdgeInsets.fromLTRB(0, 10, 0, 10),
+                        child: Text(
+                          tipAndNote.skillName,
+                          style: TextStyle(
+                            color: Theme.of(context).colorScheme.secondary,
+                            fontWeight: FontWeight.bold,
+                          ),
                         ),
                       ),
                       subtitle: Text(tipAndNote.contentSummary),
@@ -204,7 +207,7 @@ class _TipsAndNotesViewState extends State<TipsAndNotesView> {
   Widget build(BuildContext context) => Scaffold(
         body: CommonNestedScrollView(
           title: CommonAppBarTitles(
-            title: 'Tips And Notes',
+            title: 'Tips & Notes',
             subTitle: _appBarSubTitle,
           ),
           body: FutureBuilder(

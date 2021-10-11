@@ -78,6 +78,26 @@ class TipAndNoteService extends TipAndNoteRepository {
       );
 
   @override
+  Future<TipAndNote> findBySkillIdAndContentAndUserId({
+    required String skillId,
+    required String content,
+    required String userId,
+  }) async =>
+      await super.database.then(
+            (database) => database.query(table,
+                where: 'SKILL_ID = ? AND CONTENT = ? AND USER_ID = ?',
+                whereArgs: [
+                  skillId,
+                  content,
+                  userId,
+                ]).then(
+              (entity) => entity.isNotEmpty
+                  ? TipAndNote.fromMap(entity[0])
+                  : TipAndNote.empty(),
+            ),
+          );
+
+  @override
   Future<List<TipAndNote>>
       findByUserIdAndFromLanguageAndLearningLanguageAndBookmarkedTrueAndDeletedFalse({
     required String userId,
@@ -220,6 +240,31 @@ class TipAndNoteService extends TipAndNoteRepository {
   Future<TipAndNote> replace(TipAndNote model) async {
     await delete(model);
     return await insert(model);
+  }
+
+  @override
+  Future<TipAndNote> replaceById({
+    required TipAndNote tipAndNote,
+  }) async {
+    TipAndNote storedTipAndNote = await findBySkillIdAndContentAndUserId(
+      skillId: tipAndNote.skillId,
+      content: tipAndNote.content,
+      userId: tipAndNote.userId,
+    );
+
+    if (storedTipAndNote.isEmpty()) {
+      storedTipAndNote = await insert(tipAndNote);
+    } else {
+      tipAndNote.id = storedTipAndNote.id;
+      tipAndNote.bookmarked = storedTipAndNote.bookmarked;
+      tipAndNote.deleted = storedTipAndNote.deleted;
+      tipAndNote.sortOrder = storedTipAndNote.sortOrder;
+      tipAndNote.createdAt = storedTipAndNote.createdAt;
+
+      await update(tipAndNote);
+    }
+
+    return storedTipAndNote;
   }
 
   @override
