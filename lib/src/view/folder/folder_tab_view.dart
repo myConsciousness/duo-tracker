@@ -3,7 +3,7 @@
 // BSD-style license that can be found in the LICENSE file.
 
 import 'package:duo_tracker/src/component/common_default_tab_controller.dart';
-import 'package:duo_tracker/src/component/const/folder_type.dart';
+import 'package:duo_tracker/src/view/folder/folder_type.dart';
 import 'package:duo_tracker/src/view/folder/folder_view.dart';
 import 'package:flutter/material.dart';
 

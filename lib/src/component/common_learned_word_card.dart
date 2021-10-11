@@ -6,7 +6,7 @@ import 'package:clipboard/clipboard.dart';
 import 'package:duo_tracker/src/component/common_card_header_text.dart';
 import 'package:duo_tracker/src/component/common_divider.dart';
 import 'package:duo_tracker/src/component/common_text.dart';
-import 'package:duo_tracker/src/component/const/folder_type.dart';
+import 'package:duo_tracker/src/view/folder/folder_type.dart';
 import 'package:duo_tracker/src/component/dialog/network_error_dialog.dart';
 import 'package:duo_tracker/src/component/dialog/select_folder_dialog.dart';
 import 'package:duo_tracker/src/component/snackbar/info_snack_bar.dart';
@@ -38,11 +38,11 @@ class CommonLearnedWordCard extends StatefulWidget {
   /// The on press action for delete item button
   final Function()? onPressedDeleteItem;
 
-  /// The learned word
-  final LearnedWord learnedWord;
-
   /// The folder type
   final FolderType folderType;
+
+  /// The learned word
+  final LearnedWord learnedWord;
 
   @override
   _CommonLearnedWordCardState createState() => _CommonLearnedWordCardState();
@@ -244,7 +244,7 @@ class _CommonLearnedWordCardState extends State<CommonLearnedWordCard> {
                 ),
               if (_canShowHeader()) const CommonDivider(),
               if (_canShowHeader())
-                Container(
+                Padding(
                   padding: const EdgeInsets.fromLTRB(20, 0, 20, 0),
                   child: Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,

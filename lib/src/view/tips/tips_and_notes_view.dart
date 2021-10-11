@@ -3,6 +3,7 @@
 // BSD-style license that can be found in the LICENSE file.
 
 import 'package:duo_tracker/src/component/common_app_bar_titles.dart';
+import 'package:duo_tracker/src/component/common_divider.dart';
 import 'package:duo_tracker/src/component/common_nested_scroll_view.dart';
 import 'package:duo_tracker/src/component/loading.dart';
 import 'package:duo_tracker/src/repository/model/tip_and_note_model.dart';
@@ -55,16 +56,83 @@ class _TipsAndNotesViewState extends State<TipsAndNotesView> {
   }) =>
       Card(
         key: Key('${tipAndNote.sortOrder}'),
-        child: ListTile(
-          title: Text(tipAndNote.skillName),
-          subtitle: Text(tipAndNote.contentSummary),
-          onTap: () => Navigator.push(
-            context,
-            MaterialPageRoute(
-              builder: (_) => LessonTipsView(
-                tipAndNote: tipAndNote,
+        clipBehavior: Clip.antiAlias,
+        elevation: 5,
+        shape: const RoundedRectangleBorder(
+          borderRadius: BorderRadius.vertical(
+            top: Radius.circular(30),
+            bottom: Radius.circular(30),
+          ),
+        ),
+        child: Padding(
+          padding: const EdgeInsets.all(10),
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  Expanded(
+                    child: ListTile(
+                      leading: const Icon(Icons.more),
+                      title: Text(
+                        tipAndNote.skillName,
+                        style: TextStyle(
+                          color: Theme.of(context).colorScheme.secondary,
+                          fontWeight: FontWeight.bold,
+                        ),
+                      ),
+                      subtitle: Text(tipAndNote.contentSummary),
+                      onTap: () => Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (_) => LessonTipsView(
+                            tipAndNote: tipAndNote,
+                          ),
+                        ),
+                      ),
+                    ),
+                  ),
+                  IconButton(
+                    tooltip: tipAndNote.bookmarked
+                        ? 'Remove Bookmark'
+                        : 'Add Bookmark',
+                    icon: tipAndNote.bookmarked
+                        ? const Icon(Icons.bookmark_added)
+                        : const Icon(Icons.bookmark_add),
+                    onPressed: () async {
+                      tipAndNote.bookmarked = !tipAndNote.bookmarked;
+                      tipAndNote.updatedAt = DateTime.now();
+
+                      await _tipAndNoteService.update(
+                        tipAndNote,
+                      );
+
+                      super.setState(() {});
+                    },
+                  ),
+                ],
               ),
-            ),
+              const CommonDivider(),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.end,
+                children: [
+                  IconButton(
+                    tooltip: tipAndNote.deleted ? 'Restore' : 'Delete',
+                    icon: tipAndNote.deleted
+                        ? const Icon(Icons.restore_from_trash)
+                        : const Icon(Icons.delete),
+                    onPressed: () async {
+                      tipAndNote.deleted = !tipAndNote.deleted;
+                      tipAndNote.updatedAt = DateTime.now();
+
+                      await _tipAndNoteService.update(tipAndNote);
+                      super.setState(() {});
+                    },
+                  ),
+                ],
+              ),
+            ],
           ),
         ),
       );
