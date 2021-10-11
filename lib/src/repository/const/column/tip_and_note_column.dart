@@ -7,6 +7,7 @@ class TipAndNoteColumn {
   static const skillId = 'SKILL_ID';
   static const skillName = 'SKILL_NAME';
   static const content = 'CONTENT';
+  static const contentSummary = 'CONTENT_SUMMARY';
   static const userId = 'USER_ID';
   static const fromLanguage = 'FROM_LANGUAGE';
   static const learningLanguage = 'LEARNING_LANGUAGE';

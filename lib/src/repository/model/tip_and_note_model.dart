@@ -10,6 +10,7 @@ class TipAndNote {
   String skillId;
   String skillName;
   String content;
+  String contentSummary;
   String userId;
   String fromLanguage;
   String learningLanguage;
@@ -30,6 +31,7 @@ class TipAndNote {
         skillId = '',
         skillName = '',
         content = '',
+        contentSummary = '',
         userId = '',
         fromLanguage = '',
         learningLanguage = '',
@@ -47,6 +49,7 @@ class TipAndNote {
     required this.skillId,
     required this.skillName,
     required this.content,
+    required this.contentSummary,
     required this.userId,
     required this.fromLanguage,
     required this.learningLanguage,
@@ -65,6 +68,7 @@ class TipAndNote {
         skillId: map[TipAndNoteColumn.skillId],
         skillName: map[TipAndNoteColumn.skillName],
         content: map[TipAndNoteColumn.content],
+        contentSummary: map[TipAndNoteColumn.contentSummary],
         userId: map[TipAndNoteColumn.userId],
         fromLanguage: map[TipAndNoteColumn.fromLanguage],
         learningLanguage: map[TipAndNoteColumn.learningLanguage],
@@ -87,6 +91,7 @@ class TipAndNote {
     map[TipAndNoteColumn.skillId] = skillId;
     map[TipAndNoteColumn.skillName] = skillName;
     map[TipAndNoteColumn.content] = content;
+    map[TipAndNoteColumn.contentSummary] = contentSummary;
     map[TipAndNoteColumn.userId] = userId;
     map[TipAndNoteColumn.fromLanguage] = fromLanguage;
     map[TipAndNoteColumn.learningLanguage] = learningLanguage;

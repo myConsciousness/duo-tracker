@@ -89,7 +89,7 @@ class TipAndNoteService extends TipAndNoteRepository {
                     .query(
                       table,
                       where:
-                          'USER_ID = ? AND FROM_LANGUAGE = ? AND LEARNING_LANGUAGE AND BOOKMARKED = ? AND DELETED = ?',
+                          'USER_ID = ? AND FROM_LANGUAGE = ? AND LEARNING_LANGUAGE = ? AND BOOKMARKED = ? AND DELETED = ?',
                       whereArgs: [
                         userId,
                         fromLanguage,
@@ -122,7 +122,7 @@ class TipAndNoteService extends TipAndNoteRepository {
                     .query(
                       table,
                       where:
-                          'USER_ID = ? AND FROM_LANGUAGE = ? AND LEARNING_LANGUAGE AND DELETED = ?',
+                          'USER_ID = ? AND FROM_LANGUAGE = ? AND LEARNING_LANGUAGE = ? AND DELETED = ?',
                       whereArgs: [
                         userId,
                         fromLanguage,
@@ -154,7 +154,7 @@ class TipAndNoteService extends TipAndNoteRepository {
                     .query(
                       table,
                       where:
-                          'USER_ID = ? AND FROM_LANGUAGE = ? AND LEARNING_LANGUAGE AND DELETED = ?',
+                          'USER_ID = ? AND FROM_LANGUAGE = ? AND LEARNING_LANGUAGE = ? AND DELETED = ?',
                       whereArgs: [
                         userId,
                         fromLanguage,

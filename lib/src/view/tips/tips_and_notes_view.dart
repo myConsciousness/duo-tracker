@@ -57,7 +57,7 @@ class _TipsAndNotesViewState extends State<TipsAndNotesView> {
         key: Key('${tipAndNote.sortOrder}'),
         child: ListTile(
           title: Text(tipAndNote.skillName),
-          subtitle: const Text('aaa'),
+          subtitle: Text(tipAndNote.contentSummary),
           onTap: () => Navigator.push(
             context,
             MaterialPageRoute(
@@ -147,6 +147,12 @@ class _TipsAndNotesViewState extends State<TipsAndNotesView> {
               }
 
               final List<TipAndNote> tipsAndNotes = snapshot.data;
+
+              if (tipsAndNotes.isEmpty) {
+                return const Center(
+                  child: Text('No Data'),
+                );
+              }
 
               return RefreshIndicator(
                 onRefresh: () async {

@@ -19,8 +19,12 @@ import 'package:duo_tracker/src/repository/service/tip_and_note_service.dart';
 import 'package:duo_tracker/src/repository/service/user_service.dart';
 import 'package:duo_tracker/src/utils/language_converter.dart';
 import 'package:flutter/material.dart';
+import 'package:html/parser.dart';
 
 class UserApiAdapter extends ApiAdapter {
+  /// The max length of tip and note content
+  static const _maxLengthTipAndNoteContent = 200;
+
   /// The course service
   final _courseService = CourseService.getInstance();
 
@@ -237,6 +241,7 @@ class UserApiAdapter extends ApiAdapter {
         skillId: skillId,
         skillName: skillName,
         content: content,
+        contentSummary: _buildContentSummary(content: content),
         userId: userId,
         fromLanguage: fromLanguage,
         learningLanguage: learningLanguage,
@@ -250,5 +255,19 @@ class UserApiAdapter extends ApiAdapter {
     );
 
     return insertedTipAndNote.id;
+  }
+
+  String _buildContentSummary({
+    required String content,
+  }) {
+    if (content.length <= _maxLengthTipAndNoteContent) {
+      return content;
+    }
+
+    // Remove all html tags
+    final parsedContent =
+        parse(parse(content).body!.text).documentElement!.text;
+
+    return parsedContent.substring(0, _maxLengthTipAndNoteContent - 3) + '...';
   }
 }
