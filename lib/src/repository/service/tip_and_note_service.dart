@@ -2,6 +2,7 @@
 // Use of this source code is governed by a
 // BSD-style license that can be found in the LICENSE file.
 
+import 'package:duo_tracker/src/repository/boolean_text.dart';
 import 'package:duo_tracker/src/repository/const/column/tip_and_note_column.dart';
 import 'package:duo_tracker/src/repository/model/tip_and_note_model.dart';
 import 'package:duo_tracker/src/repository/tip_and_note_repository.dart';
@@ -15,21 +16,6 @@ class TipAndNoteService extends TipAndNoteRepository {
 
   /// The singleton instance of this [TipAndNoteService].
   static final _singletonInstance = TipAndNoteService._internal();
-
-  @override
-  Future<void> replaceSortOrdersByIds({
-    required List<TipAndNote> tipsAndNotes,
-  }) async {
-    tipsAndNotes.asMap().forEach((index, tipAndNote) async {
-      final storedLearnedWord = await findById(
-        tipAndNote.id,
-      );
-
-      storedLearnedWord.sortOrder = index;
-
-      await update(storedLearnedWord);
-    });
-  }
 
   @override
   Future<bool> checkExistBySkillIdAndContent({
@@ -92,6 +78,103 @@ class TipAndNoteService extends TipAndNoteRepository {
       );
 
   @override
+  Future<List<TipAndNote>>
+      findByUserIdAndFromLanguageAndLearningLanguageAndBookmarkedTrueAndDeletedFalse({
+    required String userId,
+    required String fromLanguage,
+    required String learningLanguage,
+  }) async =>
+          await super.database.then(
+                (database) => database
+                    .query(
+                      table,
+                      where:
+                          'USER_ID = ? AND FROM_LANGUAGE = ? AND LEARNING_LANGUAGE AND BOOKMARKED = ? AND DELETED = ?',
+                      whereArgs: [
+                        userId,
+                        fromLanguage,
+                        learningLanguage,
+                        BooleanText.true_,
+                        BooleanText.false_,
+                      ],
+                      orderBy: 'SORT_ORDER',
+                    )
+                    .then(
+                      (v) => v
+                          .map(
+                            (e) => e.isNotEmpty
+                                ? TipAndNote.fromMap(e)
+                                : TipAndNote.empty(),
+                          )
+                          .toList(),
+                    ),
+              );
+
+  @override
+  Future<List<TipAndNote>>
+      findByUserIdAndFromLanguageAndLearningLanguageAndDeletedFalse({
+    required String userId,
+    required String fromLanguage,
+    required String learningLanguage,
+  }) async =>
+          await super.database.then(
+                (database) => database
+                    .query(
+                      table,
+                      where:
+                          'USER_ID = ? AND FROM_LANGUAGE = ? AND LEARNING_LANGUAGE AND DELETED = ?',
+                      whereArgs: [
+                        userId,
+                        fromLanguage,
+                        learningLanguage,
+                        BooleanText.false_,
+                      ],
+                      orderBy: 'SORT_ORDER',
+                    )
+                    .then(
+                      (v) => v
+                          .map(
+                            (e) => e.isNotEmpty
+                                ? TipAndNote.fromMap(e)
+                                : TipAndNote.empty(),
+                          )
+                          .toList(),
+                    ),
+              );
+
+  @override
+  Future<List<TipAndNote>>
+      findByUserIdAndFromLanguageAndLearningLanguageAndDeletedTrue({
+    required String userId,
+    required String fromLanguage,
+    required String learningLanguage,
+  }) async =>
+          await super.database.then(
+                (database) => database
+                    .query(
+                      table,
+                      where:
+                          'USER_ID = ? AND FROM_LANGUAGE = ? AND LEARNING_LANGUAGE AND DELETED = ?',
+                      whereArgs: [
+                        userId,
+                        fromLanguage,
+                        learningLanguage,
+                        BooleanText.true_,
+                      ],
+                      orderBy: 'SORT_ORDER',
+                    )
+                    .then(
+                      (v) => v
+                          .map(
+                            (e) => e.isNotEmpty
+                                ? TipAndNote.fromMap(e)
+                                : TipAndNote.empty(),
+                          )
+                          .toList(),
+                    ),
+              );
+
+  @override
   Future<int> findIdBySkillIdAndContent({
     required String skillId,
     required String content,
@@ -137,6 +220,21 @@ class TipAndNoteService extends TipAndNoteRepository {
   Future<TipAndNote> replace(TipAndNote model) async {
     await delete(model);
     return await insert(model);
+  }
+
+  @override
+  Future<void> replaceSortOrdersByIds({
+    required List<TipAndNote> tipsAndNotes,
+  }) async {
+    tipsAndNotes.asMap().forEach((index, tipAndNote) async {
+      final storedLearnedWord = await findById(
+        tipAndNote.id,
+      );
+
+      storedLearnedWord.sortOrder = index;
+
+      await update(storedLearnedWord);
+    });
   }
 
   @override

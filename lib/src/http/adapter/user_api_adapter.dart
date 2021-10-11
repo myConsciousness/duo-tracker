@@ -15,7 +15,7 @@ import 'package:duo_tracker/src/repository/model/user_model.dart';
 import 'package:duo_tracker/src/repository/preference/common_shared_preferences_key.dart';
 import 'package:duo_tracker/src/repository/service/course_service.dart';
 import 'package:duo_tracker/src/repository/service/skill_service.dart';
-import 'package:duo_tracker/src/repository/service/tips_and_notes_service.dart';
+import 'package:duo_tracker/src/repository/service/tip_and_note_service.dart';
 import 'package:duo_tracker/src/repository/service/user_service.dart';
 import 'package:duo_tracker/src/utils/language_converter.dart';
 import 'package:flutter/material.dart';
@@ -215,6 +215,7 @@ class UserApiAdapter extends ApiAdapter {
     required DateTime now,
   }) async {
     if (content.isEmpty) {
+      // No tip and note
       return -1;
     }
 

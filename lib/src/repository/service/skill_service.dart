@@ -3,7 +3,7 @@
 // BSD-style license that can be found in the LICENSE file.
 
 import 'package:duo_tracker/src/repository/model/skill_model.dart';
-import 'package:duo_tracker/src/repository/service/tips_and_notes_service.dart';
+import 'package:duo_tracker/src/repository/service/tip_and_note_service.dart';
 import 'package:duo_tracker/src/repository/skill_repository.dart';
 
 class SkillService extends SkillRepository {

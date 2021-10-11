@@ -7,7 +7,7 @@ import 'package:duo_tracker/src/component/common_nested_scroll_view.dart';
 import 'package:duo_tracker/src/component/loading.dart';
 import 'package:duo_tracker/src/repository/model/tip_and_note_model.dart';
 import 'package:duo_tracker/src/repository/preference/common_shared_preferences_key.dart';
-import 'package:duo_tracker/src/repository/service/tips_and_notes_service.dart';
+import 'package:duo_tracker/src/repository/service/tip_and_note_service.dart';
 import 'package:duo_tracker/src/utils/language_converter.dart';
 import 'package:duo_tracker/src/view/lesson_tips_view.dart';
 import 'package:duo_tracker/src/view/tips/tips_and_notes_tab_type.dart';
@@ -101,13 +101,34 @@ class _TipsAndNotesViewState extends State<TipsAndNotesView> {
   }
 
   Future<List<TipAndNote>> _fetchDataSource() async {
+    final userId = await CommonSharedPreferencesKey.userId.getString();
+    final fromLanguage =
+        await CommonSharedPreferencesKey.currentFromLanguage.getString();
+    final learningLanguage =
+        await CommonSharedPreferencesKey.currentLearningLanguage.getString();
+
     switch (widget.tipsAndNotesTabType) {
       case TipsAndNotesTabType.all:
-        return await _tipAndNoteService.findAll();
+        return await _tipAndNoteService
+            .findByUserIdAndFromLanguageAndLearningLanguageAndDeletedFalse(
+          userId: userId,
+          fromLanguage: fromLanguage,
+          learningLanguage: learningLanguage,
+        );
       case TipsAndNotesTabType.bookmarked:
-        return await _tipAndNoteService.findAll();
+        return await _tipAndNoteService
+            .findByUserIdAndFromLanguageAndLearningLanguageAndBookmarkedTrueAndDeletedFalse(
+          userId: userId,
+          fromLanguage: fromLanguage,
+          learningLanguage: learningLanguage,
+        );
       case TipsAndNotesTabType.trash:
-        return await _tipAndNoteService.findAll();
+        return await _tipAndNoteService
+            .findByUserIdAndFromLanguageAndLearningLanguageAndDeletedTrue(
+          userId: userId,
+          fromLanguage: fromLanguage,
+          learningLanguage: learningLanguage,
+        );
     }
   }
 

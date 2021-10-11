@@ -6,6 +6,27 @@ import 'package:duo_tracker/src/repository/model/tip_and_note_model.dart';
 import 'package:duo_tracker/src/repository/repository.dart';
 
 abstract class TipAndNoteRepository extends Repository<TipAndNote> {
+  Future<List<TipAndNote>>
+      findByUserIdAndFromLanguageAndLearningLanguageAndDeletedFalse({
+    required String userId,
+    required String fromLanguage,
+    required String learningLanguage,
+  });
+
+  Future<List<TipAndNote>>
+      findByUserIdAndFromLanguageAndLearningLanguageAndBookmarkedTrueAndDeletedFalse({
+    required String userId,
+    required String fromLanguage,
+    required String learningLanguage,
+  });
+
+  Future<List<TipAndNote>>
+      findByUserIdAndFromLanguageAndLearningLanguageAndDeletedTrue({
+    required String userId,
+    required String fromLanguage,
+    required String learningLanguage,
+  });
+
   Future<int> findIdBySkillIdAndContent({
     required String skillId,
     required String content,
