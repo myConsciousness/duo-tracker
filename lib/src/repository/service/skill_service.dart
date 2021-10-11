@@ -3,6 +3,7 @@
 // BSD-style license that can be found in the LICENSE file.
 
 import 'package:duo_tracker/src/repository/model/skill_model.dart';
+import 'package:duo_tracker/src/repository/service/tips_and_notes_service.dart';
 import 'package:duo_tracker/src/repository/skill_repository.dart';
 
 class SkillService extends SkillRepository {
@@ -14,6 +15,9 @@ class SkillService extends SkillRepository {
 
   /// The singleton instance of this [SkillService].
   static final _singletonInstance = SkillService._internal();
+
+  /// The tips and notes service
+  final _tipsAndNotesService = TipsAndNotesService.getInstance();
 
   @override
   Future<void> delete(Skill model) async => await super.database.then(
@@ -52,14 +56,23 @@ class SkillService extends SkillRepository {
       );
 
   @override
-  Future<Skill> findByName({required String name}) async =>
-      await super.database.then(
-            (database) => database
-                .query(table, where: 'NAME = ?', whereArgs: [name]).then(
-              (entity) =>
-                  entity.isNotEmpty ? Skill.fromMap(entity[0]) : Skill.empty(),
-            ),
-          );
+  Future<Skill> findByName({required String name}) async {
+    final skill = await super.database.then(
+          (database) =>
+              database.query(table, where: 'NAME = ?', whereArgs: [name]).then(
+            (entity) =>
+                entity.isNotEmpty ? Skill.fromMap(entity[0]) : Skill.empty(),
+          ),
+        );
+
+    if (skill.tipsAndNotesId > -1) {
+      skill.tipsAndNotes = await _tipsAndNotesService.findById(
+        skill.tipsAndNotesId,
+      );
+    }
+
+    return skill;
+  }
 
   @override
   Future<Skill> insert(Skill model) async {

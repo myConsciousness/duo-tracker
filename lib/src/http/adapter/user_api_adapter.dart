@@ -10,10 +10,12 @@ import 'package:duo_tracker/src/http/duolingo_api.dart';
 import 'package:duo_tracker/src/http/http_status.dart';
 import 'package:duo_tracker/src/repository/model/course_model.dart';
 import 'package:duo_tracker/src/repository/model/skill_model.dart';
+import 'package:duo_tracker/src/repository/model/tips_and_notes_model.dart';
 import 'package:duo_tracker/src/repository/model/user_model.dart';
 import 'package:duo_tracker/src/repository/preference/common_shared_preferences_key.dart';
 import 'package:duo_tracker/src/repository/service/course_service.dart';
-import 'package:duo_tracker/src/repository/service/skill_serviced.dart';
+import 'package:duo_tracker/src/repository/service/skill_service.dart';
+import 'package:duo_tracker/src/repository/service/tips_and_notes_service.dart';
 import 'package:duo_tracker/src/repository/service/user_service.dart';
 import 'package:duo_tracker/src/utils/language_converter.dart';
 import 'package:flutter/material.dart';
@@ -27,6 +29,9 @@ class UserApiAdapter extends ApiAdapter {
 
   /// The user service
   final _userService = UserService.getInstance();
+
+  /// The tips and notes service
+  final _tipsAndNotesService = TipsAndNotesService.getInstance();
 
   @override
   Future<ApiResponse> doExecute({
@@ -147,14 +152,18 @@ class UserApiAdapter extends ApiAdapter {
     required Map<String, dynamic> json,
   }) async {
     await _skillService.deleteAll();
+    await _tipsAndNotesService.deleteAll();
 
     final now = DateTime.now();
     for (final List<dynamic> skillsInternal in json['currentCourse']
         ['skills']) {
       for (final Map<String, dynamic> skill in skillsInternal) {
+        final skillId = skill['id'];
+        final content = skill['tipsAndNotes'] ?? '';
+
         await _skillService.insert(
           Skill.from(
-            skillId: skill['id'],
+            skillId: skillId,
             name: skill['name'],
             shortName: skill['shortName'],
             urlName: skill['urlName'],
@@ -165,12 +174,50 @@ class UserApiAdapter extends ApiAdapter {
             lastLessonPerfect: skill['lastLessonPerfect'],
             finishedLevels: skill['finishedLevels'],
             levels: skill['levels'],
-            tipsAndNotes: skill['tipsAndNotes'] ?? '',
+            tipsAndNotesId: await _fetchTipsAndNotesId(
+              skillId: skillId,
+              content: content,
+            ),
             createdAt: now,
             updatedAt: now,
           ),
         );
       }
     }
+  }
+
+  Future<int> _fetchTipsAndNotesId({
+    required String skillId,
+    required String content,
+  }) async {
+    if (content.isEmpty) {
+      return -1;
+    }
+
+    final alreadyExist =
+        await _tipsAndNotesService.checkExistBySkillIdAndContent(
+      skillId: skillId,
+      content: content,
+    );
+
+    if (alreadyExist) {
+      // Returns stored id
+      return await _tipsAndNotesService.findIdBySkillIdAndContent(
+        skillId: skillId,
+        content: content,
+      );
+    }
+
+    final now = DateTime.now();
+    final insertedTipsAndNotes = await _tipsAndNotesService.insert(
+      TipsAndNotes.from(
+          skillId: skillId,
+          content: content,
+          deleted: false,
+          createdAt: now,
+          updatedAt: now),
+    );
+
+    return insertedTipsAndNotes.id;
   }
 }

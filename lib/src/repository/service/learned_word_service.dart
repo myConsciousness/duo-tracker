@@ -8,7 +8,7 @@ import 'package:duo_tracker/src/component/const/sort_pattern.dart';
 import 'package:duo_tracker/src/repository/learned_word_repository.dart';
 import 'package:duo_tracker/src/repository/model/learned_word_model.dart';
 import 'package:duo_tracker/src/repository/preference/common_shared_preferences_key.dart';
-import 'package:duo_tracker/src/repository/service/skill_serviced.dart';
+import 'package:duo_tracker/src/repository/service/skill_service.dart';
 import 'package:duo_tracker/src/repository/service/voice_configuration_service.dart';
 import 'package:duo_tracker/src/repository/service/word_hint_service.dart';
 
@@ -140,13 +140,13 @@ class LearnedWordService extends LearnedWordRepository {
       language: learningLanguage,
     );
 
-    final String baseTtsVoiceUrl =
+    final baseTtsVoiceUrl =
         '${voiceConfiguration.ttsBaseUrlHttps}${voiceConfiguration.path}/${voiceConfiguration.voiceType}/token';
 
-    for (final LearnedWord learnedWord in learnedWords) {
+    for (final learnedWord in learnedWords) {
       if (learnedWord.wordString.contains(' ')) {
         final wordStrings = learnedWord.wordString.split(' ');
-        for (final String wordString in wordStrings) {
+        for (final wordString in wordStrings) {
           learnedWord.ttsVoiceUrls.add('$baseTtsVoiceUrl/$wordString');
         }
       } else {

@@ -4,6 +4,7 @@
 
 import 'package:duo_tracker/src/repository/boolean_text.dart';
 import 'package:duo_tracker/src/repository/const/column/learned_word_column.dart';
+import 'package:duo_tracker/src/repository/model/tips_and_notes_model.dart';
 import 'package:duo_tracker/src/repository/model/word_hint_model.dart';
 
 class LearnedWord {
@@ -15,7 +16,6 @@ class LearnedWord {
   String fromLanguage;
   String formalLearningLanguage;
   String formalFromLanguage;
-  String lexemeId;
   int strengthBars;
   String infinitive;
   String wordString;
@@ -41,7 +41,7 @@ class LearnedWord {
   List<WordHint> wordHints = [];
 
   /// The tips and notes from skill repository
-  String tipsAndNotes = '';
+  TipsAndNotes? tipsAndNotes;
 
   /// The flag that represents if this model is exist
   bool _empty = false;
@@ -56,7 +56,6 @@ class LearnedWord {
         fromLanguage = '',
         formalLearningLanguage = '',
         formalFromLanguage = '',
-        lexemeId = '',
         strengthBars = -1,
         infinitive = '',
         wordString = '',
@@ -85,7 +84,6 @@ class LearnedWord {
     required this.fromLanguage,
     required this.formalLearningLanguage,
     required this.formalFromLanguage,
-    required this.lexemeId,
     required this.strengthBars,
     required this.infinitive,
     required this.wordString,
@@ -115,7 +113,6 @@ class LearnedWord {
         fromLanguage: map[LearnedWordColumn.fromLanguage],
         formalLearningLanguage: map[LearnedWordColumn.formalLearningLanguage],
         formalFromLanguage: map[LearnedWordColumn.formalFromLanguage],
-        lexemeId: map[LearnedWordColumn.lexemeId],
         strengthBars: map[LearnedWordColumn.strengthBars],
         infinitive: map[LearnedWordColumn.infinitive],
         wordString: map[LearnedWordColumn.wordString],
@@ -149,7 +146,6 @@ class LearnedWord {
     map[LearnedWordColumn.fromLanguage] = fromLanguage;
     map[LearnedWordColumn.formalLearningLanguage] = formalLearningLanguage;
     map[LearnedWordColumn.formalFromLanguage] = formalFromLanguage;
-    map[LearnedWordColumn.lexemeId] = lexemeId;
     map[LearnedWordColumn.strengthBars] = strengthBars;
     map[LearnedWordColumn.infinitive] = infinitive;
     map[LearnedWordColumn.wordString] = wordString;

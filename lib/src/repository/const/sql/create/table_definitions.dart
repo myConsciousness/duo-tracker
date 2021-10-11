@@ -68,7 +68,7 @@ class TableDefinitions {
           LAST_LESSON_PERFECT TEXT NOT NULL,
           FINISHED_LEVELS INTEGER NOT NULL,
           LEVELS INTEGER NOT NULL,
-          TIPS_AND_NOTES TEXT,
+          TIPS_AND_NOTES_ID INTEGER NOT NULL,
           CREATED_AT INTEGER NOT NULL,
           UPDATED_AT INTEGER NOT NULL
         )
@@ -113,8 +113,6 @@ class TableDefinitions {
           FROM_LANGUAGE TEXT NOT NULL,
           FORMAL_LEARNING_LANGUAGE TEXT NOT NULL,
           FORMAL_FROM_LANGUAGE TEXT NOT NULL,
-          LEXEME_ID TEXT,
-          RELATED_REXEMES TEXT,
           STRENGTH_BARS INTEGER,
           INFINITIVE TEXT,
           WORD_STRING TEXT,
@@ -214,6 +212,18 @@ class TableDefinitions {
           WORD_ID TEXT NOT NULL,
           USER_ID TEXT NOT NULL,
           SORT_ORDER INTEGER NOT NULL,
+          DELETED TEXT NOT NULL,
+          CREATED_AT INTEGER NOT NULL,
+          UPDATED_AT INTEGER NOT NULL
+        )
+        ''';
+
+  /// The tips and notes
+  static const tipsAndNotes = '''
+        CREATE TABLE TIPS_AND_NOTES (
+          ID INTEGER NOT NULL PRIMARY KEY,
+          SKILL_ID TEXT NOT NULL,
+          CONTENT TEXT NOT NULL,
           DELETED TEXT NOT NULL,
           CREATED_AT INTEGER NOT NULL,
           UPDATED_AT INTEGER NOT NULL

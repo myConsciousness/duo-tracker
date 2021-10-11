@@ -54,7 +54,6 @@ class LearnedWordApiAdapter extends ApiAdapter {
             formalFromLanguage: LanguageConverter.toFormalLanguageCode(
               languageCode: fromLanguage,
             ),
-            lexemeId: overview['lexeme_id'] ?? '',
             strengthBars: overview['strength_bars'] ?? -1,
             infinitive: overview['infinitive'] ?? '',
             wordString: wordString,

@@ -16,7 +16,7 @@ class SkillColumn {
   static const lastLessonPerfect = 'LAST_LESSON_PERFECT';
   static const finishedLevels = 'FINISHED_LEVELS';
   static const levels = 'LEVELS';
-  static const tipsAndNotes = 'TIPS_AND_NOTES';
+  static const tipsAndNotesId = 'TIPS_AND_NOTES_ID';
   static const createdAt = 'CREATED_AT';
   static const updatedAt = 'UPDATED_AT';
 }
