@@ -6,7 +6,7 @@ import 'package:duo_tracker/src/component/common_default_tab_controller.dart';
 import 'package:duo_tracker/src/view/analysis/proficiency_analysis_view.dart';
 import 'package:duo_tracker/src/view/folder/folder_tab_view.dart';
 import 'package:duo_tracker/src/view/overview/overview_tab_view.dart';
-import 'package:duo_tracker/src/view/settings/settings_view.dart';
+import 'package:duo_tracker/src/view/settings/settings_tab_view.dart';
 import 'package:duo_tracker/src/view/shop/shop_view.dart';
 import 'package:duo_tracker/src/view/tips/tips_and_notes_tab_view.dart';
 import 'package:duo_tracker/src/view/user/user_account_tab_view.dart';
@@ -74,7 +74,7 @@ class _DuoTrackerHomeViewState extends State<DuoTrackerHomeView> {
           ProficiencyAnalysisView(),
           UserAccountTabView(),
           ShopView(),
-          SettingsView(),
+          SettingsTabView(),
         ],
       );
 }

@@ -4,6 +4,7 @@
 
 import 'package:local_auth/local_auth.dart';
 
+@Deprecated('Not used yet')
 class BiometricAuthentication {
   /// The internal constructor.
   BiometricAuthentication._internal();
