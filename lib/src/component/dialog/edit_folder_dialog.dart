@@ -4,6 +4,7 @@
 
 import 'package:awesome_dialog/awesome_dialog.dart';
 import 'package:duo_tracker/src/component/common_text_field.dart';
+import 'package:duo_tracker/src/repository/model/folder_model.dart';
 import 'package:duo_tracker/src/view/folder/folder_type.dart';
 import 'package:duo_tracker/src/component/dialog/input_error_dialog.dart';
 import 'package:duo_tracker/src/repository/preference/common_shared_preferences_key.dart';
@@ -23,9 +24,9 @@ Future<T?> showEditFolderDialog<T>({
   required int folderId,
   required FolderType folderType,
 }) async {
-  final dynamic folder = await _folderService.findById(folderId);
+  final Folder folder = await _folderService.findById(folderId);
 
-  _folderName.text = folder.alias.isEmpty ? folder.name : folder.alias;
+  _folderName.text = folder.name;
   _remarks.text = folder.remarks;
 
   _dialog = AwesomeDialog(
@@ -58,6 +59,9 @@ Future<T?> showEditFolderDialog<T>({
                       label: 'Folder Name',
                       hintText: 'Folder name (required)',
                       maxLength: 50,
+                      onChanged: (text) {
+                        _folderName.text = text;
+                      },
                     ),
                     const SizedBox(
                       height: 10,
@@ -68,6 +72,9 @@ Future<T?> showEditFolderDialog<T>({
                       hintText: 'Remarks about folder',
                       maxLines: 5,
                       maxLength: 200,
+                      onChanged: (text) {
+                        _remarks.text = text;
+                      },
                     ),
                   ],
                 ),
@@ -113,7 +120,7 @@ Future<T?> showEditFolderDialog<T>({
                       }
                     }
 
-                    folder.alias = _folderName.text;
+                    folder.name = _folderName.text;
                     folder.remarks = _remarks.text;
                     folder.updatedAt = DateTime.now();
 

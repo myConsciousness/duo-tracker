@@ -2,6 +2,8 @@
 // Use of this source code is governed by a
 // BSD-style license that can be found in the LICENSE file.
 
+import 'package:duo_tracker/src/admob/banner_ad_list.dart';
+import 'package:duo_tracker/src/admob/banner_ad_utils.dart';
 import 'package:duo_tracker/src/component/common_app_bar_titles.dart';
 import 'package:duo_tracker/src/component/common_divider.dart';
 import 'package:duo_tracker/src/component/common_nested_scroll_view.dart';
@@ -34,6 +36,9 @@ class _TipsAndNotesViewState extends State<TipsAndNotesView> {
   /// The tip and note service
   final _tipAndNoteService = TipAndNoteService.getInstance();
 
+  /// The banner ad list
+  final _bannerAdList = BannerAdList.newInstance();
+
   @override
   void didChangeDependencies() {
     super.didChangeDependencies();
@@ -41,6 +46,7 @@ class _TipsAndNotesViewState extends State<TipsAndNotesView> {
 
   @override
   void dispose() {
+    _bannerAdList.dispose();
     super.dispose();
   }
 
@@ -54,90 +60,109 @@ class _TipsAndNotesViewState extends State<TipsAndNotesView> {
     required TipAndNote tipAndNote,
     required int index,
   }) =>
-      Card(
+      Column(
         key: Key('${tipAndNote.sortOrder}'),
-        clipBehavior: Clip.antiAlias,
-        elevation: 5,
-        shape: const RoundedRectangleBorder(
-          borderRadius: BorderRadius.vertical(
-            top: Radius.circular(30),
-            bottom: Radius.circular(30),
+        children: [
+          FutureBuilder(
+            future: BannerAdUtils.canShow(
+              index: index,
+              interval: 3,
+            ),
+            builder: (BuildContext context, AsyncSnapshot snapshot) {
+              if (!snapshot.hasData || !snapshot.data) {
+                return Container();
+              }
+
+              return BannerAdUtils.createBannerAdWidget(
+                _bannerAdList.loadNewBanner(),
+              );
+            },
           ),
-        ),
-        child: Padding(
-          padding: const EdgeInsets.all(10),
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              Row(
+          Card(
+            clipBehavior: Clip.antiAlias,
+            elevation: 5,
+            shape: const RoundedRectangleBorder(
+              borderRadius: BorderRadius.vertical(
+                top: Radius.circular(30),
+                bottom: Radius.circular(30),
+              ),
+            ),
+            child: Padding(
+              padding: const EdgeInsets.all(10),
+              child: Column(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
-                  Expanded(
-                    child: ListTile(
-                      leading: const Icon(Icons.more),
-                      title: Padding(
-                        padding: const EdgeInsets.fromLTRB(0, 10, 0, 10),
-                        child: Text(
-                          tipAndNote.skillName,
-                          style: TextStyle(
-                            color: Theme.of(context).colorScheme.secondary,
-                            fontWeight: FontWeight.bold,
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      Expanded(
+                        child: ListTile(
+                          leading: const Icon(Icons.more),
+                          title: Padding(
+                            padding: const EdgeInsets.fromLTRB(0, 10, 0, 10),
+                            child: Text(
+                              tipAndNote.skillName,
+                              style: TextStyle(
+                                color: Theme.of(context).colorScheme.secondary,
+                                fontWeight: FontWeight.bold,
+                              ),
+                            ),
+                          ),
+                          subtitle: Text(tipAndNote.contentSummary),
+                          onTap: () => Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                              builder: (_) => LessonTipsView(
+                                tipAndNote: tipAndNote,
+                              ),
+                            ),
                           ),
                         ),
                       ),
-                      subtitle: Text(tipAndNote.contentSummary),
-                      onTap: () => Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                          builder: (_) => LessonTipsView(
-                            tipAndNote: tipAndNote,
-                          ),
-                        ),
+                      IconButton(
+                        tooltip: tipAndNote.bookmarked
+                            ? 'Remove Bookmark'
+                            : 'Add Bookmark',
+                        icon: tipAndNote.bookmarked
+                            ? const Icon(Icons.bookmark_added)
+                            : const Icon(Icons.bookmark_add),
+                        onPressed: () async {
+                          tipAndNote.bookmarked = !tipAndNote.bookmarked;
+                          tipAndNote.updatedAt = DateTime.now();
+
+                          await _tipAndNoteService.update(
+                            tipAndNote,
+                          );
+
+                          super.setState(() {});
+                        },
                       ),
-                    ),
+                    ],
                   ),
-                  IconButton(
-                    tooltip: tipAndNote.bookmarked
-                        ? 'Remove Bookmark'
-                        : 'Add Bookmark',
-                    icon: tipAndNote.bookmarked
-                        ? const Icon(Icons.bookmark_added)
-                        : const Icon(Icons.bookmark_add),
-                    onPressed: () async {
-                      tipAndNote.bookmarked = !tipAndNote.bookmarked;
-                      tipAndNote.updatedAt = DateTime.now();
+                  const CommonDivider(),
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.end,
+                    children: [
+                      IconButton(
+                        tooltip: tipAndNote.deleted ? 'Restore' : 'Delete',
+                        icon: tipAndNote.deleted
+                            ? const Icon(Icons.restore_from_trash)
+                            : const Icon(Icons.delete),
+                        onPressed: () async {
+                          tipAndNote.deleted = !tipAndNote.deleted;
+                          tipAndNote.updatedAt = DateTime.now();
 
-                      await _tipAndNoteService.update(
-                        tipAndNote,
-                      );
-
-                      super.setState(() {});
-                    },
-                  ),
-                ],
-              ),
-              const CommonDivider(),
-              Row(
-                mainAxisAlignment: MainAxisAlignment.end,
-                children: [
-                  IconButton(
-                    tooltip: tipAndNote.deleted ? 'Restore' : 'Delete',
-                    icon: tipAndNote.deleted
-                        ? const Icon(Icons.restore_from_trash)
-                        : const Icon(Icons.delete),
-                    onPressed: () async {
-                      tipAndNote.deleted = !tipAndNote.deleted;
-                      tipAndNote.updatedAt = DateTime.now();
-
-                      await _tipAndNoteService.update(tipAndNote);
-                      super.setState(() {});
-                    },
+                          await _tipAndNoteService.update(tipAndNote);
+                          super.setState(() {});
+                        },
+                      ),
+                    ],
                   ),
                 ],
               ),
-            ],
+            ),
           ),
-        ),
+        ],
       );
 
   Future<void> _sortCards({

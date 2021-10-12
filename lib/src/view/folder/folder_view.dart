@@ -181,9 +181,7 @@ class _FolderViewState extends State<FolderView> {
                   ),
                   title: Row(
                     children: [
-                      Text(
-                        folder.alias.isEmpty ? folder.name : folder.alias,
-                      ),
+                      Text(folder.name),
                       IconButton(
                         icon: const Icon(Icons.edit, size: 20),
                         onPressed: () async {

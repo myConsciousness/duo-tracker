@@ -199,7 +199,6 @@ Future<void> _addFolderItem({
         folderId: folderId,
         wordId: wordId,
         sentenceGroupId: -1,
-        alias: '',
         remarks: '',
         userId: userId,
         deleted: false,

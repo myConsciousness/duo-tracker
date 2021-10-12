@@ -59,6 +59,9 @@ Future<T?> showCreateNewFolderDialog<T>({
                       label: 'Folder Name',
                       hintText: 'Folder name (required)',
                       maxLength: 50,
+                      onChanged: (text) {
+                        _folderName.text = text;
+                      },
                     ),
                     const SizedBox(
                       height: 10,
@@ -69,6 +72,9 @@ Future<T?> showCreateNewFolderDialog<T>({
                       hintText: 'Remarks about folder',
                       maxLines: 5,
                       maxLength: 200,
+                      onChanged: (text) {
+                        _remarks.text = text;
+                      },
                     ),
                   ],
                 ),
@@ -186,7 +192,6 @@ Future<void> _createNewFolder({
         parentFolderId: -1,
         folderType: folderType,
         name: folderName,
-        alias: '',
         remarks: _remarks.text,
         userId: userId,
         fromLanguage: fromLanguage,

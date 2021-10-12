@@ -11,7 +11,6 @@ class Folder {
   int parentFolderId;
   FolderType folderType;
   String name;
-  String alias;
   String remarks;
   String userId;
   String fromLanguage;
@@ -32,7 +31,6 @@ class Folder {
         parentFolderId = -1,
         folderType = FolderType.word,
         name = '',
-        alias = '',
         remarks = '',
         userId = '',
         fromLanguage = '',
@@ -50,7 +48,6 @@ class Folder {
     required this.parentFolderId,
     required this.folderType,
     required this.name,
-    required this.alias,
     required this.remarks,
     required this.userId,
     required this.fromLanguage,
@@ -69,7 +66,6 @@ class Folder {
         parentFolderId: map[FolderColumn.parentFolderId],
         folderType: FolderTypeExt.toEnum(code: map[FolderColumn.folderType]),
         name: map[FolderColumn.name],
-        alias: map[FolderColumn.alias],
         remarks: map[FolderColumn.remarks],
         userId: map[FolderColumn.userId],
         fromLanguage: map[FolderColumn.fromLanguage],
@@ -92,7 +88,6 @@ class Folder {
     map[FolderColumn.parentFolderId] = parentFolderId;
     map[FolderColumn.folderType] = folderType.code;
     map[FolderColumn.name] = name;
-    map[FolderColumn.alias] = alias;
     map[FolderColumn.remarks] = remarks;
     map[FolderColumn.userId] = userId;
     map[FolderColumn.fromLanguage] = fromLanguage;

@@ -11,7 +11,6 @@ class FolderItem {
   int folderId;
   String wordId;
   int sentenceGroupId;
-  String alias;
   String remarks;
   String userId;
   int sortOrder;
@@ -31,7 +30,6 @@ class FolderItem {
         folderId = -1,
         wordId = '',
         sentenceGroupId = -1,
-        alias = '',
         remarks = '',
         userId = '',
         sortOrder = -1,
@@ -45,7 +43,6 @@ class FolderItem {
     required this.folderId,
     required this.wordId,
     required this.sentenceGroupId,
-    required this.alias,
     required this.remarks,
     required this.userId,
     this.sortOrder = -1,
@@ -60,7 +57,6 @@ class FolderItem {
         folderId: map[FolderItemColumn.folderId],
         wordId: map[FolderItemColumn.wordId],
         sentenceGroupId: map[FolderItemColumn.sentenceGroupId],
-        alias: map[FolderItemColumn.alias],
         remarks: map[FolderItemColumn.remarks],
         userId: map[FolderItemColumn.userId],
         sortOrder: map[FolderItemColumn.sortOrder],
@@ -79,7 +75,6 @@ class FolderItem {
     map[FolderItemColumn.folderId] = folderId;
     map[FolderItemColumn.wordId] = wordId;
     map[FolderItemColumn.sentenceGroupId] = sentenceGroupId;
-    map[FolderItemColumn.alias] = alias;
     map[FolderItemColumn.remarks] = remarks;
     map[FolderItemColumn.userId] = userId;
     map[FolderItemColumn.sortOrder] = sortOrder;

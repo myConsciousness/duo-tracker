@@ -5,12 +5,10 @@
 import 'package:awesome_dialog/awesome_dialog.dart';
 import 'package:dropdown_below/dropdown_below.dart';
 import 'package:duo_tracker/src/component/dialog/input_error_dialog.dart';
-import 'package:duo_tracker/src/component/snackbar/info_snack_bar.dart';
 import 'package:duo_tracker/src/component/text_with_horizontal_divider.dart';
 import 'package:duo_tracker/src/http/duolingo_page_launcher.dart';
 import 'package:duo_tracker/src/repository/preference/common_shared_preferences_key.dart';
 import 'package:duo_tracker/src/repository/service/supported_language_service.dart';
-import 'package:duo_tracker/src/http/utils/duolingo_api_utils.dart';
 import 'package:duo_tracker/src/utils/language_converter.dart';
 import 'package:flutter/material.dart';
 
@@ -133,50 +131,7 @@ Future<T?> showSwitchLanguageDialog<T>({
 
                     _switchingLanguage = true;
 
-                    if (!await DuolingoApiUtils.refreshVersionInfo(
-                        context: context)) {
-                      _switchingLanguage = false;
-                      return;
-                    }
-
-                    if (!await DuolingoApiUtils.authenticateAccount(
-                      context: context,
-                    )) {
-                      _switchingLanguage = false;
-                      return;
-                    }
-
-                    if (!await DuolingoApiUtils.switchLearnLanguage(
-                      context: context,
-                      fromLanguage: _selectedFromLanguage,
-                      learningLanguage: _selectedLearningLanguage,
-                    )) {
-                      _switchingLanguage = false;
-                      return;
-                    }
-
-                    if (!await DuolingoApiUtils.refreshUser(context: context)) {
-                      _switchingLanguage = false;
-                      return;
-                    }
-
                     await _dialog!.dismiss();
-
-                    final fromLanguageName = LanguageConverter.toName(
-                        languageCode: _selectedFromLanguage);
-                    final learningLanguageName = LanguageConverter.toName(
-                        languageCode: _selectedLearningLanguage);
-
-                    InfoSnackbar.from(context: context).show(
-                        content:
-                            'Learning "$learningLanguageName" from "$fromLanguageName".');
-
-                    if (!await DuolingoApiUtils.synchronizeLearnedWords(
-                        context: context)) {
-                      return;
-                    }
-
-                    _switchingLanguage = false;
 
                     if (onSubmitted != null) {
                       onSubmitted.call(
@@ -184,6 +139,8 @@ Future<T?> showSwitchLanguageDialog<T>({
                         _selectedLearningLanguage,
                       );
                     }
+
+                    _switchingLanguage = false;
                   },
                 ),
                 const SizedBox(

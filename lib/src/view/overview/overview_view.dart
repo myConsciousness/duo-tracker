@@ -9,6 +9,7 @@ import 'package:duo_tracker/src/component/common_app_bar_titles.dart';
 import 'package:duo_tracker/src/component/common_learned_word_card.dart';
 import 'package:duo_tracker/src/component/common_nested_scroll_view.dart';
 import 'package:duo_tracker/src/component/const/filter_pattern.dart';
+import 'package:duo_tracker/src/component/snackbar/info_snack_bar.dart';
 import 'package:duo_tracker/src/view/folder/folder_type.dart';
 import 'package:duo_tracker/src/component/const/match_pattern.dart';
 import 'package:duo_tracker/src/component/dialog/loading_dialog.dart';
@@ -96,7 +97,10 @@ class _OverviewViewState extends State<OverviewView> {
           .abs() >=
       1);
 
-  Future<void> _syncLearnedWords() async {
+  Future<void> _syncLearnedWords({
+    String switchFromLanguage = '',
+    String switchLearningLanguage = '',
+  }) async {
     if (!_alreadyAuthDialogOpened) {
       _alreadyAuthDialogOpened = true;
 
@@ -107,6 +111,26 @@ class _OverviewViewState extends State<OverviewView> {
         title: 'Updating API Config',
         future: DuolingoApiUtils.refreshVersionInfo(context: context),
       );
+
+      if (switchFromLanguage.isNotEmpty && switchLearningLanguage.isNotEmpty) {
+        await showLoadingDialog(
+          context: context,
+          title: 'Switching Language',
+          future: DuolingoApiUtils.switchLearnLanguage(
+              context: context,
+              fromLanguage: switchFromLanguage,
+              learningLanguage: switchLearningLanguage),
+        );
+
+        final fromLanguageName =
+            LanguageConverter.toName(languageCode: switchFromLanguage);
+        final learningLanguageName =
+            LanguageConverter.toName(languageCode: switchLearningLanguage);
+
+        InfoSnackbar.from(context: context).show(
+            content:
+                'Learning "$learningLanguageName" from "$fromLanguageName".');
+      }
 
       await showLoadingDialog(
         context: context,
@@ -160,7 +184,7 @@ class _OverviewViewState extends State<OverviewView> {
             FutureBuilder(
               future: BannerAdUtils.canShow(
                 index: index,
-                interval: 10,
+                interval: 7,
               ),
               builder: (BuildContext context, AsyncSnapshot snapshot) {
                 if (!snapshot.hasData || !snapshot.data) {
@@ -371,6 +395,10 @@ class _OverviewViewState extends State<OverviewView> {
             await showSwitchLanguageDialog(
               context: context,
               onSubmitted: (fromLanguage, learningLanguage) async {
+                await _syncLearnedWords(
+                  switchFromLanguage: fromLanguage,
+                  switchLearningLanguage: learningLanguage,
+                );
                 await _searchLearnedWords();
 
                 super.setState(() {

@@ -102,7 +102,7 @@ class _CommonTextFieldState extends State<CommonTextField> {
               ),
             ),
             onChanged: widget.onChanged,
-            onSubmitted: (final String text) {
+            onSubmitted: (final text) {
               if (widget.onSubmitted != null) {
                 widget.onSubmitted!.call(text);
               }

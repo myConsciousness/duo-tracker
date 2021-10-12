@@ -73,7 +73,7 @@ dev_dependencies:
 flutter_icons:
   android: "launcher_icon"
   ios: true
-  image_path: "assets/icon/duo_tracker_icon.png"
+  image_path: "assets/icon/duo_tracker_icon_home.png"
 
 flutter_native_splash:
   image: "assets/icon/duo_tracker_icon.png"

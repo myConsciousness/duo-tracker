@@ -7,7 +7,6 @@ class FolderColumn {
   static const parentFolderId = 'PARENT_FOLDER_ID';
   static const folderType = 'FOLDER_TYPE';
   static const name = 'NAME';
-  static const alias = 'ALIAS';
   static const remarks = 'REMARKS';
   static const userId = 'USER_ID';
   static const fromLanguage = 'FROM_LANGUAGE';
