@@ -227,7 +227,7 @@ class _CommonLearnedWordCardState extends State<CommonLearnedWordCard> {
                     ),
                     CommonCardHeaderText(
                       subtitle: 'Lesson',
-                      title: widget.learnedWord.skillUrlTitle,
+                      title: widget.learnedWord.shortSkill,
                     ),
                     CommonCardHeaderText(
                       subtitle: 'Strength',

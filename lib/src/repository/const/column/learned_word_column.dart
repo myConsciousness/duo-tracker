@@ -19,6 +19,7 @@ class LearnedWordColumn {
   static const pos = 'POS';
   static const lastPracticedMs = 'LAST_PRACTICED_MS';
   static const skill = 'SKILL';
+  static const shortSkill = 'SHORT_SKILL';
   static const lastPracticed = 'LAST_PRACTICED';
   static const strength = 'STRENGTH';
   static const skillUrlTitle = 'SKILL_URL_TITLE';

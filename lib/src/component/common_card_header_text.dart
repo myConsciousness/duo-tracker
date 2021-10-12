@@ -21,11 +21,15 @@ class CommonCardHeaderText extends StatelessWidget {
   @override
   Widget build(BuildContext context) => Column(
         children: [
-          CommonText(
-            text: subtitle,
-            fontSize: 12,
-            color: Theme.of(context).colorScheme.secondary,
-            bold: true,
+          Wrap(
+            children: [
+              CommonText(
+                text: subtitle,
+                fontSize: 12,
+                color: Theme.of(context).colorScheme.secondary,
+                bold: true,
+              ),
+            ],
           ),
           CommonText(
             text: title,

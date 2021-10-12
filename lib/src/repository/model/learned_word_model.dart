@@ -23,6 +23,7 @@ class LearnedWord {
   String pos;
   int lastPracticedMs;
   String skill;
+  String shortSkill;
   String lastPracticed;
   double strength;
   String skillUrlTitle;
@@ -63,6 +64,7 @@ class LearnedWord {
         pos = '',
         lastPracticedMs = -1,
         skill = '',
+        shortSkill = '',
         lastPracticed = '',
         strength = -1,
         skillUrlTitle = '',
@@ -91,6 +93,7 @@ class LearnedWord {
     required this.pos,
     required this.lastPracticedMs,
     required this.skill,
+    required this.shortSkill,
     required this.lastPracticed,
     required this.strength,
     required this.skillUrlTitle,
@@ -120,6 +123,7 @@ class LearnedWord {
         pos: map[LearnedWordColumn.pos],
         lastPracticedMs: map[LearnedWordColumn.lastPracticedMs],
         skill: map[LearnedWordColumn.skill],
+        shortSkill: map[LearnedWordColumn.shortSkill],
         lastPracticed: map[LearnedWordColumn.lastPracticed],
         strength: map[LearnedWordColumn.strength],
         skillUrlTitle: map[LearnedWordColumn.skillUrlTitle],
@@ -153,6 +157,7 @@ class LearnedWord {
     map[LearnedWordColumn.pos] = pos;
     map[LearnedWordColumn.lastPracticedMs] = lastPracticedMs;
     map[LearnedWordColumn.skill] = skill;
+    map[LearnedWordColumn.shortSkill] = shortSkill;
     map[LearnedWordColumn.lastPracticed] = lastPracticed;
     map[LearnedWordColumn.strength] = strength;
     map[LearnedWordColumn.skillUrlTitle] = skillUrlTitle;

@@ -120,6 +120,7 @@ class TableDefinitions {
           POS TEXT,
           LAST_PRACTICED_MS INTEGER,
           SKILL TEXT,
+          SHORT_SKILL TEXT,
           LAST_PRACTICED TEXT,
           STRENGTH REAL,
           SKILL_URL_TITLE TEXT,

@@ -16,6 +16,9 @@ import 'package:duo_tracker/src/utils/language_converter.dart';
 import 'package:flutter/material.dart';
 
 class LearnedWordApiAdapter extends ApiAdapter {
+  /// The max length of skill
+  static const _maxLengthSkill = 15;
+
   /// The learned word service
   final _learnedWordService = LearnedWordService.getInstance();
 
@@ -47,6 +50,7 @@ class LearnedWordApiAdapter extends ApiAdapter {
       for (final Map<String, dynamic> overview in jsonMap['vocab_overview']) {
         final String wordId = overview['id'];
         final String wordString = overview['word_string'];
+        final String skill = overview['skill'] ?? '';
 
         await _learnedWordService.replaceById(
           LearnedWord.from(
@@ -63,7 +67,8 @@ class LearnedWordApiAdapter extends ApiAdapter {
             normalizedString: overview['normalized_string'] ?? '',
             pos: overview['pos'] ?? '',
             lastPracticedMs: overview['last_practiced_ms'] ?? -1,
-            skill: overview['skill'] ?? '',
+            skill: skill,
+            shortSkill: _buildShortSkill(skill: skill),
             lastPracticed: overview['last_practiced'] ?? '',
             strength: overview['strength'] ?? 0.0,
             skillUrlTitle: overview['skill_url_title'] ?? '',
@@ -110,5 +115,15 @@ class LearnedWordApiAdapter extends ApiAdapter {
       fromApi: FromApi.learnedWord,
       errorType: ErrorType.unknown,
     );
+  }
+
+  String _buildShortSkill({
+    required String skill,
+  }) {
+    if (skill.length <= _maxLengthSkill) {
+      return skill;
+    }
+
+    return skill.substring(0, _maxLengthSkill - 3) + '...';
   }
 }
