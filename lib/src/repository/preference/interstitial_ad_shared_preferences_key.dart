@@ -65,11 +65,11 @@ extension KeyFeature on InterstitialAdSharedPreferencesKey {
   int get limitCount {
     switch (this) {
       case InterstitialAdSharedPreferencesKey.countOpenApp:
-        return 3;
+        return 2;
       case InterstitialAdSharedPreferencesKey.countSyncWords:
-        return 3;
+        return 2;
       case InterstitialAdSharedPreferencesKey.countSearchWords:
-        return 3;
+        return 2;
       case InterstitialAdSharedPreferencesKey.countSortWords:
         return 0;
       case InterstitialAdSharedPreferencesKey.countFilterWords:
@@ -79,9 +79,9 @@ extension KeyFeature on InterstitialAdSharedPreferencesKey {
       case InterstitialAdSharedPreferencesKey.countSyncUser:
         return 0;
       case InterstitialAdSharedPreferencesKey.countShowTipAndNote:
-        return 3;
+        return 2;
       case InterstitialAdSharedPreferencesKey.countPlayAudio:
-        return 3;
+        return 2;
       case InterstitialAdSharedPreferencesKey.immediately:
         return 1;
     }
