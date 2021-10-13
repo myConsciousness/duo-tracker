@@ -3,6 +3,8 @@
 // BSD-style license that can be found in the LICENSE file.
 
 import 'package:audioplayers/audioplayers.dart';
+import 'package:duo_tracker/src/admob/interstitial_ad_utils.dart';
+import 'package:duo_tracker/src/repository/preference/interstitial_ad_shared_preferences_key.dart';
 
 class AudioPlayerUtils {
   /// The audio player
@@ -17,5 +19,9 @@ class AudioPlayerUtils {
       await _audioPlayer.play(ttsVoiceUrl, volume: 2.0);
       await Future.delayed(const Duration(seconds: 1), () {});
     }
+
+    InterstitialAdUtils.showInterstitialAd(
+      sharedPreferencesKey: InterstitialAdSharedPreferencesKey.countPlayAudio,
+    );
   }
 }
