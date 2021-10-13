@@ -44,13 +44,15 @@ class _DuoTrackerHomeViewState extends State<DuoTrackerHomeView> {
         NewVersion(androidId: FlavorConfig.instance.variables['androidId']);
     final status = await newVersion.getVersionStatus();
 
-    newVersion.showUpdateDialog(
-      context: context,
-      versionStatus: status!,
-      dialogTitle: 'New Version Is Available!',
-      updateButtonText: 'Update Right Now',
-      dismissButtonText: 'Skip',
-    );
+    if (status!.canUpdate) {
+      newVersion.showUpdateDialog(
+        context: context,
+        versionStatus: status,
+        dialogTitle: 'New Version Is Available!',
+        updateButtonText: 'Update Right Now',
+        dismissButtonText: 'Skip',
+      );
+    }
   }
 
   @override
