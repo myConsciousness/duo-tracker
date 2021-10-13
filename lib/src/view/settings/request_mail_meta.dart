@@ -4,11 +4,11 @@
 
 class RequestMailMeta {
   /// The receipient address
-  static const recipientAddress = 'kato.shinya.dev@gmail.com';
+  static const recipientAddress = 'kato.shinya.dev.contact@gmail.com';
 
   /// The subject
   static const subject =
-      '[DO NOT DELETE THIS SUBJECT] Request new feature or imporovement about Duo Tracker';
+      '[DO NOT DELETE AND EDIT THIS SUBJECT] Request new feature or imporovement about Duo Tracker';
 
   /// The body
   static const body = '''・Request Summary
