@@ -41,7 +41,7 @@ Future<bool> showAuthDialog({
               children: <Widget>[
                 const Center(
                   child: Text(
-                    'Authenticate Duolingo Account',
+                    'Sign in with Duolingo',
                     style: TextStyle(fontSize: 20),
                   ),
                 ),
@@ -79,7 +79,7 @@ Future<bool> showAuthDialog({
                 ),
                 AnimatedButton(
                   isFixedHeight: false,
-                  text: 'Login',
+                  text: 'Sign in',
                   color: Theme.of(context).colorScheme.secondaryVariant,
                   pressEvent: () async {
                     if (_authenticating) {
