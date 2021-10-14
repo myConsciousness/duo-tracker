@@ -97,6 +97,8 @@ class _FolderItemsViewState extends State<FolderItemsView> {
     await _folderItemService.replaceSortOrdersByIds(
       folderItems: folderItems,
     );
+
+    _folderItems = folderItems;
   }
 
   @override
