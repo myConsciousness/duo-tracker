@@ -107,13 +107,13 @@ class _CommonTextFieldState extends State<CommonTextField> {
                 widget.onSubmitted!.call(text);
               }
 
-              if (widget.maskText) {
-                super.setState(() {
+              super.setState(() {
+                if (widget.maskText) {
                   widget.controller.text = TextMask.apply(text: text);
-                });
-              } else {
-                widget.controller.text = text;
-              }
+                } else {
+                  widget.controller.text = text;
+                }
+              });
             },
             focusNode: _focusNode,
           )
