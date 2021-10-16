@@ -15,7 +15,6 @@ class Network {
     ConnectivityResult? connectivity,
   }) async {
     connectivity ??= await (Connectivity().checkConnectivity());
-
     return connectivity == ConnectivityResult.mobile;
   }
 
@@ -23,7 +22,6 @@ class Network {
     ConnectivityResult? connectivity,
   }) async {
     connectivity ??= await (Connectivity().checkConnectivity());
-
     return connectivity == ConnectivityResult.wifi;
   }
 }
