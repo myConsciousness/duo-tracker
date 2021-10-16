@@ -20,6 +20,7 @@ import 'package:duo_tracker/src/utils/audio_player_utils.dart';
 import 'package:duo_tracker/src/view/lesson_tips_view.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
+import 'package:rounded_loading_button/rounded_loading_button.dart';
 
 class CommonLearnedWordCard extends StatefulWidget {
   const CommonLearnedWordCard({
@@ -54,20 +55,16 @@ class _CommonLearnedWordCardState extends State<CommonLearnedWordCard> {
   /// The text represents unavailable
   static const unavailableText = 'N/A';
 
-  /// The learned word
-  late LearnedWord _learnedWord;
-
   /// The datetime format
   final _datetimeFormat = DateFormat('yyyy/MM/dd HH:mm');
 
+  final _downloadwordHintButtonController = RoundedLoadingButtonController();
+
+  /// The learned word
+  late LearnedWord _learnedWord;
+
   /// The learned word service
   final _learnedWordService = LearnedWordService.getInstance();
-
-  @override
-  void initState() {
-    super.initState();
-    _learnedWord = widget.learnedWord;
-  }
 
   @override
   void didChangeDependencies() {
@@ -77,6 +74,12 @@ class _CommonLearnedWordCardState extends State<CommonLearnedWordCard> {
   @override
   void dispose() {
     super.dispose();
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    _learnedWord = widget.learnedWord;
   }
 
   Widget _buildCardLeading({
@@ -100,27 +103,18 @@ class _CommonLearnedWordCardState extends State<CommonLearnedWordCard> {
         },
       );
 
-  Widget _buildCardHintText({
+  Widget _buildDownloadWordHintButton({
     required LearnedWord learnedWord,
-  }) {
-    if (learnedWord.wordHints.isEmpty) {
-      return Padding(
-        padding: const EdgeInsets.fromLTRB(20, 0, 20, 0),
-        child: ElevatedButton(
-          clipBehavior: Clip.antiAlias,
+  }) =>
+      Padding(
+        padding: const EdgeInsets.fromLTRB(20, 10, 20, 10),
+        child: RoundedLoadingButton(
           child: const Text('Download Word Hint'),
-          style: ElevatedButton.styleFrom(
-            primary: Theme.of(context).colorScheme.secondaryVariant,
-            onPrimary: Colors.white,
-            shape: const RoundedRectangleBorder(
-              borderRadius: BorderRadius.vertical(
-                top: Radius.circular(30),
-                bottom: Radius.circular(30),
-              ),
-            ),
-            textStyle: const TextStyle(fontSize: 14),
-          ),
+          color: Theme.of(context).colorScheme.secondaryVariant,
+          controller: _downloadwordHintButtonController,
           onPressed: () async {
+            _downloadwordHintButtonController.start();
+
             await DuolingoApiUtils.downloadWordHint(
               context: context,
               wordId: learnedWord.wordId,
@@ -135,6 +129,8 @@ class _CommonLearnedWordCardState extends State<CommonLearnedWordCard> {
               learnedWord.userId,
             );
 
+            _downloadwordHintButtonController.success();
+
             super.setState(() {});
 
             await InterstitialAdUtils.showInterstitialAd(
@@ -143,6 +139,14 @@ class _CommonLearnedWordCardState extends State<CommonLearnedWordCard> {
             );
           },
         ),
+      );
+
+  Widget _buildCardHintText({
+    required LearnedWord learnedWord,
+  }) {
+    if (learnedWord.wordHints.isEmpty) {
+      return _buildDownloadWordHintButton(
+        learnedWord: learnedWord,
       );
     }
 
