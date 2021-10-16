@@ -8,6 +8,7 @@ import 'package:duo_tracker/src/http/adapter/login_api_adapter.dart';
 import 'package:duo_tracker/src/http/adapter/switch_language_api_adapter.dart';
 import 'package:duo_tracker/src/http/adapter/user_api_adapter.dart';
 import 'package:duo_tracker/src/http/adapter/version_info_api_adapter.dart';
+import 'package:duo_tracker/src/http/adapter/word_hint_api_adapter.dart';
 
 /// The enum that manages API adapter.
 enum DuolingoApiAdapter {
@@ -15,6 +16,7 @@ enum DuolingoApiAdapter {
   login,
   user,
   overview,
+  hint,
   switchLanguage,
 }
 
@@ -29,6 +31,8 @@ extension DuolingoApiAdapterExt on DuolingoApiAdapter {
         return UserApiAdapter();
       case DuolingoApiAdapter.overview:
         return LearnedWordApiAdapter();
+      case DuolingoApiAdapter.hint:
+        return WordHintApiAdapter();
       case DuolingoApiAdapter.switchLanguage:
         return SwitchLanguageApiAdapter();
     }

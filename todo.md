@@ -46,3 +46,15 @@
 
 Api Adapter で JSON から文字列や数値を取得する際の処理を改善する。
 null であれば空文字列や-1 といった数値を返すうな処理があるが、これを共通処理にまとめる。
+
+        // Update word hint based on word id
+        WordHintApiAdapter().execute(
+          context: context,
+          params: {
+            'wordId': wordId,
+            'userId': userId,
+            'learningLanguage': learningLanguage,
+            'fromLanguage': fromLanguage,
+            'sentence': wordString,
+          },
+        );

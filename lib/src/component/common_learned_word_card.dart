@@ -6,13 +6,13 @@ import 'package:clipboard/clipboard.dart';
 import 'package:duo_tracker/src/component/common_card_header_text.dart';
 import 'package:duo_tracker/src/component/common_divider.dart';
 import 'package:duo_tracker/src/component/common_text.dart';
+import 'package:duo_tracker/src/http/utils/duolingo_api_utils.dart';
 import 'package:duo_tracker/src/view/folder/folder_type.dart';
 import 'package:duo_tracker/src/component/dialog/network_error_dialog.dart';
 import 'package:duo_tracker/src/component/dialog/select_folder_dialog.dart';
 import 'package:duo_tracker/src/component/snackbar/info_snack_bar.dart';
 import 'package:duo_tracker/src/http/network.dart';
 import 'package:duo_tracker/src/repository/model/learned_word_model.dart';
-import 'package:duo_tracker/src/repository/model/word_hint_model.dart';
 import 'package:duo_tracker/src/repository/service/learned_word_service.dart';
 import 'package:duo_tracker/src/utils/audio_player_utils.dart';
 import 'package:duo_tracker/src/view/lesson_tips_view.dart';
@@ -52,11 +52,30 @@ class _CommonLearnedWordCardState extends State<CommonLearnedWordCard> {
   /// The text represents unavailable
   static const unavailableText = 'N/A';
 
+  /// The learned word
+  late LearnedWord _learnedWord;
+
   /// The datetime format
   final _datetimeFormat = DateFormat('yyyy/MM/dd HH:mm');
 
   /// The learned word service
   final _learnedWordService = LearnedWordService.getInstance();
+
+  @override
+  void initState() {
+    super.initState();
+    _learnedWord = widget.learnedWord;
+  }
+
+  @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+  }
+
+  @override
+  void dispose() {
+    super.dispose();
+  }
 
   Widget _buildCardLeading({
     required LearnedWord learnedWord,
@@ -80,11 +99,49 @@ class _CommonLearnedWordCardState extends State<CommonLearnedWordCard> {
       );
 
   Widget _buildCardHintText({
-    required List<WordHint> wordHints,
+    required LearnedWord learnedWord,
   }) {
+    if (learnedWord.wordHints.isEmpty) {
+      return Padding(
+        padding: const EdgeInsets.fromLTRB(20, 0, 20, 0),
+        child: ElevatedButton(
+          clipBehavior: Clip.antiAlias,
+          child: const Text('Download Word Hint'),
+          style: ElevatedButton.styleFrom(
+            primary: Theme.of(context).colorScheme.secondaryVariant,
+            onPrimary: Colors.white,
+            shape: const RoundedRectangleBorder(
+              borderRadius: BorderRadius.vertical(
+                top: Radius.circular(30),
+                bottom: Radius.circular(30),
+              ),
+            ),
+            textStyle: const TextStyle(fontSize: 14),
+          ),
+          onPressed: () async {
+            await DuolingoApiUtils.downloadWordHint(
+              context: context,
+              wordId: learnedWord.wordId,
+              userId: learnedWord.userId,
+              fromLanguage: learnedWord.fromLanguage,
+              learningLanguage: learnedWord.learningLanguage,
+              wordString: learnedWord.wordString,
+            );
+
+            _learnedWord = await _learnedWordService.findByWordIdAndUserId(
+              learnedWord.wordId,
+              learnedWord.userId,
+            );
+
+            super.setState(() {});
+          },
+        ),
+      );
+    }
+
     final hintTexts = <CommonText>[];
 
-    for (final wordHint in wordHints) {
+    for (final wordHint in learnedWord.wordHints) {
       hintTexts.add(
         CommonText(
           text: '${wordHint.value} : ${wordHint.hint}',
@@ -223,21 +280,21 @@ class _CommonLearnedWordCardState extends State<CommonLearnedWordCard> {
                   children: [
                     CommonCardHeaderText(
                       subtitle: 'Index',
-                      title: '${widget.learnedWord.sortOrder + 1}',
+                      title: '${_learnedWord.sortOrder + 1}',
                     ),
                     CommonCardHeaderText(
                       subtitle: 'Lesson',
-                      title: widget.learnedWord.shortSkill,
+                      title: _learnedWord.shortSkill,
                     ),
                     CommonCardHeaderText(
                       subtitle: 'Strength',
-                      title: '${widget.learnedWord.strengthBars}',
+                      title: '${_learnedWord.strengthBars}',
                     ),
                     CommonCardHeaderText(
                       subtitle: 'Last practiced at',
                       title: _datetimeFormat.format(
                         DateTime.fromMillisecondsSinceEpoch(
-                            widget.learnedWord.lastPracticedMs),
+                            _learnedWord.lastPracticedMs),
                       ),
                     ),
                   ],
@@ -252,26 +309,26 @@ class _CommonLearnedWordCardState extends State<CommonLearnedWordCard> {
                     children: [
                       CommonCardHeaderText(
                         subtitle: 'Pos',
-                        title: widget.learnedWord.pos.isEmpty
+                        title: _learnedWord.pos.isEmpty
                             ? unavailableText
-                            : widget.learnedWord.pos,
+                            : _learnedWord.pos,
                       ),
                       CommonCardHeaderText(
                         subtitle: 'Infinitive',
-                        title: widget.learnedWord.infinitive.isEmpty
+                        title: _learnedWord.infinitive.isEmpty
                             ? unavailableText
-                            : widget.learnedWord.infinitive,
+                            : _learnedWord.infinitive,
                       ),
                       CommonCardHeaderText(
                         subtitle: 'Gender',
-                        title: widget.learnedWord.gender.isEmpty
+                        title: _learnedWord.gender.isEmpty
                             ? unavailableText
-                            : widget.learnedWord.gender,
+                            : _learnedWord.gender,
                       ),
                       CommonCardHeaderText(
                         subtitle: 'Proficiency',
                         title:
-                            '${(widget.learnedWord.strength * 100.0).toStringAsFixed(2)} %',
+                            '${(_learnedWord.strength * 100.0).toStringAsFixed(2)} %',
                       ),
                     ],
                   ),
@@ -283,12 +340,12 @@ class _CommonLearnedWordCardState extends State<CommonLearnedWordCard> {
                   Expanded(
                     child: ListTile(
                       leading: _buildCardLeading(
-                        learnedWord: widget.learnedWord,
+                        learnedWord: _learnedWord,
                       ),
                       title: Row(
                         children: [
                           _buildCardTitleText(
-                            learnedWord: widget.learnedWord,
+                            learnedWord: _learnedWord,
                           ),
                           if (widget.folderType != FolderType.voice)
                             IconButton(
@@ -296,35 +353,34 @@ class _CommonLearnedWordCardState extends State<CommonLearnedWordCard> {
                               icon: const Icon(Icons.copy_all, size: 20),
                               onPressed: () async {
                                 await FlutterClipboard.copy(
-                                    widget.learnedWord.wordString);
+                                    _learnedWord.wordString);
                                 InfoSnackbar.from(context: context).show(
                                     content:
-                                        'Copied "${widget.learnedWord.wordString}" to clipboard.');
+                                        'Copied "${_learnedWord.wordString}" to clipboard.');
                               },
                             )
                         ],
                       ),
                       subtitle: _buildCardHintText(
-                        wordHints: widget.learnedWord.wordHints,
+                        learnedWord: _learnedWord,
                       ),
                     ),
                   ),
                   if (widget.folderType == FolderType.none &&
-                      !widget.learnedWord.deleted)
+                      !_learnedWord.deleted)
                     IconButton(
-                      tooltip: widget.learnedWord.bookmarked
+                      tooltip: _learnedWord.bookmarked
                           ? 'Remove Bookmark'
                           : 'Add Bookmark',
-                      icon: widget.learnedWord.bookmarked
+                      icon: _learnedWord.bookmarked
                           ? const Icon(Icons.bookmark_added)
                           : const Icon(Icons.bookmark_add),
                       onPressed: () async {
-                        widget.learnedWord.bookmarked =
-                            !widget.learnedWord.bookmarked;
-                        widget.learnedWord.updatedAt = DateTime.now();
+                        _learnedWord.bookmarked = !_learnedWord.bookmarked;
+                        _learnedWord.updatedAt = DateTime.now();
 
                         await _learnedWordService.update(
-                          widget.learnedWord,
+                          _learnedWord,
                         );
 
                         super.setState(() {});
@@ -343,7 +399,7 @@ class _CommonLearnedWordCardState extends State<CommonLearnedWordCard> {
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   crossAxisAlignment: CrossAxisAlignment.end,
                   children: _createCardActions(
-                    learnedWord: widget.learnedWord,
+                    learnedWord: _learnedWord,
                   ),
                 ),
             ],

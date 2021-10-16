@@ -143,8 +143,8 @@ class WordHintApiAdapter extends ApiAdapter {
 
     final now = DateTime.now();
     hintsMatrix.forEach(
-      (final String value, final List<String> hints) {
-        for (final String hint in hints) {
+      (final value, final hints) {
+        for (final hint in hints) {
           _wordHintService.insert(
             WordHint.from(
               wordId: wordId,

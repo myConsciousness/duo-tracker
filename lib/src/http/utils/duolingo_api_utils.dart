@@ -57,4 +57,23 @@ class DuolingoApiUtils {
           'learningLanguage': learningLanguage,
         },
       );
+
+  static Future<bool> downloadWordHint({
+    required BuildContext context,
+    required String wordId,
+    required String userId,
+    required String fromLanguage,
+    required String learningLanguage,
+    required String wordString,
+  }) async =>
+      await DuolingoApiAdapter.hint.build.execute(
+        context: context,
+        params: {
+          'wordId': wordId,
+          'userId': userId,
+          'learningLanguage': learningLanguage,
+          'fromLanguage': fromLanguage,
+          'sentence': wordString,
+        },
+      );
 }

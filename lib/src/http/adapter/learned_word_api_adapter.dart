@@ -4,7 +4,6 @@
 
 import 'dart:convert';
 
-import 'package:duo_tracker/src/http/adapter/word_hint_api_adapter.dart';
 import 'package:duo_tracker/src/http/adapter/api_adapter.dart';
 import 'package:duo_tracker/src/http/api_response.dart';
 import 'package:duo_tracker/src/http/duolingo_api.dart';
@@ -48,8 +47,6 @@ class LearnedWordApiAdapter extends ApiAdapter {
       int sortOrder = 0;
       final now = DateTime.now();
       for (final Map<String, dynamic> overview in jsonMap['vocab_overview']) {
-        final String wordId = overview['id'];
-        final String wordString = overview['word_string'];
         final String skill = overview['skill'] ?? '';
 
         await _learnedWordService.replaceById(
@@ -63,7 +60,7 @@ class LearnedWordApiAdapter extends ApiAdapter {
             formalFromLanguage: formalFromLanguage,
             strengthBars: overview['strength_bars'] ?? -1,
             infinitive: overview['infinitive'] ?? '',
-            wordString: wordString,
+            wordString: overview['word_string'],
             normalizedString: overview['normalized_string'] ?? '',
             pos: overview['pos'] ?? '',
             lastPracticedMs: overview['last_practiced_ms'] ?? -1,
@@ -80,18 +77,6 @@ class LearnedWordApiAdapter extends ApiAdapter {
             createdAt: now,
             updatedAt: now,
           ),
-        );
-
-        // Update word hint based on word id
-        WordHintApiAdapter().execute(
-          context: context,
-          params: {
-            'wordId': wordId,
-            'userId': userId,
-            'learningLanguage': learningLanguage,
-            'fromLanguage': fromLanguage,
-            'sentence': wordString,
-          },
         );
       }
 
