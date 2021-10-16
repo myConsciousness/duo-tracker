@@ -3,10 +3,12 @@
 // BSD-style license that can be found in the LICENSE file.
 
 import 'package:clipboard/clipboard.dart';
+import 'package:duo_tracker/src/admob/interstitial_ad_utils.dart';
 import 'package:duo_tracker/src/component/common_card_header_text.dart';
 import 'package:duo_tracker/src/component/common_divider.dart';
 import 'package:duo_tracker/src/component/common_text.dart';
 import 'package:duo_tracker/src/http/utils/duolingo_api_utils.dart';
+import 'package:duo_tracker/src/repository/preference/interstitial_ad_shared_preferences_key.dart';
 import 'package:duo_tracker/src/view/folder/folder_type.dart';
 import 'package:duo_tracker/src/component/dialog/network_error_dialog.dart';
 import 'package:duo_tracker/src/component/dialog/select_folder_dialog.dart';
@@ -134,6 +136,11 @@ class _CommonLearnedWordCardState extends State<CommonLearnedWordCard> {
             );
 
             super.setState(() {});
+
+            await InterstitialAdUtils.showInterstitialAd(
+              sharedPreferencesKey:
+                  InterstitialAdSharedPreferencesKey.countDownloadWordHint,
+            );
           },
         ),
       );
