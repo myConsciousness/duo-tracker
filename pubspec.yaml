@@ -36,7 +36,6 @@ dependencies:
   admob_unit_ids: ^1.0.2
   shared_preferences: ^2.0.7
   http: ^0.13.3
-  connectivity: ^3.0.6
   encrypt: ^5.0.1
   local_auth: ^1.1.8
   open_settings: ^2.0.2
@@ -60,11 +59,11 @@ dependencies:
   future_progress_dialog: ^0.2.0
   flutter_email_sender: ^5.0.2
   app_review: ^2.1.1+1
-  upgrader: ^3.5.1
   syncfusion_flutter_charts: ^19.2.62
   syncfusion_flutter_sliders: ^19.2.62
   gallery_saver: ^2.2.0
   new_version: ^0.2.3
+  connectivity_plus: ^2.0.2
 
 dev_dependencies:
   flutter_test:
