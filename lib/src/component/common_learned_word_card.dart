@@ -115,7 +115,7 @@ class _CommonLearnedWordCardState extends State<CommonLearnedWordCard> {
           onPressed: () async {
             _downloadwordHintButtonController.start();
 
-            await DuolingoApiUtils.downloadWordHint(
+            final downloaded = await DuolingoApiUtils.downloadWordHint(
               context: context,
               wordId: learnedWord.wordId,
               userId: learnedWord.userId,
@@ -124,14 +124,19 @@ class _CommonLearnedWordCardState extends State<CommonLearnedWordCard> {
               wordString: learnedWord.wordString,
             );
 
+            if (!downloaded) {
+              _downloadwordHintButtonController.reset();
+              return;
+            }
+
             _learnedWord = await _learnedWordService.findByWordIdAndUserId(
               learnedWord.wordId,
               learnedWord.userId,
             );
 
-            _downloadwordHintButtonController.success();
-
-            super.setState(() {});
+            super.setState(() {
+              _downloadwordHintButtonController.success();
+            });
 
             await InterstitialAdUtils.showInterstitialAd(
               sharedPreferencesKey:

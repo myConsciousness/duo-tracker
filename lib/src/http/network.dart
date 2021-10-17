@@ -2,26 +2,18 @@
 // Use of this source code is governed by a
 // BSD-style license that can be found in the LICENSE file.
 
-import 'package:connectivity_plus/connectivity_plus.dart';
+import 'dart:io';
 
 class Network {
+  /// The base host to check a network connection
+  static const _baseHost = 'www.duolingo.com';
+
   static Future<bool> isConnected() async {
-    final connectivity = await Connectivity().checkConnectivity();
-    return await _isMobileConnected(connectivity: connectivity) ||
-        await _isWifiConnected(connectivity: connectivity);
-  }
-
-  static Future<bool> _isMobileConnected({
-    ConnectivityResult? connectivity,
-  }) async {
-    connectivity ??= await Connectivity().checkConnectivity();
-    return connectivity == ConnectivityResult.mobile;
-  }
-
-  static Future<bool> _isWifiConnected({
-    ConnectivityResult? connectivity,
-  }) async {
-    connectivity ??= await Connectivity().checkConnectivity();
-    return connectivity == ConnectivityResult.wifi;
+    try {
+      final connection = await InternetAddress.lookup(_baseHost);
+      return connection.isNotEmpty && connection[0].rawAddress.isNotEmpty;
+    } on SocketException catch (_) {
+      return false;
+    }
   }
 }
