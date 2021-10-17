@@ -11,7 +11,6 @@ import 'package:duo_tracker/src/http/adapter/adapter.dart';
 import 'package:duo_tracker/src/http/api_response.dart';
 import 'package:duo_tracker/src/http/network.dart';
 import 'package:flutter/material.dart';
-import 'package:open_settings/open_settings.dart';
 
 abstract class ApiAdapter implements Adapter {
   @override
@@ -58,7 +57,6 @@ abstract class ApiAdapter implements Adapter {
         return true;
       case ErrorType.network:
         await showNetworkErrorDialog(context: context);
-        await OpenSettings.openNetworkOperatorSetting();
         return false;
       case ErrorType.noUserRegistered:
         await showAuthDialog(
