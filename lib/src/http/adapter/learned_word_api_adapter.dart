@@ -46,7 +46,8 @@ class LearnedWordApiAdapter extends ApiAdapter {
 
       int sortOrder = 0;
       final now = DateTime.now();
-      for (final Map<String, dynamic> overview in jsonMap['vocab_overview']) {
+      final vocabOverview = jsonMap['vocab_overview'];
+      for (final Map<String, dynamic> overview in vocabOverview) {
         final String skill = overview['skill'] ?? '';
 
         await _learnedWordService.replaceById(

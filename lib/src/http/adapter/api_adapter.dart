@@ -65,6 +65,15 @@ abstract class ApiAdapter implements Adapter {
         );
 
         return false;
+      case ErrorType.noHintData:
+        await showErrorDialog(
+          context: context,
+          title: 'Word Hint Not Found',
+          content:
+              'The hint data for the word to be downloaded does not exist in Duolingo.',
+        );
+
+        return false;
       case ErrorType.authentication:
         await showInputErrorDialog(context: context, content: response.message);
 

@@ -30,6 +30,7 @@ enum ErrorType {
   none,
   network,
   noUserRegistered,
+  noHintData,
   authentication,
   client,
   server,

@@ -38,6 +38,13 @@ class WordHintApiAdapter extends ApiAdapter {
         json: jsonDecode(response.body),
       );
 
+      if (hintsMatrix.isEmpty) {
+        return ApiResponse.from(
+          fromApi: FromApi.wordHint,
+          errorType: ErrorType.noHintData,
+        );
+      }
+
       await _refreshWordHints(
         params: params,
         hintsMatrix: hintsMatrix,
@@ -75,8 +82,16 @@ class WordHintApiAdapter extends ApiAdapter {
         continue;
       }
 
-      for (final Map<String, dynamic> row in token['hint_table']['rows']) {
-        for (final Map<String, dynamic> cell in row['cells']) {
+      final rows = token['hint_table']['rows'];
+
+      if (rows.isEmpty) {
+        // No hint data
+        return {};
+      }
+
+      for (final Map<String, dynamic> row in rows) {
+        final cells = row['cells'];
+        for (final Map<String, dynamic> cell in cells) {
           if (cell.isNotEmpty) {
             final int colspan = cell['colspan'] ?? -1;
             final String key = colspan > 0
