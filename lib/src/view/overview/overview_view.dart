@@ -117,9 +117,10 @@ class _OverviewViewState extends State<OverviewView> {
           context: context,
           title: 'Switching Language',
           future: DuolingoApiUtils.switchLearnLanguage(
-              context: context,
-              fromLanguage: switchFromLanguage,
-              learningLanguage: switchLearningLanguage),
+            context: context,
+            fromLanguage: switchFromLanguage,
+            learningLanguage: switchLearningLanguage,
+          ),
         );
 
         final fromLanguageName =
