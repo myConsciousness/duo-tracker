@@ -2,6 +2,7 @@
 // Use of this source code is governed by a
 // BSD-style license that can be found in the LICENSE file.
 
+import 'package:quiver/iterables.dart';
 import 'package:duo_tracker/src/admob/banner_ad_list.dart';
 import 'package:duo_tracker/src/admob/banner_ad_utils.dart';
 import 'package:duo_tracker/src/admob/interstitial_ad_utils.dart';
@@ -49,20 +50,29 @@ class OverviewView extends StatefulWidget {
 }
 
 class _OverviewViewState extends State<OverviewView> {
+  // The per page
+  static const _perPage = 5;
+
   bool _alreadyAuthDialogOpened = false;
   String _appBarSubTitle = '';
+
+  /// The banner ad list
+  final _bannerAdList = BannerAdList.newInstance();
+
+  final List<Widget> _displayLearnedWordCards = [];
   FilterPattern _filterPattern = FilterPattern.none;
 
   /// The learned word service
   final _learnedWordService = LearnedWordService.getInstance();
 
+  List<LearnedWord> _learnedWords = [];
   MatchPattern _matchPattern = MatchPattern.partial;
+  // The present page
+  int _presentPage = 0;
+
   String _searchWord = '';
   bool _searching = false;
   List<String> _selectedFilterItems = [];
-
-  /// The banner ad list
-  final _bannerAdList = BannerAdList.newInstance();
 
   @override
   void didChangeDependencies() {
@@ -129,8 +139,8 @@ class _OverviewViewState extends State<OverviewView> {
             LanguageConverter.toName(languageCode: switchLearningLanguage);
 
         InfoSnackbar.from(context: context).show(
-            content:
-                'Learning "$learningLanguageName" from "$fromLanguageName".');
+          content: 'Learning "$learningLanguageName" from "$fromLanguageName".',
+        );
       }
 
       await showLoadingDialog(
@@ -221,17 +231,21 @@ class _OverviewViewState extends State<OverviewView> {
   }
 
   Future<void> _sortCards({
-    required List<LearnedWord> learnedWords,
     required int oldIndex,
     required int newIndex,
   }) async {
-    learnedWords.insert(
+    _learnedWords.insert(
       oldIndex < newIndex ? newIndex - 1 : newIndex,
-      learnedWords.removeAt(oldIndex),
+      _learnedWords.removeAt(oldIndex),
+    );
+
+    _displayLearnedWordCards.insert(
+      oldIndex < newIndex ? newIndex - 1 : newIndex,
+      _displayLearnedWordCards.removeAt(oldIndex),
     );
 
     // Update all sort orders
-    await _learnedWordService.replaceSortOrdersByIds(learnedWords);
+    await _learnedWordService.replaceSortOrdersByIds(_learnedWords);
   }
 
   Future<void> _asyncInitState() async {
@@ -411,6 +425,24 @@ class _OverviewViewState extends State<OverviewView> {
         ),
       ];
 
+  void _loadMoreCard() {
+    for (final pageNumber in range(
+      _presentPage,
+      _perPage + _presentPage,
+    )) {
+      final int page = pageNumber as int;
+      _displayLearnedWordCards.add(
+        _buildLearnedWordCard(
+          index: page,
+          learnedWord: _learnedWords[page],
+        ),
+      );
+    }
+
+    // Indicates next page to load
+    _presentPage += _perPage;
+  }
+
   @override
   Widget build(BuildContext context) => Scaffold(
         floatingActionButtonLocation:
@@ -435,22 +467,29 @@ class _OverviewViewState extends State<OverviewView> {
           body: FutureBuilder(
             future: _fetchDataSource(),
             builder: (_, AsyncSnapshot snapshot) {
-              if (!snapshot.hasData) {
+              if (!snapshot.hasData || snapshot.data.isEmpty) {
                 return const Loading();
               }
 
-              final List<LearnedWord> learnedWords = snapshot.data;
+              _learnedWords = snapshot.data;
+              _loadMoreCard();
 
-              return ReorderableListView.builder(
-                itemCount: learnedWords.length,
-                onReorder: (oldIndex, newIndex) async => await _sortCards(
-                  learnedWords: learnedWords,
-                  oldIndex: oldIndex,
-                  newIndex: newIndex,
-                ),
-                itemBuilder: (_, index) => _buildLearnedWordCard(
-                  index: index,
-                  learnedWord: learnedWords[index],
+              return NotificationListener<ScrollNotification>(
+                onNotification: (scroll) {
+                  if (scroll.metrics.atEdge && scroll.metrics.pixels != 0) {
+                    super.setState(() {
+                      _loadMoreCard();
+                    });
+                  }
+
+                  return true;
+                },
+                child: ReorderableListView(
+                  onReorder: (oldIndex, newIndex) async => await _sortCards(
+                    oldIndex: oldIndex,
+                    newIndex: newIndex,
+                  ),
+                  children: _displayLearnedWordCards,
                 ),
               );
             },

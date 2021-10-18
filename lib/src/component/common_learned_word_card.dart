@@ -7,8 +7,11 @@ import 'package:duo_tracker/src/admob/interstitial_ad_utils.dart';
 import 'package:duo_tracker/src/component/common_card_header_text.dart';
 import 'package:duo_tracker/src/component/common_divider.dart';
 import 'package:duo_tracker/src/component/common_text.dart';
+import 'package:duo_tracker/src/component/loading.dart';
 import 'package:duo_tracker/src/http/utils/duolingo_api_utils.dart';
+import 'package:duo_tracker/src/repository/model/word_hint_model.dart';
 import 'package:duo_tracker/src/repository/preference/interstitial_ad_shared_preferences_key.dart';
+import 'package:duo_tracker/src/repository/service/word_hint_service.dart';
 import 'package:duo_tracker/src/view/folder/folder_type.dart';
 import 'package:duo_tracker/src/component/dialog/network_error_dialog.dart';
 import 'package:duo_tracker/src/component/dialog/select_folder_dialog.dart';
@@ -148,8 +151,9 @@ class _CommonLearnedWordCardState extends State<CommonLearnedWordCard> {
 
   Widget _buildCardHintText({
     required LearnedWord learnedWord,
+    required List<WordHint> wordHints,
   }) {
-    if (learnedWord.wordHints.isEmpty) {
+    if (wordHints.isEmpty) {
       return _buildDownloadWordHintButton(
         learnedWord: learnedWord,
       );
@@ -157,7 +161,7 @@ class _CommonLearnedWordCardState extends State<CommonLearnedWordCard> {
 
     final hintTexts = <CommonText>[];
 
-    for (final wordHint in learnedWord.wordHints) {
+    for (final wordHint in wordHints) {
       hintTexts.add(
         CommonText(
           text: '${wordHint.value} : ${wordHint.hint}',
@@ -377,8 +381,22 @@ class _CommonLearnedWordCardState extends State<CommonLearnedWordCard> {
                             )
                         ],
                       ),
-                      subtitle: _buildCardHintText(
-                        learnedWord: _learnedWord,
+                      subtitle: FutureBuilder(
+                        future: _wordHintService
+                            .findByWordIdAndUserIdAndSortBySortOrder(
+                          _learnedWord.wordId,
+                          _learnedWord.userId,
+                        ),
+                        builder: (_, AsyncSnapshot snapshot) {
+                          if (!snapshot.hasData) {
+                            return const Loading();
+                          }
+
+                          return _buildCardHintText(
+                            learnedWord: _learnedWord,
+                            wordHints: snapshot.data,
+                          );
+                        },
                       ),
                     ),
                   ),
@@ -422,4 +440,7 @@ class _CommonLearnedWordCardState extends State<CommonLearnedWordCard> {
           ),
         ),
       );
+
+  // The word hint service
+  final _wordHintService = WordHintService.getInstance();
 }

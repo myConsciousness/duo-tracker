@@ -5,7 +5,6 @@
 import 'package:duo_tracker/src/repository/boolean_text.dart';
 import 'package:duo_tracker/src/repository/const/column/learned_word_column.dart';
 import 'package:duo_tracker/src/repository/model/tip_and_note_model.dart';
-import 'package:duo_tracker/src/repository/model/word_hint_model.dart';
 
 class LearnedWord {
   int id = -1;
@@ -37,9 +36,6 @@ class LearnedWord {
 
   /// The tts voice urls from voice configuration repository
   List<String> ttsVoiceUrls = <String>[];
-
-  /// The word hints from word hint repository
-  List<WordHint> wordHints = [];
 
   /// The tip and note from skill repository
   TipAndNote? tipAndNote;
@@ -104,6 +100,7 @@ class LearnedWord {
     required this.sortOrder,
     required this.createdAt,
     required this.updatedAt,
+    this.tipAndNote,
   });
 
   /// Returns the new instance of [LearnedWord] based on the [map] passed as an argument.
@@ -137,6 +134,26 @@ class LearnedWord {
         ),
         updatedAt: DateTime.fromMillisecondsSinceEpoch(
           map[LearnedWordColumn.updatedAt] ?? 0,
+        ),
+        tipAndNote: TipAndNote.from(
+          id: map['TAN_ID'],
+          skillId: map['TAN_SKILL_ID'],
+          skillName: map['TAN_SKILL_NAME'],
+          content: map['TAN_CONTENT'],
+          contentSummary: map['TAN_CONTENT_SUMMARY'],
+          userId: map['TAN_USER_ID'],
+          fromLanguage: map['TAN_FROM_LANGUAGE'],
+          learningLanguage: map['TAN_LEARNING_LANGUAGE'],
+          formalFromLanguage: map['TAN_FORMAL_FROM_LANGUAGE'],
+          formalLearningLanguage: map['TAN_FORMAL_LEARNING_LANGUAGE'],
+          bookmarked: map['TAN_BOOKMARKED'] == BooleanText.true_,
+          deleted: map['TAN_DELETED'] == BooleanText.true_,
+          createdAt: DateTime.fromMillisecondsSinceEpoch(
+            map['TAN_CREATED_AT'] ?? 0,
+          ),
+          updatedAt: DateTime.fromMillisecondsSinceEpoch(
+            map['TAN_UPDATED_AT'] ?? 0,
+          ),
         ),
       );
 

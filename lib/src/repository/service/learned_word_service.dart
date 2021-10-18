@@ -8,9 +8,7 @@ import 'package:duo_tracker/src/component/const/sort_pattern.dart';
 import 'package:duo_tracker/src/repository/learned_word_repository.dart';
 import 'package:duo_tracker/src/repository/model/learned_word_model.dart';
 import 'package:duo_tracker/src/repository/preference/common_shared_preferences_key.dart';
-import 'package:duo_tracker/src/repository/service/skill_service.dart';
 import 'package:duo_tracker/src/repository/service/voice_configuration_service.dart';
-import 'package:duo_tracker/src/repository/service/word_hint_service.dart';
 
 class LearnedWordService extends LearnedWordRepository {
   /// The internal constructor.
@@ -22,14 +20,8 @@ class LearnedWordService extends LearnedWordRepository {
   /// The singleton instance of this [LearnedWordService].
   static final _singletonInstance = LearnedWordService._internal();
 
-  /// The skill service
-  final _skillService = SkillService.getInstance();
-
   /// The voice configuration service
   final _voiceConfigurationService = VoiceConfigurationService.getInstance();
-
-  /// The word hint service
-  final _wordHintService = WordHintService.getInstance();
 
   @override
   Future<void> delete(LearnedWord model) async => await super.database.then(
@@ -101,30 +93,78 @@ class LearnedWordService extends LearnedWordRepository {
         SortPatternExt.toEnum(code: sortPatternCode).patternName;
 
     final learnedWords = await super.database.then(
-          (database) => database
-              .query(
-                table,
-                where:
-                    'USER_ID = ? AND LEARNING_LANGUAGE = ? AND FROM_LANGUAGE = ?',
-                whereArgs: [
-                  userId,
-                  learningLanguage,
-                  fromLanguage,
-                ],
-                orderBy: '$sortColumnName $sortPattern',
-              )
-              .then(
-                (entities) => entities
-                    .map((entity) => entity.isNotEmpty
-                        ? LearnedWord.fromMap(entity)
-                        : LearnedWord.empty())
-                    .toList(),
-              ),
+          (database) => database.rawQuery(
+            '''
+            SELECT
+              LW.ID,
+              LW.WORD_ID,
+              LW.USER_ID,
+              LW.LANGUAGE_STRING,
+              LW.LEARNING_LANGUAGE,
+              LW.FROM_LANGUAGE,
+              LW.FORMAL_LEARNING_LANGUAGE,
+              LW.FORMAL_FROM_LANGUAGE,
+              LW.STRENGTH_BARS,
+              LW.INFINITIVE,
+              LW.WORD_STRING,
+              LW.NORMALIZED_STRING,
+              LW.POS,
+              LW.LAST_PRACTICED_MS,
+              LW.SKILL,
+              LW.SHORT_SKILL,
+              LW.LAST_PRACTICED,
+              LW.STRENGTH,
+              LW.SKILL_URL_TITLE,
+              LW.GENDER,
+              LW.BOOKMARKED,
+              LW.COMPLETED,
+              LW.DELETED,
+              LW.SORT_ORDER,
+              LW.CREATED_AT,
+              LW.UPDATED_AT,
+              TAN.ID TAN_ID,
+              TAN.SKILL_ID TAN_SKILL_ID,
+              TAN.SKILL_NAME TAN_SKILL_NAME,
+              TAN.CONTENT TAN_CONTENT,
+              TAN.CONTENT_SUMMARY TAN_CONTENT_SUMMARY,
+              TAN.USER_ID TAN_USER_ID,
+              TAN.FROM_LANGUAGE TAN_FROM_LANGUAGE,
+              TAN.LEARNING_LANGUAGE TAN_LEARNING_LANGUAGE,
+              TAN.FORMAL_FROM_LANGUAGE TAN_FORMAL_FROM_LANGUAGE,
+              TAN.FORMAL_LEARNING_LANGUAGE TAN_FORMAL_LEARNING_LANGUAGE,
+              TAN.SORT_ORDER TAN_SORT_ORDER,
+              TAN.BOOKMARKED TAN_BOOKMARKED,
+              TAN.DELETED TAN_DELETED,
+              TAN.CREATED_AT TAN_CREATED_AT,
+              TAN.UPDATED_AT TAN_UPDATED_AT
+            FROM
+              LEARNED_WORD LW
+              INNER JOIN SKILL S ON LW.SKILL = S.NAME
+              INNER JOIN TIP_AND_NOTE TAN ON S.TIP_AND_NOTE_ID = TAN.ID
+            WHERE
+              1 = 1
+              AND LW.USER_ID = ?
+              AND LW.LEARNING_LANGUAGE = ?
+              AND LW.FROM_LANGUAGE = ?
+            ORDER BY
+              LW.$sortColumnName $sortPattern
+          ''',
+            [
+              userId,
+              learningLanguage,
+              fromLanguage,
+            ],
+          ).then(
+            (entities) => entities
+                .map((entity) => entity.isNotEmpty
+                    ? LearnedWord.fromMap(entity)
+                    : LearnedWord.empty())
+                .toList(),
+          ),
         );
 
     await _correctModelObject(
       learnedWords: learnedWords,
-      userId: userId,
       learningLanguage: learningLanguage,
     );
 
@@ -133,7 +173,6 @@ class LearnedWordService extends LearnedWordRepository {
 
   Future<void> _correctModelObject({
     required List<LearnedWord> learnedWords,
-    required String userId,
     required String learningLanguage,
   }) async {
     final voiceConfiguration = await _voiceConfigurationService.findByLanguage(
@@ -153,12 +192,6 @@ class LearnedWordService extends LearnedWordRepository {
         learnedWord.ttsVoiceUrls
             .add('$baseTtsVoiceUrl/${learnedWord.wordString}');
       }
-
-      learnedWord.wordHints = await _wordHintService
-          .findByWordIdAndUserIdAndSortBySortOrder(learnedWord.wordId, userId);
-
-      final skill = await _skillService.findByName(name: learnedWord.skill);
-      learnedWord.tipAndNote = skill.tipAndNote;
     }
   }
 
@@ -167,10 +200,60 @@ class LearnedWordService extends LearnedWordRepository {
       String wordId, String userId) async {
     final learnedWords = [
       await super.database.then(
-            (database) => database.query(
-              table,
-              where: 'WORD_ID = ? AND USER_ID = ?',
-              whereArgs: [
+            (database) => database.rawQuery(
+              '''
+              SELECT
+                LW.ID,
+                LW.WORD_ID,
+                LW.USER_ID,
+                LW.LANGUAGE_STRING,
+                LW.LEARNING_LANGUAGE,
+                LW.FROM_LANGUAGE,
+                LW.FORMAL_LEARNING_LANGUAGE,
+                LW.FORMAL_FROM_LANGUAGE,
+                LW.STRENGTH_BARS,
+                LW.INFINITIVE,
+                LW.WORD_STRING,
+                LW.NORMALIZED_STRING,
+                LW.POS,
+                LW.LAST_PRACTICED_MS,
+                LW.SKILL,
+                LW.SHORT_SKILL,
+                LW.LAST_PRACTICED,
+                LW.STRENGTH,
+                LW.SKILL_URL_TITLE,
+                LW.GENDER,
+                LW.BOOKMARKED,
+                LW.COMPLETED,
+                LW.DELETED,
+                LW.SORT_ORDER,
+                LW.CREATED_AT,
+                LW.UPDATED_AT,
+                TAN.ID TAN_ID,
+                TAN.SKILL_ID TAN_SKILL_ID,
+                TAN.SKILL_NAME TAN_SKILL_NAME,
+                TAN.CONTENT TAN_CONTENT,
+                TAN.CONTENT_SUMMARY TAN_CONTENT_SUMMARY,
+                TAN.USER_ID TAN_USER_ID,
+                TAN.FROM_LANGUAGE TAN_FROM_LANGUAGE,
+                TAN.LEARNING_LANGUAGE TAN_LEARNING_LANGUAGE,
+                TAN.FORMAL_FROM_LANGUAGE TAN_FORMAL_FROM_LANGUAGE,
+                TAN.FORMAL_LEARNING_LANGUAGE TAN_FORMAL_LEARNING_LANGUAGE,
+                TAN.SORT_ORDER TAN_SORT_ORDER,
+                TAN.BOOKMARKED TAN_BOOKMARKED,
+                TAN.DELETED TAN_DELETED,
+                TAN.CREATED_AT TAN_CREATED_AT,
+                TAN.UPDATED_AT TAN_UPDATED_AT
+              FROM
+                LEARNED_WORD LW
+                INNER JOIN SKILL S ON LW.SKILL = S.NAME
+                INNER JOIN TIP_AND_NOTE TAN ON S.TIP_AND_NOTE_ID = TAN.ID
+              WHERE
+                1 = 1
+                AND LW.WORD_ID = ?
+                AND LW.USER_ID = ?
+            ''',
+              [
                 wordId,
                 userId,
               ],
@@ -184,7 +267,6 @@ class LearnedWordService extends LearnedWordRepository {
 
     await _correctModelObject(
       learnedWords: learnedWords,
-      userId: userId,
       learningLanguage: learnedWords[0].learningLanguage,
     );
 
