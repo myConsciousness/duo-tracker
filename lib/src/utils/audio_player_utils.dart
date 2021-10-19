@@ -20,7 +20,10 @@ class AudioPlayerUtils {
       await Future.delayed(const Duration(seconds: 1), () {});
     }
 
-    InterstitialAdUtils.showInterstitialAd(
+    // Wait while playing audio
+    await Future.delayed(const Duration(seconds: 1), () {});
+
+    await InterstitialAdUtils.showInterstitialAd(
       sharedPreferencesKey: InterstitialAdSharedPreferencesKey.countPlayAudio,
     );
   }
