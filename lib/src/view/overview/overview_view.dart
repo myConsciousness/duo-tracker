@@ -61,7 +61,6 @@ class _OverviewViewState extends State<OverviewView> {
   final _learnedWordService = LearnedWordService.getInstance();
 
   MatchPattern _matchPattern = MatchPattern.partial;
-
   String _searchWord = '';
   bool _searching = false;
   List<String> _selectedFilterItems = [];
@@ -234,7 +233,11 @@ class _OverviewViewState extends State<OverviewView> {
     );
 
     // Update all sort orders
-    await _learnedWordService.replaceSortOrdersByIds(learnedWords);
+    await showLoadingDialog(
+      context: context,
+      title: 'Saving sort order',
+      future: _learnedWordService.replaceSortOrdersByIds(learnedWords),
+    );
   }
 
   Future<void> _asyncInitState() async {
