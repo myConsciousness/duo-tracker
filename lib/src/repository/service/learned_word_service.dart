@@ -191,30 +191,6 @@ class LearnedWordService extends LearnedWordRepository {
     return learnedWords;
   }
 
-  Future<void> _correctModelObject({
-    required List<LearnedWord> learnedWords,
-    required String learningLanguage,
-  }) async {
-    final voiceConfiguration = await _voiceConfigurationService.findByLanguage(
-      language: learningLanguage,
-    );
-
-    final baseTtsVoiceUrl =
-        '${voiceConfiguration.ttsBaseUrlHttps}${voiceConfiguration.path}/${voiceConfiguration.voiceType}/token';
-
-    for (final learnedWord in learnedWords) {
-      if (learnedWord.wordString.contains(' ')) {
-        final wordStrings = learnedWord.wordString.split(' ');
-        for (final wordString in wordStrings) {
-          learnedWord.ttsVoiceUrls.add('$baseTtsVoiceUrl/$wordString');
-        }
-      } else {
-        learnedWord.ttsVoiceUrls
-            .add('$baseTtsVoiceUrl/${learnedWord.wordString}');
-      }
-    }
-  }
-
   @override
   Future<LearnedWord> findByWordIdAndUserId(
       String wordId, String userId) async {
@@ -314,80 +290,6 @@ class LearnedWordService extends LearnedWordRepository {
   }
 
   @override
-  Future<LearnedWord> insert(LearnedWord model) async {
-    await super.database.then(
-          (database) => database
-              .insert(
-                table,
-                model.toMap(),
-              )
-              .then(
-                (int id) async => model.id = id,
-              ),
-        );
-
-    return model;
-  }
-
-  @override
-  Future<LearnedWord> replace(LearnedWord model) async {
-    await delete(model);
-    return await insert(model);
-  }
-
-  @override
-  Future<LearnedWord> replaceById(LearnedWord learnedWord) async {
-    LearnedWord storedLearnedWord = await findByWordIdAndUserId(
-      learnedWord.wordId,
-      learnedWord.userId,
-    );
-
-    if (storedLearnedWord.isEmpty()) {
-      storedLearnedWord = await insert(learnedWord);
-    } else {
-      learnedWord.id = storedLearnedWord.id;
-      learnedWord.bookmarked = storedLearnedWord.bookmarked;
-      learnedWord.completed = storedLearnedWord.completed;
-      learnedWord.deleted = storedLearnedWord.deleted;
-      learnedWord.sortOrder = storedLearnedWord.sortOrder;
-      learnedWord.createdAt = storedLearnedWord.createdAt;
-
-      await update(learnedWord);
-    }
-
-    return storedLearnedWord;
-  }
-
-  @override
-  Future<void> replaceSortOrdersByIds(List<LearnedWord> learnedWords) async {
-    learnedWords.asMap().forEach((index, learnedWord) async {
-      final storedLearnedWord = await findByWordIdAndUserId(
-        learnedWord.wordId,
-        learnedWord.userId,
-      );
-
-      storedLearnedWord.sortOrder = index;
-
-      await update(storedLearnedWord);
-    });
-  }
-
-  @override
-  String get table => 'LEARNED_WORD';
-
-  @override
-  Future<void> update(LearnedWord model) async => await super.database.then(
-        (database) => database.update(
-          table,
-          model.toMap(),
-          where: 'ID = ?',
-          whereArgs: [
-            model.id,
-          ],
-        ),
-      );
-
-  @override
   Future<List<String>>
       findDistinctFilterPatternByUserIdAndLearningLanguageAndFromLanguage({
     required FilterPattern filterPattern,
@@ -422,4 +324,131 @@ class LearnedWordService extends LearnedWordRepository {
                   },
                 ).toList(),
               ));
+
+  @override
+  Future<LearnedWord> insert(LearnedWord model) async {
+    await super.database.then(
+          (database) => database
+              .insert(
+                table,
+                model.toMap(),
+              )
+              .then(
+                (int id) async => model.id = id,
+              ),
+        );
+
+    return model;
+  }
+
+  @override
+  Future<LearnedWord> replace(LearnedWord model) async {
+    await delete(model);
+    return await insert(model);
+  }
+
+  @override
+  Future<void> replaceByIds(List<LearnedWord> learnedWords) async {
+    await database.then((database) async {
+      final batch = database.batch();
+
+      for (final learnedWord in learnedWords) {
+        final LearnedWord storedLearnedWord = await findByWordIdAndUserId(
+          learnedWord.wordId,
+          learnedWord.userId,
+        );
+
+        if (storedLearnedWord.isEmpty()) {
+          batch.insert(table, learnedWord.toMap());
+        } else {
+          learnedWord.id = storedLearnedWord.id;
+          learnedWord.bookmarked = storedLearnedWord.bookmarked;
+          learnedWord.completed = storedLearnedWord.completed;
+          learnedWord.deleted = storedLearnedWord.deleted;
+          learnedWord.sortOrder = storedLearnedWord.sortOrder;
+          learnedWord.createdAt = storedLearnedWord.createdAt;
+
+          batch.update(
+            table,
+            learnedWord.toMap(),
+            where: 'ID = ?',
+            whereArgs: [
+              learnedWord.id,
+            ],
+          );
+        }
+      }
+
+      await batch.commit(noResult: true);
+    });
+  }
+
+  @override
+  Future<void> replaceSortOrdersByIds(List<LearnedWord> learnedWords) async {
+    await database.then((database) async {
+      final batch = database.batch();
+
+      int index = 0;
+      for (final learnedWord in learnedWords) {
+        final storedLearnedWord = await findByWordIdAndUserId(
+          learnedWord.wordId,
+          learnedWord.userId,
+        );
+
+        storedLearnedWord.sortOrder = index;
+
+        batch.update(
+          table,
+          storedLearnedWord.toMap(),
+          where: 'ID = ?',
+          whereArgs: [
+            storedLearnedWord.id,
+          ],
+        );
+
+        index++;
+      }
+
+      await batch.commit(noResult: true);
+    });
+  }
+
+  @override
+  String get table => 'LEARNED_WORD';
+
+  @override
+  Future<void> update(LearnedWord model) async => await super.database.then(
+        (database) => database.update(
+          table,
+          model.toMap(),
+          where: 'ID = ?',
+          whereArgs: [
+            model.id,
+          ],
+        ),
+      );
+
+  Future<void> _correctModelObject({
+    required List<LearnedWord> learnedWords,
+    required String learningLanguage,
+  }) async {
+    final voiceConfiguration = await _voiceConfigurationService.findByLanguage(
+      language: learningLanguage,
+    );
+
+    final baseTtsVoiceUrl =
+        '${voiceConfiguration.ttsBaseUrlHttps}${voiceConfiguration.path}/${voiceConfiguration.voiceType}/token';
+
+    for (final learnedWord in learnedWords) {
+      if (learnedWord.wordString.contains(' ')) {
+        final wordStrings = learnedWord.wordString.split(' ');
+        for (final wordString in wordStrings) {
+          learnedWord.ttsVoiceUrls.add('$baseTtsVoiceUrl/$wordString');
+        }
+      } else {
+        learnedWord.ttsVoiceUrls
+            .add('$baseTtsVoiceUrl/${learnedWord.wordString}');
+      }
+    }
+  }
 }

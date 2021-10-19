@@ -233,7 +233,7 @@ class _CommonLearnedWordCardState extends State<CommonLearnedWordCard> {
         Row(
           mainAxisAlignment: MainAxisAlignment.end,
           children: [
-            if (learnedWord.tipAndNote != null)
+            if (!learnedWord.tipAndNote!.isEmpty())
               IconButton(
                 tooltip: 'Show Tips & Notes',
                 icon: const Icon(Icons.more),

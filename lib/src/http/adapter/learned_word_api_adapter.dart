@@ -43,14 +43,14 @@ class LearnedWordApiAdapter extends ApiAdapter {
       );
 
       final userId = await CommonSharedPreferencesKey.userId.getString();
+      final learnedWords = <LearnedWord>[];
 
       int sortOrder = 0;
       final now = DateTime.now();
       final vocabOverview = jsonMap['vocab_overview'];
       for (final Map<String, dynamic> overview in vocabOverview) {
         final String skill = overview['skill'] ?? '';
-
-        await _learnedWordService.replaceById(
+        learnedWords.add(
           LearnedWord.from(
             wordId: overview['id'],
             userId: userId,
@@ -80,6 +80,10 @@ class LearnedWordApiAdapter extends ApiAdapter {
           ),
         );
       }
+
+      await _learnedWordService.replaceByIds(
+        learnedWords,
+      );
 
       return ApiResponse.from(
         fromApi: FromApi.learnedWord,

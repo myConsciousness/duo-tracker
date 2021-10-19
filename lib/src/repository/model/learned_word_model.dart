@@ -136,7 +136,7 @@ class LearnedWord {
           map[LearnedWordColumn.updatedAt] ?? 0,
         ),
         tipAndNote: map['TAN_ID'] == null
-            ? null
+            ? TipAndNote.empty()
             : TipAndNote.from(
                 id: map['TAN_ID'],
                 skillId: map['TAN_SKILL_ID'],

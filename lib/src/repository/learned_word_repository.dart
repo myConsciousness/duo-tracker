@@ -31,7 +31,7 @@ abstract class LearnedWordRepository extends Repository<LearnedWord> {
     String userId,
   );
 
-  Future<LearnedWord> replaceById(LearnedWord learnedWord);
+  Future<void> replaceByIds(List<LearnedWord> learnedWords);
 
   Future<void> replaceSortOrdersByIds(List<LearnedWord> learnedWords);
 }

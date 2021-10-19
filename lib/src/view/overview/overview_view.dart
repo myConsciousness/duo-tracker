@@ -444,21 +444,16 @@ class _OverviewViewState extends State<OverviewView> {
 
               final List<LearnedWord> learnedWords = snapshot.data;
 
-              return RefreshIndicator(
-                onRefresh: () async {
-                  super.setState(() {});
-                },
-                child: ReorderableListView.builder(
-                  itemCount: learnedWords.length,
-                  onReorder: (oldIndex, newIndex) async => await _sortCards(
-                    learnedWords: learnedWords,
-                    oldIndex: oldIndex,
-                    newIndex: newIndex,
-                  ),
-                  itemBuilder: (context, index) => _buildLearnedWordCard(
-                    index: index,
-                    learnedWord: learnedWords[index],
-                  ),
+              return ReorderableListView.builder(
+                itemCount: learnedWords.length,
+                onReorder: (oldIndex, newIndex) async => await _sortCards(
+                  learnedWords: learnedWords,
+                  oldIndex: oldIndex,
+                  newIndex: newIndex,
+                ),
+                itemBuilder: (_, index) => _buildLearnedWordCard(
+                  index: index,
+                  learnedWord: learnedWords[index],
                 ),
               );
             },
