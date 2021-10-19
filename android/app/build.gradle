@@ -59,10 +59,10 @@ android {
     defaultConfig {
         // TODO: Specify your own unique Application ID (https://developer.android.com/studio/build/application-id.html).
         applicationId "org.thinkit.duotracker"
-        minSdkVersion 24
+        minSdkVersion 21
         targetSdkVersion 31
-        versionCode 17
-        versionName '1.0.5'
+        versionCode 18
+        versionName '1.0.6'
         multiDexEnabled true
     }
 
