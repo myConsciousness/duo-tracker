@@ -2,6 +2,8 @@
 // Use of this source code is governed by a
 // BSD-style license that can be found in the LICENSE file.
 
+import 'package:duo_tracker/src/admob/banner_ad_list.dart';
+import 'package:duo_tracker/src/admob/banner_ad_utils.dart';
 import 'package:duo_tracker/src/component/common_card_header_text.dart';
 import 'package:duo_tracker/src/component/loading.dart';
 import 'package:duo_tracker/src/component/text_with_horizontal_divider.dart';
@@ -25,6 +27,25 @@ class _UserLearnedCoursesViewState extends State<UserLearnedCoursesView> {
 
   /// The format for numeric text
   final _numericTextFormat = NumberFormat('#,###');
+
+  /// The banner ad list
+  final _bannerAdList = BannerAdList.newInstance();
+
+  @override
+  void initState() {
+    super.initState();
+  }
+
+  @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+  }
+
+  @override
+  void dispose() {
+    _bannerAdList.dispose();
+    super.dispose();
+  }
 
   Map<String, List<Course>> _getCourseMatrix({
     required List<Course> courses,
@@ -91,65 +112,84 @@ class _UserLearnedCoursesViewState extends State<UserLearnedCoursesView> {
         itemCount: courseMatrix.length,
         itemBuilder: (BuildContext context, int index) {
           final courses = courseMatrix[keys[index]];
-          return Card(
-            elevation: 5,
-            shape: const RoundedRectangleBorder(
-              borderRadius: BorderRadius.vertical(
-                top: Radius.circular(30),
-                bottom: Radius.circular(30),
+          return Column(
+            children: [
+              FutureBuilder(
+                future: BannerAdUtils.canShow(
+                  index: index,
+                  interval: 1,
+                ),
+                builder: (BuildContext context, AsyncSnapshot snapshot) {
+                  if (!snapshot.hasData || !snapshot.data) {
+                    return Container();
+                  }
+
+                  return BannerAdUtils.createBannerAdWidget(
+                    _bannerAdList.loadNewBanner(),
+                  );
+                },
               ),
-            ),
-            child: Padding(
-              padding: const EdgeInsets.all(10),
-              child: Column(
-                children: [
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.center,
+              Card(
+                elevation: 5,
+                shape: const RoundedRectangleBorder(
+                  borderRadius: BorderRadius.vertical(
+                    top: Radius.circular(30),
+                    bottom: Radius.circular(30),
+                  ),
+                ),
+                child: Padding(
+                  padding: const EdgeInsets.all(10),
+                  child: Column(
                     children: [
-                      CommonCardHeaderText(
-                        subtitle: 'Total XP',
-                        title: _numericTextFormat.format(
-                          _getTotalXp(
-                            courses: courses!,
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          CommonCardHeaderText(
+                            subtitle: 'Total XP',
+                            title: _numericTextFormat.format(
+                              _getTotalXp(
+                                courses: courses!,
+                              ),
+                            ),
                           ),
+                          const SizedBox(
+                            width: 50,
+                          ),
+                          CommonCardHeaderText(
+                            subtitle: 'Total Crowns',
+                            title: _numericTextFormat.format(
+                              _getTotalCrowns(
+                                courses: courses,
+                              ),
+                            ),
+                          ),
+                          const SizedBox(
+                            width: 10,
+                          ),
+                        ],
+                      ),
+                      TextWithHorizontalDivider(
+                        value: LanguageConverter.toNameWithFormal(
+                          languageCode: courses[0].formalFromLanguage,
                         ),
+                        fontSize: 15,
+                        textColor: Theme.of(context).colorScheme.secondary,
+                        fontWeight: FontWeight.bold,
                       ),
                       const SizedBox(
-                        width: 50,
+                        height: 7,
                       ),
-                      CommonCardHeaderText(
-                        subtitle: 'Total Crowns',
-                        title: _numericTextFormat.format(
-                          _getTotalCrowns(
-                            courses: courses,
-                          ),
-                        ),
+                      _buildLearnedCourseChildSection(
+                        courses: courses,
                       ),
                       const SizedBox(
-                        width: 10,
+                        height: 5,
                       ),
                     ],
                   ),
-                  TextWithHorizontalDivider(
-                    value: LanguageConverter.toNameWithFormal(
-                      languageCode: courses[0].formalFromLanguage,
-                    ),
-                    fontSize: 15,
-                    textColor: Theme.of(context).colorScheme.secondary,
-                    fontWeight: FontWeight.bold,
-                  ),
-                  const SizedBox(
-                    height: 7,
-                  ),
-                  _buildLearnedCourseChildSection(
-                    courses: courses,
-                  ),
-                  const SizedBox(
-                    height: 5,
-                  ),
-                ],
+                ),
               ),
-            ),
+            ],
           );
         },
       );

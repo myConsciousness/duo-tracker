@@ -186,7 +186,7 @@ class _OverviewViewState extends State<OverviewView> {
             FutureBuilder(
               future: BannerAdUtils.canShow(
                 index: index,
-                interval: 7,
+                interval: 5,
               ),
               builder: (BuildContext context, AsyncSnapshot snapshot) {
                 if (!snapshot.hasData || !snapshot.data) {
