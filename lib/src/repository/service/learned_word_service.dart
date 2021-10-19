@@ -139,8 +139,28 @@ class LearnedWordService extends LearnedWordRepository {
               TAN.UPDATED_AT TAN_UPDATED_AT
             FROM
               LEARNED_WORD LW
-              INNER JOIN SKILL S ON LW.SKILL = S.NAME
-              INNER JOIN TIP_AND_NOTE TAN ON S.TIP_AND_NOTE_ID = TAN.ID
+              LEFT OUTER JOIN
+                (
+                  SELECT
+                    TANI.ID,
+                    TANI.SKILL_ID,
+                    TANI.SKILL_NAME,
+                    TANI.CONTENT,
+                    TANI.CONTENT_SUMMARY,
+                    TANI.USER_ID,
+                    TANI.FROM_LANGUAGE,
+                    TANI.LEARNING_LANGUAGE,
+                    TANI.FORMAL_FROM_LANGUAGE,
+                    TANI.FORMAL_LEARNING_LANGUAGE,
+                    TANI.SORT_ORDER,
+                    TANI.BOOKMARKED,
+                    TANI.DELETED,
+                    TANI.CREATED_AT,
+                    TANI.UPDATED_AT
+                  FROM
+                    SKILL S
+                    INNER JOIN TIP_AND_NOTE TANI ON S.TIP_AND_NOTE_ID = TANI.ID
+                ) TAN ON LW.SKILL = TAN.SKILL_NAME AND LW.USER_ID = TAN.USER_ID
             WHERE
               1 = 1
               AND LW.USER_ID = ?
@@ -246,8 +266,28 @@ class LearnedWordService extends LearnedWordRepository {
                 TAN.UPDATED_AT TAN_UPDATED_AT
               FROM
                 LEARNED_WORD LW
-                INNER JOIN SKILL S ON LW.SKILL = S.NAME
-                INNER JOIN TIP_AND_NOTE TAN ON S.TIP_AND_NOTE_ID = TAN.ID
+                LEFT OUTER JOIN
+                  (
+                    SELECT
+                      TANI.ID,
+                      TANI.SKILL_ID,
+                      TANI.SKILL_NAME,
+                      TANI.CONTENT,
+                      TANI.CONTENT_SUMMARY,
+                      TANI.USER_ID,
+                      TANI.FROM_LANGUAGE,
+                      TANI.LEARNING_LANGUAGE,
+                      TANI.FORMAL_FROM_LANGUAGE,
+                      TANI.FORMAL_LEARNING_LANGUAGE,
+                      TANI.SORT_ORDER,
+                      TANI.BOOKMARKED,
+                      TANI.DELETED,
+                      TANI.CREATED_AT,
+                      TANI.UPDATED_AT
+                    FROM
+                     SKILL S
+                     INNER JOIN TIP_AND_NOTE TANI ON S.TIP_AND_NOTE_ID = TANI.ID
+                  ) TAN ON LW.SKILL = TAN.SKILL_NAME AND LW.USER_ID = TAN.USER_ID
               WHERE
                 1 = 1
                 AND LW.WORD_ID = ?

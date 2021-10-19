@@ -2,7 +2,6 @@
 // Use of this source code is governed by a
 // BSD-style license that can be found in the LICENSE file.
 
-import 'package:quiver/iterables.dart';
 import 'package:duo_tracker/src/admob/banner_ad_list.dart';
 import 'package:duo_tracker/src/admob/banner_ad_utils.dart';
 import 'package:duo_tracker/src/admob/interstitial_ad_utils.dart';
@@ -50,25 +49,18 @@ class OverviewView extends StatefulWidget {
 }
 
 class _OverviewViewState extends State<OverviewView> {
-  // The per page
-  static const _perPage = 5;
-
   bool _alreadyAuthDialogOpened = false;
   String _appBarSubTitle = '';
 
   /// The banner ad list
   final _bannerAdList = BannerAdList.newInstance();
 
-  final List<Widget> _displayLearnedWordCards = [];
   FilterPattern _filterPattern = FilterPattern.none;
 
   /// The learned word service
   final _learnedWordService = LearnedWordService.getInstance();
 
-  List<LearnedWord> _learnedWords = [];
   MatchPattern _matchPattern = MatchPattern.partial;
-  // The present page
-  int _presentPage = 0;
 
   String _searchWord = '';
   bool _searching = false;
@@ -207,45 +199,42 @@ class _OverviewViewState extends State<OverviewView> {
                 );
               },
             ),
-          CommonLearnedWordCard(
-            learnedWord: learnedWord,
-            folderType: FolderType.none,
-            onPressedComplete: () async {
-              learnedWord.completed = !learnedWord.completed;
-              learnedWord.updatedAt = DateTime.now();
+          if (visible)
+            CommonLearnedWordCard(
+              learnedWord: learnedWord,
+              folderType: FolderType.none,
+              onPressedComplete: () async {
+                learnedWord.completed = !learnedWord.completed;
+                learnedWord.updatedAt = DateTime.now();
 
-              await _learnedWordService.update(learnedWord);
-              super.setState(() {});
-            },
-            onPressedTrash: () async {
-              learnedWord.deleted = !learnedWord.deleted;
-              learnedWord.updatedAt = DateTime.now();
+                await _learnedWordService.update(learnedWord);
+                super.setState(() {});
+              },
+              onPressedTrash: () async {
+                learnedWord.deleted = !learnedWord.deleted;
+                learnedWord.updatedAt = DateTime.now();
 
-              await _learnedWordService.update(learnedWord);
-              super.setState(() {});
-            },
-          ),
+                await _learnedWordService.update(learnedWord);
+                super.setState(() {});
+              },
+            ),
         ],
       ),
     );
   }
 
   Future<void> _sortCards({
+    required List<LearnedWord> learnedWords,
     required int oldIndex,
     required int newIndex,
   }) async {
-    _learnedWords.insert(
+    learnedWords.insert(
       oldIndex < newIndex ? newIndex - 1 : newIndex,
-      _learnedWords.removeAt(oldIndex),
-    );
-
-    _displayLearnedWordCards.insert(
-      oldIndex < newIndex ? newIndex - 1 : newIndex,
-      _displayLearnedWordCards.removeAt(oldIndex),
+      learnedWords.removeAt(oldIndex),
     );
 
     // Update all sort orders
-    await _learnedWordService.replaceSortOrdersByIds(_learnedWords);
+    await _learnedWordService.replaceSortOrdersByIds(learnedWords);
   }
 
   Future<void> _asyncInitState() async {
@@ -425,24 +414,6 @@ class _OverviewViewState extends State<OverviewView> {
         ),
       ];
 
-  void _loadMoreCard() {
-    for (final pageNumber in range(
-      _presentPage,
-      _perPage + _presentPage,
-    )) {
-      final int page = pageNumber as int;
-      _displayLearnedWordCards.add(
-        _buildLearnedWordCard(
-          index: page,
-          learnedWord: _learnedWords[page],
-        ),
-      );
-    }
-
-    // Indicates next page to load
-    _presentPage += _perPage;
-  }
-
   @override
   Widget build(BuildContext context) => Scaffold(
         floatingActionButtonLocation:
@@ -471,25 +442,23 @@ class _OverviewViewState extends State<OverviewView> {
                 return const Loading();
               }
 
-              _learnedWords = snapshot.data;
-              _loadMoreCard();
+              final List<LearnedWord> learnedWords = snapshot.data;
 
-              return NotificationListener<ScrollNotification>(
-                onNotification: (scroll) {
-                  if (scroll.metrics.atEdge && scroll.metrics.pixels != 0) {
-                    super.setState(() {
-                      _loadMoreCard();
-                    });
-                  }
-
-                  return true;
+              return RefreshIndicator(
+                onRefresh: () async {
+                  super.setState(() {});
                 },
-                child: ReorderableListView(
+                child: ReorderableListView.builder(
+                  itemCount: learnedWords.length,
                   onReorder: (oldIndex, newIndex) async => await _sortCards(
+                    learnedWords: learnedWords,
                     oldIndex: oldIndex,
                     newIndex: newIndex,
                   ),
-                  children: _displayLearnedWordCards,
+                  itemBuilder: (context, index) => _buildLearnedWordCard(
+                    index: index,
+                    learnedWord: learnedWords[index],
+                  ),
                 ),
               );
             },

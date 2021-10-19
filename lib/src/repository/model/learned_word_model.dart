@@ -135,26 +135,28 @@ class LearnedWord {
         updatedAt: DateTime.fromMillisecondsSinceEpoch(
           map[LearnedWordColumn.updatedAt] ?? 0,
         ),
-        tipAndNote: TipAndNote.from(
-          id: map['TAN_ID'],
-          skillId: map['TAN_SKILL_ID'],
-          skillName: map['TAN_SKILL_NAME'],
-          content: map['TAN_CONTENT'],
-          contentSummary: map['TAN_CONTENT_SUMMARY'],
-          userId: map['TAN_USER_ID'],
-          fromLanguage: map['TAN_FROM_LANGUAGE'],
-          learningLanguage: map['TAN_LEARNING_LANGUAGE'],
-          formalFromLanguage: map['TAN_FORMAL_FROM_LANGUAGE'],
-          formalLearningLanguage: map['TAN_FORMAL_LEARNING_LANGUAGE'],
-          bookmarked: map['TAN_BOOKMARKED'] == BooleanText.true_,
-          deleted: map['TAN_DELETED'] == BooleanText.true_,
-          createdAt: DateTime.fromMillisecondsSinceEpoch(
-            map['TAN_CREATED_AT'] ?? 0,
-          ),
-          updatedAt: DateTime.fromMillisecondsSinceEpoch(
-            map['TAN_UPDATED_AT'] ?? 0,
-          ),
-        ),
+        tipAndNote: map['TAN_ID'] == null
+            ? TipAndNote.empty()
+            : TipAndNote.from(
+                id: map['TAN_ID'],
+                skillId: map['TAN_SKILL_ID'],
+                skillName: map['TAN_SKILL_NAME'],
+                content: map['TAN_CONTENT'],
+                contentSummary: map['TAN_CONTENT_SUMMARY'],
+                userId: map['TAN_USER_ID'],
+                fromLanguage: map['TAN_FROM_LANGUAGE'],
+                learningLanguage: map['TAN_LEARNING_LANGUAGE'],
+                formalFromLanguage: map['TAN_FORMAL_FROM_LANGUAGE'],
+                formalLearningLanguage: map['TAN_FORMAL_LEARNING_LANGUAGE'],
+                bookmarked: map['TAN_BOOKMARKED'] == BooleanText.true_,
+                deleted: map['TAN_DELETED'] == BooleanText.true_,
+                createdAt: DateTime.fromMillisecondsSinceEpoch(
+                  map['TAN_CREATED_AT'] ?? 0,
+                ),
+                updatedAt: DateTime.fromMillisecondsSinceEpoch(
+                  map['TAN_UPDATED_AT'] ?? 0,
+                ),
+              ),
       );
 
   /// Returns this [LearnedWord] model as [Map].
