@@ -4,9 +4,11 @@
 
 import 'package:duo_tracker/src/admob/banner_ad_list.dart';
 import 'package:duo_tracker/src/admob/banner_ad_utils.dart';
+import 'package:duo_tracker/src/admob/interstitial_ad_utils.dart';
 import 'package:duo_tracker/src/component/common_app_bar_titles.dart';
 import 'package:duo_tracker/src/component/common_learned_word_card.dart';
 import 'package:duo_tracker/src/component/common_nested_scroll_view.dart';
+import 'package:duo_tracker/src/repository/preference/interstitial_ad_shared_preferences_key.dart';
 import 'package:duo_tracker/src/view/folder/folder_type.dart';
 import 'package:duo_tracker/src/component/loading.dart';
 import 'package:duo_tracker/src/repository/model/folder_item_model.dart';
@@ -118,6 +120,11 @@ class _FolderItemsViewState extends State<FolderItemsView> {
                       ttsVoiceUrls: folderItem.learnedWord!.ttsVoiceUrls,
                     );
                   }
+
+                  await InterstitialAdUtils.showInterstitialAd(
+                    sharedPreferencesKey:
+                        InterstitialAdSharedPreferencesKey.countPlayAudio,
+                  );
                 },
               ),
           ],

@@ -103,6 +103,11 @@ class _CommonLearnedWordCardState extends State<CommonLearnedWordCard> {
           await AudioPlayerUtils.play(
             ttsVoiceUrls: learnedWord.ttsVoiceUrls,
           );
+
+          await InterstitialAdUtils.showInterstitialAd(
+            sharedPreferencesKey:
+                InterstitialAdSharedPreferencesKey.countPlayAudio,
+          );
         },
       );
 
