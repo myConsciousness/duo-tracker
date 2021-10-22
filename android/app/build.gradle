@@ -61,8 +61,8 @@ android {
         applicationId "org.thinkit.duotracker"
         minSdkVersion 21
         targetSdkVersion 31
-        versionCode 18
-        versionName '1.0.6'
+        versionCode 19
+        versionName '1.0.7'
         multiDexEnabled true
     }
 

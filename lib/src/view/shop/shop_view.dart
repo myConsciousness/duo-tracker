@@ -58,7 +58,7 @@ class _ShopViewState extends State<ShopView> {
   }
 
   Widget _buildWalletCard() => Padding(
-        padding: const EdgeInsets.fromLTRB(50, 5, 50, 5),
+        padding: const EdgeInsets.fromLTRB(30, 5, 30, 5),
         child: Card(
           clipBehavior: Clip.antiAlias,
           elevation: 5,
