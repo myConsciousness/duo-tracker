@@ -110,4 +110,19 @@ class SkillService extends SkillRepository {
           ],
         ),
       );
+
+  @override
+  Future<void> insertAll({
+    required List<Skill> skills,
+  }) async {
+    await database.then((database) async {
+      final batch = database.batch();
+
+      for (final skill in skills) {
+        batch.insert(table, skill.toMap());
+      }
+
+      await batch.commit(noResult: true);
+    });
+  }
 }

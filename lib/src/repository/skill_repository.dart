@@ -9,4 +9,8 @@ abstract class SkillRepository extends Repository<Skill> {
   Future<Skill> findByName({
     required String name,
   });
+
+  Future<void> insertAll({
+    required List<Skill> skills,
+  });
 }

@@ -11,4 +11,8 @@ abstract class CourseRepository extends Repository<Course> {
   });
 
   Future<List<Course>> findAllOrderByFormalFromLanguageAndXpDesc();
+
+  Future<void> insertAll({
+    required List<Course> courses,
+  });
 }

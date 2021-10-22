@@ -131,9 +131,10 @@ class UserApiAdapter extends ApiAdapter {
   }) async {
     await _courseService.deleteAll();
 
+    final courses = <Course>[];
     final now = DateTime.now();
     for (final Map<String, dynamic> course in json['courses']) {
-      await _courseService.insert(
+      courses.add(
         Course.from(
           courseId: course['id'],
           title: course['title'],
@@ -150,6 +151,8 @@ class UserApiAdapter extends ApiAdapter {
         ),
       );
     }
+
+    await _courseService.insertAll(courses: courses);
   }
 
   Future<void> _refreshSkill({
@@ -170,12 +173,12 @@ class UserApiAdapter extends ApiAdapter {
     final now = DateTime.now();
     for (final List<dynamic> skillsInternal in json['currentCourse']
         ['skills']) {
+      final skills = <Skill>[];
       for (final Map<String, dynamic> skill in skillsInternal) {
         final skillId = skill['id'];
         final skillName = skill['name'];
-        final content = skill['tipsAndNotes'] ?? '';
 
-        await _skillService.insert(
+        skills.add(
           Skill.from(
             skillId: skillId,
             name: skillName,
@@ -191,7 +194,7 @@ class UserApiAdapter extends ApiAdapter {
             tipAndNoteId: await _fetchTipAndNoteId(
               skillId: skillId,
               skillName: skillName,
-              content: content,
+              content: skill['tipsAndNotes'] ?? '',
               userId: userId,
               fromLanguage: fromLanguage,
               learningLanguage: learningLanguage,
@@ -204,6 +207,8 @@ class UserApiAdapter extends ApiAdapter {
           ),
         );
       }
+
+      await _skillService.insertAll(skills: skills);
     }
   }
 

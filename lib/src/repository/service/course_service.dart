@@ -118,4 +118,19 @@ class CourseService extends CourseRepository {
                       .toList(),
                 ),
           );
+
+  @override
+  Future<void> insertAll({
+    required List<Course> courses,
+  }) async {
+    await database.then((database) async {
+      final batch = database.batch();
+
+      for (final course in courses) {
+        batch.insert(table, course.toMap());
+      }
+
+      await batch.commit(noResult: true);
+    });
+  }
 }
