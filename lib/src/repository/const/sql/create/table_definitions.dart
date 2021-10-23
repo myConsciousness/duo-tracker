@@ -155,7 +155,7 @@ class TableDefinitions {
   /// The purchase history
   static const purchaseHistory = '''
         CREATE TABLE PURCHASE_HISTORY (
-          ID INTEGER NOT NULL PRIMARY KEY,
+          ID INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT,
           PRODUCT_NAME TEXT NOT NULL,
           PRICE INTEGER NOT NULL,
           PRICE_TYPE INTEGER NOT NULL,
@@ -170,7 +170,7 @@ class TableDefinitions {
   /// The learned word folder
   static const folder = '''
         CREATE TABLE FOLDER (
-          ID INTEGER NOT NULL PRIMARY KEY,
+          ID INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT,
           PARENT_FOLDER_ID INTEGER NOT NULL,
           FOLDER_TYPE INTEGER NOT NULL,
           NAME TEXT NOT NULL,
@@ -190,7 +190,7 @@ class TableDefinitions {
   /// The learned word folder item
   static const folderItem = '''
         CREATE TABLE FOLDER_ITEM (
-          ID INTEGER NOT NULL PRIMARY KEY,
+          ID INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT,
           FOLDER_ID INTEGER NOT NULL,
           WORD_ID TEXT NOT NULL,
           SENTENCE_GROUP_ID INTEGER NOT NULL,
@@ -206,7 +206,7 @@ class TableDefinitions {
   /// The learned word sentence
   static const learnedWordSentence = '''
         CREATE TABLE LEARNED_WORD_SENTENCE (
-          ID INTEGER NOT NULL PRIMARY KEY,
+          ID INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT,
           GROUP_ID INTEGER NOT NULL,
           WORD_ID TEXT NOT NULL,
           USER_ID TEXT NOT NULL,
@@ -220,7 +220,7 @@ class TableDefinitions {
   /// The tip and note
   static const tipAndNote = '''
         CREATE TABLE TIP_AND_NOTE (
-          ID INTEGER NOT NULL PRIMARY KEY,
+          ID INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT,
           SKILL_ID TEXT NOT NULL,
           SKILL_NAME TEXT NOT NULL,
           CONTENT TEXT NOT NULL,
