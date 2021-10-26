@@ -89,9 +89,7 @@ flutter:
   uses-material-design: true
   generate: true
   assets:
-    - assets/icon/bowie.png
     - assets/icon/bowie_license.png
-    - assets/icon/mochi.png
 
 flavorizr:
   app:
