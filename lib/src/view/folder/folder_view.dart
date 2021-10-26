@@ -181,7 +181,9 @@ class _FolderViewState extends State<FolderView> {
                   ),
                   title: Row(
                     children: [
-                      Text(folder.name),
+                      Flexible(
+                        child: Text(folder.name),
+                      ),
                       IconButton(
                         icon: const Icon(Icons.edit, size: 20),
                         onPressed: () async {
