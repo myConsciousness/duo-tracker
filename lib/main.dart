@@ -96,17 +96,17 @@ class _DuoTrackerState extends State<DuoTracker> with WidgetsBindingObserver {
   Widget build(BuildContext context) => ChangeNotifierProvider(
         create: (_) => _themeModeProvider,
         child: Consumer<ThemeModeProvider>(
-          builder: (context, _, __) {
+          builder: (_, themeModeProvider, __) {
             SystemChrome.setSystemUIOverlayStyle(
               SystemUiOverlayStyle(
-                statusBarColor: _themeModeProvider.appliedDarkTheme
+                statusBarColor: themeModeProvider.appliedDarkTheme
                     ? Colors.grey[800]!
                     : Colors.blue,
-                systemNavigationBarColor: _themeModeProvider.appliedDarkTheme
+                systemNavigationBarColor: themeModeProvider.appliedDarkTheme
                     ? Colors.grey[850]!
                     : Colors.grey[50]!,
                 systemNavigationBarIconBrightness:
-                    _themeModeProvider.appliedDarkTheme
+                    themeModeProvider.appliedDarkTheme
                         ? Brightness.light
                         : Brightness.dark,
               ),
@@ -115,12 +115,12 @@ class _DuoTrackerState extends State<DuoTracker> with WidgetsBindingObserver {
             return MaterialApp(
               debugShowCheckedModeBanner: false,
               theme: ThemeData(
-                brightness: _themeModeProvider.appliedDarkTheme
+                brightness: themeModeProvider.appliedDarkTheme
                     ? Brightness.dark
                     : Brightness.light,
                 typography: Typography.material2018(),
                 textTheme: GoogleFonts.latoTextTheme(
-                  _themeModeProvider.appliedDarkTheme
+                  themeModeProvider.appliedDarkTheme
                       ? Typography.whiteMountainView
                       : Typography.blackMountainView,
                 ),
