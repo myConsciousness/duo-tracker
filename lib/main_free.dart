@@ -3,6 +3,7 @@
 // BSD-style license that can be found in the LICENSE file.
 
 import 'package:duo_tracker/main.dart';
+import 'package:duo_tracker/src/provider/theme_mode_provider.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_flavor/flutter_flavor.dart';
 import 'package:google_mobile_ads/google_mobile_ads.dart';
@@ -15,6 +16,8 @@ void main() async {
   RequestConfiguration configuration =
       RequestConfiguration(testDeviceIds: ['12FA608E7D2E2A96D30BE9C3D4A6ACA5']);
   await MobileAds.instance.updateRequestConfiguration(configuration);
+
+  await ThemeModeProvider.getInstance().init();
 
   FlavorConfig(
     variables: {

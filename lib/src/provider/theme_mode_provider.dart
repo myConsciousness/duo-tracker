@@ -6,16 +6,22 @@ import 'package:duo_tracker/src/repository/preference/common_shared_preferences_
 import 'package:flutter/material.dart';
 
 class ThemeModeProvider with ChangeNotifier {
-  ThemeModeProvider() {
-    _asyncInit();
-  }
+  /// The internal constructor.
+  ThemeModeProvider._internal();
+
+  /// Returns the singleton instance of [ThemeModeProvider].
+  factory ThemeModeProvider.getInstance() => _singletonInstance;
+
+  /// The singleton instance of this [ThemeModeProvider].
+  static final _singletonInstance = ThemeModeProvider._internal();
 
   bool _appliedDarkTheme = false;
 
-  Future<void> _asyncInit() async {
+  Future<void> init() async {
     await notify(
-        appliedDarkTheme:
-            await CommonSharedPreferencesKey.applyDarkTheme.getBool());
+      appliedDarkTheme:
+          await CommonSharedPreferencesKey.applyDarkTheme.getBool(),
+    );
   }
 
   bool get appliedDarkTheme => _appliedDarkTheme;

@@ -3,12 +3,15 @@
 // BSD-style license that can be found in the LICENSE file.
 
 import 'package:duo_tracker/main.dart';
+import 'package:duo_tracker/src/provider/theme_mode_provider.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_flavor/flutter_flavor.dart';
 import 'flavors.dart';
 
-void main() {
-  F.appFlavor = Flavor.paid;
+void main() async {
+  WidgetsFlutterBinding.ensureInitialized();
+
+  await ThemeModeProvider.getInstance().init();
 
   FlavorConfig(
     variables: {
@@ -16,5 +19,6 @@ void main() {
     },
   );
 
+  F.appFlavor = Flavor.paid;
   runApp(const DuoTracker());
 }

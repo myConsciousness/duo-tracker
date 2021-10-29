@@ -29,8 +29,8 @@ class _DuoTrackerState extends State<DuoTracker> with WidgetsBindingObserver {
   /// The rewarded ad resolver
   final _rewardedAdResolver = RewardedAdResolver.getInstance();
 
-  /// The sheme mode provider
-  final _themeModeProvider = ThemeModeProvider();
+  /// The theme mode provider
+  final _themeModeProvider = ThemeModeProvider.getInstance();
 
   @override
   void didChangeAppLifecycleState(AppLifecycleState state) async {
