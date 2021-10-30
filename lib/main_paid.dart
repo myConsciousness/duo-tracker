@@ -10,8 +10,7 @@ import 'flavors.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
-
-  await ThemeModeProvider.getInstance().init();
+  await ThemeModeProvider.getInstance().initialize();
 
   FlavorConfig(
     variables: {

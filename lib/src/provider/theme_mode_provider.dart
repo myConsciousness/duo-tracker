@@ -17,7 +17,7 @@ class ThemeModeProvider with ChangeNotifier {
 
   bool _appliedDarkTheme = false;
 
-  Future<void> init() async {
+  Future<void> initialize() async {
     await notify(
       appliedDarkTheme:
           await CommonSharedPreferencesKey.applyDarkTheme.getBool(),
