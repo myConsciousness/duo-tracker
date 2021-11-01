@@ -2,6 +2,7 @@
 // Use of this source code is governed by a
 // BSD-style license that can be found in the LICENSE file.
 
+import 'package:duo_tracker/flavors.dart';
 import 'package:duo_tracker/src/component/common_default_tab_controller.dart';
 import 'package:duo_tracker/src/view/analysis/proficiency_analysis_view.dart';
 import 'package:duo_tracker/src/view/folder/folder_tab_view.dart';
@@ -56,27 +57,28 @@ class _DuoTrackerHomeViewState extends State<DuoTrackerHomeView> {
   }
 
   @override
-  Widget build(BuildContext context) => const CommonDefaultTabController(
-        length: 7,
+  Widget build(BuildContext context) => CommonDefaultTabController(
+        length: F.isFreeBuild ? 6 : 7,
         labelFontSize: 12.0,
         unselectedLabelFontSize: 11.0,
         tabs: [
-          Tab(icon: Icon(FontAwesomeIcons.listAlt, size: 16)),
-          Tab(icon: Icon(Icons.more, size: 20)),
-          Tab(icon: Icon(FontAwesomeIcons.folderOpen, size: 16)),
-          Tab(icon: Icon(FontAwesomeIcons.chartPie, size: 16)),
-          Tab(icon: Icon(FontAwesomeIcons.userAlt, size: 16)),
-          Tab(icon: Icon(FontAwesomeIcons.shoppingCart, size: 16)),
-          Tab(icon: Icon(Icons.settings, size: 20)),
+          const Tab(icon: Icon(FontAwesomeIcons.listAlt, size: 16)),
+          const Tab(icon: Icon(Icons.more, size: 20)),
+          const Tab(icon: Icon(FontAwesomeIcons.folderOpen, size: 16)),
+          const Tab(icon: Icon(FontAwesomeIcons.chartPie, size: 16)),
+          const Tab(icon: Icon(FontAwesomeIcons.userAlt, size: 16)),
+          if (F.isFreeBuild)
+            const Tab(icon: Icon(FontAwesomeIcons.shoppingCart, size: 16)),
+          const Tab(icon: Icon(Icons.settings, size: 20)),
         ],
         body: [
-          OverviewTabView(),
-          TipsAndNotesTabView(),
-          FolderTabView(),
-          ProficiencyAnalysisView(),
-          UserAccountTabView(),
-          ShopView(),
-          SettingsTabView(),
+          const OverviewTabView(),
+          const TipsAndNotesTabView(),
+          const FolderTabView(),
+          const ProficiencyAnalysisView(),
+          const UserAccountTabView(),
+          if (F.isFreeBuild) const ShopView(),
+          const SettingsTabView(),
         ],
       );
 }
