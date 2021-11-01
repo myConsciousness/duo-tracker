@@ -4,6 +4,7 @@
 
 import 'package:duo_tracker/src/admob/banner_ad_utils.dart';
 import 'package:duo_tracker/src/component/chart/tracker_column_chart.dart';
+import 'package:duo_tracker/src/component/common_divider.dart';
 import 'package:duo_tracker/src/component/loading.dart';
 import 'package:duo_tracker/src/repository/service/chart_service.dart';
 import 'package:duo_tracker/src/view/analysis/proficiency_range.dart';
@@ -109,6 +110,10 @@ class _ProficiencyAnalysisViewState extends State<ProficiencyAnalysisView> {
                       },
                     ),
                   ),
+                  const CommonDivider(),
+                  const SizedBox(
+                    height: 10,
+                  ),
                   Column(
                     children: [
                       Center(
@@ -117,6 +122,7 @@ class _ProficiencyAnalysisViewState extends State<ProficiencyAnalysisView> {
                           style: TextStyle(
                             color: Theme.of(context).colorScheme.secondary,
                             fontSize: 14,
+                            fontWeight: FontWeight.bold,
                           ),
                         ),
                       ),
@@ -142,7 +148,7 @@ class _ProficiencyAnalysisViewState extends State<ProficiencyAnalysisView> {
                     ],
                   ),
                   const SizedBox(
-                    height: 20,
+                    height: 25,
                   ),
                   Column(
                     children: [
@@ -152,6 +158,7 @@ class _ProficiencyAnalysisViewState extends State<ProficiencyAnalysisView> {
                           style: TextStyle(
                             color: Theme.of(context).colorScheme.secondary,
                             fontSize: 14,
+                            fontWeight: FontWeight.bold,
                           ),
                         ),
                       ),

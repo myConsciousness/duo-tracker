@@ -98,6 +98,7 @@ Future<T?> showSelectFilterMethodDialog<T>({
                     'Filter Item',
                     style: TextStyle(
                       color: Theme.of(context).colorScheme.secondary,
+                      fontWeight: FontWeight.bold,
                     ),
                   ),
                 ),

@@ -67,7 +67,10 @@ class _CommonTextFieldState extends State<CommonTextField> {
           if (widget.label != null)
             Text(
               widget.label!,
-              style: TextStyle(color: Theme.of(context).colorScheme.secondary),
+              style: TextStyle(
+                color: Theme.of(context).colorScheme.secondary,
+                fontWeight: FontWeight.bold,
+              ),
             ),
           if (widget.label != null)
             const SizedBox(

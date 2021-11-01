@@ -61,7 +61,6 @@ Future<T?> showSwitchLanguageDialog<T>({
                     'Select Language',
                     style: TextStyle(
                       fontSize: 20,
-                      fontWeight: FontWeight.bold,
                     ),
                   ),
                 ),
@@ -191,6 +190,7 @@ Widget _createDropdownBelow({
           style: TextStyle(
             color: Theme.of(context).colorScheme.secondary,
             fontSize: 16,
+            fontWeight: FontWeight.bold,
           ),
         ),
         const SizedBox(
