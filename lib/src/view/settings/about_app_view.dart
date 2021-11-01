@@ -105,7 +105,7 @@ class _AboutAppViewState extends State<AboutAppView> {
                       '''Duo Tracker is the best app to support your learning with Duolingo!
 Your language learning will be accelerated with this app!
 
-#Duolingo #DuoTracker #Tracker #Learn #App #Android #DL
+#Duolingo #DuoTracker #Tracker #Learn #App #Android #DL #Flutter
 https://play.google.com/store/apps/details?id=${packageInfo.packageName}
                       ''',
                       subject: 'This is ${packageInfo.appName}!',

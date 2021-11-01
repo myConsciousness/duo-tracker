@@ -26,6 +26,7 @@ void main() async {
   FlavorConfig(
     variables: {
       'androidId': 'org.thinkit.free.duotracker',
+      'paidPackageId': 'org.thinkit.paid.duotracker',
     },
   );
 

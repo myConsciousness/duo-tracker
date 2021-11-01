@@ -58,7 +58,7 @@ class _DuoTrackerHomeViewState extends State<DuoTrackerHomeView> {
 
   @override
   Widget build(BuildContext context) => CommonDefaultTabController(
-        length: F.isFreeBuild ? 6 : 7,
+        length: F.isFreeBuild ? 7 : 6,
         labelFontSize: 12.0,
         unselectedLabelFontSize: 11.0,
         tabs: [
