@@ -1,12 +1,12 @@
 # Promotion
 
-## Titlt
+## Title
 
-Duo Tracker: Ultimate Tracker for Duolingo
+Ultimate Tracker for Duolingo!
 
 ## Remarks
 
-The ultimate tracker to power your learning on Duolingo!
+Beautiful and cool tracker to power your learning on Duolingo!
 
 ## Body
 
