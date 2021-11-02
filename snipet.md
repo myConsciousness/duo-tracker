@@ -23,7 +23,7 @@
 
 | 製品名      | 区分 | 最新バージョン |
 | ----------- | ---- | -------------- |
-| Duo Tracker | Free | 1.0.10         |
+| Duo Tracker | Free | 1.1.0          |
 | Duo Tracker | Paid | 1.1.0          |
 
 ## 1.2. Flavor の作り方
