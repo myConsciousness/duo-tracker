@@ -2,13 +2,13 @@
 // Use of this source code is governed by a
 // BSD-style license that can be found in the LICENSE file.
 
+import 'package:duo_tracker/flavors.dart';
 import 'package:duo_tracker/src/component/common_divider.dart';
-import 'package:duo_tracker/src/component/dialog/network_error_dialog.dart';
-import 'package:duo_tracker/src/http/network.dart';
 import 'package:duo_tracker/src/view/settings/request_mail_meta.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_email_sender/flutter_email_sender.dart';
+import 'package:flutter_flavor/flutter_flavor.dart';
 import 'package:launch_review/launch_review.dart';
 import 'package:package_info/package_info.dart';
 import 'package:share/share.dart';
@@ -119,7 +119,8 @@ https://play.google.com/store/apps/details?id=${packageInfo.packageName}
                     final PackageInfo packageInfo =
                         await PackageInfo.fromPlatform();
 
-                    LaunchReview.launch(androidAppId: packageInfo.packageName);
+                    await LaunchReview.launch(
+                        androidAppId: packageInfo.packageName);
                   },
                 ),
                 _createListTile(
@@ -168,29 +169,31 @@ THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND 
                   title: 'Send Your Opinion',
                   subtitle:
                       'You can directly request new features or improvements to existing features to a developer.',
-                  onTap: () async {
-                    await FlutterEmailSender.send(
-                      Email(
-                        recipients: [RequestMailMeta.recipientAddress],
-                        subject: RequestMailMeta.subject,
-                        body: RequestMailMeta.body,
-                        isHTML: false,
-                      ),
-                    );
-                  },
+                  onTap: () async => await FlutterEmailSender.send(
+                    Email(
+                      recipients: [
+                        RequestMailMeta.recipientAddress,
+                      ],
+                      subject: RequestMailMeta.subject,
+                      body: RequestMailMeta.body,
+                      isHTML: false,
+                    ),
+                  ),
                 ),
                 _createListTile(
                   icon: const Icon(Icons.people),
                   title: 'About Author',
-                  onTap: () async {
-                    if (!await Network.isConnected()) {
-                      await showNetworkErrorDialog(context: context);
-                      return;
-                    }
-
-                    await launch('https://github.com/myConsciousness');
-                  },
+                  onTap: () async =>
+                      await launch('https://github.com/myConsciousness'),
                 ),
+                if (F.isFreeBuild) const CommonDivider(),
+                if (F.isFreeBuild)
+                  _createListTile(
+                    icon: const Icon(Icons.money),
+                    title: 'Get NoAds Version',
+                    onTap: () async => await launch(
+                        'https://play.google.com/store/apps/details?id=${FlavorConfig.instance.variables['paidPackageId']}'),
+                  ),
               ],
             ),
           ),
