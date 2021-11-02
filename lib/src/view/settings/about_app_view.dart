@@ -189,7 +189,7 @@ THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND 
                 if (F.isFreeBuild) const CommonDivider(),
                 if (F.isFreeBuild)
                   _createListTile(
-                    icon: const Icon(Icons.money),
+                    icon: const Icon(Icons.paid),
                     title: 'Get NoAds Version',
                     onTap: () async => await launch(
                         'https://play.google.com/store/apps/details?id=${FlavorConfig.instance.variables['paidPackageId']}'),

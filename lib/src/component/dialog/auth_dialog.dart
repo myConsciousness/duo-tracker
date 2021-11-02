@@ -50,7 +50,7 @@ Future<bool> showAuthDialog({
                 ),
                 CommonTextField(
                   controller: _usernameController,
-                  hintText: 'Username or Email (required)',
+                  hintText: 'Username or Email',
                   prefixIcon: Icon(
                     Icons.person,
                     color: Theme.of(context).colorScheme.secondary,
@@ -64,7 +64,7 @@ Future<bool> showAuthDialog({
                 ),
                 CommonTextField(
                   controller: _passwordController,
-                  hintText: 'Password (required)',
+                  hintText: 'Password',
                   maskText: true,
                   prefixIcon: Icon(
                     Icons.lock,

@@ -13,14 +13,11 @@ import 'package:duo_tracker/src/component/snackbar/info_snack_bar.dart';
 import 'package:duo_tracker/src/view/folder/folder_type.dart';
 import 'package:duo_tracker/src/component/const/match_pattern.dart';
 import 'package:duo_tracker/src/component/dialog/loading_dialog.dart';
-import 'package:duo_tracker/src/component/dialog/network_error_dialog.dart';
 import 'package:duo_tracker/src/component/dialog/select_filter_method_dialog.dart';
 import 'package:duo_tracker/src/component/dialog/select_search_method_dialog.dart';
-import 'package:duo_tracker/src/component/dialog/switch_language_dialog.dart';
 import 'package:duo_tracker/src/component/dialog/select_sort_method_dialog.dart';
 import 'package:duo_tracker/src/component/loading.dart';
 import 'package:duo_tracker/src/repository/preference/common_shared_preferences_key.dart';
-import 'package:duo_tracker/src/http/network.dart';
 import 'package:duo_tracker/src/repository/model/learned_word_model.dart';
 import 'package:duo_tracker/src/repository/preference/interstitial_ad_shared_preferences_key.dart';
 import 'package:duo_tracker/src/repository/service/learned_word_service.dart';
@@ -134,11 +131,12 @@ class _OverviewViewState extends State<OverviewView> {
         );
       }
 
-      await showLoadingDialog(
-        context: context,
-        title: 'Updating User Information',
-        future: DuolingoApiUtils.refreshUser(context: context),
-      );
+      // TODO: User情報取得APIの不具合による調整
+      // await showLoadingDialog(
+      //   context: context,
+      //   title: 'Updating User Information',
+      //   future: DuolingoApiUtils.refreshUser(context: context),
+      // );
 
       await showLoadingDialog(
         context: context,
@@ -390,31 +388,32 @@ class _OverviewViewState extends State<OverviewView> {
             super.setState(() {});
           },
         ),
-        _buildSpeedDialChild(
-          icon: FontAwesomeIcons.language,
-          label: 'Switch Language',
-          onTap: () async {
-            if (!await Network.isConnected()) {
-              await showNetworkErrorDialog(context: context);
-              return;
-            }
+        // TODO: User情報取得APIの不具合による調整
+        // _buildSpeedDialChild(
+        //   icon: FontAwesomeIcons.language,
+        //   label: 'Switch Language',
+        //   onTap: () async {
+        //     if (!await Network.isConnected()) {
+        //       await showNetworkErrorDialog(context: context);
+        //       return;
+        //     }
 
-            await showSwitchLanguageDialog(
-              context: context,
-              onSubmitted: (fromLanguage, learningLanguage) async {
-                await _syncLearnedWords(
-                  switchFromLanguage: fromLanguage,
-                  switchLearningLanguage: learningLanguage,
-                );
-                await _searchLearnedWords();
+        //     await showSwitchLanguageDialog(
+        //       context: context,
+        //       onSubmitted: (fromLanguage, learningLanguage) async {
+        //         await _syncLearnedWords(
+        //           switchFromLanguage: fromLanguage,
+        //           switchLearningLanguage: learningLanguage,
+        //         );
+        //         await _searchLearnedWords();
 
-                super.setState(() {
-                  _buildAppBarSubTitle();
-                });
-              },
-            );
-          },
-        ),
+        //         super.setState(() {
+        //           _buildAppBarSubTitle();
+        //         });
+        //       },
+        //     );
+        //   },
+        // ),
       ];
 
   @override
