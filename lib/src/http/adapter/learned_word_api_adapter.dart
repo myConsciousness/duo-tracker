@@ -35,13 +35,6 @@ class LearnedWordApiAdapter extends ApiAdapter {
       final String learningLanguage = jsonMap['learning_language'];
       final String fromLanguage = jsonMap['from_language'];
 
-      // TODO: User情報取得APIの不具合による暫定対応
-      // TODO: User情報取得APIが正常に機能するようになったら以下の設定処理を消す
-      await CommonSharedPreferencesKey.currentLearningLanguage
-          .setString(learningLanguage);
-      await CommonSharedPreferencesKey.currentFromLanguage
-          .setString(fromLanguage);
-
       final formalLearningLanguage = LanguageConverter.toFormalLanguageCode(
         languageCode: learningLanguage,
       );

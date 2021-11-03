@@ -22,6 +22,7 @@ class Session {
 
   http.Response updateCookie({required final http.Response response}) {
     _headers['cookie'] = response.headers['set-cookie'] ?? '';
+    _headers['Authorization'] = 'Bearer ${response.headers['jwt']}';
     return response;
   }
 }

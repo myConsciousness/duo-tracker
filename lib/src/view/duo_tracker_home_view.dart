@@ -4,10 +4,13 @@
 
 import 'package:duo_tracker/flavors.dart';
 import 'package:duo_tracker/src/component/common_default_tab_controller.dart';
+import 'package:duo_tracker/src/view/analysis/proficiency_analysis_view.dart';
 import 'package:duo_tracker/src/view/folder/folder_tab_view.dart';
 import 'package:duo_tracker/src/view/overview/overview_tab_view.dart';
 import 'package:duo_tracker/src/view/settings/settings_tab_view.dart';
 import 'package:duo_tracker/src/view/shop/shop_view.dart';
+import 'package:duo_tracker/src/view/tips/tips_and_notes_tab_view.dart';
+import 'package:duo_tracker/src/view/user/user_account_tab_view.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_flavor/flutter_flavor.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
@@ -55,25 +58,25 @@ class _DuoTrackerHomeViewState extends State<DuoTrackerHomeView> {
 
   @override
   Widget build(BuildContext context) => CommonDefaultTabController(
-        length: F.isFreeBuild ? 4 : 3,
+        length: F.isFreeBuild ? 7 : 6,
         labelFontSize: 12.0,
         unselectedLabelFontSize: 11.0,
         tabs: [
           const Tab(icon: Icon(FontAwesomeIcons.listAlt, size: 16)),
-          // const Tab(icon: Icon(Icons.more, size: 20)),
+          const Tab(icon: Icon(Icons.more, size: 20)),
           const Tab(icon: Icon(FontAwesomeIcons.folderOpen, size: 16)),
-          // const Tab(icon: Icon(FontAwesomeIcons.chartPie, size: 16)),
-          // const Tab(icon: Icon(FontAwesomeIcons.userAlt, size: 16)),
+          const Tab(icon: Icon(FontAwesomeIcons.chartPie, size: 16)),
+          const Tab(icon: Icon(FontAwesomeIcons.userAlt, size: 16)),
           if (F.isFreeBuild)
             const Tab(icon: Icon(FontAwesomeIcons.shoppingCart, size: 16)),
           const Tab(icon: Icon(Icons.settings, size: 20)),
         ],
         body: [
           const OverviewTabView(),
-          // const TipsAndNotesTabView(),
+          const TipsAndNotesTabView(),
           const FolderTabView(),
-          // const ProficiencyAnalysisView(),
-          // const UserAccountTabView(),
+          const ProficiencyAnalysisView(),
+          const UserAccountTabView(),
           if (F.isFreeBuild) const ShopView(),
           const SettingsTabView(),
         ],

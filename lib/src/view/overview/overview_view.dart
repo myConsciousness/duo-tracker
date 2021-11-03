@@ -9,7 +9,10 @@ import 'package:duo_tracker/src/component/common_app_bar_titles.dart';
 import 'package:duo_tracker/src/component/common_learned_word_card.dart';
 import 'package:duo_tracker/src/component/common_nested_scroll_view.dart';
 import 'package:duo_tracker/src/component/const/filter_pattern.dart';
+import 'package:duo_tracker/src/component/dialog/network_error_dialog.dart';
+import 'package:duo_tracker/src/component/dialog/switch_language_dialog.dart';
 import 'package:duo_tracker/src/component/snackbar/info_snack_bar.dart';
+import 'package:duo_tracker/src/http/network.dart';
 import 'package:duo_tracker/src/view/folder/folder_type.dart';
 import 'package:duo_tracker/src/component/const/match_pattern.dart';
 import 'package:duo_tracker/src/component/dialog/loading_dialog.dart';
@@ -131,12 +134,11 @@ class _OverviewViewState extends State<OverviewView> {
         );
       }
 
-      // TODO: User情報取得APIの不具合による調整
-      // await showLoadingDialog(
-      //   context: context,
-      //   title: 'Updating User Information',
-      //   future: DuolingoApiUtils.refreshUser(context: context),
-      // );
+      await showLoadingDialog(
+        context: context,
+        title: 'Updating User Information',
+        future: DuolingoApiUtils.refreshUser(context: context),
+      );
 
       await showLoadingDialog(
         context: context,
@@ -388,32 +390,31 @@ class _OverviewViewState extends State<OverviewView> {
             super.setState(() {});
           },
         ),
-        // TODO: User情報取得APIの不具合による調整
-        // _buildSpeedDialChild(
-        //   icon: FontAwesomeIcons.language,
-        //   label: 'Switch Language',
-        //   onTap: () async {
-        //     if (!await Network.isConnected()) {
-        //       await showNetworkErrorDialog(context: context);
-        //       return;
-        //     }
+        _buildSpeedDialChild(
+          icon: FontAwesomeIcons.language,
+          label: 'Switch Language',
+          onTap: () async {
+            if (!await Network.isConnected()) {
+              await showNetworkErrorDialog(context: context);
+              return;
+            }
 
-        //     await showSwitchLanguageDialog(
-        //       context: context,
-        //       onSubmitted: (fromLanguage, learningLanguage) async {
-        //         await _syncLearnedWords(
-        //           switchFromLanguage: fromLanguage,
-        //           switchLearningLanguage: learningLanguage,
-        //         );
-        //         await _searchLearnedWords();
+            await showSwitchLanguageDialog(
+              context: context,
+              onSubmitted: (fromLanguage, learningLanguage) async {
+                await _syncLearnedWords(
+                  switchFromLanguage: fromLanguage,
+                  switchLearningLanguage: learningLanguage,
+                );
+                await _searchLearnedWords();
 
-        //         super.setState(() {
-        //           _buildAppBarSubTitle();
-        //         });
-        //       },
-        //     );
-        //   },
-        // ),
+                super.setState(() {
+                  _buildAppBarSubTitle();
+                });
+              },
+            );
+          },
+        ),
       ];
 
   @override
