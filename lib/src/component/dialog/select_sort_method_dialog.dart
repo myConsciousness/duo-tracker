@@ -31,7 +31,7 @@ Future<T?> showSelectSortMethodDialog<T>({
     btnOkColor: Theme.of(context).colorScheme.secondary,
     body: StatefulBuilder(
       builder: (BuildContext context, setState) => Padding(
-        padding: const EdgeInsets.all(13),
+        padding: const EdgeInsets.all(5),
         child: Center(
           child: SingleChildScrollView(
             child: ListBody(
