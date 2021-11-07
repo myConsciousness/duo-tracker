@@ -18,6 +18,15 @@ extension SortPatternExt on SortPattern {
     }
   }
 
+  String get name {
+    switch (this) {
+      case SortPattern.asc:
+        return 'Ascending';
+      case SortPattern.desc:
+        return 'Descending';
+    }
+  }
+
   String get patternName {
     switch (this) {
       case SortPattern.asc:

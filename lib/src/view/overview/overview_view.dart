@@ -73,8 +73,15 @@ class _OverviewViewState extends State<OverviewView> {
 
   @override
   void dispose() {
+    _asyncDispose();
     _bannerAdList.dispose();
     super.dispose();
+  }
+
+  Future<void> _asyncDispose() async {
+    // Reset filter config
+    await CommonSharedPreferencesKey.matchPattern.setInt(-1);
+    await CommonSharedPreferencesKey.sortPattern.setInt(-1);
   }
 
   @override
@@ -86,6 +93,10 @@ class _OverviewViewState extends State<OverviewView> {
   Future<List<LearnedWord>> _fetchDataSource() async {
     if (await _canAutoSync()) {
       await _syncLearnedWords();
+
+      await CommonSharedPreferencesKey.datetimeLastAutoSyncedOverview.setInt(
+        DateTime.now().millisecondsSinceEpoch,
+      );
     }
 
     return await _searchLearnedWords();
@@ -159,7 +170,7 @@ class _OverviewViewState extends State<OverviewView> {
         future: DuolingoApiUtils.synchronizeLearnedWords(context: context),
       );
 
-      await CommonSharedPreferencesKey.datetimeLastAutoSyncedOverview.setInt(
+      await CommonSharedPreferencesKey.datetimeLastSyncedOverview.setInt(
         DateTime.now().millisecondsSinceEpoch,
       );
 
@@ -429,7 +440,7 @@ class _OverviewViewState extends State<OverviewView> {
           },
         ),
         _buildSpeedDialChild(
-          icon: FontAwesomeIcons.sync,
+          icon: Icons.settings,
           label: 'Settings',
           onTap: () => Navigator.push(
             context,

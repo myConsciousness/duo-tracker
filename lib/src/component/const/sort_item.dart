@@ -38,6 +38,27 @@ extension SortItemExt on SortItem {
     }
   }
 
+  String get name {
+    switch (this) {
+      case SortItem.defaultIndex:
+        return 'Index';
+      case SortItem.lesson:
+        return 'Lesson';
+      case SortItem.strength:
+        return 'Strength';
+      case SortItem.pos:
+        return 'Pos';
+      case SortItem.infinitive:
+        return 'Infinitive';
+      case SortItem.gender:
+        return 'Gender';
+      case SortItem.proficiency:
+        return 'Proficiency';
+      case SortItem.lastPracticed:
+        return 'Last Practiced';
+    }
+  }
+
   String get columnName {
     switch (this) {
       case SortItem.defaultIndex:

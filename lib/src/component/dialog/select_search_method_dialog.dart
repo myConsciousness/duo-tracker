@@ -13,80 +13,101 @@ late MatchPattern _matchPattern;
 
 Future<T?> showSelectSearchMethodDialog<T>({
   required BuildContext context,
+  bool setDefault = false,
 }) async {
-  final matchPatternCode =
-      await CommonSharedPreferencesKey.matchPattern.getInt();
-  _matchPattern = MatchPatternExt.toEnum(code: matchPatternCode);
+  _matchPattern = MatchPatternExt.toEnum(code: await _getMatchPatternCode());
 
-  _dialog = AwesomeDialog(
-    context: context,
-    animType: AnimType.LEFTSLIDE,
-    dialogType: DialogType.QUESTION,
-    btnOkColor: Theme.of(context).colorScheme.secondary,
-    body: StatefulBuilder(
-      builder: (BuildContext context, setState) => Padding(
-        padding: const EdgeInsets.all(13),
-        child: Center(
-          child: SingleChildScrollView(
-            child: ListBody(
-              children: <Widget>[
-                const Center(
-                  child: Text(
-                    'Search Options',
-                    style: TextStyle(
-                      fontSize: 20,
+  _dialog = _buildDialog(context: context, setDefault: setDefault);
+  await _dialog.show();
+}
+
+AwesomeDialog _buildDialog({
+  required BuildContext context,
+  required bool setDefault,
+}) =>
+    AwesomeDialog(
+      context: context,
+      animType: AnimType.LEFTSLIDE,
+      dialogType: DialogType.QUESTION,
+      btnOkColor: Theme.of(context).colorScheme.secondary,
+      body: StatefulBuilder(
+        builder: (BuildContext context, setState) => Padding(
+          padding: const EdgeInsets.all(13),
+          child: Center(
+            child: SingleChildScrollView(
+              child: ListBody(
+                children: <Widget>[
+                  const Center(
+                    child: Text(
+                      'Search Options',
+                      style: TextStyle(
+                        fontSize: 20,
+                      ),
                     ),
                   ),
-                ),
-                const SizedBox(
-                  height: 25,
-                ),
-                CommonTwoGridsRadioListTile(
-                  label: 'Match Pattern',
-                  dataSource: const {
-                    'Partial': MatchPattern.partial,
-                    'Exact': MatchPattern.exact,
-                    'Prefix': MatchPattern.prefix,
-                    'Suffix': MatchPattern.suffix,
-                  },
-                  groupValue: _matchPattern,
-                  onChanged: (value) {
-                    setState(() {
-                      _matchPattern = value;
-                    });
-                  },
-                ),
-                const SizedBox(
-                  height: 30,
-                ),
-                AnimatedButton(
-                  isFixedHeight: false,
-                  text: 'Apply',
-                  color: Theme.of(context).colorScheme.secondaryVariant,
-                  pressEvent: () async {
-                    await CommonSharedPreferencesKey.matchPattern
-                        .setInt(_matchPattern.code);
-                    _dialog.dismiss();
-                  },
-                ),
-                AnimatedButton(
-                  isFixedHeight: false,
-                  text: 'Cancel',
-                  color: Theme.of(context).colorScheme.error,
-                  pressEvent: () {
-                    _dialog.dismiss();
-                  },
-                ),
-                const SizedBox(
-                  height: 30,
-                ),
-              ],
+                  const SizedBox(
+                    height: 25,
+                  ),
+                  CommonTwoGridsRadioListTile(
+                    label: 'Match Pattern',
+                    dataSource: const {
+                      'Partial': MatchPattern.partial,
+                      'Exact': MatchPattern.exact,
+                      'Prefix': MatchPattern.prefix,
+                      'Suffix': MatchPattern.suffix,
+                    },
+                    groupValue: _matchPattern,
+                    onChanged: (value) {
+                      setState(() {
+                        _matchPattern = value;
+                      });
+                    },
+                  ),
+                  const SizedBox(
+                    height: 30,
+                  ),
+                  AnimatedButton(
+                    isFixedHeight: false,
+                    text: 'Apply',
+                    color: Theme.of(context).colorScheme.secondaryVariant,
+                    pressEvent: () async {
+                      if (setDefault) {
+                        await CommonSharedPreferencesKey
+                            .overviewDefaultMatchPattern
+                            .setInt(_matchPattern.code);
+                      } else {
+                        await CommonSharedPreferencesKey.matchPattern
+                            .setInt(_matchPattern.code);
+                      }
+
+                      _dialog.dismiss();
+                    },
+                  ),
+                  AnimatedButton(
+                    isFixedHeight: false,
+                    text: 'Cancel',
+                    color: Theme.of(context).colorScheme.error,
+                    pressEvent: () {
+                      _dialog.dismiss();
+                    },
+                  ),
+                  const SizedBox(
+                    height: 30,
+                  ),
+                ],
+              ),
             ),
           ),
         ),
       ),
-    ),
-  );
+    );
 
-  await _dialog.show();
+Future<int> _getMatchPatternCode() async {
+  final code = await CommonSharedPreferencesKey.matchPattern.getInt();
+
+  if (code > -1) {
+    return code;
+  }
+
+  return await CommonSharedPreferencesKey.overviewDefaultMatchPattern.getInt();
 }

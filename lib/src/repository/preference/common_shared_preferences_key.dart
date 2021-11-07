@@ -73,6 +73,9 @@ enum CommonSharedPreferencesKey {
 
   //! The Sync Config ↓
 
+  /// The datetime last  synced overview
+  datetimeLastSyncedOverview,
+
   /// The datetime last auto synced overview
   datetimeLastAutoSyncedOverview,
 
@@ -92,8 +95,11 @@ enum CommonSharedPreferencesKey {
   /// The overview default match pattern
   overviewDefaultMatchPattern,
 
-  /// The overview default sort option
-  overviewDefaultSortOption,
+  /// The overview default sort item
+  overviewDefaultSortItem,
+
+  /// The overview default sort pattern
+  overviewDefaultSortPattern,
 
   //! The Settings Config ↑
 
@@ -142,6 +148,8 @@ extension KeyFeature on CommonSharedPreferencesKey {
         return 'current_learning_language';
       case CommonSharedPreferencesKey.currentFromLanguage:
         return 'current_from_language';
+      case CommonSharedPreferencesKey.datetimeLastSyncedOverview:
+        return 'datetime_last_synced_overview';
       case CommonSharedPreferencesKey.datetimeLastAutoSyncedOverview:
         return 'datetime_last_auto_synced_overview';
       case CommonSharedPreferencesKey.applyDarkTheme:
@@ -152,8 +160,10 @@ extension KeyFeature on CommonSharedPreferencesKey {
         return 'overview_auto_sync_interval';
       case CommonSharedPreferencesKey.overviewDefaultMatchPattern:
         return 'overview_default_match_pattern';
-      case CommonSharedPreferencesKey.overviewDefaultSortOption:
-        return 'overview_default_sort_option';
+      case CommonSharedPreferencesKey.overviewDefaultSortItem:
+        return 'overview_default_sort_item';
+      case CommonSharedPreferencesKey.overviewDefaultSortPattern:
+        return 'overview_default_sort_pattern';
       case CommonSharedPreferencesKey.datetimeLastShowedAppReview:
         return 'datetime_last_showed_app_review';
     }

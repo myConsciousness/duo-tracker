@@ -30,6 +30,19 @@ extension MatchPatternExt on MatchPattern {
     }
   }
 
+  String get name {
+    switch (this) {
+      case MatchPattern.partial:
+        return 'Partial';
+      case MatchPattern.exact:
+        return 'Exact';
+      case MatchPattern.prefix:
+        return 'Prefix';
+      case MatchPattern.suffix:
+        return 'Suffix';
+    }
+  }
+
   static MatchPattern toEnum({required final int code}) {
     for (final MatchPattern matchPattern in MatchPattern.values) {
       if (code == matchPattern.code) {
