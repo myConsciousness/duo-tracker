@@ -191,6 +191,8 @@ THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND 
                   _createListTile(
                     icon: const Icon(Icons.store),
                     title: 'Get NoAds Version',
+                    subtitle:
+                        'You can purchase an ad-free version on the Play Store.',
                     onTap: () async => await launch(
                         'https://play.google.com/store/apps/details?id=${FlavorConfig.instance.variables['paidPackageId']}'),
                   ),

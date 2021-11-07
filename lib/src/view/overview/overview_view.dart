@@ -28,6 +28,7 @@ import 'package:duo_tracker/src/http/utils/duolingo_api_utils.dart';
 import 'package:duo_tracker/src/utils/language_converter.dart';
 import 'package:duo_tracker/src/view/overview/overview_tab_type.dart';
 import 'package:duo_tracker/src/view/overview/word_filter.dart';
+import 'package:duo_tracker/src/view/settings/overview_settings_view.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/painting.dart';
@@ -90,13 +91,25 @@ class _OverviewViewState extends State<OverviewView> {
     return await _searchLearnedWords();
   }
 
-  Future<bool> _canAutoSync() async => (DateTime.now()
-          .difference(DateTime.fromMillisecondsSinceEpoch(
-              await CommonSharedPreferencesKey.datetimeLastAutoSyncedOverview
-                  .getInt()))
-          .inDays
-          .abs() >=
-      1);
+  Future<bool> _canAutoSync() async {
+    final useAutoSync = await CommonSharedPreferencesKey.overviewUseAutoSync
+        .getBool(defaultValue: true);
+
+    if (!useAutoSync) {
+      return false;
+    }
+
+    final interval = await CommonSharedPreferencesKey.overviewAutoSyncInterval
+        .getInt(defaultValue: 1);
+
+    return (DateTime.now()
+            .difference(DateTime.fromMillisecondsSinceEpoch(
+                await CommonSharedPreferencesKey.datetimeLastAutoSyncedOverview
+                    .getInt()))
+            .inDays
+            .abs() >=
+        interval);
+  }
 
   Future<void> _syncLearnedWords({
     String switchFromLanguage = '',
@@ -414,6 +427,16 @@ class _OverviewViewState extends State<OverviewView> {
               },
             );
           },
+        ),
+        _buildSpeedDialChild(
+          icon: FontAwesomeIcons.sync,
+          label: 'Settings',
+          onTap: () => Navigator.push(
+            context,
+            MaterialPageRoute(
+              builder: (_) => const OverviewSettingsView(),
+            ),
+          ),
         ),
       ];
 

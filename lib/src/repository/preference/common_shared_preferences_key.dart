@@ -83,6 +83,18 @@ enum CommonSharedPreferencesKey {
   /// The apply darke theme
   applyDarkTheme,
 
+  /// The flag represents use auto sync or not
+  overviewUseAutoSync,
+
+  /// The overview auto sync interval
+  overviewAutoSyncInterval,
+
+  /// The overview default match pattern
+  overviewDefaultMatchPattern,
+
+  /// The overview default sort option
+  overviewDefaultSortOption,
+
   //! The Settings Config ↑
 
   //! The Review Config ↓
@@ -134,6 +146,14 @@ extension KeyFeature on CommonSharedPreferencesKey {
         return 'datetime_last_auto_synced_overview';
       case CommonSharedPreferencesKey.applyDarkTheme:
         return 'apply_dark_theme';
+      case CommonSharedPreferencesKey.overviewUseAutoSync:
+        return 'overview_use_auto_aync';
+      case CommonSharedPreferencesKey.overviewAutoSyncInterval:
+        return 'overview_auto_sync_interval';
+      case CommonSharedPreferencesKey.overviewDefaultMatchPattern:
+        return 'overview_default_match_pattern';
+      case CommonSharedPreferencesKey.overviewDefaultSortOption:
+        return 'overview_default_sort_option';
       case CommonSharedPreferencesKey.datetimeLastShowedAppReview:
         return 'datetime_last_showed_app_review';
     }
