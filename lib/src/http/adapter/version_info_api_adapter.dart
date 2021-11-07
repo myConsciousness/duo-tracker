@@ -13,6 +13,8 @@ import 'package:duo_tracker/src/repository/model/voice_configuration_model.dart'
 import 'package:duo_tracker/src/repository/service/supported_language_service.dart';
 import 'package:duo_tracker/src/repository/service/voice_configuration_service.dart';
 import 'package:duo_tracker/src/utils/language_converter.dart';
+import 'package:duo_tracker/src/http/const/error_type.dart';
+import 'package:duo_tracker/src/http/const/from_api.dart';
 import 'package:flutter/material.dart';
 
 class VersionInfoAdapter extends ApiAdapter {

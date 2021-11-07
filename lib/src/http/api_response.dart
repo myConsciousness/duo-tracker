@@ -2,40 +2,8 @@
 // Use of this source code is governed by a
 // BSD-style license that can be found in the LICENSE file.
 
-enum FromApi {
-  ///The none
-  none,
-
-  /// Login
-  login,
-
-  /// User
-  user,
-
-  /// Overview
-  learnedWord,
-
-  /// Overview Translation
-  wordHint,
-
-  /// Switch language
-  switchLanguage,
-
-  /// Version Information
-  versionInfo,
-}
-
-/// The enum manages response error type.
-enum ErrorType {
-  none,
-  network,
-  noUserRegistered,
-  noHintData,
-  authentication,
-  client,
-  server,
-  unknown,
-}
+import 'package:duo_tracker/src/http/const/error_type.dart';
+import 'package:duo_tracker/src/http/const/from_api.dart';
 
 class ApiResponse {
   /// Returns the new instance of [ApiResponse] based on [fromApi], [errorType] and [message].

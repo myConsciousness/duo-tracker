@@ -12,6 +12,8 @@ import 'package:duo_tracker/src/repository/model/word_hint_model.dart';
 import 'package:duo_tracker/src/repository/preference/common_shared_preferences_key.dart';
 import 'package:duo_tracker/src/repository/service/word_hint_service.dart';
 import 'package:duo_tracker/src/utils/language_converter.dart';
+import 'package:duo_tracker/src/http/const/error_type.dart';
+import 'package:duo_tracker/src/http/const/from_api.dart';
 import 'package:flutter/material.dart';
 
 class WordHintApiAdapter extends ApiAdapter {

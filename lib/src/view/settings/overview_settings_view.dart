@@ -21,8 +21,8 @@ class OverviewSettingsView extends StatefulWidget {
 }
 
 class _OverviewSettingsViewState extends State<OverviewSettingsView> {
-  /// The use auto aync
-  bool _useAutoSync = true;
+  /// The datetime format
+  final _datetimeFormat = DateFormat('yyyy/MM/dd HH:mm');
 
   // The match pattern
   MatchPattern _matchPattern = MatchPattern.partial;
@@ -33,8 +33,8 @@ class _OverviewSettingsViewState extends State<OverviewSettingsView> {
   /// The sort pattern
   SortPattern _sortPattern = SortPattern.asc;
 
-  /// The datetime format
-  final _datetimeFormat = DateFormat('yyyy/MM/dd HH:mm');
+  /// The use auto aync
+  bool _useAutoSync = true;
 
   @override
   void didChangeDependencies() {
@@ -181,9 +181,8 @@ class _OverviewSettingsViewState extends State<OverviewSettingsView> {
                 ),
                 _createListTile(
                   icon: const Icon(Icons.calendar_today),
-                  title: 'Auto Sync Cycle',
-                  subtitle:
-                      'You can change the cycle for automatic synchronization with Duolingo.',
+                  title: 'Auto Sync Schedule',
+                  subtitle: '',
                 ),
                 const CommonDivider(),
                 _createListTile(

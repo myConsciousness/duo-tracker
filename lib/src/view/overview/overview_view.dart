@@ -26,6 +26,7 @@ import 'package:duo_tracker/src/repository/preference/interstitial_ad_shared_pre
 import 'package:duo_tracker/src/repository/service/learned_word_service.dart';
 import 'package:duo_tracker/src/http/utils/duolingo_api_utils.dart';
 import 'package:duo_tracker/src/utils/language_converter.dart';
+import 'package:duo_tracker/src/view/overview/auto_sync_scheduler.dart';
 import 'package:duo_tracker/src/view/overview/overview_tab_type.dart';
 import 'package:duo_tracker/src/view/overview/word_filter.dart';
 import 'package:duo_tracker/src/view/settings/overview_settings_view.dart';
@@ -53,6 +54,9 @@ class _OverviewViewState extends State<OverviewView> {
   bool _alreadyAuthDialogOpened = false;
   String _appBarSubTitle = '';
 
+  /// The auto sync scheduler
+  final _autoSyncScheduler = AutoSyncScheduler();
+
   /// The banner ad list
   final _bannerAdList = BannerAdList.newInstance();
 
@@ -78,20 +82,20 @@ class _OverviewViewState extends State<OverviewView> {
     super.dispose();
   }
 
-  Future<void> _asyncDispose() async {
-    // Reset filter config
-    await CommonSharedPreferencesKey.matchPattern.setInt(-1);
-    await CommonSharedPreferencesKey.sortPattern.setInt(-1);
-  }
-
   @override
   void initState() {
     super.initState();
     _asyncInitState();
   }
 
+  Future<void> _asyncDispose() async {
+    // Reset filter config
+    await CommonSharedPreferencesKey.matchPattern.setInt(-1);
+    await CommonSharedPreferencesKey.sortPattern.setInt(-1);
+  }
+
   Future<List<LearnedWord>> _fetchDataSource() async {
-    if (await _canAutoSync()) {
+    if (await _autoSyncScheduler.canAutoSync()) {
       await _syncLearnedWords();
 
       await CommonSharedPreferencesKey.datetimeLastAutoSyncedOverview.setInt(
@@ -100,26 +104,6 @@ class _OverviewViewState extends State<OverviewView> {
     }
 
     return await _searchLearnedWords();
-  }
-
-  Future<bool> _canAutoSync() async {
-    final useAutoSync = await CommonSharedPreferencesKey.overviewUseAutoSync
-        .getBool(defaultValue: true);
-
-    if (!useAutoSync) {
-      return false;
-    }
-
-    final interval = await CommonSharedPreferencesKey.overviewAutoSyncInterval
-        .getInt(defaultValue: 1);
-
-    return (DateTime.now()
-            .difference(DateTime.fromMillisecondsSinceEpoch(
-                await CommonSharedPreferencesKey.datetimeLastAutoSyncedOverview
-                    .getInt()))
-            .inDays
-            .abs() >=
-        interval);
   }
 
   Future<void> _syncLearnedWords({

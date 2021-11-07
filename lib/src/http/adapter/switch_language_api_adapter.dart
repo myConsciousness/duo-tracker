@@ -7,6 +7,8 @@ import 'package:duo_tracker/src/http/api_response.dart';
 import 'package:duo_tracker/src/http/duolingo_api.dart';
 import 'package:duo_tracker/src/http/http_status.dart';
 import 'package:duo_tracker/src/repository/preference/common_shared_preferences_key.dart';
+import 'package:duo_tracker/src/http/const/error_type.dart';
+import 'package:duo_tracker/src/http/const/from_api.dart';
 import 'package:flutter/material.dart';
 
 class SwitchLanguageApiAdapter extends ApiAdapter {

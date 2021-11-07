@@ -9,6 +9,8 @@ import 'package:duo_tracker/src/component/dialog/network_error_dialog.dart';
 import 'package:duo_tracker/src/component/snackbar/info_snack_bar.dart';
 import 'package:duo_tracker/src/http/adapter/adapter.dart';
 import 'package:duo_tracker/src/http/api_response.dart';
+import 'package:duo_tracker/src/http/const/error_type.dart';
+import 'package:duo_tracker/src/http/const/from_api.dart';
 import 'package:duo_tracker/src/http/network.dart';
 import 'package:flutter/material.dart';
 
