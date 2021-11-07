@@ -78,20 +78,7 @@ enum CommonSharedPreferencesKey {
 
   //! The Sync Config ↑
 
-  //! The Secutiry Config ↓
-
-  /// The passcode
-  passcode,
-
-  //! The Security Config ↑
-
   //! The Settings Config ↓
-
-  /// The use passcode lock
-  usePasscodeLock,
-
-  /// The use fingerprint recognition
-  useFingerprintRecognition,
 
   /// The apply darke theme
   applyDarkTheme,
@@ -145,12 +132,6 @@ extension KeyFeature on CommonSharedPreferencesKey {
         return 'current_from_language';
       case CommonSharedPreferencesKey.datetimeLastAutoSyncedOverview:
         return 'datetime_last_auto_synced_overview';
-      case CommonSharedPreferencesKey.usePasscodeLock:
-        return 'use_passcode_lock';
-      case CommonSharedPreferencesKey.useFingerprintRecognition:
-        return 'use_fingerprint_recognition';
-      case CommonSharedPreferencesKey.passcode:
-        return 'passcode';
       case CommonSharedPreferencesKey.applyDarkTheme:
         return 'apply_dark_theme';
       case CommonSharedPreferencesKey.datetimeLastShowedAppReview:

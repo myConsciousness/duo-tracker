@@ -18,6 +18,7 @@ void main() async {
 
   RequestConfiguration configuration =
       RequestConfiguration(testDeviceIds: ['12FA608E7D2E2A96D30BE9C3D4A6ACA5']);
+
   await MobileAds.instance.updateRequestConfiguration(configuration);
 
   await InterstitialAdResolver.getInstance().loadInterstitialAd();
