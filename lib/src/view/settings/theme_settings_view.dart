@@ -2,9 +2,11 @@
 // Use of this source code is governed by a
 // BSD-style license that can be found in the LICENSE file.
 
+import 'package:duo_tracker/src/component/common_divider.dart';
 import 'package:duo_tracker/src/provider/theme_mode_provider.dart';
 import 'package:duo_tracker/src/repository/preference/common_shared_preferences_key.dart';
 import 'package:flutter/material.dart';
+import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:provider/provider.dart';
 
 class ThemeSettingsView extends StatefulWidget {
@@ -91,8 +93,15 @@ class _ThemeSettingsViewState extends State<ThemeSettingsView> {
                       await themeModeProvider.notify(appliedDarkTheme: value);
                       super.setState(() {});
                     },
-                  )
+                  ),
                 ],
+              ),
+              const CommonDivider(),
+              _createListTile(
+                icon: const Icon(FontAwesomeIcons.clock),
+                title: 'Date Time Format',
+                subtitle: '',
+                onTap: () async {},
               ),
             ],
           ),
