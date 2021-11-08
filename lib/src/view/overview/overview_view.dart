@@ -13,6 +13,7 @@ import 'package:duo_tracker/src/component/dialog/network_error_dialog.dart';
 import 'package:duo_tracker/src/component/dialog/switch_language_dialog.dart';
 import 'package:duo_tracker/src/component/snackbar/info_snack_bar.dart';
 import 'package:duo_tracker/src/http/network.dart';
+import 'package:duo_tracker/src/repository/utils/shared_preferences_utils.dart';
 import 'package:duo_tracker/src/view/folder/folder_type.dart';
 import 'package:duo_tracker/src/component/const/match_pattern.dart';
 import 'package:duo_tracker/src/component/dialog/loading_dialog.dart';
@@ -305,7 +306,10 @@ class _OverviewViewState extends State<OverviewView> {
           ),
           onChanged: (searchWord) async {
             final matchPatternCode =
-                await CommonSharedPreferencesKey.matchPattern.getInt();
+                await SharedPreferencesUtils.getCurrentIntValueOrDefault(
+                    currentKey: CommonSharedPreferencesKey.matchPattern,
+                    defaultKey:
+                        CommonSharedPreferencesKey.overviewDefaultMatchPattern);
 
             super.setState(() {
               _searchWord = searchWord;

@@ -9,6 +9,7 @@ import 'package:duo_tracker/src/repository/learned_word_repository.dart';
 import 'package:duo_tracker/src/repository/model/learned_word_model.dart';
 import 'package:duo_tracker/src/repository/preference/common_shared_preferences_key.dart';
 import 'package:duo_tracker/src/repository/service/voice_configuration_service.dart';
+import 'package:duo_tracker/src/repository/utils/shared_preferences_utils.dart';
 
 class LearnedWordService extends LearnedWordRepository {
   /// The internal constructor.
@@ -84,9 +85,16 @@ class LearnedWordService extends LearnedWordRepository {
     String learningLanguage,
     String fromLanguage,
   ) async {
-    final sortItemCode = await CommonSharedPreferencesKey.sortItem.getInt();
+    final sortItemCode =
+        await SharedPreferencesUtils.getCurrentIntValueOrDefault(
+      currentKey: CommonSharedPreferencesKey.sortItem,
+      defaultKey: CommonSharedPreferencesKey.overviewDefaultSortItem,
+    );
     final sortPatternCode =
-        await CommonSharedPreferencesKey.sortPattern.getInt();
+        await SharedPreferencesUtils.getCurrentIntValueOrDefault(
+      currentKey: CommonSharedPreferencesKey.sortPattern,
+      defaultKey: CommonSharedPreferencesKey.overviewDefaultSortPattern,
+    );
 
     final sortColumnName = SortItemExt.toEnum(code: sortItemCode).columnName;
     final sortPattern =

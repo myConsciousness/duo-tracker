@@ -3,7 +3,7 @@
 // BSD-style license that can be found in the LICENSE file.
 
 import 'package:duo_tracker/src/view/folder/folder_type.dart';
-import 'package:duo_tracker/src/repository/boolean_text.dart';
+import 'package:duo_tracker/src/repository/utils/boolean_text.dart';
 import 'package:duo_tracker/src/repository/const/column/folder_column.dart';
 
 class Folder {

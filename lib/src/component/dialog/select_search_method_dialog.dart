@@ -6,6 +6,7 @@ import 'package:awesome_dialog/awesome_dialog.dart';
 import 'package:duo_tracker/src/component/common_two_grids_radio_list_tile.dart';
 import 'package:duo_tracker/src/component/const/match_pattern.dart';
 import 'package:duo_tracker/src/repository/preference/common_shared_preferences_key.dart';
+import 'package:duo_tracker/src/repository/utils/shared_preferences_utils.dart';
 import 'package:flutter/material.dart';
 
 late AwesomeDialog _dialog;
@@ -15,7 +16,12 @@ Future<T?> showSelectSearchMethodDialog<T>({
   required BuildContext context,
   bool setDefault = false,
 }) async {
-  _matchPattern = MatchPatternExt.toEnum(code: await _getMatchPatternCode());
+  _matchPattern = MatchPatternExt.toEnum(
+    code: await SharedPreferencesUtils.getCurrentIntValueOrDefault(
+      currentKey: CommonSharedPreferencesKey.matchPattern,
+      defaultKey: CommonSharedPreferencesKey.overviewDefaultMatchPattern,
+    ),
+  );
 
   _dialog = _buildDialog(context: context, setDefault: setDefault);
   await _dialog.show();
@@ -101,13 +107,3 @@ AwesomeDialog _buildDialog({
         ),
       ),
     );
-
-Future<int> _getMatchPatternCode() async {
-  final code = await CommonSharedPreferencesKey.matchPattern.getInt();
-
-  if (code > -1) {
-    return code;
-  }
-
-  return await CommonSharedPreferencesKey.overviewDefaultMatchPattern.getInt();
-}

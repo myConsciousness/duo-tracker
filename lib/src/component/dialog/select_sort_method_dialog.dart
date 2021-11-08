@@ -9,6 +9,7 @@ import 'package:duo_tracker/src/component/const/sort_item.dart';
 import 'package:duo_tracker/src/component/const/sort_pattern.dart';
 import 'package:duo_tracker/src/repository/preference/common_shared_preferences_key.dart';
 import 'package:duo_tracker/src/repository/preference/interstitial_ad_shared_preferences_key.dart';
+import 'package:duo_tracker/src/repository/utils/shared_preferences_utils.dart';
 import 'package:flutter/material.dart';
 
 late AwesomeDialog _dialog;
@@ -20,14 +21,14 @@ Future<T?> showSelectSortMethodDialog<T>({
   bool setDefault = false,
 }) async {
   _sortItem = SortItemExt.toEnum(
-    code: await _getCurrentValueOrDefault(
+    code: await SharedPreferencesUtils.getCurrentIntValueOrDefault(
       currentKey: CommonSharedPreferencesKey.sortItem,
       defaultKey: CommonSharedPreferencesKey.overviewDefaultSortItem,
     ),
   );
 
   _sortPattern = SortPatternExt.toEnum(
-    code: await _getCurrentValueOrDefault(
+    code: await SharedPreferencesUtils.getCurrentIntValueOrDefault(
       currentKey: CommonSharedPreferencesKey.sortPattern,
       defaultKey: CommonSharedPreferencesKey.overviewDefaultSortPattern,
     ),
@@ -35,19 +36,6 @@ Future<T?> showSelectSortMethodDialog<T>({
 
   _dialog = _buildDialog(context: context, setDefault: setDefault);
   await _dialog.show();
-}
-
-Future<int> _getCurrentValueOrDefault({
-  required CommonSharedPreferencesKey currentKey,
-  required CommonSharedPreferencesKey defaultKey,
-}) async {
-  final code = await currentKey.getInt();
-
-  if (code > -1) {
-    return code;
-  }
-
-  return defaultKey.getInt();
 }
 
 AwesomeDialog _buildDialog({
