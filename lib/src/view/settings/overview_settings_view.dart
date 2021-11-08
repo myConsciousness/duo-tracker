@@ -212,18 +212,19 @@ class _OverviewSettingsViewState extends State<OverviewSettingsView> {
                   children: [
                     Expanded(
                       child: _createListTile(
-                          icon: const Icon(Icons.sync),
-                          title: 'Use Auto Sync',
-                          subtitle:
-                              'You can set whether or not to perform automatic synchronization with Duolingo.',
-                          onTap: () async {
-                            await CommonSharedPreferencesKey.overviewUseAutoSync
-                                .setBool(!_useAutoSync);
+                        icon: const Icon(Icons.sync),
+                        title: 'Use Auto Sync',
+                        subtitle:
+                            'You can set whether or not to perform automatic synchronization with Duolingo.',
+                        onTap: () async {
+                          await CommonSharedPreferencesKey.overviewUseAutoSync
+                              .setBool(!_useAutoSync);
 
-                            super.setState(() {
-                              _useAutoSync = !_useAutoSync;
-                            });
-                          }),
+                          super.setState(() {
+                            _useAutoSync = !_useAutoSync;
+                          });
+                        },
+                      ),
                     ),
                     Switch(
                       value: _useAutoSync,
