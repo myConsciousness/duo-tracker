@@ -3,6 +3,7 @@
 // BSD-style license that can be found in the LICENSE file.
 
 import 'package:duo_tracker/src/provider/theme_mode_provider.dart';
+import 'package:duo_tracker/src/repository/preference/common_shared_preferences_key.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
@@ -70,11 +71,18 @@ class _ThemeSettingsViewState extends State<ThemeSettingsView> {
                 children: [
                   Expanded(
                     child: _createListTile(
-                      icon: const Icon(Icons.dark_mode),
-                      title: 'Use Dark Mode',
-                      subtitle:
-                          'Switch the theme of app to dark mode. Dark mode consumes less power and is less stressful on your eyes.',
-                    ),
+                        icon: const Icon(Icons.dark_mode),
+                        title: 'Use Dark Mode',
+                        subtitle:
+                            'Switch the theme of app to dark mode. Dark mode consumes less power and is less stressful on your eyes.',
+                        onTap: () async {
+                          final applyDarkTheme =
+                              await CommonSharedPreferencesKey.applyDarkTheme
+                                  .getBool();
+                          await themeModeProvider.notify(
+                              appliedDarkTheme: !applyDarkTheme);
+                          super.setState(() {});
+                        }),
                   ),
                   Switch(
                     value: themeModeProvider.appliedDarkTheme,
