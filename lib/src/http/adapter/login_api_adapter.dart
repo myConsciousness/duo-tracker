@@ -37,51 +37,58 @@ class LoginApiAdapter extends ApiAdapter {
       );
     }
 
-    final response = await DuolingoApi.login.request.send(
-      params: {
-        'login': username,
-        'password': password,
-      },
-    );
+    try {
+      final response = await DuolingoApi.login.request.send(
+        params: {
+          'login': username,
+          'password': password,
+        },
+      );
 
-    final httpStatus = HttpStatus.from(code: response.statusCode);
+      final httpStatus = HttpStatus.from(code: response.statusCode);
 
-    if (httpStatus.isAccepted) {
-      final Map<String, dynamic> jsonMap = jsonDecode(response.body);
+      if (httpStatus.isAccepted) {
+        final Map<String, dynamic> jsonMap = jsonDecode(response.body);
 
-      if (jsonMap.containsKey('failure')) {
-        return ApiResponse.from(
+        if (jsonMap.containsKey('failure')) {
+          return ApiResponse.from(
+              fromApi: FromApi.login,
+              errorType: ErrorType.authentication,
+              message: 'The username or password was wrong.');
+        } else {
+          await CommonSharedPreferencesKey.username
+              .setString(params[_paramUsername]);
+          await CommonSharedPreferencesKey.password
+              .setString(Encryption.encode(value: params[_paramPassword]));
+          await CommonSharedPreferencesKey.userId.setString(jsonMap['user_id']);
+
+          return ApiResponse.from(
             fromApi: FromApi.login,
-            errorType: ErrorType.authentication,
-            message: 'The username or password was wrong.');
-      } else {
-        await CommonSharedPreferencesKey.username
-            .setString(params[_paramUsername]);
-        await CommonSharedPreferencesKey.password
-            .setString(Encryption.encode(value: params[_paramPassword]));
-        await CommonSharedPreferencesKey.userId.setString(jsonMap['user_id']);
-
+            errorType: ErrorType.none,
+            message: 'Your account has been authenticated.',
+          );
+        }
+      } else if (httpStatus.isClientError) {
         return ApiResponse.from(
           fromApi: FromApi.login,
-          errorType: ErrorType.none,
-          message: 'Your account has been authenticated.',
+          errorType: ErrorType.client,
+        );
+      } else if (httpStatus.isServerError) {
+        return ApiResponse.from(
+          fromApi: FromApi.login,
+          errorType: ErrorType.server,
         );
       }
-    } else if (httpStatus.isClientError) {
+
       return ApiResponse.from(
         fromApi: FromApi.login,
-        errorType: ErrorType.client,
+        errorType: ErrorType.unknown,
       );
-    } else if (httpStatus.isServerError) {
+    } catch (e) {
       return ApiResponse.from(
         fromApi: FromApi.login,
-        errorType: ErrorType.server,
+        errorType: ErrorType.unknown,
       );
     }
-
-    return ApiResponse.from(
-      fromApi: FromApi.login,
-      errorType: ErrorType.unknown,
-    );
   }
 }

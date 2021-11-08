@@ -32,46 +32,53 @@ class WordHintApiAdapter extends ApiAdapter {
       throw FlutterError('The parameter "$_paramWordId" is required.');
     }
 
-    final response = await DuolingoApi.wordHint.request.send(params: params);
-    final httpStatus = HttpStatus.from(code: response.statusCode);
+    try {
+      final response = await DuolingoApi.wordHint.request.send(params: params);
+      final httpStatus = HttpStatus.from(code: response.statusCode);
 
-    if (httpStatus.isAccepted) {
-      final hintsMatrix = _createHintsMatrix(
-        json: jsonDecode(response.body),
-      );
+      if (httpStatus.isAccepted) {
+        final hintsMatrix = _createHintsMatrix(
+          json: jsonDecode(response.body),
+        );
 
-      if (hintsMatrix.isEmpty) {
+        if (hintsMatrix.isEmpty) {
+          return ApiResponse.from(
+            fromApi: FromApi.wordHint,
+            errorType: ErrorType.noHintData,
+          );
+        }
+
+        await _refreshWordHints(
+          params: params,
+          hintsMatrix: hintsMatrix,
+        );
+
         return ApiResponse.from(
           fromApi: FromApi.wordHint,
-          errorType: ErrorType.noHintData,
+          errorType: ErrorType.none,
+        );
+      } else if (httpStatus.isClientError) {
+        return ApiResponse.from(
+          fromApi: FromApi.wordHint,
+          errorType: ErrorType.client,
+        );
+      } else if (httpStatus.isServerError) {
+        return ApiResponse.from(
+          fromApi: FromApi.wordHint,
+          errorType: ErrorType.server,
         );
       }
 
-      await _refreshWordHints(
-        params: params,
-        hintsMatrix: hintsMatrix,
-      );
-
       return ApiResponse.from(
         fromApi: FromApi.wordHint,
-        errorType: ErrorType.none,
+        errorType: ErrorType.unknown,
       );
-    } else if (httpStatus.isClientError) {
+    } catch (e) {
       return ApiResponse.from(
         fromApi: FromApi.wordHint,
-        errorType: ErrorType.client,
-      );
-    } else if (httpStatus.isServerError) {
-      return ApiResponse.from(
-        fromApi: FromApi.wordHint,
-        errorType: ErrorType.server,
+        errorType: ErrorType.unknown,
       );
     }
-
-    return ApiResponse.from(
-      fromApi: FromApi.wordHint,
-      errorType: ErrorType.unknown,
-    );
   }
 
   Map<String, List<String>> _createHintsMatrix({
