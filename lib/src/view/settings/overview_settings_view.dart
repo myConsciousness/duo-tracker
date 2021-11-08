@@ -4,6 +4,7 @@
 
 import 'package:duo_tracker/src/component/common_divider.dart';
 import 'package:duo_tracker/src/component/const/match_pattern.dart';
+import 'package:duo_tracker/src/component/const/schedule_cycle_unit.dart';
 import 'package:duo_tracker/src/component/const/sort_item.dart';
 import 'package:duo_tracker/src/component/const/sort_pattern.dart';
 import 'package:duo_tracker/src/component/dialog/confirm_dialog.dart';
@@ -26,11 +27,11 @@ class OverviewSettingsView extends StatefulWidget {
 }
 
 class _OverviewSettingsViewState extends State<OverviewSettingsView> {
-  /// The learned word service
-  final _learnedWordService = LearnedWordService.getInstance();
-
   /// The datetime format
   final _datetimeFormat = DateFormat('yyyy/MM/dd HH:mm');
+
+  /// The learned word service
+  final _learnedWordService = LearnedWordService.getInstance();
 
   // The match pattern
   MatchPattern _matchPattern = MatchPattern.partial;
@@ -80,6 +81,23 @@ class _OverviewSettingsViewState extends State<OverviewSettingsView> {
     _sortPattern = SortPatternExt.toEnum(
         code: await CommonSharedPreferencesKey.overviewDefaultSortPattern
             .getInt());
+  }
+
+  Future<DateTime> _computeNextAutoSync() async {
+    final cycle = await CommonSharedPreferencesKey.autoSyncCycle.getInt();
+    final cycleUnitCode =
+        await CommonSharedPreferencesKey.autoSyncCycleUnit.getInt();
+    final cycleUnit = ScheduleCycleUnitExt.toEnum(code: cycleUnitCode);
+
+    switch (cycleUnit) {
+      case ScheduleCycleUnit.day:
+        final lastAutoSyncedAt = DateTime.fromMillisecondsSinceEpoch(
+            await CommonSharedPreferencesKey.datetimeLastAutoSyncedOverview
+                .getInt());
+        return lastAutoSyncedAt.add(Duration(days: cycle));
+      case ScheduleCycleUnit.hour:
+        return DateTime.now().add(Duration(hours: cycle));
+    }
   }
 
   Widget _createListTile({
@@ -149,6 +167,22 @@ class _OverviewSettingsViewState extends State<OverviewSettingsView> {
                       title: 'Last Auto Synced At',
                       subtitle: _datetimeFormat.format(
                         DateTime.fromMillisecondsSinceEpoch(snapshot.data),
+                      ),
+                    );
+                  },
+                ),
+                FutureBuilder(
+                  future: _computeNextAutoSync(),
+                  builder: (BuildContext context, AsyncSnapshot snapshot) {
+                    if (!snapshot.hasData) {
+                      return const Loading();
+                    }
+
+                    return _createListTile(
+                      icon: const Icon(Icons.info),
+                      title: 'Next Auto Sync At',
+                      subtitle: _datetimeFormat.format(
+                        snapshot.data,
                       ),
                     );
                   },
