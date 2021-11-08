@@ -90,18 +90,15 @@ class _OverviewSettingsViewState extends State<OverviewSettingsView> {
         await CommonSharedPreferencesKey.autoSyncCycleUnit.getInt();
     final cycleUnit = ScheduleCycleUnitExt.toEnum(code: cycleUnitCode);
 
+    final lastAutoSyncedAt = DateTime.fromMillisecondsSinceEpoch(
+      await CommonSharedPreferencesKey.datetimeLastAutoSyncedOverview.getInt(),
+    );
+
     switch (cycleUnit) {
       case ScheduleCycleUnit.day:
-        // It will always be after today if the unit is a day,
-        // so use the last sync time as the reference.
-        final lastAutoSyncedAt = DateTime.fromMillisecondsSinceEpoch(
-          await CommonSharedPreferencesKey.datetimeLastAutoSyncedOverview
-              .getInt(),
-        );
-
         return lastAutoSyncedAt.add(Duration(days: cycle));
       case ScheduleCycleUnit.hour:
-        return DateTime.now().add(Duration(hours: cycle));
+        return lastAutoSyncedAt.add(Duration(hours: cycle));
     }
   }
 

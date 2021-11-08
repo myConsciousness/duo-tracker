@@ -260,6 +260,6 @@ DateTime _computeNextAutoSync() {
     case ScheduleCycleUnit.day:
       return _lastAutoSyncedAt.add(Duration(days: _autoSyncCycleCount));
     case ScheduleCycleUnit.hour:
-      return DateTime.now().add(Duration(hours: _autoSyncCycleCount));
+      return _lastAutoSyncedAt.add(Duration(hours: _autoSyncCycleCount));
   }
 }
