@@ -226,28 +226,37 @@ class _OverviewSettingsViewState extends State<OverviewSettingsView> {
                 const SizedBox(
                   height: 10,
                 ),
-                _createListTile(
-                  icon: const Icon(Icons.calendar_today),
-                  title: 'Auto Sync Schedule',
-                  subtitle: '',
-                  onTap: () async {
-                    final useAutoSync = await CommonSharedPreferencesKey
-                        .overviewUseAutoSync
-                        .getBool(defaultValue: true);
-
-                    if (!useAutoSync) {
-                      await showWarningDialog(
-                          context: context,
-                          title: 'Auto Sync is disabled',
-                          content:
-                              'The Auto Sync schedule can be set if Auto Sync is enabled, please enable Auto Sync.');
-                      return;
+                FutureBuilder(
+                  future: _getAutoSyncSettings(),
+                  builder: (BuildContext context, AsyncSnapshot snapshot) {
+                    if (!snapshot.hasData) {
+                      return const Loading();
                     }
 
-                    await showSelectAutoSyncScheduleDialog(
-                      context: context,
-                      onSubmitted: () {
-                        super.setState(() {});
+                    return _createListTile(
+                      icon: const Icon(Icons.calendar_today),
+                      title: 'Auto Sync Schedule',
+                      subtitle: snapshot.data,
+                      onTap: () async {
+                        final useAutoSync = await CommonSharedPreferencesKey
+                            .overviewUseAutoSync
+                            .getBool(defaultValue: true);
+
+                        if (!useAutoSync) {
+                          await showWarningDialog(
+                              context: context,
+                              title: 'Auto Sync is disabled',
+                              content:
+                                  'The Auto Sync schedule can be set if Auto Sync is enabled, please enable Auto Sync.');
+                          return;
+                        }
+
+                        await showSelectAutoSyncScheduleDialog(
+                          context: context,
+                          onSubmitted: () {
+                            super.setState(() {});
+                          },
+                        );
                       },
                     );
                   },
@@ -340,4 +349,19 @@ class _OverviewSettingsViewState extends State<OverviewSettingsView> {
           ),
         ),
       );
+
+  Future<String> _getAutoSyncSettings() async {
+    final cycleUnitCode =
+        await CommonSharedPreferencesKey.autoSyncCycleUnit.getInt();
+    final cycleUnit = ScheduleCycleUnitExt.toEnum(code: cycleUnitCode);
+    final cycle =
+        await CommonSharedPreferencesKey.autoSyncCycle.getInt(defaultValue: 1);
+
+    switch (cycleUnit) {
+      case ScheduleCycleUnit.day:
+        return 'Per $cycle ${cycle < 2 ? "day" : "days"}';
+      case ScheduleCycleUnit.hour:
+        return 'Per $cycle ${cycle < 2 ? "hour" : "hours"}';
+    }
+  }
 }
