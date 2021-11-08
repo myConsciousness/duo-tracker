@@ -131,6 +131,21 @@ class _OverviewSettingsViewState extends State<OverviewSettingsView> {
         onTap: onTap,
       );
 
+  Future<String> _getAutoSyncSettings() async {
+    final cycleUnitCode =
+        await CommonSharedPreferencesKey.autoSyncCycleUnit.getInt();
+    final cycleUnit = ScheduleCycleUnitExt.toEnum(code: cycleUnitCode);
+    final cycle =
+        await CommonSharedPreferencesKey.autoSyncCycle.getInt(defaultValue: 1);
+
+    switch (cycleUnit) {
+      case ScheduleCycleUnit.day:
+        return 'Per $cycle ${cycle < 2 ? "day" : "days"}';
+      case ScheduleCycleUnit.hour:
+        return 'Per $cycle ${cycle < 2 ? "hour" : "hours"}';
+    }
+  }
+
   @override
   Widget build(BuildContext context) => Scaffold(
         appBar: AppBar(
@@ -349,19 +364,4 @@ class _OverviewSettingsViewState extends State<OverviewSettingsView> {
           ),
         ),
       );
-
-  Future<String> _getAutoSyncSettings() async {
-    final cycleUnitCode =
-        await CommonSharedPreferencesKey.autoSyncCycleUnit.getInt();
-    final cycleUnit = ScheduleCycleUnitExt.toEnum(code: cycleUnitCode);
-    final cycle =
-        await CommonSharedPreferencesKey.autoSyncCycle.getInt(defaultValue: 1);
-
-    switch (cycleUnit) {
-      case ScheduleCycleUnit.day:
-        return 'Per $cycle ${cycle < 2 ? "day" : "days"}';
-      case ScheduleCycleUnit.hour:
-        return 'Per $cycle ${cycle < 2 ? "hour" : "hours"}';
-    }
-  }
 }
