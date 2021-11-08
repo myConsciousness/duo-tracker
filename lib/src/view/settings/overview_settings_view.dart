@@ -6,10 +6,14 @@ import 'package:duo_tracker/src/component/common_divider.dart';
 import 'package:duo_tracker/src/component/const/match_pattern.dart';
 import 'package:duo_tracker/src/component/const/sort_item.dart';
 import 'package:duo_tracker/src/component/const/sort_pattern.dart';
+import 'package:duo_tracker/src/component/dialog/confirm_dialog.dart';
+import 'package:duo_tracker/src/component/dialog/loading_dialog.dart';
 import 'package:duo_tracker/src/component/dialog/select_search_method_dialog.dart';
 import 'package:duo_tracker/src/component/dialog/select_sort_method_dialog.dart';
+import 'package:duo_tracker/src/component/dialog/warning_dialog.dart';
 import 'package:duo_tracker/src/component/loading.dart';
 import 'package:duo_tracker/src/repository/preference/common_shared_preferences_key.dart';
+import 'package:duo_tracker/src/repository/service/learned_word_service.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 
@@ -21,6 +25,9 @@ class OverviewSettingsView extends StatefulWidget {
 }
 
 class _OverviewSettingsViewState extends State<OverviewSettingsView> {
+  /// The learned word service
+  final _learnedWordService = LearnedWordService.getInstance();
+
   /// The datetime format
   final _datetimeFormat = DateFormat('yyyy/MM/dd HH:mm');
 
@@ -180,10 +187,23 @@ class _OverviewSettingsViewState extends State<OverviewSettingsView> {
                   height: 10,
                 ),
                 _createListTile(
-                  icon: const Icon(Icons.calendar_today),
-                  title: 'Auto Sync Schedule',
-                  subtitle: '',
-                ),
+                    icon: const Icon(Icons.calendar_today),
+                    title: 'Auto Sync Schedule',
+                    subtitle: '',
+                    onTap: () async {
+                      final useAutoSync = await CommonSharedPreferencesKey
+                          .overviewUseAutoSync
+                          .getBool();
+
+                      if (!useAutoSync) {
+                        await showWarningDialog(
+                            context: context,
+                            title: 'Auto Sync is disabled',
+                            content:
+                                'The Auto Sync schedule can be set if Auto Sync is enabled, please enable Auto Sync.');
+                        return;
+                      }
+                    }),
                 const CommonDivider(),
                 _createListTile(
                   icon: const Icon(Icons.search),
@@ -239,6 +259,33 @@ class _OverviewSettingsViewState extends State<OverviewSettingsView> {
                   title: 'Reset Sort Order',
                   subtitle:
                       'You can reset the order of the words in the list. This operation will not reset the order of words in the folder.',
+                  onTap: () async => await showConfirmDialog(
+                    context: context,
+                    title: 'Reset Word Orders',
+                    content:
+                        'Resets the sorted order in the word list. This will not reset the order of the words in the folder. Are you sure?',
+                    onPressedOk: () async {
+                      final userId =
+                          await CommonSharedPreferencesKey.userId.getString();
+                      final learningLanguage = await CommonSharedPreferencesKey
+                          .currentLearningLanguage
+                          .getString();
+                      final fromLanguage = await CommonSharedPreferencesKey
+                          .currentFromLanguage
+                          .getString();
+
+                      await showLoadingDialog(
+                        context: context,
+                        title: 'Resetting Word Orders',
+                        future: _learnedWordService
+                            .resetSortOrderByUserIdAndLearningLanguageAndFromLanguage(
+                          userId: userId,
+                          learningLanguage: learningLanguage,
+                          fromLanguage: fromLanguage,
+                        ),
+                      );
+                    },
+                  ),
                 ),
               ],
             ),

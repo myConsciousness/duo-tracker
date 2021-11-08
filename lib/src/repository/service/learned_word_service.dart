@@ -200,6 +200,35 @@ class LearnedWordService extends LearnedWordRepository {
   }
 
   @override
+  Future<List<LearnedWord>>
+      findByUserIdAndLearningLanguageAndFromLanguageOrderByLastPracticedMsDesc({
+    required String userId,
+    required String learningLanguage,
+    required String fromLanguage,
+  }) async =>
+          database.then(
+            (database) => database
+                .query(
+                  table,
+                  where:
+                      'USER_ID = ? AND LEARNING_LANGUAGE = ? AND FROM_LANGUAGE = ?',
+                  whereArgs: [
+                    userId,
+                    learningLanguage,
+                    fromLanguage,
+                  ],
+                  orderBy: 'LAST_PRACTICED_MS DESC',
+                )
+                .then(
+                  (entities) => entities
+                      .map((entity) => entity.isNotEmpty
+                          ? LearnedWord.fromMap(entity)
+                          : LearnedWord.empty())
+                      .toList(),
+                ),
+          );
+
+  @override
   Future<LearnedWord> findByWordIdAndUserId(
       String wordId, String userId) async {
     final learnedWords = [
@@ -419,6 +448,31 @@ class LearnedWordService extends LearnedWordRepository {
 
       await batch.commit(noResult: true);
     });
+  }
+
+  @override
+  Future<void> resetSortOrderByUserIdAndLearningLanguageAndFromLanguage({
+    required String userId,
+    required String learningLanguage,
+    required String fromLanguage,
+  }) async {
+    // The words returned by the Duolingo API are in descending order of the last learning date.
+    final learnedWords =
+        await findByUserIdAndLearningLanguageAndFromLanguageOrderByLastPracticedMsDesc(
+      userId: userId,
+      learningLanguage: learningLanguage,
+      fromLanguage: fromLanguage,
+    );
+
+    int index = 0;
+    final now = DateTime.now();
+    for (final learnedWord in learnedWords) {
+      learnedWord.sortOrder = index;
+      learnedWord.updatedAt = now;
+
+      update(learnedWord);
+      index++;
+    }
   }
 
   @override

@@ -195,7 +195,7 @@ class _OverviewViewState extends State<OverviewView> {
             FutureBuilder(
               future: BannerAdUtils.canShow(
                 index: index,
-                interval: 5,
+                interval: 10,
               ),
               builder: (BuildContext context, AsyncSnapshot snapshot) {
                 if (!snapshot.hasData || !snapshot.data) {
@@ -435,7 +435,7 @@ class _OverviewViewState extends State<OverviewView> {
             MaterialPageRoute(
               builder: (_) => const OverviewSettingsView(),
             ),
-          ),
+          ).then((_) => super.setState(() {})),
         ),
       ];
 

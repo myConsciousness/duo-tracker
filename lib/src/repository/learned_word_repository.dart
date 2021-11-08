@@ -13,6 +13,13 @@ abstract class LearnedWordRepository extends Repository<LearnedWord> {
     String fromLanguage,
   );
 
+  Future<List<LearnedWord>>
+      findByUserIdAndLearningLanguageAndFromLanguageOrderByLastPracticedMsDesc({
+    required String userId,
+    required String learningLanguage,
+    required String fromLanguage,
+  });
+
   Future<LearnedWord> findByWordIdAndUserId(
     String wordId,
     String userId,
@@ -30,6 +37,12 @@ abstract class LearnedWordRepository extends Repository<LearnedWord> {
     String wordId,
     String userId,
   );
+
+  Future<void> resetSortOrderByUserIdAndLearningLanguageAndFromLanguage({
+    required String userId,
+    required String learningLanguage,
+    required String fromLanguage,
+  });
 
   Future<void> replaceByIds(List<LearnedWord> learnedWords);
 
