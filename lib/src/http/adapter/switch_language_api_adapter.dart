@@ -17,35 +17,42 @@ class SwitchLanguageApiAdapter extends ApiAdapter {
     required BuildContext context,
     final params = const <String, String>{},
   }) async {
-    final response =
-        await DuolingoApi.switchLanguage.request.send(params: params);
-    final httpStatus = HttpStatus.from(code: response.statusCode);
+    try {
+      final response =
+          await DuolingoApi.switchLanguage.request.send(params: params);
+      final httpStatus = HttpStatus.from(code: response.statusCode);
 
-    if (httpStatus.isAccepted) {
-      await CommonSharedPreferencesKey.currentFromLanguage
-          .setString(params['fromLanguage']);
-      await CommonSharedPreferencesKey.currentLearningLanguage
-          .setString(params['learningLanguage']);
+      if (httpStatus.isAccepted) {
+        await CommonSharedPreferencesKey.currentFromLanguage
+            .setString(params['fromLanguage']);
+        await CommonSharedPreferencesKey.currentLearningLanguage
+            .setString(params['learningLanguage']);
+
+        return ApiResponse.from(
+          fromApi: FromApi.switchLanguage,
+          errorType: ErrorType.none,
+        );
+      } else if (httpStatus.isClientError) {
+        return ApiResponse.from(
+          fromApi: FromApi.switchLanguage,
+          errorType: ErrorType.client,
+        );
+      } else if (httpStatus.isServerError) {
+        return ApiResponse.from(
+          fromApi: FromApi.switchLanguage,
+          errorType: ErrorType.server,
+        );
+      }
 
       return ApiResponse.from(
         fromApi: FromApi.switchLanguage,
-        errorType: ErrorType.none,
+        errorType: ErrorType.unknown,
       );
-    } else if (httpStatus.isClientError) {
+    } catch (e) {
       return ApiResponse.from(
         fromApi: FromApi.switchLanguage,
-        errorType: ErrorType.client,
-      );
-    } else if (httpStatus.isServerError) {
-      return ApiResponse.from(
-        fromApi: FromApi.switchLanguage,
-        errorType: ErrorType.server,
+        errorType: ErrorType.unknown,
       );
     }
-
-    return ApiResponse.from(
-      fromApi: FromApi.switchLanguage,
-      errorType: ErrorType.unknown,
-    );
   }
 }

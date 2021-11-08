@@ -44,38 +44,45 @@ class UserApiAdapter extends ApiAdapter {
     required BuildContext context,
     final params = const <String, String>{},
   }) async {
-    final userId = await CommonSharedPreferencesKey.userId.getString();
-    final response =
-        await DuolingoApi.user.request.send(params: {'userId': userId});
-    final httpStatus = HttpStatus.from(code: response.statusCode);
+    try {
+      final userId = await CommonSharedPreferencesKey.userId.getString();
+      final response =
+          await DuolingoApi.user.request.send(params: {'userId': userId});
+      final httpStatus = HttpStatus.from(code: response.statusCode);
 
-    if (httpStatus.isAccepted) {
-      final jsonMap = jsonDecode(utf8.decode(response.body.runes.toList()));
+      if (httpStatus.isAccepted) {
+        final jsonMap = jsonDecode(utf8.decode(response.body.runes.toList()));
 
-      await _updateUser(userId: userId, json: jsonMap);
-      await _refreshCourse(json: jsonMap);
-      await _refreshSkill(json: jsonMap);
+        await _updateUser(userId: userId, json: jsonMap);
+        await _refreshCourse(json: jsonMap);
+        await _refreshSkill(json: jsonMap);
+
+        return ApiResponse.from(
+          fromApi: FromApi.user,
+          errorType: ErrorType.none,
+        );
+      } else if (httpStatus.isClientError) {
+        return ApiResponse.from(
+          fromApi: FromApi.user,
+          errorType: ErrorType.client,
+        );
+      } else if (httpStatus.isServerError) {
+        return ApiResponse.from(
+          fromApi: FromApi.user,
+          errorType: ErrorType.server,
+        );
+      }
 
       return ApiResponse.from(
         fromApi: FromApi.user,
-        errorType: ErrorType.none,
+        errorType: ErrorType.unknown,
       );
-    } else if (httpStatus.isClientError) {
+    } catch (e) {
       return ApiResponse.from(
         fromApi: FromApi.user,
-        errorType: ErrorType.client,
-      );
-    } else if (httpStatus.isServerError) {
-      return ApiResponse.from(
-        fromApi: FromApi.user,
-        errorType: ErrorType.server,
+        errorType: ErrorType.unknown,
       );
     }
-
-    return ApiResponse.from(
-      fromApi: FromApi.user,
-      errorType: ErrorType.unknown,
-    );
   }
 
   Future<void> _updateUser({

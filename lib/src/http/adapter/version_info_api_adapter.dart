@@ -29,40 +29,47 @@ class VersionInfoAdapter extends ApiAdapter {
     required BuildContext context,
     params = const <String, String>{},
   }) async {
-    final response = await DuolingoApi.versionInfo.request.send();
-    final httpStatus = HttpStatus.from(code: response.statusCode);
+    try {
+      final response = await DuolingoApi.versionInfo.request.send();
+      final httpStatus = HttpStatus.from(code: response.statusCode);
 
-    if (httpStatus.isAccepted) {
-      final jsonMap = jsonDecode(response.body);
+      if (httpStatus.isAccepted) {
+        final jsonMap = jsonDecode(response.body);
 
-      await _refreshSupportedLanguage(
-        json: jsonMap,
-      );
+        await _refreshSupportedLanguage(
+          json: jsonMap,
+        );
 
-      await _refreshVoiceConfiguration(
-        json: jsonMap,
-      );
+        await _refreshVoiceConfiguration(
+          json: jsonMap,
+        );
+
+        return ApiResponse.from(
+          fromApi: FromApi.versionInfo,
+          errorType: ErrorType.none,
+        );
+      } else if (httpStatus.isClientError) {
+        return ApiResponse.from(
+          fromApi: FromApi.versionInfo,
+          errorType: ErrorType.client,
+        );
+      } else if (httpStatus.isServerError) {
+        return ApiResponse.from(
+          fromApi: FromApi.versionInfo,
+          errorType: ErrorType.server,
+        );
+      }
 
       return ApiResponse.from(
         fromApi: FromApi.versionInfo,
-        errorType: ErrorType.none,
+        errorType: ErrorType.unknown,
       );
-    } else if (httpStatus.isClientError) {
+    } catch (e) {
       return ApiResponse.from(
         fromApi: FromApi.versionInfo,
-        errorType: ErrorType.client,
-      );
-    } else if (httpStatus.isServerError) {
-      return ApiResponse.from(
-        fromApi: FromApi.versionInfo,
-        errorType: ErrorType.server,
+        errorType: ErrorType.unknown,
       );
     }
-
-    return ApiResponse.from(
-      fromApi: FromApi.versionInfo,
-      errorType: ErrorType.unknown,
-    );
   }
 
   Future<void> _refreshSupportedLanguage({

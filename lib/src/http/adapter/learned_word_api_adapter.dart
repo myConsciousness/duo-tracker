@@ -28,85 +28,92 @@ class LearnedWordApiAdapter extends ApiAdapter {
     required final BuildContext context,
     final params = const <String, String>{},
   }) async {
-    final response = await DuolingoApi.learnedWord.request.send();
-    final httpStatus = HttpStatus.from(code: response.statusCode);
+    try {
+      final response = await DuolingoApi.learnedWord.request.send();
+      final httpStatus = HttpStatus.from(code: response.statusCode);
 
-    if (httpStatus.isAccepted) {
-      final jsonMap = jsonDecode(response.body);
-      final String languageString = jsonMap['language_string'];
-      final String learningLanguage = jsonMap['learning_language'];
-      final String fromLanguage = jsonMap['from_language'];
+      if (httpStatus.isAccepted) {
+        final jsonMap = jsonDecode(response.body);
+        final String languageString = jsonMap['language_string'];
+        final String learningLanguage = jsonMap['learning_language'];
+        final String fromLanguage = jsonMap['from_language'];
 
-      final formalLearningLanguage = LanguageConverter.toFormalLanguageCode(
-        languageCode: learningLanguage,
-      );
-      final formalFromLanguage = LanguageConverter.toFormalLanguageCode(
-        languageCode: fromLanguage,
-      );
+        final formalLearningLanguage = LanguageConverter.toFormalLanguageCode(
+          languageCode: learningLanguage,
+        );
+        final formalFromLanguage = LanguageConverter.toFormalLanguageCode(
+          languageCode: fromLanguage,
+        );
 
-      final userId = await CommonSharedPreferencesKey.userId.getString();
-      final learnedWords = <LearnedWord>[];
+        final userId = await CommonSharedPreferencesKey.userId.getString();
+        final learnedWords = <LearnedWord>[];
 
-      int sortOrder = 0;
-      final now = DateTime.now();
-      final vocabOverview = jsonMap['vocab_overview'];
-      for (final Map<String, dynamic> overview in vocabOverview) {
-        final String skill = overview['skill'] ?? '';
-        learnedWords.add(
-          LearnedWord.from(
-            wordId: overview['id'],
-            userId: userId,
-            languageString: languageString,
-            learningLanguage: learningLanguage,
-            fromLanguage: fromLanguage,
-            formalLearningLanguage: formalLearningLanguage,
-            formalFromLanguage: formalFromLanguage,
-            strengthBars: overview['strength_bars'] ?? -1,
-            infinitive: overview['infinitive'] ?? '',
-            wordString: overview['word_string'],
-            normalizedString: overview['normalized_string'] ?? '',
-            pos: overview['pos'] ?? '',
-            lastPracticedMs: overview['last_practiced_ms'] ?? -1,
-            skill: skill,
-            shortSkill: _buildShortSkill(skill: skill),
-            lastPracticed: overview['last_practiced'] ?? '',
-            strength: overview['strength'] ?? 0.0,
-            skillUrlTitle: overview['skill_url_title'] ?? '',
-            gender: overview['gender'] ?? '',
-            bookmarked: false,
-            completed: false,
-            deleted: false,
-            sortOrder: sortOrder++,
-            createdAt: now,
-            updatedAt: now,
-          ),
+        int sortOrder = 0;
+        final now = DateTime.now();
+        final vocabOverview = jsonMap['vocab_overview'];
+        for (final Map<String, dynamic> overview in vocabOverview) {
+          final String skill = overview['skill'] ?? '';
+          learnedWords.add(
+            LearnedWord.from(
+              wordId: overview['id'],
+              userId: userId,
+              languageString: languageString,
+              learningLanguage: learningLanguage,
+              fromLanguage: fromLanguage,
+              formalLearningLanguage: formalLearningLanguage,
+              formalFromLanguage: formalFromLanguage,
+              strengthBars: overview['strength_bars'] ?? -1,
+              infinitive: overview['infinitive'] ?? '',
+              wordString: overview['word_string'],
+              normalizedString: overview['normalized_string'] ?? '',
+              pos: overview['pos'] ?? '',
+              lastPracticedMs: overview['last_practiced_ms'] ?? -1,
+              skill: skill,
+              shortSkill: _buildShortSkill(skill: skill),
+              lastPracticed: overview['last_practiced'] ?? '',
+              strength: overview['strength'] ?? 0.0,
+              skillUrlTitle: overview['skill_url_title'] ?? '',
+              gender: overview['gender'] ?? '',
+              bookmarked: false,
+              completed: false,
+              deleted: false,
+              sortOrder: sortOrder++,
+              createdAt: now,
+              updatedAt: now,
+            ),
+          );
+        }
+
+        await _learnedWordService.replaceByIds(
+          learnedWords,
+        );
+
+        return ApiResponse.from(
+          fromApi: FromApi.learnedWord,
+          errorType: ErrorType.none,
+        );
+      } else if (httpStatus.isClientError) {
+        return ApiResponse.from(
+          fromApi: FromApi.learnedWord,
+          errorType: ErrorType.client,
+        );
+      } else if (httpStatus.isServerError) {
+        return ApiResponse.from(
+          fromApi: FromApi.learnedWord,
+          errorType: ErrorType.server,
         );
       }
 
-      await _learnedWordService.replaceByIds(
-        learnedWords,
-      );
-
       return ApiResponse.from(
         fromApi: FromApi.learnedWord,
-        errorType: ErrorType.none,
+        errorType: ErrorType.unknown,
       );
-    } else if (httpStatus.isClientError) {
+    } catch (e) {
       return ApiResponse.from(
         fromApi: FromApi.learnedWord,
-        errorType: ErrorType.client,
-      );
-    } else if (httpStatus.isServerError) {
-      return ApiResponse.from(
-        fromApi: FromApi.learnedWord,
-        errorType: ErrorType.server,
+        errorType: ErrorType.unknown,
       );
     }
-
-    return ApiResponse.from(
-      fromApi: FromApi.learnedWord,
-      errorType: ErrorType.unknown,
-    );
   }
 
   String _buildShortSkill({
