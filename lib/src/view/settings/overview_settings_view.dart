@@ -92,9 +92,13 @@ class _OverviewSettingsViewState extends State<OverviewSettingsView> {
 
     switch (cycleUnit) {
       case ScheduleCycleUnit.day:
+        // It will always be after today if the unit is a day,
+        // so use the last sync time as the reference.
         final lastAutoSyncedAt = DateTime.fromMillisecondsSinceEpoch(
-            await CommonSharedPreferencesKey.datetimeLastAutoSyncedOverview
-                .getInt());
+          await CommonSharedPreferencesKey.datetimeLastAutoSyncedOverview
+              .getInt(),
+        );
+
         return lastAutoSyncedAt.add(Duration(days: cycle));
       case ScheduleCycleUnit.hour:
         return DateTime.now().add(Duration(hours: cycle));
