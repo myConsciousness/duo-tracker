@@ -7,6 +7,9 @@ enum DateFormatPattern {
   /// 2000/12/24
   yyyymmdd,
 
+  /// 2000/24/12
+  yyyyddmm,
+
   /// 24/12/2000
   ddmmyyyy,
 
@@ -19,10 +22,12 @@ extension DateFormatPatternExt on DateFormatPattern {
     switch (this) {
       case DateFormatPattern.yyyymmdd:
         return 0;
-      case DateFormatPattern.ddmmyyyy:
+      case DateFormatPattern.yyyyddmm:
         return 1;
-      case DateFormatPattern.mmddyyyy:
+      case DateFormatPattern.ddmmyyyy:
         return 2;
+      case DateFormatPattern.mmddyyyy:
+        return 3;
     }
   }
 
@@ -30,6 +35,8 @@ extension DateFormatPatternExt on DateFormatPattern {
     switch (this) {
       case DateFormatPattern.yyyymmdd:
         return 'yyyy/MM/dd';
+      case DateFormatPattern.yyyyddmm:
+        return 'yyyy/dd/MM';
       case DateFormatPattern.ddmmyyyy:
         return 'dd/MM/yyyy';
       case DateFormatPattern.mmddyyyy:

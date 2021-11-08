@@ -3,6 +3,7 @@
 // BSD-style license that can be found in the LICENSE file.
 
 import 'package:duo_tracker/src/component/common_divider.dart';
+import 'package:duo_tracker/src/component/dialog/select_date_time_format_dialog.dart';
 import 'package:duo_tracker/src/provider/theme_mode_provider.dart';
 import 'package:duo_tracker/src/repository/preference/common_shared_preferences_key.dart';
 import 'package:flutter/material.dart';
@@ -99,9 +100,11 @@ class _ThemeSettingsViewState extends State<ThemeSettingsView> {
               const CommonDivider(),
               _createListTile(
                 icon: const Icon(FontAwesomeIcons.clock),
-                title: 'Date Time Format',
+                title: 'Date Format',
                 subtitle: '',
-                onTap: () async {},
+                onTap: () async {
+                  await showSelectDateTimeFormatDialog(context: context);
+                },
               ),
             ],
           ),

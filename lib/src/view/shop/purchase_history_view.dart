@@ -10,9 +10,9 @@ import 'package:duo_tracker/src/component/common_nested_scroll_view.dart';
 import 'package:duo_tracker/src/component/loading.dart';
 import 'package:duo_tracker/src/repository/model/purchase_history_model.dart';
 import 'package:duo_tracker/src/repository/service/purchase_history_service.dart';
+import 'package:duo_tracker/src/utils/date_time_formatter.dart';
 import 'package:duo_tracker/src/view/shop/purchase_history_tab_type.dart';
 import 'package:flutter/material.dart';
-import 'package:intl/intl.dart';
 
 class PurchaseHistoryView extends StatefulWidget {
   const PurchaseHistoryView({
@@ -31,8 +31,8 @@ class _PurchaseHistoryViewState extends State<PurchaseHistoryView> {
   /// The banner ad list
   final _bannerAdList = BannerAdList.newInstance();
 
-  /// The datetime format
-  final _datetimeFormat = DateFormat('yyyy/MM/dd HH:mm');
+  /// The date time formatter
+  final _dateTimeFormatter = DateTimeFormatter();
 
   /// The purchase history service
   final _purchaseHistoryService = PurchaseHistoryService.getInstance();
@@ -135,15 +135,33 @@ class _PurchaseHistoryViewState extends State<PurchaseHistoryView> {
                                         '${purchaseHistory.validPeriodInMinutes} min',
                                     subtitle: 'Valid Period',
                                   ),
-                                  CommonCardHeaderText(
-                                    title: _datetimeFormat
-                                        .format(purchaseHistory.purchasedAt),
-                                    subtitle: 'Purchased At',
+                                  FutureBuilder(
+                                    future: _dateTimeFormatter.execute(
+                                        dateTime: purchaseHistory.purchasedAt),
+                                    builder: (_, AsyncSnapshot snapshot) {
+                                      if (!snapshot.hasData) {
+                                        return const Loading();
+                                      }
+
+                                      return CommonCardHeaderText(
+                                        subtitle: 'Purchased At',
+                                        title: snapshot.data,
+                                      );
+                                    },
                                   ),
-                                  CommonCardHeaderText(
-                                    title: _datetimeFormat
-                                        .format(purchaseHistory.expiredAt),
-                                    subtitle: 'Expired At',
+                                  FutureBuilder(
+                                    future: _dateTimeFormatter.execute(
+                                        dateTime: purchaseHistory.expiredAt),
+                                    builder: (_, AsyncSnapshot snapshot) {
+                                      if (!snapshot.hasData) {
+                                        return const Loading();
+                                      }
+
+                                      return CommonCardHeaderText(
+                                        subtitle: 'Expired At',
+                                        title: snapshot.data,
+                                      );
+                                    },
                                   ),
                                 ],
                               ),
