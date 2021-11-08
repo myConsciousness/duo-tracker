@@ -2,7 +2,7 @@
 // Use of this source code is governed by a
 // BSD-style license that can be found in the LICENSE file.
 
-import 'package:duo_tracker/src/repository/boolean_text.dart';
+import 'package:duo_tracker/src/repository/utils/boolean_text.dart';
 import 'package:duo_tracker/src/repository/const/column/user_column.dart';
 
 class User {
