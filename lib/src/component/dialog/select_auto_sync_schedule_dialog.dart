@@ -30,6 +30,7 @@ final _datetimeFormat = DateFormat('yyyy/MM/dd HH:mm');
 
 Future<T?> showSelectAutoSyncScheduleDialog<T>({
   required BuildContext context,
+  required Function onSubmitted,
 }) async {
   final cycleUnitCode =
       await CommonSharedPreferencesKey.autoSyncCycleUnit.getInt();
@@ -43,22 +44,31 @@ Future<T?> showSelectAutoSyncScheduleDialog<T>({
     await CommonSharedPreferencesKey.datetimeLastAutoSyncedOverview.getInt(),
   );
 
-  _dialog = _buildDialog(context: context);
+  _dialog = _buildDialog(
+    context: context,
+    onSubmitted: onSubmitted,
+  );
   await _dialog.show();
 }
 
 AwesomeDialog _buildDialog({
   required BuildContext context,
+  required Function onSubmitted,
 }) =>
     AwesomeDialog(
       context: context,
       animType: AnimType.LEFTSLIDE,
       dialogType: DialogType.QUESTION,
       btnOkColor: Theme.of(context).colorScheme.secondary,
-      body: _buildDialogBody(),
+      body: _buildDialogBody(
+        onSubmitted: onSubmitted,
+      ),
     );
 
-Widget _buildDialogBody() => StatefulBuilder(
+Widget _buildDialogBody({
+  required Function onSubmitted,
+}) =>
+    StatefulBuilder(
       builder: (BuildContext context, setState) => Padding(
         padding: const EdgeInsets.all(13),
         child: Center(
@@ -104,6 +114,8 @@ Widget _buildDialogBody() => StatefulBuilder(
                         .setInt(_cycleUnit.code);
                     await CommonSharedPreferencesKey.autoSyncCycle
                         .setInt(_autoSyncCycleCount);
+
+                    onSubmitted.call();
 
                     _dialog.dismiss();
                   },

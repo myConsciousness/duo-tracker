@@ -84,7 +84,8 @@ class _OverviewSettingsViewState extends State<OverviewSettingsView> {
   }
 
   Future<DateTime> _computeNextAutoSync() async {
-    final cycle = await CommonSharedPreferencesKey.autoSyncCycle.getInt();
+    final cycle =
+        await CommonSharedPreferencesKey.autoSyncCycle.getInt(defaultValue: 1);
     final cycleUnitCode =
         await CommonSharedPreferencesKey.autoSyncCycleUnit.getInt();
     final cycleUnit = ScheduleCycleUnitExt.toEnum(code: cycleUnitCode);
@@ -228,7 +229,7 @@ class _OverviewSettingsViewState extends State<OverviewSettingsView> {
                   onTap: () async {
                     final useAutoSync = await CommonSharedPreferencesKey
                         .overviewUseAutoSync
-                        .getBool();
+                        .getBool(defaultValue: true);
 
                     if (!useAutoSync) {
                       await showWarningDialog(
@@ -239,7 +240,12 @@ class _OverviewSettingsViewState extends State<OverviewSettingsView> {
                       return;
                     }
 
-                    await showSelectAutoSyncScheduleDialog(context: context);
+                    await showSelectAutoSyncScheduleDialog(
+                      context: context,
+                      onSubmitted: () {
+                        super.setState(() {});
+                      },
+                    );
                   },
                 ),
                 const CommonDivider(),
