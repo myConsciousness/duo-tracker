@@ -437,6 +437,8 @@ class _UserOverviewViewState extends State<UserOverviewView> {
         floatingActionButtonLocation:
             FloatingActionButtonLocation.miniCenterDocked,
         floatingActionButton: SpeedDial(
+          backgroundColor: Theme.of(context).colorScheme.secondaryVariant,
+          foregroundColor: Colors.white,
           renderOverlay: true,
           switchLabelPosition: true,
           buttonSize: 50,

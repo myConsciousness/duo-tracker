@@ -8,6 +8,7 @@ import 'package:duo_tracker/src/component/const/sort_item.dart';
 import 'package:duo_tracker/src/component/const/sort_pattern.dart';
 import 'package:duo_tracker/src/component/dialog/confirm_dialog.dart';
 import 'package:duo_tracker/src/component/dialog/loading_dialog.dart';
+import 'package:duo_tracker/src/component/dialog/select_auto_sync_schedule_dialog.dart';
 import 'package:duo_tracker/src/component/dialog/select_search_method_dialog.dart';
 import 'package:duo_tracker/src/component/dialog/select_sort_method_dialog.dart';
 import 'package:duo_tracker/src/component/dialog/warning_dialog.dart';
@@ -187,23 +188,26 @@ class _OverviewSettingsViewState extends State<OverviewSettingsView> {
                   height: 10,
                 ),
                 _createListTile(
-                    icon: const Icon(Icons.calendar_today),
-                    title: 'Auto Sync Schedule',
-                    subtitle: '',
-                    onTap: () async {
-                      final useAutoSync = await CommonSharedPreferencesKey
-                          .overviewUseAutoSync
-                          .getBool();
+                  icon: const Icon(Icons.calendar_today),
+                  title: 'Auto Sync Schedule',
+                  subtitle: '',
+                  onTap: () async {
+                    final useAutoSync = await CommonSharedPreferencesKey
+                        .overviewUseAutoSync
+                        .getBool();
 
-                      if (!useAutoSync) {
-                        await showWarningDialog(
-                            context: context,
-                            title: 'Auto Sync is disabled',
-                            content:
-                                'The Auto Sync schedule can be set if Auto Sync is enabled, please enable Auto Sync.');
-                        return;
-                      }
-                    }),
+                    if (!useAutoSync) {
+                      await showWarningDialog(
+                          context: context,
+                          title: 'Auto Sync is disabled',
+                          content:
+                              'The Auto Sync schedule can be set if Auto Sync is enabled, please enable Auto Sync.');
+                      return;
+                    }
+
+                    await showSelectAutoSyncScheduleDialog(context: context);
+                  },
+                ),
                 const CommonDivider(),
                 _createListTile(
                   icon: const Icon(Icons.search),

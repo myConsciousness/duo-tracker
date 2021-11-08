@@ -73,6 +73,12 @@ enum CommonSharedPreferencesKey {
 
   //! The Sync Config ↓
 
+  /// The auto sync cycle unit
+  autoSyncCycleUnit,
+
+  /// The auto sync cycle
+  autoSyncCycle,
+
   /// The datetime last  synced overview
   datetimeLastSyncedOverview,
 
@@ -88,9 +94,6 @@ enum CommonSharedPreferencesKey {
 
   /// The flag represents use auto sync or not
   overviewUseAutoSync,
-
-  /// The overview auto sync interval
-  overviewAutoSyncInterval,
 
   /// The overview default match pattern
   overviewDefaultMatchPattern,
@@ -148,6 +151,10 @@ extension KeyFeature on CommonSharedPreferencesKey {
         return 'current_learning_language';
       case CommonSharedPreferencesKey.currentFromLanguage:
         return 'current_from_language';
+      case CommonSharedPreferencesKey.autoSyncCycleUnit:
+        return 'auto_sync_cycle_unit';
+      case CommonSharedPreferencesKey.autoSyncCycle:
+        return 'auto_sync_cycle';
       case CommonSharedPreferencesKey.datetimeLastSyncedOverview:
         return 'datetime_last_synced_overview';
       case CommonSharedPreferencesKey.datetimeLastAutoSyncedOverview:
@@ -156,8 +163,6 @@ extension KeyFeature on CommonSharedPreferencesKey {
         return 'apply_dark_theme';
       case CommonSharedPreferencesKey.overviewUseAutoSync:
         return 'overview_use_auto_aync';
-      case CommonSharedPreferencesKey.overviewAutoSyncInterval:
-        return 'overview_auto_sync_interval';
       case CommonSharedPreferencesKey.overviewDefaultMatchPattern:
         return 'overview_default_match_pattern';
       case CommonSharedPreferencesKey.overviewDefaultSortItem:

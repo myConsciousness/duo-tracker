@@ -71,18 +71,19 @@ class _ThemeSettingsViewState extends State<ThemeSettingsView> {
                 children: [
                   Expanded(
                     child: _createListTile(
-                        icon: const Icon(Icons.dark_mode),
-                        title: 'Use Dark Mode',
-                        subtitle:
-                            'Switch the theme of app to dark mode. Dark mode consumes less power and is less stressful on your eyes.',
-                        onTap: () async {
-                          final applyDarkTheme =
-                              await CommonSharedPreferencesKey.applyDarkTheme
-                                  .getBool();
-                          await themeModeProvider.notify(
-                              appliedDarkTheme: !applyDarkTheme);
-                          super.setState(() {});
-                        }),
+                      icon: const Icon(Icons.dark_mode),
+                      title: 'Use Dark Mode',
+                      subtitle:
+                          'Switch the theme of app to dark mode. Dark mode consumes less power and is less stressful on your eyes.',
+                      onTap: () async {
+                        final applyDarkTheme = await CommonSharedPreferencesKey
+                            .applyDarkTheme
+                            .getBool();
+                        await themeModeProvider.notify(
+                            appliedDarkTheme: !applyDarkTheme);
+                        super.setState(() {});
+                      },
+                    ),
                   ),
                   Switch(
                     value: themeModeProvider.appliedDarkTheme,

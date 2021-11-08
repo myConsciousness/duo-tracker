@@ -2,34 +2,34 @@
 // Use of this source code is governed by a
 // BSD-style license that can be found in the LICENSE file.
 
-/// The enum represents schedule unit.
-enum ScheduleUnit {
+/// The enum represents schedule cycle unit.
+enum ScheduleCycleUnit {
   /// The day
   day,
 
-  /// The month
-  month,
+  /// The hour
+  hour,
 }
 
-extension ScheduleUnitExt on ScheduleUnit {
+extension ScheduleCycleUnitExt on ScheduleCycleUnit {
   int get code {
     switch (this) {
-      case ScheduleUnit.day:
+      case ScheduleCycleUnit.day:
         return 0;
-      case ScheduleUnit.month:
+      case ScheduleCycleUnit.hour:
         return 1;
     }
   }
 
-  ScheduleUnit toEnum({
+  static ScheduleCycleUnit toEnum({
     required int code,
   }) {
-    for (final scheduleUnit in ScheduleUnit.values) {
+    for (final scheduleUnit in ScheduleCycleUnit.values) {
       if (scheduleUnit.code == code) {
         return scheduleUnit;
       }
     }
 
-    return ScheduleUnit.day;
+    return ScheduleCycleUnit.day;
   }
 }

@@ -69,6 +69,9 @@ class _CommonLearnedWordCardState extends State<CommonLearnedWordCard> {
   /// The learned word service
   final _learnedWordService = LearnedWordService.getInstance();
 
+  // The word hint service
+  final _wordHintService = WordHintService.getInstance();
+
   @override
   void didChangeDependencies() {
     super.didChangeDependencies();
@@ -445,7 +448,4 @@ class _CommonLearnedWordCardState extends State<CommonLearnedWordCard> {
           ),
         ),
       );
-
-  // The word hint service
-  final _wordHintService = WordHintService.getInstance();
 }
