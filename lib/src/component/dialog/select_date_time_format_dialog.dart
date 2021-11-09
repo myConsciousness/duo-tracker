@@ -3,12 +3,11 @@
 // BSD-style license that can be found in the LICENSE file.
 
 import 'package:awesome_dialog/awesome_dialog.dart';
-import 'package:duo_tracker/src/admob/interstitial_ad_utils.dart';
-import 'package:duo_tracker/src/component/common_two_grids_radio_list_tile.dart';
+import 'package:duo_tracker/src/component/common_radio_list_tile.dart';
 import 'package:duo_tracker/src/const/date_format_pattern.dart';
 import 'package:duo_tracker/src/repository/preference/common_shared_preferences_key.dart';
-import 'package:duo_tracker/src/repository/preference/interstitial_ad_shared_preferences_key.dart';
 import 'package:flutter/material.dart';
+import 'package:intl/intl.dart';
 
 late AwesomeDialog _dialog;
 
@@ -17,16 +16,37 @@ late DateFormatPattern _dateFormatPattern;
 
 Future<T?> showSelectDateTimeFormatDialog<T>({
   required BuildContext context,
+  required Function onSubmitted,
 }) async {
   final dateFotmatCode = await CommonSharedPreferencesKey.dateFormat.getInt();
   _dateFormatPattern = DateFormatPatternExt.toEnum(code: dateFotmatCode);
 
-  _dialog = AwesomeDialog(
+  _dialog = _buildDialog(
     context: context,
-    animType: AnimType.LEFTSLIDE,
-    dialogType: DialogType.QUESTION,
-    btnOkColor: Theme.of(context).colorScheme.secondary,
-    body: StatefulBuilder(
+    onSubmitted: onSubmitted,
+  );
+
+  await _dialog.show();
+}
+
+AwesomeDialog _buildDialog({
+  required BuildContext context,
+  required Function onSubmitted,
+}) =>
+    AwesomeDialog(
+      context: context,
+      animType: AnimType.LEFTSLIDE,
+      dialogType: DialogType.QUESTION,
+      btnOkColor: Theme.of(context).colorScheme.secondary,
+      body: _buildDialogBody(
+        onSubmitted: onSubmitted,
+      ),
+    );
+
+Widget _buildDialogBody({
+  required Function onSubmitted,
+}) =>
+    StatefulBuilder(
       builder: (BuildContext context, setState) => Padding(
         padding: const EdgeInsets.all(13),
         child: Center(
@@ -44,24 +64,8 @@ Future<T?> showSelectDateTimeFormatDialog<T>({
                 const SizedBox(
                   height: 20,
                 ),
-                CommonTwoGridsRadioListTile(
-                  label: 'Format Pattern',
-                  dataSource: const {
-                    'yyyy/MM/dd': DateFormatPattern.yyyymmdd,
-                    'yyyy/dd/MM': DateFormatPattern.yyyyddmm,
-                    'dd/MM/yyyyy': DateFormatPattern.ddmmyyyy,
-                    'MM/dd/yyyy': DateFormatPattern.mmddyyyy,
-                  },
-                  groupValue: _dateFormatPattern,
-                  onChanged: (value) async {
-                    await CommonSharedPreferencesKey.dateFormat.setInt(
-                      (value as DateFormatPattern).code,
-                    );
-
-                    setState(() {
-                      _dateFormatPattern = value;
-                    });
-                  },
+                _buildRadioFormatPatternSection(
+                  setState: setState,
                 ),
                 const SizedBox(
                   height: 20,
@@ -73,12 +77,12 @@ Future<T?> showSelectDateTimeFormatDialog<T>({
                     text: 'Apply',
                     color: Theme.of(context).colorScheme.secondaryVariant,
                     pressEvent: () async {
-                      _dialog.dismiss();
-
-                      await InterstitialAdUtils.showInterstitialAd(
-                        sharedPreferencesKey:
-                            InterstitialAdSharedPreferencesKey.countFilterWords,
+                      await CommonSharedPreferencesKey.dateFormat.setInt(
+                        _dateFormatPattern.code,
                       );
+
+                      onSubmitted.call();
+                      _dialog.dismiss();
                     },
                   ),
                 ),
@@ -87,8 +91,35 @@ Future<T?> showSelectDateTimeFormatDialog<T>({
           ),
         ),
       ),
-    ),
-  );
+    );
 
-  await _dialog.show();
+Map<String, DateFormatPattern> _buildDateFormatDataSource() {
+  final dataSource = <String, DateFormatPattern>{};
+
+  final now = DateTime.now();
+  for (final dateFormatPattern in DateFormatPattern.values) {
+    final dateFormat = DateFormat(dateFormatPattern.pattern);
+    dataSource['${dateFormatPattern.pattern} (${dateFormat.format(now)})'] =
+        dateFormatPattern;
+  }
+
+  return dataSource;
 }
+
+Widget _buildRadioFormatPatternSection({
+  required Function setState,
+}) =>
+    CommonRadioListTile(
+      label: 'Format Pattern',
+      dataSource: _buildDateFormatDataSource(),
+      groupValue: _dateFormatPattern,
+      onChanged: (value) async {
+        await CommonSharedPreferencesKey.dateFormat.setInt(
+          (value as DateFormatPattern).code,
+        );
+
+        setState(() {
+          _dateFormatPattern = value;
+        });
+      },
+    );
