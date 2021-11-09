@@ -56,6 +56,7 @@ class _CommonRadioListTileState<T> extends State<CommonRadioListTile> {
             widget.label!,
             style: TextStyle(
               color: Theme.of(context).colorScheme.secondary,
+              fontWeight: FontWeight.bold,
             ),
           ),
         if (widget.label != null)
