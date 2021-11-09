@@ -2,9 +2,14 @@
 // Use of this source code is governed by a
 // BSD-style license that can be found in the LICENSE file.
 
+import 'package:duo_tracker/src/component/common_divider.dart';
+import 'package:duo_tracker/src/component/dialog/select_date_time_format_dialog.dart';
+import 'package:duo_tracker/src/component/loading.dart';
+import 'package:duo_tracker/src/const/date_format_pattern.dart';
 import 'package:duo_tracker/src/provider/theme_mode_provider.dart';
 import 'package:duo_tracker/src/repository/preference/common_shared_preferences_key.dart';
 import 'package:flutter/material.dart';
+import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:provider/provider.dart';
 
 class ThemeSettingsView extends StatefulWidget {
@@ -91,13 +96,41 @@ class _ThemeSettingsViewState extends State<ThemeSettingsView> {
                       await themeModeProvider.notify(appliedDarkTheme: value);
                       super.setState(() {});
                     },
-                  )
+                  ),
                 ],
+              ),
+              const CommonDivider(),
+              FutureBuilder(
+                future: _getCurrentDateFormatPattern(),
+                builder: (_, AsyncSnapshot snapshot) {
+                  if (!snapshot.hasData) {
+                    return const Loading();
+                  }
+
+                  return _createListTile(
+                    icon: const Icon(FontAwesomeIcons.clock),
+                    title: 'Date Format',
+                    subtitle: snapshot.data,
+                    onTap: () async {
+                      await showSelectDateTimeFormatDialog(
+                        context: context,
+                        onSubmitted: () {
+                          super.setState(() {});
+                        },
+                      );
+                    },
+                  );
+                },
               ),
             ],
           ),
         ),
       ),
     );
+  }
+
+  Future<String> _getCurrentDateFormatPattern() async {
+    final dateFormatCode = await CommonSharedPreferencesKey.dateFormat.getInt();
+    return DateFormatPatternExt.toEnum(code: dateFormatCode).pattern;
   }
 }

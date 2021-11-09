@@ -12,6 +12,7 @@ import 'package:duo_tracker/src/http/utils/duolingo_api_utils.dart';
 import 'package:duo_tracker/src/repository/model/word_hint_model.dart';
 import 'package:duo_tracker/src/repository/preference/interstitial_ad_shared_preferences_key.dart';
 import 'package:duo_tracker/src/repository/service/word_hint_service.dart';
+import 'package:duo_tracker/src/utils/date_time_formatter.dart';
 import 'package:duo_tracker/src/view/folder/folder_type.dart';
 import 'package:duo_tracker/src/component/dialog/network_error_dialog.dart';
 import 'package:duo_tracker/src/component/dialog/select_folder_dialog.dart';
@@ -22,7 +23,6 @@ import 'package:duo_tracker/src/repository/service/learned_word_service.dart';
 import 'package:duo_tracker/src/utils/audio_player_utils.dart';
 import 'package:duo_tracker/src/view/lesson_tips_view.dart';
 import 'package:flutter/material.dart';
-import 'package:intl/intl.dart';
 import 'package:rounded_loading_button/rounded_loading_button.dart';
 
 class CommonLearnedWordCard extends StatefulWidget {
@@ -58,10 +58,10 @@ class _CommonLearnedWordCardState extends State<CommonLearnedWordCard> {
   /// The text represents unavailable
   static const unavailableText = 'N/A';
 
-  /// The datetime format
-  final _datetimeFormat = DateFormat('yyyy/MM/dd HH:mm');
-
   final _downloadwordHintButtonController = RoundedLoadingButtonController();
+
+  /// The date time formatter
+  final _dataTimeFormatter = DateTimeFormatter();
 
   /// The learned word
   late LearnedWord _learnedWord;
@@ -318,12 +318,22 @@ class _CommonLearnedWordCardState extends State<CommonLearnedWordCard> {
                       subtitle: 'Strength',
                       title: '${_learnedWord.strengthBars}',
                     ),
-                    CommonCardHeaderText(
-                      subtitle: 'Last practiced at',
-                      title: _datetimeFormat.format(
-                        DateTime.fromMillisecondsSinceEpoch(
-                            _learnedWord.lastPracticedMs),
+                    FutureBuilder(
+                      future: _dataTimeFormatter.execute(
+                        dateTime: DateTime.fromMillisecondsSinceEpoch(
+                          _learnedWord.lastPracticedMs,
+                        ),
                       ),
+                      builder: (_, AsyncSnapshot snapshot) {
+                        if (!snapshot.hasData) {
+                          return const Loading();
+                        }
+
+                        return CommonCardHeaderText(
+                          subtitle: 'Last practiced at',
+                          title: snapshot.data,
+                        );
+                      },
                     ),
                   ],
                 ),

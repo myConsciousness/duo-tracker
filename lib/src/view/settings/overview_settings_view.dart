@@ -90,18 +90,15 @@ class _OverviewSettingsViewState extends State<OverviewSettingsView> {
         await CommonSharedPreferencesKey.autoSyncCycleUnit.getInt();
     final cycleUnit = ScheduleCycleUnitExt.toEnum(code: cycleUnitCode);
 
+    final lastAutoSyncedAt = DateTime.fromMillisecondsSinceEpoch(
+      await CommonSharedPreferencesKey.datetimeLastAutoSyncedOverview.getInt(),
+    );
+
     switch (cycleUnit) {
       case ScheduleCycleUnit.day:
-        // It will always be after today if the unit is a day,
-        // so use the last sync time as the reference.
-        final lastAutoSyncedAt = DateTime.fromMillisecondsSinceEpoch(
-          await CommonSharedPreferencesKey.datetimeLastAutoSyncedOverview
-              .getInt(),
-        );
-
         return lastAutoSyncedAt.add(Duration(days: cycle));
       case ScheduleCycleUnit.hour:
-        return DateTime.now().add(Duration(hours: cycle));
+        return lastAutoSyncedAt.add(Duration(hours: cycle));
     }
   }
 
@@ -130,6 +127,21 @@ class _OverviewSettingsViewState extends State<OverviewSettingsView> {
               ),
         onTap: onTap,
       );
+
+  Future<String> _getAutoSyncSettings() async {
+    final cycleUnitCode =
+        await CommonSharedPreferencesKey.autoSyncCycleUnit.getInt();
+    final cycleUnit = ScheduleCycleUnitExt.toEnum(code: cycleUnitCode);
+    final cycle =
+        await CommonSharedPreferencesKey.autoSyncCycle.getInt(defaultValue: 1);
+
+    switch (cycleUnit) {
+      case ScheduleCycleUnit.day:
+        return 'Per $cycle ${cycle < 2 ? "day" : "days"}';
+      case ScheduleCycleUnit.hour:
+        return 'Per $cycle ${cycle < 2 ? "hour" : "hours"}';
+    }
+  }
 
   @override
   Widget build(BuildContext context) => Scaffold(
@@ -197,18 +209,19 @@ class _OverviewSettingsViewState extends State<OverviewSettingsView> {
                   children: [
                     Expanded(
                       child: _createListTile(
-                          icon: const Icon(Icons.sync),
-                          title: 'Use Auto Sync',
-                          subtitle:
-                              'You can set whether or not to perform automatic synchronization with Duolingo.',
-                          onTap: () async {
-                            await CommonSharedPreferencesKey.overviewUseAutoSync
-                                .setBool(!_useAutoSync);
+                        icon: const Icon(Icons.sync),
+                        title: 'Use Auto Sync',
+                        subtitle:
+                            'You can set whether or not to perform automatic synchronization with Duolingo.',
+                        onTap: () async {
+                          await CommonSharedPreferencesKey.overviewUseAutoSync
+                              .setBool(!_useAutoSync);
 
-                            super.setState(() {
-                              _useAutoSync = !_useAutoSync;
-                            });
-                          }),
+                          super.setState(() {
+                            _useAutoSync = !_useAutoSync;
+                          });
+                        },
+                      ),
                     ),
                     Switch(
                       value: _useAutoSync,
@@ -349,19 +362,4 @@ class _OverviewSettingsViewState extends State<OverviewSettingsView> {
           ),
         ),
       );
-
-  Future<String> _getAutoSyncSettings() async {
-    final cycleUnitCode =
-        await CommonSharedPreferencesKey.autoSyncCycleUnit.getInt();
-    final cycleUnit = ScheduleCycleUnitExt.toEnum(code: cycleUnitCode);
-    final cycle =
-        await CommonSharedPreferencesKey.autoSyncCycle.getInt(defaultValue: 1);
-
-    switch (cycleUnit) {
-      case ScheduleCycleUnit.day:
-        return 'Per $cycle ${cycle < 2 ? "day" : "days"}';
-      case ScheduleCycleUnit.hour:
-        return 'Per $cycle ${cycle < 2 ? "hour" : "hours"}';
-    }
-  }
 }

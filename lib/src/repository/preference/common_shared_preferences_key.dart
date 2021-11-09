@@ -89,6 +89,9 @@ enum CommonSharedPreferencesKey {
 
   //! The Settings Config ↓
 
+  /// The date format
+  dateFormat,
+
   /// The apply darke theme
   applyDarkTheme,
 
@@ -159,6 +162,8 @@ extension KeyFeature on CommonSharedPreferencesKey {
         return 'datetime_last_synced_overview';
       case CommonSharedPreferencesKey.datetimeLastAutoSyncedOverview:
         return 'datetime_last_auto_synced_overview';
+      case CommonSharedPreferencesKey.dateFormat:
+        return 'date_format';
       case CommonSharedPreferencesKey.applyDarkTheme:
         return 'apply_dark_theme';
       case CommonSharedPreferencesKey.overviewUseAutoSync:

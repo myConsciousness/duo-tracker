@@ -9,6 +9,7 @@ import 'package:duo_tracker/src/component/common_app_bar_titles.dart';
 import 'package:duo_tracker/src/component/common_card_header_text.dart';
 import 'package:duo_tracker/src/component/common_divider.dart';
 import 'package:duo_tracker/src/component/common_nested_scroll_view.dart';
+import 'package:duo_tracker/src/utils/date_time_formatter.dart';
 import 'package:duo_tracker/src/view/folder/folder_type.dart';
 import 'package:duo_tracker/src/component/dialog/confirm_dialog.dart';
 import 'package:duo_tracker/src/component/dialog/create_new_folder_dialog.dart';
@@ -43,8 +44,8 @@ class _FolderViewState extends State<FolderView> {
   /// The banner ad list
   final _bannerAdList = BannerAdList.newInstance();
 
-  /// The datetime format
-  final _datetimeFormat = DateFormat('yyyy/MM/dd HH:mm');
+  /// The date time formatter
+  final _dateTimeFormatter = DateTimeFormatter();
 
   /// The folder item service
   final _folderItemService = FolderItemService.getInstance();
@@ -160,13 +161,31 @@ class _FolderViewState extends State<FolderView> {
                   );
                 },
               ),
-              CommonCardHeaderText(
-                subtitle: 'Created At',
-                title: _datetimeFormat.format(folder.createdAt),
+              FutureBuilder(
+                future: _dateTimeFormatter.execute(dateTime: folder.createdAt),
+                builder: (BuildContext context, AsyncSnapshot snapshot) {
+                  if (!snapshot.hasData) {
+                    return const Loading();
+                  }
+
+                  return CommonCardHeaderText(
+                    subtitle: 'Created At',
+                    title: snapshot.data,
+                  );
+                },
               ),
-              CommonCardHeaderText(
-                subtitle: 'Updated At',
-                title: _datetimeFormat.format(folder.updatedAt),
+              FutureBuilder(
+                future: _dateTimeFormatter.execute(dateTime: folder.createdAt),
+                builder: (BuildContext context, AsyncSnapshot snapshot) {
+                  if (!snapshot.hasData) {
+                    return const Loading();
+                  }
+
+                  return CommonCardHeaderText(
+                    subtitle: 'Updated At',
+                    title: snapshot.data,
+                  );
+                },
               ),
             ],
           ),
