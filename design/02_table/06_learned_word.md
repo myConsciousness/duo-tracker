@@ -2,9 +2,9 @@
 
 ## Overview
 
-| Physical Name | Logical Name | Remarks                                                     |
-| ------------- | ------------ | ----------------------------------------------------------- |
-| learned_word  | 学習済み単語 | Duolingo でサポートされている学習済みの単語情報を管理する。 |
+| Physical Name | Logical Name | Remarks                                 |
+| ------------- | ------------ | --------------------------------------- |
+| learned_word  | 学習済み単語 | Duolingo で学習した単語情報を管理する。 |
 
 ## Definition
 

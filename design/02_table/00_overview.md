@@ -20,5 +20,5 @@
 | purchase_history      | 購入履歴       | Duo Tracker で行われたアイテムの売買に関する履歴情報を管理する。 |
 | folder                | フォルダー     | Duo Tracker でのフォルダー情報を管理する。                       |
 | folder_item           | フォルダー項目 | Duo Tracker 作成されたフォルダーの項目情報を管理する。           |
-| learned_word_sentence | 学習済文章     | Duo Tracker で作成された学習済み単語からなる文章情報を管理する。 |
+| learned_word_sentence | 学習済み文章   | Duo Tracker で作成された学習済み単語からなる文章情報を管理する。 |
 | tip_and_note          | 補足           | Duolingo で学習した単語やコースに関する補足情報を管理する。      |
