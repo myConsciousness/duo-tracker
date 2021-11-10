@@ -3,6 +3,7 @@
 // BSD-style license that can be found in the LICENSE file.
 
 import 'package:duo_tracker/src/component/common_divider.dart';
+import 'package:duo_tracker/src/component/common_tappable_list_title.dart';
 import 'package:duo_tracker/src/component/dialog/select_date_time_format_dialog.dart';
 import 'package:duo_tracker/src/component/loading.dart';
 import 'package:duo_tracker/src/const/date_format_pattern.dart';
@@ -35,32 +36,6 @@ class _ThemeSettingsViewState extends State<ThemeSettingsView> {
     super.initState();
   }
 
-  Widget _createListTile({
-    required Icon icon,
-    required String title,
-    String subtitle = '',
-    GestureTapCallback? onTap,
-  }) =>
-      ListTile(
-        leading: icon,
-        title: Text(
-          title,
-          style: TextStyle(
-            color: Theme.of(context).colorScheme.onSurface,
-          ),
-        ),
-        subtitle: subtitle.isEmpty
-            ? null
-            : Text(
-                subtitle,
-                style: TextStyle(
-                  color:
-                      Theme.of(context).colorScheme.onSurface.withOpacity(0.7),
-                ),
-              ),
-        onTap: onTap,
-      );
-
   @override
   Widget build(BuildContext context) {
     final ThemeModeProvider themeModeProvider = Provider.of(context);
@@ -75,7 +50,7 @@ class _ThemeSettingsViewState extends State<ThemeSettingsView> {
               Row(
                 children: [
                   Expanded(
-                    child: _createListTile(
+                    child: CommonTappableListTile(
                       icon: const Icon(Icons.dark_mode),
                       title: 'Use Dark Mode',
                       subtitle:
@@ -107,7 +82,7 @@ class _ThemeSettingsViewState extends State<ThemeSettingsView> {
                     return const Loading();
                   }
 
-                  return _createListTile(
+                  return CommonTappableListTile(
                     icon: const Icon(FontAwesomeIcons.clock),
                     title: 'Date Format',
                     subtitle: snapshot.data,

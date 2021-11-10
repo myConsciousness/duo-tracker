@@ -4,6 +4,7 @@
 
 import 'package:duo_tracker/flavors.dart';
 import 'package:duo_tracker/src/component/common_divider.dart';
+import 'package:duo_tracker/src/component/common_tappable_list_title.dart';
 import 'package:duo_tracker/src/view/settings/request_mail_meta.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
@@ -53,32 +54,6 @@ class _AboutAppViewState extends State<AboutAppView> {
     });
   }
 
-  Widget _createListTile({
-    required Icon icon,
-    required String title,
-    String subtitle = '',
-    GestureTapCallback? onTap,
-  }) =>
-      ListTile(
-        leading: icon,
-        title: Text(
-          title,
-          style: TextStyle(
-            color: Theme.of(context).colorScheme.onSurface,
-          ),
-        ),
-        subtitle: subtitle.isEmpty
-            ? null
-            : Text(
-                subtitle,
-                style: TextStyle(
-                  color:
-                      Theme.of(context).colorScheme.onSurface.withOpacity(0.7),
-                ),
-              ),
-        onTap: onTap,
-      );
-
   @override
   Widget build(BuildContext context) => Scaffold(
         body: SafeArea(
@@ -88,13 +63,13 @@ class _AboutAppViewState extends State<AboutAppView> {
                 const SizedBox(
                   height: 10,
                 ),
-                _createListTile(
+                CommonTappableListTile(
                   icon: const Icon(Icons.app_settings_alt),
                   title: _appName,
                   subtitle: _buildVersion,
                 ),
                 const CommonDivider(),
-                _createListTile(
+                CommonTappableListTile(
                   icon: const Icon(Icons.share),
                   title: 'Share App',
                   onTap: () async {
@@ -112,7 +87,7 @@ https://play.google.com/store/apps/details?id=${packageInfo.packageName}
                     );
                   },
                 ),
-                _createListTile(
+                CommonTappableListTile(
                   icon: const Icon(Icons.rate_review),
                   title: 'Review App',
                   onTap: () async {
@@ -123,7 +98,7 @@ https://play.google.com/store/apps/details?id=${packageInfo.packageName}
                         androidAppId: packageInfo.packageName);
                   },
                 ),
-                _createListTile(
+                CommonTappableListTile(
                   icon: const Icon(Icons.info),
                   title: 'Show Licenses',
                   onTap: () async {
@@ -164,7 +139,7 @@ THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND 
                   },
                 ),
                 const CommonDivider(),
-                _createListTile(
+                CommonTappableListTile(
                   icon: const Icon(Icons.mail),
                   title: 'Send Your Opinion',
                   subtitle:
@@ -180,7 +155,7 @@ THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND 
                     ),
                   ),
                 ),
-                _createListTile(
+                CommonTappableListTile(
                   icon: const Icon(Icons.people),
                   title: 'About Author',
                   onTap: () async =>
@@ -188,7 +163,7 @@ THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND 
                 ),
                 if (F.isFreeBuild) const CommonDivider(),
                 if (F.isFreeBuild)
-                  _createListTile(
+                  CommonTappableListTile(
                     icon: const Icon(Icons.store),
                     title: 'Purchase NoAds Version',
                     subtitle:

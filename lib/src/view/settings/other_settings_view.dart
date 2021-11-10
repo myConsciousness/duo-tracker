@@ -2,6 +2,7 @@
 // Use of this source code is governed by a
 // BSD-style license that can be found in the LICENSE file.
 
+import 'package:duo_tracker/src/component/common_tappable_list_title.dart';
 import 'package:duo_tracker/src/view/settings/overview_settings_view.dart';
 import 'package:flutter/material.dart';
 
@@ -28,32 +29,6 @@ class _OtherSettingsViewState extends State<OtherSettingsView> {
     super.initState();
   }
 
-  Widget _createListTile({
-    required Icon icon,
-    required String title,
-    String subtitle = '',
-    GestureTapCallback? onTap,
-  }) =>
-      ListTile(
-        leading: icon,
-        title: Text(
-          title,
-          style: TextStyle(
-            color: Theme.of(context).colorScheme.onSurface,
-          ),
-        ),
-        subtitle: subtitle.isEmpty
-            ? null
-            : Text(
-                subtitle,
-                style: TextStyle(
-                  color:
-                      Theme.of(context).colorScheme.onSurface.withOpacity(0.7),
-                ),
-              ),
-        onTap: onTap,
-      );
-
   @override
   Widget build(BuildContext context) => SafeArea(
         child: SingleChildScrollView(
@@ -65,7 +40,7 @@ class _OtherSettingsViewState extends State<OtherSettingsView> {
               Row(
                 children: [
                   Expanded(
-                    child: _createListTile(
+                    child: CommonTappableListTile(
                       icon: const Icon(Icons.settings),
                       title: 'Open Overview Settings',
                       onTap: () => Navigator.push(
