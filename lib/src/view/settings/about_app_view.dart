@@ -190,7 +190,7 @@ THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND 
                 if (F.isFreeBuild)
                   _createListTile(
                     icon: const Icon(Icons.store),
-                    title: 'Get NoAds Version',
+                    title: 'Purchase NoAds Version',
                     subtitle:
                         'You can purchase an ad-free version on the Play Store.',
                     onTap: () async => await launch(

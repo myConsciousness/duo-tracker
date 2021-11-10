@@ -35,6 +35,12 @@ enum InterstitialAdSharedPreferencesKey {
   // The count download word hint
   countDownloadWordHint,
 
+  /// The count adjust auto sync schedule
+  countAdjustAutoSyncSchedule,
+
+  /// The count adjust date format
+  countAdjustDateFormat,
+
   /// The immediately
   immediately,
 }
@@ -62,6 +68,10 @@ extension KeyFeature on InterstitialAdSharedPreferencesKey {
         return 'count_play_audio';
       case InterstitialAdSharedPreferencesKey.countDownloadWordHint:
         return 'count_download_word_hint';
+      case InterstitialAdSharedPreferencesKey.countAdjustAutoSyncSchedule:
+        return 'count_adjust_auto_sync_schedule';
+      case InterstitialAdSharedPreferencesKey.countAdjustDateFormat:
+        return 'count_adjust_date_format';
       case InterstitialAdSharedPreferencesKey.immediately:
         return 'interstitial_immediately';
     }
@@ -88,6 +98,10 @@ extension KeyFeature on InterstitialAdSharedPreferencesKey {
       case InterstitialAdSharedPreferencesKey.countPlayAudio:
         return 2;
       case InterstitialAdSharedPreferencesKey.countDownloadWordHint:
+        return 1;
+      case InterstitialAdSharedPreferencesKey.countAdjustAutoSyncSchedule:
+        return 1;
+      case InterstitialAdSharedPreferencesKey.countAdjustDateFormat:
         return 1;
       case InterstitialAdSharedPreferencesKey.immediately:
         return 0;
