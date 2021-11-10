@@ -3,6 +3,7 @@
 // BSD-style license that can be found in the LICENSE file.
 
 import 'package:duo_tracker/src/component/common_divider.dart';
+import 'package:duo_tracker/src/component/common_tappable_list_title.dart';
 import 'package:duo_tracker/src/component/const/match_pattern.dart';
 import 'package:duo_tracker/src/component/const/schedule_cycle_unit.dart';
 import 'package:duo_tracker/src/component/const/sort_item.dart';
@@ -102,32 +103,6 @@ class _OverviewSettingsViewState extends State<OverviewSettingsView> {
     }
   }
 
-  Widget _createListTile({
-    required Icon icon,
-    required String title,
-    String subtitle = '',
-    GestureTapCallback? onTap,
-  }) =>
-      ListTile(
-        leading: icon,
-        title: Text(
-          title,
-          style: TextStyle(
-            color: Theme.of(context).colorScheme.onSurface,
-          ),
-        ),
-        subtitle: subtitle.isEmpty
-            ? null
-            : Text(
-                subtitle,
-                style: TextStyle(
-                  color:
-                      Theme.of(context).colorScheme.onSurface.withOpacity(0.7),
-                ),
-              ),
-        onTap: onTap,
-      );
-
   Future<String> _getAutoSyncSettings() async {
     final cycleUnitCode =
         await CommonSharedPreferencesKey.autoSyncCycleUnit.getInt();
@@ -161,7 +136,7 @@ class _OverviewSettingsViewState extends State<OverviewSettingsView> {
                       return const Loading();
                     }
 
-                    return _createListTile(
+                    return CommonTappableListTile(
                       icon: const Icon(Icons.info),
                       title: 'Last Synced At',
                       subtitle: _datetimeFormat.format(
@@ -179,7 +154,7 @@ class _OverviewSettingsViewState extends State<OverviewSettingsView> {
                       return const Loading();
                     }
 
-                    return _createListTile(
+                    return CommonTappableListTile(
                       icon: const Icon(Icons.info),
                       title: 'Last Auto Synced At',
                       subtitle: _datetimeFormat.format(
@@ -195,7 +170,7 @@ class _OverviewSettingsViewState extends State<OverviewSettingsView> {
                       return const Loading();
                     }
 
-                    return _createListTile(
+                    return CommonTappableListTile(
                       icon: const Icon(Icons.info),
                       title: 'Next Auto Sync At',
                       subtitle: _datetimeFormat.format(
@@ -208,7 +183,7 @@ class _OverviewSettingsViewState extends State<OverviewSettingsView> {
                 Row(
                   children: [
                     Expanded(
-                      child: _createListTile(
+                      child: CommonTappableListTile(
                         icon: const Icon(Icons.sync),
                         title: 'Use Auto Sync',
                         subtitle:
@@ -246,7 +221,7 @@ class _OverviewSettingsViewState extends State<OverviewSettingsView> {
                       return const Loading();
                     }
 
-                    return _createListTile(
+                    return CommonTappableListTile(
                       icon: const Icon(Icons.calendar_today),
                       title: 'Auto Sync Schedule',
                       subtitle: snapshot.data,
@@ -275,7 +250,7 @@ class _OverviewSettingsViewState extends State<OverviewSettingsView> {
                   },
                 ),
                 const CommonDivider(),
-                _createListTile(
+                CommonTappableListTile(
                   icon: const Icon(Icons.search),
                   title: 'Default Match Pattern',
                   subtitle: _matchPattern.name,
@@ -296,7 +271,7 @@ class _OverviewSettingsViewState extends State<OverviewSettingsView> {
                     });
                   },
                 ),
-                _createListTile(
+                CommonTappableListTile(
                   icon: const Icon(Icons.sort),
                   title: 'Default Sort Pattern',
                   subtitle: '${_sortItem.name} (${_sortPattern.name})',
@@ -324,7 +299,7 @@ class _OverviewSettingsViewState extends State<OverviewSettingsView> {
                   },
                 ),
                 const CommonDivider(),
-                _createListTile(
+                CommonTappableListTile(
                   icon: const Icon(Icons.reorder),
                   title: 'Reset Sort Order',
                   subtitle:
