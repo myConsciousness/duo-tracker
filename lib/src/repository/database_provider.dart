@@ -2,9 +2,10 @@
 // Use of this source code is governed by a
 // BSD-style license that can be found in the LICENSE file.
 
-import 'package:duo_tracker/src/repository/const/sql/create/table_definitions.dart';
+import 'package:duo_tracker/src/repository/const/sql/create_table_statement.dart';
 import 'package:sqflite/sqflite.dart';
 import 'package:path/path.dart';
+import 'package:flutter/services.dart' show rootBundle;
 
 class DatabaseProvider {
   /// The internal constructor for singleton.
@@ -33,18 +34,11 @@ class DatabaseProvider {
           _databaseName,
         ),
         onCreate: (Database database, int version) async {
-          await database.execute(TableDefinitions.supportedLanguage);
-          await database.execute(TableDefinitions.voiceConfiguration);
-          await database.execute(TableDefinitions.user);
-          await database.execute(TableDefinitions.skill);
-          await database.execute(TableDefinitions.course);
-          await database.execute(TableDefinitions.learnedWord);
-          await database.execute(TableDefinitions.wordHint);
-          await database.execute(TableDefinitions.purchaseHistory);
-          await database.execute(TableDefinitions.folder);
-          await database.execute(TableDefinitions.folderItem);
-          await database.execute(TableDefinitions.learnedWordSentence);
-          await database.execute(TableDefinitions.tipAndNote);
+          for (final createTableStatement in CreateTableStatement.values) {
+            await database.execute(
+              await rootBundle.loadString(createTableStatement.path),
+            );
+          }
         },
         onUpgrade: (Database db, int oldVersion, int newVersion) async {
           // Do nothing now
