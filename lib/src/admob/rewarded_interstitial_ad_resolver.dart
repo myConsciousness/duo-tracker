@@ -3,7 +3,6 @@
 // BSD-style license that can be found in the LICENSE file.
 
 import 'package:duo_tracker/src/admob/duo_tracker_admob_unit_ids.dart';
-import 'package:duo_tracker/src/repository/preference/common_shared_preferences_key.dart';
 import 'package:google_mobile_ads/google_mobile_ads.dart';
 
 class RewardedAdResolver {
@@ -44,7 +43,9 @@ class RewardedAdResolver {
         ),
       );
 
-  Future<void> showRewardedAd() async {
+  Future<void> showRewardedAd({
+    required Function(int amount) onRewarded,
+  }) async {
     if (_rewardedAd == null) {
       await loadRewardedAd();
       return;
@@ -63,15 +64,9 @@ class RewardedAdResolver {
     );
 
     await _rewardedAd!.show(
-        onUserEarnedReward: (RewardedAd ad, RewardItem reward) async {
-      final currentPoint = await CommonSharedPreferencesKey.rewardPoint.getInt(
-        defaultValue: 0,
-      );
-
-      await CommonSharedPreferencesKey.rewardPoint.setInt(
-        currentPoint + reward.amount.toInt(),
-      );
-    });
+      onUserEarnedReward: (RewardedAd ad, RewardItem reward) =>
+          onRewarded.call(reward.amount.toInt()),
+    );
 
     _rewardedAd = null;
 
