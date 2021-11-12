@@ -66,27 +66,8 @@ class _ShopViewState extends State<ShopView> {
             children: [
               ListTile(
                 leading: const Icon(FontAwesomeIcons.wallet),
-                title: Row(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  crossAxisAlignment: CrossAxisAlignment.center,
-                  children: [
-                    Text(
-                        'You have ${_numericTextFormat.format(_point)} points'),
-                    IconButton(
-                      tooltip: 'Update Point',
-                      icon: const Icon(Icons.sync),
-                      onPressed: () async {
-                        final currentRewardPoint =
-                            await CommonSharedPreferencesKey.rewardPoint
-                                .getInt(defaultValue: 0);
-
-                        super.setState(() {
-                          _point = currentRewardPoint;
-                        });
-                      },
-                    ),
-                  ],
-                ),
+                title: Text(
+                    'You have ${_numericTextFormat.format(_point)} points'),
               ),
               Padding(
                 padding: const EdgeInsets.fromLTRB(20, 0, 20, 5),
@@ -99,6 +80,10 @@ class _ShopViewState extends State<ShopView> {
                       context: context,
                       sharedPreferencesKey:
                           RewardedAdSharedPreferencesKey.rewardImmediately,
+                      onRewarded: (int amount) async =>
+                          await _refreshPointOnRewarded(
+                        rewardedAmount: amount,
+                      ),
                       showForce: true,
                     );
                   },
@@ -371,7 +356,13 @@ class _ShopViewState extends State<ShopView> {
               await CommonSharedPreferencesKey.rewardPoint.getInt();
 
           if (currentPoint < price) {
-            await showChargePointDialog(context: context);
+            await showChargePointDialog(
+              context: context,
+              onRewarded: (int amount) async => await _refreshPointOnRewarded(
+                rewardedAmount: amount,
+              ),
+            );
+
             return;
           }
 
@@ -381,19 +372,39 @@ class _ShopViewState extends State<ShopView> {
             productName: product.name,
             validPeriodInMinutes: disableAdPattern.timeLimit,
             onPressedOk: () async {
-              await CommonSharedPreferencesKey.rewardPoint
-                  .setInt(currentPoint - price);
+              final newPoint = currentPoint - price;
+              await CommonSharedPreferencesKey.rewardPoint.setInt(newPoint);
 
               await _disableAds(
                 productType: product,
                 disableAdPattern: disableAdPattern,
               );
 
-              super.setState(() {});
+              super.setState(() {
+                _point = newPoint;
+              });
             },
           );
         },
       );
+
+  Future<void> _refreshPointOnRewarded({
+    required int rewardedAmount,
+  }) async {
+    final currentPoint = await CommonSharedPreferencesKey.rewardPoint.getInt(
+      defaultValue: 0,
+    );
+
+    final newPoint = currentPoint + rewardedAmount;
+
+    await CommonSharedPreferencesKey.rewardPoint.setInt(
+      newPoint,
+    );
+
+    super.setState(() {
+      _point = newPoint;
+    });
+  }
 
   Future<Color> _getDisableAdPurchaseButtonColor({
     required DisableAdProductType productType,

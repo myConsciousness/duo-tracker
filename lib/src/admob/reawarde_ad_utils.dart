@@ -14,6 +14,7 @@ class RewardedAdUtils {
   static Future<void> showRewarededAd({
     required BuildContext context,
     required RewardedAdSharedPreferencesKey sharedPreferencesKey,
+    required Function(int amount) onRewarded,
     bool showForce = false,
   }) async {
     if (!F.isFreeBuild) {
@@ -51,7 +52,9 @@ class RewardedAdUtils {
       final rewardedAdResolver = RewardedAdResolver.getInstance();
 
       if (rewardedAdResolver.adLoaded) {
-        await rewardedAdResolver.showRewardedAd();
+        await rewardedAdResolver.showRewardedAd(
+          onRewarded: onRewarded,
+        );
         await sharedPreferencesKey.setInt(0);
       } else {
         await showErrorDialog(

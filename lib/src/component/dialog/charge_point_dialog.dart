@@ -11,6 +11,7 @@ AwesomeDialog? _dialog;
 
 Future<T?> showChargePointDialog<T>({
   required BuildContext context,
+  required Function(int amount) onRewarded,
 }) async {
   _dialog = AwesomeDialog(
     context: context,
@@ -57,6 +58,7 @@ Future<T?> showChargePointDialog<T>({
                       context: context,
                       sharedPreferencesKey:
                           RewardedAdSharedPreferencesKey.rewardImmediately,
+                      onRewarded: onRewarded,
                       showForce: true,
                     );
 
