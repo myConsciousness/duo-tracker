@@ -12,7 +12,6 @@ import 'package:duo_tracker/src/component/common_nested_scroll_view.dart';
 import 'package:duo_tracker/src/utils/date_time_formatter.dart';
 import 'package:duo_tracker/src/view/folder/folder_type.dart';
 import 'package:duo_tracker/src/component/dialog/confirm_dialog.dart';
-import 'package:duo_tracker/src/component/dialog/create_new_folder_dialog.dart';
 import 'package:duo_tracker/src/component/dialog/edit_folder_dialog.dart';
 import 'package:duo_tracker/src/component/loading.dart';
 import 'package:duo_tracker/src/repository/model/folder_model.dart';
@@ -335,7 +334,7 @@ class _FolderViewState extends State<FolderView> {
               tooltip: 'Add Folder',
               icon: const Icon(Icons.add),
               onPressed: () async {
-                await showCreateNewFolderDialog(
+                await showEditFolderDialog(
                   context: context,
                   folderType: widget.folderType,
                 );
@@ -356,7 +355,7 @@ class _FolderViewState extends State<FolderView> {
               if (folders.isEmpty) {
                 return AddNewFolderButton(
                   onPressedCreate: () async {
-                    await showCreateNewFolderDialog(
+                    await showEditFolderDialog(
                       context: context,
                       folderType: widget.folderType,
                     );
