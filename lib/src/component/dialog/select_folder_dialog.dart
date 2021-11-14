@@ -5,7 +5,7 @@
 import 'package:awesome_dialog/awesome_dialog.dart';
 import 'package:duo_tracker/src/component/add_new_folder_button.dart';
 import 'package:duo_tracker/src/component/common_two_grids_radio_list_tile.dart';
-import 'package:duo_tracker/src/component/dialog/create_new_folder_dialog.dart';
+import 'package:duo_tracker/src/component/dialog/edit_folder_dialog.dart';
 import 'package:duo_tracker/src/component/loading.dart';
 import 'package:duo_tracker/src/repository/model/folder_item_model.dart';
 import 'package:duo_tracker/src/repository/model/folder_model.dart';
@@ -95,7 +95,7 @@ Future<T?> showSelectFolderDialog<T>({
                       if (folders.isEmpty) {
                         return AddNewFolderButton(
                           onPressedCreate: () async {
-                            await showCreateNewFolderDialog(
+                            await showEditFolderDialog(
                               context: context,
                               folderType: _selectedFolderType,
                             );
