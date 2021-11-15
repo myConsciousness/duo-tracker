@@ -46,7 +46,6 @@ class InterstitialAdResolver {
   Future<void> showInterstitialAd() async {
     if (_interstitialAd == null) {
       await loadInterstitialAd();
-      return;
     }
 
     _interstitialAd!.fullScreenContentCallback = FullScreenContentCallback(

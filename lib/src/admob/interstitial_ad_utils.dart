@@ -12,32 +12,15 @@ class InterstitialAdUtils {
   static Future<void> showInterstitialAd({
     required InterstitialAdSharedPreferencesKey sharedPreferencesKey,
   }) async {
-    if (!F.isFreeBuild) {
+    if (F.isPaidBuild) {
+      return;
+    }
+
+    if (await _adDisabled(sharedPreferencesKey: sharedPreferencesKey)) {
       return;
     }
 
     int count = await sharedPreferencesKey.getInt();
-
-    final disableAdPatternCode =
-        await CommonSharedPreferencesKey.disableFullScreenPattern.getInt();
-
-    if (disableAdPatternCode != -1) {
-      final disableAdPattern =
-          DisableAdPatternExt.toEnum(code: disableAdPatternCode);
-      final purchasedDatetime = DateTime.fromMillisecondsSinceEpoch(
-          await CommonSharedPreferencesKey.datetimeDisabledFullScreen.getInt());
-
-      if (DateTime.now().difference(purchasedDatetime).inMinutes.abs() >
-          disableAdPattern.timeLimit) {
-        // Disable setting expires.
-        await CommonSharedPreferencesKey.disableFullScreenPattern.setInt(-1);
-        await CommonSharedPreferencesKey.datetimeDisabledFullScreen.setInt(-1);
-      } else {
-        count++;
-        await sharedPreferencesKey.setInt(count);
-        return;
-      }
-    }
 
     if (count >= sharedPreferencesKey.limitCount) {
       final interstitialAdResolver = InterstitialAdResolver.getInstance();
@@ -50,5 +33,39 @@ class InterstitialAdUtils {
       count++;
       await sharedPreferencesKey.setInt(count);
     }
+  }
+
+  static Future<bool> _adDisabled({
+    required InterstitialAdSharedPreferencesKey sharedPreferencesKey,
+  }) async {
+    final disableAdPatternCode =
+        await CommonSharedPreferencesKey.disableFullScreenPattern.getInt();
+
+    if (disableAdPatternCode == -1) {
+      /// When there is no purchased item.
+      return false;
+    }
+
+    final disableAdPattern =
+        DisableAdPatternExt.toEnum(code: disableAdPatternCode);
+    final purchasedDatetime = DateTime.fromMillisecondsSinceEpoch(
+        await CommonSharedPreferencesKey.datetimeDisabledFullScreen.getInt());
+
+    if (DateTime.now().difference(purchasedDatetime).inMinutes.abs() >
+        disableAdPattern.timeLimit) {
+      // Disable setting expires.
+      await CommonSharedPreferencesKey.disableFullScreenPattern.setInt(-1);
+      await CommonSharedPreferencesKey.datetimeDisabledFullScreen.setInt(-1);
+
+      // When purchased item is expired.
+      return false;
+    }
+
+    int count = await sharedPreferencesKey.getInt();
+
+    count++;
+    await sharedPreferencesKey.setInt(count);
+
+    return true;
   }
 }
