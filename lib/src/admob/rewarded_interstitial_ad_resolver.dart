@@ -48,7 +48,6 @@ class RewardedAdResolver {
   }) async {
     if (_rewardedAd == null) {
       await loadRewardedAd();
-      return;
     }
 
     _rewardedAd!.fullScreenContentCallback = FullScreenContentCallback(
