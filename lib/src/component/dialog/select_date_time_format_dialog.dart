@@ -4,6 +4,8 @@
 
 import 'package:awesome_dialog/awesome_dialog.dart';
 import 'package:duo_tracker/src/admob/interstitial_ad_utils.dart';
+import 'package:duo_tracker/src/component/common_dialog_submit_button.dart';
+import 'package:duo_tracker/src/component/common_dialog_title.dart';
 import 'package:duo_tracker/src/component/common_radio_list_tile.dart';
 import 'package:duo_tracker/src/const/date_format_pattern.dart';
 import 'package:duo_tracker/src/repository/preference/common_shared_preferences_key.dart';
@@ -55,14 +57,7 @@ Widget _buildDialogBody({
           child: SingleChildScrollView(
             child: ListBody(
               children: <Widget>[
-                const Center(
-                  child: Text(
-                    'Select Date Format',
-                    style: TextStyle(
-                      fontSize: 20,
-                    ),
-                  ),
-                ),
+                const CommonDialogTitle(title: 'Select Date Format'),
                 const SizedBox(
                   height: 20,
                 ),
@@ -72,26 +67,21 @@ Widget _buildDialogBody({
                 const SizedBox(
                   height: 20,
                 ),
-                Padding(
-                  padding: const EdgeInsets.all(10),
-                  child: AnimatedButton(
-                    isFixedHeight: false,
-                    text: 'Apply',
-                    color: Theme.of(context).colorScheme.secondaryVariant,
-                    pressEvent: () async {
-                      await CommonSharedPreferencesKey.dateFormat.setInt(
-                        _dateFormatPattern.code,
-                      );
+                CommonDialogSubmitButton(
+                  title: 'Apply',
+                  pressEvent: () async {
+                    await CommonSharedPreferencesKey.dateFormat.setInt(
+                      _dateFormatPattern.code,
+                    );
 
-                      onSubmitted.call();
-                      _dialog.dismiss();
+                    onSubmitted.call();
+                    _dialog.dismiss();
 
-                      await InterstitialAdUtils.showInterstitialAd(
-                        sharedPreferencesKey: InterstitialAdSharedPreferencesKey
-                            .countAdjustDateFormat,
-                      );
-                    },
-                  ),
+                    await InterstitialAdUtils.showInterstitialAd(
+                      sharedPreferencesKey: InterstitialAdSharedPreferencesKey
+                          .countAdjustDateFormat,
+                    );
+                  },
                 ),
               ],
             ),

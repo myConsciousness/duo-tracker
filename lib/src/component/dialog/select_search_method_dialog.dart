@@ -3,6 +3,9 @@
 // BSD-style license that can be found in the LICENSE file.
 
 import 'package:awesome_dialog/awesome_dialog.dart';
+import 'package:duo_tracker/src/component/common_dialog_cancel_button.dart';
+import 'package:duo_tracker/src/component/common_dialog_submit_button.dart';
+import 'package:duo_tracker/src/component/common_dialog_title.dart';
 import 'package:duo_tracker/src/component/common_two_grids_radio_list_tile.dart';
 import 'package:duo_tracker/src/component/const/match_pattern.dart';
 import 'package:duo_tracker/src/repository/preference/common_shared_preferences_key.dart';
@@ -43,14 +46,7 @@ AwesomeDialog _buildDialog({
             child: SingleChildScrollView(
               child: ListBody(
                 children: <Widget>[
-                  const Center(
-                    child: Text(
-                      'Search Options',
-                      style: TextStyle(
-                        fontSize: 20,
-                      ),
-                    ),
-                  ),
+                  const CommonDialogTitle(title: 'Search Options'),
                   const SizedBox(
                     height: 25,
                   ),
@@ -72,10 +68,8 @@ AwesomeDialog _buildDialog({
                   const SizedBox(
                     height: 30,
                   ),
-                  AnimatedButton(
-                    isFixedHeight: false,
-                    text: 'Apply',
-                    color: Theme.of(context).colorScheme.secondaryVariant,
+                  CommonDialogSubmitButton(
+                    title: 'Apply',
                     pressEvent: () async {
                       if (setDefault) {
                         await CommonSharedPreferencesKey
@@ -89,13 +83,8 @@ AwesomeDialog _buildDialog({
                       _dialog.dismiss();
                     },
                   ),
-                  AnimatedButton(
-                    isFixedHeight: false,
-                    text: 'Cancel',
-                    color: Theme.of(context).colorScheme.error,
-                    pressEvent: () {
-                      _dialog.dismiss();
-                    },
+                  CommonDialogCancelButton(
+                    onPressEvent: () async => await _dialog.dismiss(),
                   ),
                   const SizedBox(
                     height: 30,

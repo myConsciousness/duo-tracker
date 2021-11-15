@@ -3,6 +3,9 @@
 // BSD-style license that can be found in the LICENSE file.
 
 import 'package:awesome_dialog/awesome_dialog.dart';
+import 'package:duo_tracker/src/component/common_dialog_content.dart';
+import 'package:duo_tracker/src/component/common_dialog_submit_button.dart';
+import 'package:duo_tracker/src/component/common_dialog_title.dart';
 import 'package:flutter/material.dart';
 
 AwesomeDialog? _dialog;
@@ -23,33 +26,16 @@ Future<void> showCommonAwesomeDialog<T>({
         child: SingleChildScrollView(
           child: ListBody(
             children: <Widget>[
-              Center(
-                child: Text(
-                  title,
-                  style: const TextStyle(
-                    fontSize: 20,
-                    fontWeight: FontWeight.bold,
-                  ),
-                ),
-              ),
+              CommonDialogTitle(title: title),
               const SizedBox(
                 height: 30,
               ),
-              Center(
-                child: Text(
-                  content,
-                  style: const TextStyle(
-                    fontSize: 15,
-                  ),
-                ),
-              ),
+              CommonDialogContent(content: content),
               const SizedBox(
                 height: 25,
               ),
-              AnimatedButton(
-                isFixedHeight: false,
-                text: 'OK',
-                color: Theme.of(context).colorScheme.secondaryVariant,
+              CommonDialogSubmitButton(
+                title: 'OK',
                 pressEvent: () async {
                   await _dialog!.dismiss();
                 },

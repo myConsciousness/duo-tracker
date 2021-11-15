@@ -3,6 +3,9 @@
 // BSD-style license that can be found in the LICENSE file.
 
 import 'package:awesome_dialog/awesome_dialog.dart';
+import 'package:duo_tracker/src/component/common_dialog_cancel_button.dart';
+import 'package:duo_tracker/src/component/common_dialog_submit_button.dart';
+import 'package:duo_tracker/src/component/common_dialog_title.dart';
 import 'package:duo_tracker/src/component/common_divider.dart';
 import 'package:duo_tracker/src/repository/model/purchase_history_model.dart';
 import 'package:duo_tracker/src/repository/service/purchase_history_service.dart';
@@ -37,15 +40,7 @@ Future<T?> showPurchaseDialog<T>({
           child: SingleChildScrollView(
             child: ListBody(
               children: <Widget>[
-                const Center(
-                  child: Text(
-                    'Purchase Confirmation',
-                    style: TextStyle(
-                      fontWeight: FontWeight.bold,
-                      fontSize: 20,
-                    ),
-                  ),
-                ),
+                const CommonDialogTitle(title: 'Purchase Confirmation'),
                 const SizedBox(
                   height: 25,
                 ),
@@ -84,10 +79,8 @@ Future<T?> showPurchaseDialog<T>({
                 const SizedBox(
                   height: 30,
                 ),
-                AnimatedButton(
-                  isFixedHeight: false,
-                  text: 'Confirm',
-                  color: Theme.of(context).colorScheme.secondaryVariant,
+                CommonDialogSubmitButton(
+                  title: 'Confirm',
                   pressEvent: () async {
                     await onPressedOk.call();
 
@@ -111,13 +104,8 @@ Future<T?> showPurchaseDialog<T>({
                     _dialog.dismiss();
                   },
                 ),
-                AnimatedButton(
-                  isFixedHeight: false,
-                  text: 'Cancel',
-                  color: Theme.of(context).colorScheme.error,
-                  pressEvent: () {
-                    _dialog.dismiss();
-                  },
+                CommonDialogCancelButton(
+                  onPressEvent: () async => await _dialog.dismiss(),
                 ),
                 const SizedBox(
                   height: 10,

@@ -4,6 +4,9 @@
 
 import 'package:awesome_dialog/awesome_dialog.dart';
 import 'package:duo_tracker/src/admob/interstitial_ad_utils.dart';
+import 'package:duo_tracker/src/component/common_dialog_cancel_button.dart';
+import 'package:duo_tracker/src/component/common_dialog_submit_button.dart';
+import 'package:duo_tracker/src/component/common_dialog_title.dart';
 import 'package:duo_tracker/src/component/common_two_grids_radio_list_tile.dart';
 import 'package:duo_tracker/src/component/const/schedule_cycle_unit.dart';
 import 'package:duo_tracker/src/component/dialog/warning_dialog.dart';
@@ -77,14 +80,7 @@ Widget _buildDialogBody({
           child: SingleChildScrollView(
             child: ListBody(
               children: <Widget>[
-                const Center(
-                  child: Text(
-                    'Auto Sync Schedule',
-                    style: TextStyle(
-                      fontSize: 20,
-                    ),
-                  ),
-                ),
+                const CommonDialogTitle(title: 'Auto Sync Schedule'),
                 const SizedBox(
                   height: 25,
                 ),
@@ -107,10 +103,8 @@ Widget _buildDialogBody({
                 const SizedBox(
                   height: 30,
                 ),
-                AnimatedButton(
-                  isFixedHeight: false,
-                  text: 'Apply',
-                  color: Theme.of(context).colorScheme.secondaryVariant,
+                CommonDialogSubmitButton(
+                  title: 'Apply',
                   pressEvent: () async {
                     await CommonSharedPreferencesKey.autoSyncCycleUnit
                         .setInt(_cycleUnit.code);
@@ -126,13 +120,8 @@ Widget _buildDialogBody({
                     );
                   },
                 ),
-                AnimatedButton(
-                  isFixedHeight: false,
-                  text: 'Cancel',
-                  color: Theme.of(context).colorScheme.error,
-                  pressEvent: () {
-                    _dialog.dismiss();
-                  },
+                CommonDialogCancelButton(
+                  onPressEvent: () async => await _dialog.dismiss(),
                 ),
                 const SizedBox(
                   height: 10,
