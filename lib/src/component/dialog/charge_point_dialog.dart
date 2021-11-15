@@ -32,9 +32,9 @@ Future<T?> showChargePointDialog<T>({
                   height: 20,
                 ),
                 const CommonDialogContent(
-                    content: 'You have not enough points to get the benefit.'),
-                const CommonDialogContent(
-                    content: 'Please watch ads and recharge your points.'),
+                  content:
+                      'You have not enough points to get the benefit. Please watch ads and recharge your points.',
+                ),
                 const SizedBox(
                   height: 20,
                 ),
