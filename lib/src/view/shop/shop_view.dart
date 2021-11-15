@@ -64,13 +64,20 @@ class _ShopViewState extends State<ShopView> {
           elevation: 5,
           child: Column(
             children: [
-              ListTile(
-                leading: const Icon(FontAwesomeIcons.wallet),
-                title: Text(
-                    'You have ${_numericTextFormat.format(_point)} points'),
+              Padding(
+                padding: const EdgeInsets.fromLTRB(0, 20, 0, 0),
+                child: Center(
+                  child: Text(
+                    'You have ${_numericTextFormat.format(_point)} points!',
+                    style: const TextStyle(
+                      fontSize: 20,
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
+                ),
               ),
               Padding(
-                padding: const EdgeInsets.fromLTRB(20, 0, 20, 5),
+                padding: const EdgeInsets.fromLTRB(20, 10, 20, 10),
                 child: AnimatedButton(
                   isFixedHeight: false,
                   text: 'Charge +2 Points',
