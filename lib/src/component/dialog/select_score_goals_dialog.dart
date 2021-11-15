@@ -4,6 +4,8 @@
 
 import 'package:awesome_dialog/awesome_dialog.dart';
 import 'package:duo_tracker/src/admob/interstitial_ad_utils.dart';
+import 'package:duo_tracker/src/component/common_dialog_submit_button.dart';
+import 'package:duo_tracker/src/component/common_dialog_title.dart';
 import 'package:duo_tracker/src/repository/preference/common_shared_preferences_key.dart';
 import 'package:duo_tracker/src/repository/preference/interstitial_ad_shared_preferences_key.dart';
 import 'package:flutter/material.dart';
@@ -46,14 +48,7 @@ Future<T?> showSelectScoreGoalsDialog<T>({
           child: SingleChildScrollView(
             child: ListBody(
               children: <Widget>[
-                const Center(
-                  child: Text(
-                    'Adjust Goals',
-                    style: TextStyle(
-                      fontSize: 20,
-                    ),
-                  ),
-                ),
+                const CommonDialogTitle(title: 'Adjust Goals'),
                 const SizedBox(
                   height: 20,
                 ),
@@ -121,10 +116,8 @@ Future<T?> showSelectScoreGoalsDialog<T>({
                 const SizedBox(
                   height: 40,
                 ),
-                AnimatedButton(
-                  isFixedHeight: false,
-                  text: 'Apply',
-                  color: Theme.of(context).colorScheme.secondaryVariant,
+                CommonDialogSubmitButton(
+                  title: 'Apply',
                   pressEvent: () async {
                     await CommonSharedPreferencesKey.scoreGoalsDailyXp
                         .setDouble(_selectedDailyXp);

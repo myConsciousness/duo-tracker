@@ -4,6 +4,8 @@
 
 import 'package:awesome_dialog/awesome_dialog.dart';
 import 'package:dropdown_below/dropdown_below.dart';
+import 'package:duo_tracker/src/component/common_dialog_submit_button.dart';
+import 'package:duo_tracker/src/component/common_dialog_title.dart';
 import 'package:duo_tracker/src/component/dialog/input_error_dialog.dart';
 import 'package:duo_tracker/src/component/text_with_horizontal_divider.dart';
 import 'package:duo_tracker/src/http/duolingo_page_launcher.dart';
@@ -56,14 +58,7 @@ Future<T?> showSwitchLanguageDialog<T>({
           child: SingleChildScrollView(
             child: ListBody(
               children: <Widget>[
-                const Center(
-                  child: Text(
-                    'Select Language',
-                    style: TextStyle(
-                      fontSize: 20,
-                    ),
-                  ),
-                ),
+                const CommonDialogTitle(title: 'Select Language'),
                 const SizedBox(
                   height: 30,
                 ),
@@ -107,10 +102,8 @@ Future<T?> showSwitchLanguageDialog<T>({
                 const SizedBox(
                   height: 25,
                 ),
-                AnimatedButton(
-                  isFixedHeight: false,
-                  text: 'Submit',
-                  color: Theme.of(context).colorScheme.secondaryVariant,
+                CommonDialogSubmitButton(
+                  title: 'Submit',
                   pressEvent: () async {
                     if (_switchingLanguage) {
                       // Prevents multiple presses.

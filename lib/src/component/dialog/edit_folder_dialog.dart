@@ -3,6 +3,9 @@
 // BSD-style license that can be found in the LICENSE file.
 
 import 'package:awesome_dialog/awesome_dialog.dart';
+import 'package:duo_tracker/src/component/common_dialog_cancel_button.dart';
+import 'package:duo_tracker/src/component/common_dialog_submit_button.dart';
+import 'package:duo_tracker/src/component/common_dialog_title.dart';
 import 'package:duo_tracker/src/component/common_text_field.dart';
 import 'package:duo_tracker/src/repository/model/folder_model.dart';
 import 'package:duo_tracker/src/utils/language_converter.dart';
@@ -91,14 +94,7 @@ Widget _buildDialogListBody({
 }) =>
     ListBody(
       children: <Widget>[
-        Center(
-          child: Text(
-            _getDialogTitle(folderType: folderType),
-            style: const TextStyle(
-              fontSize: 20,
-            ),
-          ),
-        ),
+        CommonDialogTitle(title: _getDialogTitle(folderType: folderType)),
         const SizedBox(
           height: 25,
         ),
@@ -106,22 +102,15 @@ Widget _buildDialogListBody({
         const SizedBox(
           height: 30,
         ),
-        AnimatedButton(
-          isFixedHeight: false,
-          text: _okButtonName,
-          color: Theme.of(context).colorScheme.secondaryVariant,
+        CommonDialogSubmitButton(
+          title: _okButtonName,
           pressEvent: () async => await _onPressedOk(
             context: context,
             folderType: folderType,
           ),
         ),
-        AnimatedButton(
-          isFixedHeight: false,
-          text: 'Cancel',
-          color: Theme.of(context).colorScheme.error,
-          pressEvent: () {
-            _dialog.dismiss();
-          },
+        CommonDialogCancelButton(
+          onPressEvent: () async => await _dialog.dismiss(),
         ),
         const SizedBox(
           height: 10,

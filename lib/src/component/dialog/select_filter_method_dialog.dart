@@ -4,6 +4,8 @@
 
 import 'package:awesome_dialog/awesome_dialog.dart';
 import 'package:duo_tracker/src/admob/interstitial_ad_utils.dart';
+import 'package:duo_tracker/src/component/common_dialog_submit_button.dart';
+import 'package:duo_tracker/src/component/common_dialog_title.dart';
 import 'package:duo_tracker/src/component/common_two_grids_radio_list_tile.dart';
 import 'package:duo_tracker/src/component/const/filter_pattern.dart';
 import 'package:duo_tracker/src/component/dialog/warning_dialog.dart';
@@ -54,14 +56,7 @@ Future<T?> showSelectFilterMethodDialog<T>({
           child: SingleChildScrollView(
             child: ListBody(
               children: <Widget>[
-                const Center(
-                  child: Text(
-                    'Filter Options',
-                    style: TextStyle(
-                      fontSize: 20,
-                    ),
-                  ),
-                ),
+                const CommonDialogTitle(title: 'Filter Options'),
                 const SizedBox(
                   height: 20,
                 ),
@@ -169,34 +164,29 @@ Future<T?> showSelectFilterMethodDialog<T>({
                         ),
                       ],
                     ),
-                    Padding(
-                      padding: const EdgeInsets.all(10),
-                      child: AnimatedButton(
-                        isFixedHeight: false,
-                        text: 'Apply',
-                        color: Theme.of(context).colorScheme.secondaryVariant,
-                        pressEvent: () async {
-                          if (_filterPattern != FilterPattern.none &&
-                              _selectedItems.isEmpty) {
-                            await showWarningDialog(
-                              context: context,
-                              title: 'Input Error',
-                              content: 'Select at least one filter item.',
-                            );
-
-                            return;
-                          }
-
-                          onPressedOk.call(_filterPattern, _selectedItems);
-                          _dialog.dismiss();
-
-                          await InterstitialAdUtils.showInterstitialAd(
-                            sharedPreferencesKey:
-                                InterstitialAdSharedPreferencesKey
-                                    .countFilterWords,
+                    CommonDialogSubmitButton(
+                      title: 'Apply',
+                      pressEvent: () async {
+                        if (_filterPattern != FilterPattern.none &&
+                            _selectedItems.isEmpty) {
+                          await showWarningDialog(
+                            context: context,
+                            title: 'Input Error',
+                            content: 'Select at least one filter item.',
                           );
-                        },
-                      ),
+
+                          return;
+                        }
+
+                        onPressedOk.call(_filterPattern, _selectedItems);
+                        _dialog.dismiss();
+
+                        await InterstitialAdUtils.showInterstitialAd(
+                          sharedPreferencesKey:
+                              InterstitialAdSharedPreferencesKey
+                                  .countFilterWords,
+                        );
+                      },
                     ),
                   ],
                 ),

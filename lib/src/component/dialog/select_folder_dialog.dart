@@ -4,6 +4,9 @@
 
 import 'package:awesome_dialog/awesome_dialog.dart';
 import 'package:duo_tracker/src/component/add_new_folder_button.dart';
+import 'package:duo_tracker/src/component/common_dialog_cancel_button.dart';
+import 'package:duo_tracker/src/component/common_dialog_submit_button.dart';
+import 'package:duo_tracker/src/component/common_dialog_title.dart';
 import 'package:duo_tracker/src/component/common_two_grids_radio_list_tile.dart';
 import 'package:duo_tracker/src/component/dialog/edit_folder_dialog.dart';
 import 'package:duo_tracker/src/component/loading.dart';
@@ -54,14 +57,7 @@ Future<T?> showSelectFolderDialog<T>({
           child: SingleChildScrollView(
             child: ListBody(
               children: <Widget>[
-                const Center(
-                  child: Text(
-                    'Select Folder',
-                    style: TextStyle(
-                      fontSize: 20,
-                    ),
-                  ),
-                ),
+                const CommonDialogTitle(title: 'Select Folder'),
                 const SizedBox(
                   height: 25,
                 ),
@@ -129,10 +125,8 @@ Future<T?> showSelectFolderDialog<T>({
                 const SizedBox(
                   height: 30,
                 ),
-                AnimatedButton(
-                  isFixedHeight: false,
-                  text: 'Add',
-                  color: Theme.of(context).colorScheme.secondaryVariant,
+                CommonDialogSubmitButton(
+                  title: 'Add',
                   pressEvent: () async {
                     final userId =
                         await CommonSharedPreferencesKey.userId.getString();
@@ -166,13 +160,8 @@ Future<T?> showSelectFolderDialog<T>({
                     _dialog.dismiss();
                   },
                 ),
-                AnimatedButton(
-                  isFixedHeight: false,
-                  text: 'Cancel',
-                  color: Theme.of(context).colorScheme.error,
-                  pressEvent: () {
-                    _dialog.dismiss();
-                  },
+                CommonDialogCancelButton(
+                  onPressEvent: () async => await _dialog.dismiss(),
                 ),
                 const SizedBox(
                   height: 10,

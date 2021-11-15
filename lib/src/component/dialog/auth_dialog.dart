@@ -3,6 +3,8 @@
 // BSD-style license that can be found in the LICENSE file.
 
 import 'package:awesome_dialog/awesome_dialog.dart';
+import 'package:duo_tracker/src/component/common_dialog_submit_button.dart';
+import 'package:duo_tracker/src/component/common_dialog_title.dart';
 import 'package:duo_tracker/src/component/common_text_field.dart';
 import 'package:duo_tracker/src/component/dialog/input_error_dialog.dart';
 import 'package:duo_tracker/src/http/utils/duolingo_api_utils.dart';
@@ -25,6 +27,10 @@ Future<bool> showAuthDialog({
   _authenticating = false;
   _authenticated = false;
 
+  _usernameController.clear();
+  _passwordController.clear();
+  _rawPassword = '';
+
   _dialog = AwesomeDialog(
     context: context,
     animType: AnimType.LEFTSLIDE,
@@ -39,12 +45,7 @@ Future<bool> showAuthDialog({
           child: SingleChildScrollView(
             child: ListBody(
               children: <Widget>[
-                const Center(
-                  child: Text(
-                    'Sign in with Duolingo',
-                    style: TextStyle(fontSize: 20),
-                  ),
-                ),
+                const CommonDialogTitle(title: 'Sign in with Duolingo'),
                 const SizedBox(
                   height: 20,
                 ),
@@ -77,10 +78,8 @@ Future<bool> showAuthDialog({
                 const SizedBox(
                   height: 30,
                 ),
-                AnimatedButton(
-                  isFixedHeight: false,
-                  text: 'Sign in',
-                  color: Theme.of(context).colorScheme.secondaryVariant,
+                CommonDialogSubmitButton(
+                  title: 'Sign in',
                   pressEvent: () async {
                     if (_authenticating) {
                       // Prevents multiple presses.
@@ -102,11 +101,6 @@ Future<bool> showAuthDialog({
                       _authenticating = false;
                       return;
                     }
-
-                    // Delete input information
-                    _usernameController.clear();
-                    _passwordController.clear();
-                    _rawPassword = '';
 
                     _authenticated = true;
 

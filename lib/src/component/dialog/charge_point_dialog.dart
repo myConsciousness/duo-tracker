@@ -4,6 +4,9 @@
 
 import 'package:awesome_dialog/awesome_dialog.dart';
 import 'package:duo_tracker/src/admob/reawarde_ad_utils.dart';
+import 'package:duo_tracker/src/component/common_dialog_content.dart';
+import 'package:duo_tracker/src/component/common_dialog_submit_button.dart';
+import 'package:duo_tracker/src/component/common_dialog_title.dart';
 import 'package:duo_tracker/src/repository/preference/rewarded_ad_shared_preferences.dart';
 import 'package:flutter/material.dart';
 
@@ -24,35 +27,19 @@ Future<T?> showChargePointDialog<T>({
           child: SingleChildScrollView(
             child: ListBody(
               children: <Widget>[
-                const Center(
-                  child: Text(
-                    'Need to charge point!',
-                    style: TextStyle(
-                      fontSize: 20,
-                      fontWeight: FontWeight.bold,
-                    ),
-                  ),
-                ),
+                const CommonDialogTitle(title: 'Need to charge point!'),
                 const SizedBox(
                   height: 20,
                 ),
-                const Center(
-                  child: Text(
-                    'You have not enough points to get the benefit.',
-                  ),
-                ),
-                const Center(
-                  child: Text(
-                    'Please watch ads and recharge your points.',
-                  ),
-                ),
+                const CommonDialogContent(
+                    content: 'You have not enough points to get the benefit.'),
+                const CommonDialogContent(
+                    content: 'Please watch ads and recharge your points.'),
                 const SizedBox(
                   height: 20,
                 ),
-                AnimatedButton(
-                  isFixedHeight: false,
-                  text: 'Charge',
-                  color: Theme.of(context).colorScheme.secondaryVariant,
+                CommonDialogSubmitButton(
+                  title: 'Charge',
                   pressEvent: () async {
                     await RewardedAdUtils.showRewarededAd(
                       context: context,

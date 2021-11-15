@@ -3,6 +3,9 @@
 // BSD-style license that can be found in the LICENSE file.
 
 import 'package:awesome_dialog/awesome_dialog.dart';
+import 'package:duo_tracker/src/component/common_dialog_content.dart';
+import 'package:duo_tracker/src/component/common_dialog_submit_button.dart';
+import 'package:duo_tracker/src/component/common_dialog_title.dart';
 import 'package:flutter/material.dart';
 import 'package:open_settings/open_settings.dart';
 
@@ -21,33 +24,19 @@ Future<void> showNetworkErrorDialog<T>({
         child: SingleChildScrollView(
           child: ListBody(
             children: <Widget>[
-              const Center(
-                child: Text(
-                  'Network Error',
-                  style: TextStyle(
-                    fontSize: 20,
-                    fontWeight: FontWeight.bold,
-                  ),
-                ),
-              ),
+              const CommonDialogTitle(title: 'Network Error'),
               const SizedBox(
                 height: 30,
               ),
-              const Center(
-                child: Text(
-                  'Could not detect a valid network. Please check the network environment and the network settings of the device.',
-                  style: TextStyle(
-                    fontSize: 15,
-                  ),
-                ),
+              const CommonDialogContent(
+                content:
+                    'Could not detect a valid network. Please check the network environment and the network settings of the device.',
               ),
               const SizedBox(
                 height: 25,
               ),
-              AnimatedButton(
-                isFixedHeight: false,
-                text: 'Open Network Settings',
-                color: Theme.of(context).colorScheme.secondaryVariant,
+              CommonDialogSubmitButton(
+                title: 'Open Network Settings',
                 pressEvent: () async {
                   await OpenSettings.openNetworkOperatorSetting();
                   await _dialog!.dismiss();
