@@ -16,8 +16,11 @@ void main() async {
   await ThemeModeProvider.getInstance().initialize();
   await MobileAds.instance.initialize();
 
-  RequestConfiguration configuration =
-      RequestConfiguration(testDeviceIds: ['12FA608E7D2E2A96D30BE9C3D4A6ACA5']);
+  final configuration = RequestConfiguration(
+    testDeviceIds: ['12FA608E7D2E2A96D30BE9C3D4A6ACA5'],
+    tagForChildDirectedTreatment: TagForChildDirectedTreatment.yes,
+    maxAdContentRating: MaxAdContentRating.g,
+  );
 
   await MobileAds.instance.updateRequestConfiguration(configuration);
 
