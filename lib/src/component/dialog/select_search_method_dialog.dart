@@ -8,6 +8,7 @@ import 'package:duo_tracker/src/component/common_dialog_submit_button.dart';
 import 'package:duo_tracker/src/component/common_dialog_title.dart';
 import 'package:duo_tracker/src/component/common_two_grids_radio_list_tile.dart';
 import 'package:duo_tracker/src/component/const/match_pattern.dart';
+import 'package:duo_tracker/src/component/snackbar/info_snack_bar.dart';
 import 'package:duo_tracker/src/repository/preference/common_shared_preferences_key.dart';
 import 'package:duo_tracker/src/repository/utils/shared_preferences_utils.dart';
 import 'package:flutter/material.dart';
@@ -79,6 +80,11 @@ AwesomeDialog _buildDialog({
                         await CommonSharedPreferencesKey.matchPattern
                             .setInt(_matchPattern.code);
                       }
+
+                      InfoSnackbar.from(context: context).show(
+                        content:
+                            'The selected search method have been applied.',
+                      );
 
                       _dialog.dismiss();
                     },

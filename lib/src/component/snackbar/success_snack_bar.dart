@@ -6,9 +6,9 @@ import 'package:flutter/material.dart';
 import 'package:top_snackbar_flutter/custom_snack_bar.dart';
 import 'package:top_snackbar_flutter/top_snack_bar.dart';
 
-class InfoSnackbar {
-  /// Returns the new instance of [InfoSnackbar] based on the [context] passed as an argument.
-  InfoSnackbar.from({
+class SuccessSnackBar {
+  /// Returns the new instance of [SuccessSnackBar] based on the [context] passed as an argument.
+  SuccessSnackBar.from({
     required this.context,
   });
 
@@ -20,10 +20,10 @@ class InfoSnackbar {
   }) {
     showTopSnackBar(
       context,
-      CustomSnackBar.info(
+      CustomSnackBar.success(
         message: content,
         icon: const Icon(
-          Icons.info,
+          Icons.done,
           color: Color(0x15000000),
           size: 120,
         ),

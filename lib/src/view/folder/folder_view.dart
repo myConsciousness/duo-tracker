@@ -9,6 +9,7 @@ import 'package:duo_tracker/src/component/common_app_bar_titles.dart';
 import 'package:duo_tracker/src/component/common_card_header_text.dart';
 import 'package:duo_tracker/src/component/common_divider.dart';
 import 'package:duo_tracker/src/component/common_nested_scroll_view.dart';
+import 'package:duo_tracker/src/component/snackbar/info_snack_bar.dart';
 import 'package:duo_tracker/src/utils/date_time_formatter.dart';
 import 'package:duo_tracker/src/view/folder/folder_type.dart';
 import 'package:duo_tracker/src/component/dialog/confirm_dialog.dart';
@@ -243,7 +244,12 @@ class _FolderViewState extends State<FolderView> {
                     onPressedOk: () async {
                       await _folderService.delete(folder);
                       await _folderItemService.deleteByFolderId(
-                          folderId: folder.id);
+                        folderId: folder.id,
+                      );
+
+                      InfoSnackbar.from(context: context).show(
+                        content: 'The folder has been deleted.',
+                      );
 
                       super.setState(() {});
                     },

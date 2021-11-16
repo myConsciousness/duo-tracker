@@ -9,6 +9,7 @@ import 'package:duo_tracker/src/component/common_dialog_title.dart';
 import 'package:duo_tracker/src/component/common_two_grids_radio_list_tile.dart';
 import 'package:duo_tracker/src/component/const/filter_pattern.dart';
 import 'package:duo_tracker/src/component/dialog/warning_dialog.dart';
+import 'package:duo_tracker/src/component/snackbar/info_snack_bar.dart';
 import 'package:duo_tracker/src/repository/preference/common_shared_preferences_key.dart';
 import 'package:duo_tracker/src/repository/preference/interstitial_ad_shared_preferences_key.dart';
 import 'package:duo_tracker/src/repository/service/learned_word_service.dart';
@@ -179,6 +180,11 @@ Future<T?> showSelectFilterMethodDialog<T>({
                         }
 
                         onPressedOk.call(_filterPattern, _selectedItems);
+
+                        InfoSnackbar.from(context: context).show(
+                          content: 'The selected filter have been applied.',
+                        );
+
                         _dialog.dismiss();
 
                         await InterstitialAdUtils.showInterstitialAd(

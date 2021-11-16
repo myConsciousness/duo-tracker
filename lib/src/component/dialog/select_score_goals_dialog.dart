@@ -6,6 +6,7 @@ import 'package:awesome_dialog/awesome_dialog.dart';
 import 'package:duo_tracker/src/admob/interstitial_ad_utils.dart';
 import 'package:duo_tracker/src/component/common_dialog_submit_button.dart';
 import 'package:duo_tracker/src/component/common_dialog_title.dart';
+import 'package:duo_tracker/src/component/snackbar/info_snack_bar.dart';
 import 'package:duo_tracker/src/repository/preference/common_shared_preferences_key.dart';
 import 'package:duo_tracker/src/repository/preference/interstitial_ad_shared_preferences_key.dart';
 import 'package:flutter/material.dart';
@@ -127,6 +128,10 @@ Future<T?> showSelectScoreGoalsDialog<T>({
                         .setDouble(_selectedMonthlyXp);
                     await CommonSharedPreferencesKey.scoreGoalsStreak
                         .setDouble(_selectedStreak);
+
+                    InfoSnackbar.from(context: context).show(
+                      content: 'New learning goals have been applied.',
+                    );
 
                     _dialog.dismiss();
 

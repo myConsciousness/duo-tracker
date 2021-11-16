@@ -11,7 +11,7 @@ import 'package:duo_tracker/src/component/common_nested_scroll_view.dart';
 import 'package:duo_tracker/src/component/const/filter_pattern.dart';
 import 'package:duo_tracker/src/component/dialog/network_error_dialog.dart';
 import 'package:duo_tracker/src/component/dialog/switch_language_dialog.dart';
-import 'package:duo_tracker/src/component/snackbar/info_snack_bar.dart';
+import 'package:duo_tracker/src/component/snackbar/success_snack_bar.dart';
 import 'package:duo_tracker/src/http/network.dart';
 import 'package:duo_tracker/src/repository/utils/shared_preferences_utils.dart';
 import 'package:duo_tracker/src/view/folder/folder_type.dart';
@@ -139,8 +139,8 @@ class _OverviewViewState extends State<OverviewView> {
         final learningLanguageName =
             LanguageConverter.toName(languageCode: switchLearningLanguage);
 
-        InfoSnackbar.from(context: context).show(
-          content: 'Learning "$learningLanguageName" from "$fromLanguageName".',
+        SuccessSnackBar.from(context: context).show(
+          content: 'Learning "$learningLanguageName" from "$fromLanguageName"!',
         );
       }
 

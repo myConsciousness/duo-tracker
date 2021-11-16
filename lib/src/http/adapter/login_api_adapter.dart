@@ -65,7 +65,7 @@ class LoginApiAdapter extends ApiAdapter {
           return ApiResponse.from(
             fromApi: FromApi.login,
             errorType: ErrorType.none,
-            message: 'Your account has been authenticated.',
+            message: 'Your account has been authenticated!',
           );
         }
       } else if (httpStatus.isClientError) {

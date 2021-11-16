@@ -10,6 +10,7 @@ import 'package:duo_tracker/src/component/common_dialog_title.dart';
 import 'package:duo_tracker/src/component/common_two_grids_radio_list_tile.dart';
 import 'package:duo_tracker/src/component/const/sort_item.dart';
 import 'package:duo_tracker/src/component/const/sort_pattern.dart';
+import 'package:duo_tracker/src/component/snackbar/info_snack_bar.dart';
 import 'package:duo_tracker/src/repository/preference/common_shared_preferences_key.dart';
 import 'package:duo_tracker/src/repository/preference/interstitial_ad_shared_preferences_key.dart';
 import 'package:duo_tracker/src/repository/utils/shared_preferences_utils.dart';
@@ -118,6 +119,10 @@ AwesomeDialog _buildDialog({
                         await CommonSharedPreferencesKey.sortPattern
                             .setInt(_sortPattern.code);
                       }
+
+                      InfoSnackbar.from(context: context).show(
+                        content: 'The selected sort order have been applied.',
+                      );
 
                       _dialog.dismiss();
 
