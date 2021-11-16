@@ -4,6 +4,7 @@
 
 import 'package:awesome_dialog/awesome_dialog.dart';
 import 'package:duo_tracker/src/admob/interstitial_ad_utils.dart';
+import 'package:duo_tracker/src/component/common_dialog_cancel_button.dart';
 import 'package:duo_tracker/src/component/common_dialog_submit_button.dart';
 import 'package:duo_tracker/src/component/common_dialog_title.dart';
 import 'package:duo_tracker/src/component/common_radio_list_tile.dart';
@@ -89,6 +90,12 @@ Widget _buildDialogBody({
                           .countAdjustDateFormat,
                     );
                   },
+                ),
+                CommonDialogCancelButton(
+                  onPressEvent: () async => await _dialog.dismiss(),
+                ),
+                const SizedBox(
+                  height: 10,
                 ),
               ],
             ),

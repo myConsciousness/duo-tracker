@@ -466,13 +466,8 @@ class _ShopViewState extends State<ShopView> {
           return Theme.of(context).colorScheme.secondaryVariant;
         }
 
-        final datetimeDisabledFullScreen = await CommonSharedPreferencesKey
-            .datetimeDisabledFullScreen
-            .getInt();
-        final datetimeDisabledBanner =
-            await CommonSharedPreferencesKey.datetimeDisabledBanner.getInt();
-
-        if (datetimeDisabledFullScreen == datetimeDisabledBanner) {
+        if (disableFullScreenAdTypeCode == disableAdPattern.code &&
+            disableBannerAdTypeCode == disableAdPattern.code) {
           // Enabled color
           return Theme.of(context).colorScheme.secondaryVariant;
         }

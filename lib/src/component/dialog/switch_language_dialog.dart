@@ -4,6 +4,7 @@
 
 import 'package:awesome_dialog/awesome_dialog.dart';
 import 'package:dropdown_below/dropdown_below.dart';
+import 'package:duo_tracker/src/component/common_dialog_cancel_button.dart';
 import 'package:duo_tracker/src/component/common_dialog_submit_button.dart';
 import 'package:duo_tracker/src/component/common_dialog_title.dart';
 import 'package:duo_tracker/src/component/dialog/input_error_dialog.dart';
@@ -135,8 +136,11 @@ Future<T?> showSwitchLanguageDialog<T>({
                     _switchingLanguage = false;
                   },
                 ),
+                CommonDialogCancelButton(
+                  onPressEvent: () async => await _dialog!.dismiss(),
+                ),
                 const SizedBox(
-                  height: 20,
+                  height: 10,
                 ),
                 const TextWithHorizontalDivider(
                   value: 'OR',
