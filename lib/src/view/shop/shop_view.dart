@@ -236,7 +236,7 @@ class _ShopViewState extends State<ShopView> {
           return defaultTitle;
         }
 
-        if (await _disabledAll()) {
+        if (await _disabledAll(disableAdType: disableAdType)) {
           final purchasedDisableAdType =
               DisableAdPatternExt.toEnum(code: disableFullScreenTypeCode);
 
@@ -251,7 +251,9 @@ class _ShopViewState extends State<ShopView> {
     }
   }
 
-  Future<bool> _disabledAll() async {
+  Future<bool> _disabledAll({
+    required DisableAdPattern disableAdType,
+  }) async {
     final disableFullScreenTypeCode =
         await CommonSharedPreferencesKey.disableFullScreenPattern.getInt();
     final disableBannerTypeCode =
@@ -266,11 +268,9 @@ class _ShopViewState extends State<ShopView> {
     final datetimeDisabledBanner =
         await CommonSharedPreferencesKey.datetimeDisabledBanner.getInt();
 
-    if (datetimeDisabledFullScreen != datetimeDisabledBanner) {
-      return false;
-    }
-
-    return true;
+    return disableFullScreenTypeCode == disableAdType.code &&
+        disableBannerTypeCode == disableAdType.code &&
+        datetimeDisabledFullScreen == datetimeDisabledBanner;
   }
 
   Widget _buildDisableAdProductCard({
@@ -466,8 +466,15 @@ class _ShopViewState extends State<ShopView> {
           return Theme.of(context).colorScheme.secondaryVariant;
         }
 
+        final datetimeDisabledFullScreen = await CommonSharedPreferencesKey
+            .datetimeDisabledFullScreen
+            .getInt();
+        final datetimeDisabledBanner =
+            await CommonSharedPreferencesKey.datetimeDisabledBanner.getInt();
+
         if (disableFullScreenAdTypeCode == disableAdPattern.code &&
-            disableBannerAdTypeCode == disableAdPattern.code) {
+            disableBannerAdTypeCode == disableAdPattern.code &&
+            datetimeDisabledFullScreen == datetimeDisabledBanner) {
           // Enabled color
           return Theme.of(context).colorScheme.secondaryVariant;
         }
