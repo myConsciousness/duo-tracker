@@ -4,6 +4,7 @@
 
 import 'package:awesome_dialog/awesome_dialog.dart';
 import 'package:duo_tracker/src/admob/interstitial_ad_utils.dart';
+import 'package:duo_tracker/src/component/common_dialog_cancel_button.dart';
 import 'package:duo_tracker/src/component/common_dialog_submit_button.dart';
 import 'package:duo_tracker/src/component/common_dialog_title.dart';
 import 'package:duo_tracker/src/component/snackbar/info_snack_bar.dart';
@@ -141,8 +142,11 @@ Future<T?> showSelectScoreGoalsDialog<T>({
                     );
                   },
                 ),
+                CommonDialogCancelButton(
+                  onPressEvent: () async => await _dialog.dismiss(),
+                ),
                 const SizedBox(
-                  height: 5,
+                  height: 10,
                 ),
               ],
             ),

@@ -136,7 +136,7 @@ AwesomeDialog _buildDialog({
                     onPressEvent: () async => await _dialog.dismiss(),
                   ),
                   const SizedBox(
-                    height: 30,
+                    height: 10,
                   ),
                 ],
               ),
