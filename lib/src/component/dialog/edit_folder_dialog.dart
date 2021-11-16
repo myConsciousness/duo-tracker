@@ -7,6 +7,7 @@ import 'package:duo_tracker/src/component/common_dialog_cancel_button.dart';
 import 'package:duo_tracker/src/component/common_dialog_submit_button.dart';
 import 'package:duo_tracker/src/component/common_dialog_title.dart';
 import 'package:duo_tracker/src/component/common_text_field.dart';
+import 'package:duo_tracker/src/component/snackbar/info_snack_bar.dart';
 import 'package:duo_tracker/src/repository/model/folder_model.dart';
 import 'package:duo_tracker/src/utils/language_converter.dart';
 import 'package:duo_tracker/src/view/folder/folder_type.dart';
@@ -254,6 +255,10 @@ Future<void> _onPressedOk({
     await _updateFolder(
       folderType: folderType,
     );
+
+    InfoSnackbar.from(context: context).show(
+      content: 'The folder has been edited.',
+    );
   } else {
     await _createNewFolder(
       folderType: folderType,
@@ -261,6 +266,10 @@ Future<void> _onPressedOk({
       userId: userId,
       fromLanguage: fromLanguage,
       learningLanguage: learningLanguage,
+    );
+
+    InfoSnackbar.from(context: context).show(
+      content: 'The folder has been created.',
     );
   }
 

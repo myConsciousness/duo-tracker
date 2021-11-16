@@ -7,6 +7,7 @@ import 'package:duo_tracker/src/component/common_dialog_cancel_button.dart';
 import 'package:duo_tracker/src/component/common_dialog_submit_button.dart';
 import 'package:duo_tracker/src/component/common_dialog_title.dart';
 import 'package:duo_tracker/src/component/common_divider.dart';
+import 'package:duo_tracker/src/component/snackbar/success_snack_bar.dart';
 import 'package:duo_tracker/src/repository/model/purchase_history_model.dart';
 import 'package:duo_tracker/src/repository/service/purchase_history_service.dart';
 import 'package:duo_tracker/src/view/shop/price_type.dart';
@@ -84,7 +85,7 @@ Future<T?> showPurchaseDialog<T>({
                   pressEvent: () async {
                     await onPressedOk.call();
 
-                    _purchaseHistoryService.insert(
+                    await _purchaseHistoryService.insert(
                       PurchaseHistory.from(
                         productName: productName,
                         price: price,
@@ -99,6 +100,11 @@ Future<T?> showPurchaseDialog<T>({
                         createdAt: DateTime.now(),
                         updatedAt: DateTime.now(),
                       ),
+                    );
+
+                    SuccessSnackBar.from(context: context).show(
+                      content:
+                          'Purchase completed. You can check the information from the history.',
                     );
 
                     _dialog.dismiss();

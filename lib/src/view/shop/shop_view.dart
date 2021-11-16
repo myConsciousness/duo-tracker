@@ -9,6 +9,7 @@ import 'package:duo_tracker/src/component/dialog/charge_point_dialog.dart';
 import 'package:duo_tracker/src/component/dialog/error_dialog.dart';
 import 'package:duo_tracker/src/component/dialog/purchase_dialog.dart';
 import 'package:duo_tracker/src/component/loading.dart';
+import 'package:duo_tracker/src/component/snackbar/success_snack_bar.dart';
 import 'package:duo_tracker/src/repository/preference/common_shared_preferences_key.dart';
 import 'package:duo_tracker/src/repository/preference/rewarded_ad_shared_preferences.dart';
 import 'package:duo_tracker/src/view/shop/disable_ad_type.dart';
@@ -411,6 +412,11 @@ class _ShopViewState extends State<ShopView> {
     super.setState(() {
       _point = newPoint;
     });
+
+    SuccessSnackBar.from(context: context).show(
+      content:
+          'Thank you for looking at ad! Your wallet has been credited with 2 points!',
+    );
   }
 
   Future<Color> _getDisableAdPurchaseButtonColor({

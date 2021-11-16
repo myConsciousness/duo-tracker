@@ -391,10 +391,13 @@ class _CommonLearnedWordCardState extends State<CommonLearnedWordCard> {
                               icon: const Icon(Icons.copy_all, size: 20),
                               onPressed: () async {
                                 await FlutterClipboard.copy(
-                                    _learnedWord.wordString);
+                                  _learnedWord.wordString,
+                                );
+
                                 InfoSnackbar.from(context: context).show(
-                                    content:
-                                        'Copied "${_learnedWord.wordString}" to clipboard.');
+                                  content:
+                                      'Copied "${_learnedWord.wordString}" to clipboard.',
+                                );
                               },
                             )
                         ],

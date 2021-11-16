@@ -7,6 +7,7 @@ import 'package:duo_tracker/src/admob/interstitial_ad_utils.dart';
 import 'package:duo_tracker/src/component/common_dialog_submit_button.dart';
 import 'package:duo_tracker/src/component/common_dialog_title.dart';
 import 'package:duo_tracker/src/component/common_radio_list_tile.dart';
+import 'package:duo_tracker/src/component/snackbar/info_snack_bar.dart';
 import 'package:duo_tracker/src/const/date_format_pattern.dart';
 import 'package:duo_tracker/src/repository/preference/common_shared_preferences_key.dart';
 import 'package:duo_tracker/src/repository/preference/interstitial_ad_shared_preferences_key.dart';
@@ -75,6 +76,12 @@ Widget _buildDialogBody({
                     );
 
                     onSubmitted.call();
+
+                    InfoSnackbar.from(context: context).show(
+                      content:
+                          'The selected date time format have been applied.',
+                    );
+
                     _dialog.dismiss();
 
                     await InterstitialAdUtils.showInterstitialAd(

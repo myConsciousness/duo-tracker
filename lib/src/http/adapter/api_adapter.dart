@@ -6,7 +6,7 @@ import 'package:duo_tracker/src/component/dialog/auth_dialog.dart';
 import 'package:duo_tracker/src/component/dialog/error_dialog.dart';
 import 'package:duo_tracker/src/component/dialog/input_error_dialog.dart';
 import 'package:duo_tracker/src/component/dialog/network_error_dialog.dart';
-import 'package:duo_tracker/src/component/snackbar/info_snack_bar.dart';
+import 'package:duo_tracker/src/component/snackbar/success_snack_bar.dart';
 import 'package:duo_tracker/src/http/adapter/adapter.dart';
 import 'package:duo_tracker/src/http/api_response.dart';
 import 'package:duo_tracker/src/http/const/error_type.dart';
@@ -51,7 +51,7 @@ abstract class ApiAdapter implements Adapter {
     switch (response.errorType) {
       case ErrorType.none:
         if (response.message.isNotEmpty) {
-          InfoSnackbar.from(context: context).show(
+          SuccessSnackBar.from(context: context).show(
             content: response.message,
           );
         }
