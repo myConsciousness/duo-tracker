@@ -13,6 +13,7 @@ import 'package:duo_tracker/src/component/dialog/network_error_dialog.dart';
 import 'package:duo_tracker/src/component/dialog/switch_language_dialog.dart';
 import 'package:duo_tracker/src/component/snackbar/success_snack_bar.dart';
 import 'package:duo_tracker/src/http/network.dart';
+import 'package:duo_tracker/src/repository/preference/interstitial_ad_shared_preferences_key.dart';
 import 'package:duo_tracker/src/repository/utils/shared_preferences_utils.dart';
 import 'package:duo_tracker/src/view/folder/folder_type.dart';
 import 'package:duo_tracker/src/component/const/match_pattern.dart';
@@ -23,7 +24,6 @@ import 'package:duo_tracker/src/component/dialog/select_sort_method_dialog.dart'
 import 'package:duo_tracker/src/component/loading.dart';
 import 'package:duo_tracker/src/repository/preference/common_shared_preferences_key.dart';
 import 'package:duo_tracker/src/repository/model/learned_word_model.dart';
-import 'package:duo_tracker/src/repository/preference/interstitial_ad_shared_preferences_key.dart';
 import 'package:duo_tracker/src/repository/service/learned_word_service.dart';
 import 'package:duo_tracker/src/http/utils/duolingo_api_utils.dart';
 import 'package:duo_tracker/src/utils/language_converter.dart';
@@ -161,6 +161,10 @@ class _OverviewViewState extends State<OverviewView> {
       );
 
       await _buildAppBarSubTitle();
+
+      await InterstitialAdUtils.showInterstitialAd(
+        sharedPreferencesKey: InterstitialAdSharedPreferencesKey.countSyncWords,
+      );
 
       _alreadyAuthDialogOpened = false;
     }
@@ -305,26 +309,26 @@ class _OverviewViewState extends State<OverviewView> {
               ),
             ),
           ),
-          onChanged: (searchWord) async {
-            final matchPatternCode =
-                await SharedPreferencesUtils.getCurrentIntValueOrDefault(
-                    currentKey: CommonSharedPreferencesKey.matchPattern,
-                    defaultKey:
-                        CommonSharedPreferencesKey.overviewDefaultMatchPattern);
-
-            super.setState(() {
-              _searchWord = searchWord;
-              _matchPattern = MatchPatternExt.toEnum(code: matchPatternCode);
-            });
-          },
-          onSubmitted: (_) async {
-            await InterstitialAdUtils.showInterstitialAd(
-              sharedPreferencesKey:
-                  InterstitialAdSharedPreferencesKey.countSearchWords,
-            );
-          },
+          onChanged: (searchWord) async =>
+              await _applySearch(searchWord: searchWord),
+          onSubmitted: (searchWord) async =>
+              await _applySearch(searchWord: searchWord),
         ),
       );
+
+  Future<void> _applySearch({
+    required String searchWord,
+  }) async {
+    final matchPatternCode =
+        await SharedPreferencesUtils.getCurrentIntValueOrDefault(
+            currentKey: CommonSharedPreferencesKey.matchPattern,
+            defaultKey: CommonSharedPreferencesKey.overviewDefaultMatchPattern);
+
+    super.setState(() {
+      _searchWord = searchWord;
+      _matchPattern = MatchPatternExt.toEnum(code: matchPatternCode);
+    });
+  }
 
   List<Widget> _buildActions() {
     if (_searching) {

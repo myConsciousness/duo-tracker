@@ -11,9 +11,6 @@ enum InterstitialAdSharedPreferencesKey {
   /// The count sync words
   countSyncWords,
 
-  /// The count search words
-  countSearchWords,
-
   /// The count sort words
   countSortWords,
 
@@ -26,20 +23,11 @@ enum InterstitialAdSharedPreferencesKey {
   /// The count sync user
   countSyncUser,
 
-  /// The count show tip and note
-  countShowTipAndNote,
-
   /// The count play audio
   countPlayAudio,
 
   // The count download word hint
   countDownloadWordHint,
-
-  /// The count adjust auto sync schedule
-  countAdjustAutoSyncSchedule,
-
-  /// The count adjust date format
-  countAdjustDateFormat,
 
   /// The immediately
   immediately,
@@ -52,8 +40,6 @@ extension KeyFeature on InterstitialAdSharedPreferencesKey {
         return 'count_open_app';
       case InterstitialAdSharedPreferencesKey.countSyncWords:
         return 'count_sync_words';
-      case InterstitialAdSharedPreferencesKey.countSearchWords:
-        return 'count_search_words';
       case InterstitialAdSharedPreferencesKey.countSortWords:
         return 'count_sort_words';
       case InterstitialAdSharedPreferencesKey.countFilterWords:
@@ -62,16 +48,10 @@ extension KeyFeature on InterstitialAdSharedPreferencesKey {
         return 'count_adjust_goals';
       case InterstitialAdSharedPreferencesKey.countSyncUser:
         return 'count_sync_user';
-      case InterstitialAdSharedPreferencesKey.countShowTipAndNote:
-        return 'count_show_tip_and_note';
       case InterstitialAdSharedPreferencesKey.countPlayAudio:
         return 'count_play_audio';
       case InterstitialAdSharedPreferencesKey.countDownloadWordHint:
         return 'count_download_word_hint';
-      case InterstitialAdSharedPreferencesKey.countAdjustAutoSyncSchedule:
-        return 'count_adjust_auto_sync_schedule';
-      case InterstitialAdSharedPreferencesKey.countAdjustDateFormat:
-        return 'count_adjust_date_format';
       case InterstitialAdSharedPreferencesKey.immediately:
         return 'interstitial_immediately';
     }
@@ -82,27 +62,19 @@ extension KeyFeature on InterstitialAdSharedPreferencesKey {
       case InterstitialAdSharedPreferencesKey.countOpenApp:
         return 2;
       case InterstitialAdSharedPreferencesKey.countSyncWords:
-        return 1;
-      case InterstitialAdSharedPreferencesKey.countSearchWords:
-        return 1;
+        return 2;
       case InterstitialAdSharedPreferencesKey.countSortWords:
-        return 0;
+        return 4;
       case InterstitialAdSharedPreferencesKey.countFilterWords:
-        return 0;
+        return 4;
       case InterstitialAdSharedPreferencesKey.countAdjustGoals:
-        return 0;
+        return 2;
       case InterstitialAdSharedPreferencesKey.countSyncUser:
-        return 0;
-      case InterstitialAdSharedPreferencesKey.countShowTipAndNote:
         return 2;
       case InterstitialAdSharedPreferencesKey.countPlayAudio:
-        return 2;
+        return 5;
       case InterstitialAdSharedPreferencesKey.countDownloadWordHint:
-        return 1;
-      case InterstitialAdSharedPreferencesKey.countAdjustAutoSyncSchedule:
-        return 1;
-      case InterstitialAdSharedPreferencesKey.countAdjustDateFormat:
-        return 1;
+        return 5;
       case InterstitialAdSharedPreferencesKey.immediately:
         return 0;
     }
