@@ -3,7 +3,6 @@
 // BSD-style license that can be found in the LICENSE file.
 
 import 'package:awesome_dialog/awesome_dialog.dart';
-import 'package:duo_tracker/src/admob/interstitial_ad_utils.dart';
 import 'package:duo_tracker/src/component/common_dialog_cancel_button.dart';
 import 'package:duo_tracker/src/component/common_dialog_submit_button.dart';
 import 'package:duo_tracker/src/component/common_dialog_title.dart';
@@ -12,7 +11,6 @@ import 'package:duo_tracker/src/component/const/schedule_cycle_unit.dart';
 import 'package:duo_tracker/src/component/dialog/warning_dialog.dart';
 import 'package:duo_tracker/src/component/snackbar/info_snack_bar.dart';
 import 'package:duo_tracker/src/repository/preference/common_shared_preferences_key.dart';
-import 'package:duo_tracker/src/repository/preference/interstitial_ad_shared_preferences_key.dart';
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:intl/intl.dart';
@@ -120,11 +118,6 @@ Widget _buildDialogBody({
                     );
 
                     _dialog.dismiss();
-
-                    await InterstitialAdUtils.showInterstitialAd(
-                      sharedPreferencesKey: InterstitialAdSharedPreferencesKey
-                          .countAdjustAutoSyncSchedule,
-                    );
                   },
                 ),
                 CommonDialogCancelButton(

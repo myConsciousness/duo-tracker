@@ -20,18 +20,9 @@ class DuoTracker extends StatefulWidget {
   _DuoTrackerState createState() => _DuoTrackerState();
 }
 
-class _DuoTrackerState extends State<DuoTracker> with WidgetsBindingObserver {
+class _DuoTrackerState extends State<DuoTracker> {
   /// The theme mode provider
   final _themeModeProvider = ThemeModeProvider.getInstance();
-
-  @override
-  void didChangeAppLifecycleState(AppLifecycleState state) async {
-    if (state == AppLifecycleState.resumed) {
-      await InterstitialAdUtils.showInterstitialAd(
-        sharedPreferencesKey: InterstitialAdSharedPreferencesKey.countOpenApp,
-      );
-    }
-  }
 
   @override
   void didChangeDependencies() {
@@ -40,15 +31,12 @@ class _DuoTrackerState extends State<DuoTracker> with WidgetsBindingObserver {
 
   @override
   void dispose() {
-    WidgetsBinding.instance!.removeObserver(this);
     super.dispose();
   }
 
   @override
   void initState() {
     super.initState();
-    WidgetsBinding.instance!.addObserver(this);
-
     _asyncInitState();
 
     // Fix app orientation
@@ -70,7 +58,6 @@ class _DuoTrackerState extends State<DuoTracker> with WidgetsBindingObserver {
       /// First time app is launched
       await CommonSharedPreferencesKey.datetimeLastShowedAppReview
           .setInt(DateTime.now().millisecondsSinceEpoch);
-      await AppReview.requestReview;
     } else {
       final datetimeLastShowed =
           DateTime.fromMillisecondsSinceEpoch(datetimeSinceEpock);

@@ -3,6 +3,7 @@
 // BSD-style license that can be found in the LICENSE file.
 
 import 'package:duo_tracker/src/admob/banner_ad_utils.dart';
+import 'package:duo_tracker/src/admob/interstitial_ad_utils.dart';
 import 'package:duo_tracker/src/component/chart/radical_bar_chart.dart';
 import 'package:duo_tracker/src/component/common_card_header_text.dart';
 import 'package:duo_tracker/src/component/common_divider.dart';
@@ -14,6 +15,7 @@ import 'package:duo_tracker/src/http/utils/duolingo_api_utils.dart';
 import 'package:duo_tracker/src/repository/model/chart_data_source_model.dart';
 import 'package:duo_tracker/src/repository/model/user_model.dart';
 import 'package:duo_tracker/src/repository/preference/common_shared_preferences_key.dart';
+import 'package:duo_tracker/src/repository/preference/interstitial_ad_shared_preferences_key.dart';
 import 'package:duo_tracker/src/repository/service/chart_service.dart';
 import 'package:duo_tracker/src/repository/service/user_service.dart';
 import 'package:duo_tracker/src/utils/language_converter.dart';
@@ -535,5 +537,9 @@ class _UserOverviewViewState extends State<UserOverviewView> {
     );
 
     super.setState(() {});
+
+    await InterstitialAdUtils.showInterstitialAd(
+      sharedPreferencesKey: InterstitialAdSharedPreferencesKey.countSyncUser,
+    );
   }
 }
