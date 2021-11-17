@@ -127,6 +127,7 @@ AwesomeDialog _buildDialog({
                       _dialog.dismiss();
 
                       await InterstitialAdUtils.showInterstitialAd(
+                        context: context,
                         sharedPreferencesKey:
                             InterstitialAdSharedPreferencesKey.countSortWords,
                       );

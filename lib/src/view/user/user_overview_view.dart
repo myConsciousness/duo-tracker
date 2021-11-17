@@ -539,6 +539,7 @@ class _UserOverviewViewState extends State<UserOverviewView> {
     super.setState(() {});
 
     await InterstitialAdUtils.showInterstitialAd(
+      context: context,
       sharedPreferencesKey: InterstitialAdSharedPreferencesKey.countSyncUser,
     );
   }

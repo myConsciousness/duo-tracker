@@ -108,6 +108,7 @@ class _CommonLearnedWordCardState extends State<CommonLearnedWordCard> {
           );
 
           await InterstitialAdUtils.showInterstitialAd(
+            context: context,
             sharedPreferencesKey:
                 InterstitialAdSharedPreferencesKey.countPlayAudio,
           );
@@ -150,6 +151,7 @@ class _CommonLearnedWordCardState extends State<CommonLearnedWordCard> {
             });
 
             await InterstitialAdUtils.showInterstitialAd(
+              context: context,
               sharedPreferencesKey:
                   InterstitialAdSharedPreferencesKey.countDownloadWordHint,
             );

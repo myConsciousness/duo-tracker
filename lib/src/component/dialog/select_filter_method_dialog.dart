@@ -189,6 +189,7 @@ Future<T?> showSelectFilterMethodDialog<T>({
                         _dialog.dismiss();
 
                         await InterstitialAdUtils.showInterstitialAd(
+                          context: context,
                           sharedPreferencesKey:
                               InterstitialAdSharedPreferencesKey
                                   .countFilterWords,

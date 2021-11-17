@@ -122,6 +122,7 @@ class _FolderItemsViewState extends State<FolderItemsView> {
                   }
 
                   await InterstitialAdUtils.showInterstitialAd(
+                    context: context,
                     sharedPreferencesKey:
                         InterstitialAdSharedPreferencesKey.countPlayAudio,
                   );
