@@ -4,8 +4,7 @@
 
 import 'package:duo_tracker/flavors.dart';
 import 'package:duo_tracker/src/admob/duo_tracker_admob_unit_ids.dart';
-import 'package:duo_tracker/src/repository/preference/common_shared_preferences_key.dart';
-import 'package:duo_tracker/src/view/shop/disable_ad_type.dart';
+import 'package:duo_tracker/src/utils/disable_banner_ad_support.dart';
 import 'package:flutter/material.dart';
 import 'package:google_mobile_ads/google_mobile_ads.dart';
 
@@ -25,39 +24,25 @@ class BannerAdUtils {
   static Future<bool> canShow({
     int index = -1,
     int interval = -1,
-    bool header = false,
   }) async {
-    if (!F.isFreeBuild) {
+    if (F.isPaidBuild) {
       return false;
     }
 
-    final disableBannerPatternCode =
-        await CommonSharedPreferencesKey.disableBannerPattern.getInt();
-
-    if (disableBannerPatternCode != -1) {
-      final disableBannerPattern =
-          DisableAdPatternExt.toEnum(code: disableBannerPatternCode);
-      final purchasedDatetime = DateTime.fromMillisecondsSinceEpoch(
-        await CommonSharedPreferencesKey.datetimeDisabledBanner.getInt(),
-      );
-
-      if (DateTime.now().difference(purchasedDatetime).inMinutes.abs() >
-          disableBannerPattern.timeLimit) {
-        await CommonSharedPreferencesKey.disableBannerPattern.setInt(-1);
-        await CommonSharedPreferencesKey.datetimeDisabledBanner.setInt(-1);
-      } else {
+    if (await DisableBannerAdSupport.isEnabled()) {
+      if (!await DisableBannerAdSupport.isExpired()) {
         return false;
       }
+
+      // When purchased product is expired.
+      await DisableBannerAdSupport.clearPurchasedProduct();
     }
 
-    if (index > -1 && interval > -1) {
-      if (header) {
-        return index % interval == 0;
-      } else {
-        return index != 0 && index % interval == 0;
-      }
+    if (index < 0 && interval < 0) {
+      // When there is no specific condition of index and interval
+      return true;
     }
 
-    return true;
+    return index != 0 && index % interval == 0;
   }
 }
