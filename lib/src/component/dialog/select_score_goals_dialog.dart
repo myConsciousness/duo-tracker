@@ -137,6 +137,7 @@ Future<T?> showSelectScoreGoalsDialog<T>({
                     _dialog.dismiss();
 
                     await InterstitialAdUtils.showInterstitialAd(
+                      context: context,
                       sharedPreferencesKey:
                           InterstitialAdSharedPreferencesKey.countAdjustGoals,
                     );

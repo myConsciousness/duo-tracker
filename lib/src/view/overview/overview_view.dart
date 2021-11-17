@@ -163,6 +163,7 @@ class _OverviewViewState extends State<OverviewView> {
       await _buildAppBarSubTitle();
 
       await InterstitialAdUtils.showInterstitialAd(
+        context: context,
         sharedPreferencesKey: InterstitialAdSharedPreferencesKey.countSyncWords,
       );
 

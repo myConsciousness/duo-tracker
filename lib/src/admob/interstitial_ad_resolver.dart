@@ -43,25 +43,27 @@ class InterstitialAdResolver {
         ),
       );
 
-  Future<void> showInterstitialAd() async {
+  Future<void> showInterstitialAd({
+    required Function(int reward) onAdShowed,
+  }) async {
     if (_interstitialAd == null) {
       await loadInterstitialAd();
     }
 
     _interstitialAd!.fullScreenContentCallback = FullScreenContentCallback(
-      onAdShowedFullScreenContent: (final InterstitialAd interstitialAd) {},
-      onAdDismissedFullScreenContent:
-          (final InterstitialAd interstitialAd) async {
+      onAdShowedFullScreenContent: (final interstitialAd) {},
+      onAdDismissedFullScreenContent: (final interstitialAd) async {
         await interstitialAd.dispose();
+        onAdShowed.call(3);
       },
       onAdFailedToShowFullScreenContent:
-          (final InterstitialAd interstitialAd, final AdError adError) async {
+          (final interstitialAd, final adError) async {
         await interstitialAd.dispose();
         await loadInterstitialAd();
       },
     );
 
-    _interstitialAd!.show();
+    await _interstitialAd!.show();
     _interstitialAd = null;
 
     /// Reload next ad
