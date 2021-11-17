@@ -3,6 +3,9 @@
 // BSD-style license that can be found in the LICENSE file.
 
 enum DisableAdPattern {
+  /// 5 minutes
+  m5,
+
   /// 30 minutes
   m30,
 
@@ -26,6 +29,8 @@ extension DisableAdPatternExt on DisableAdPattern {
   /// Returns the code
   int get code {
     switch (this) {
+      case DisableAdPattern.m5:
+        return 900;
       case DisableAdPattern.m30:
         return 0;
       case DisableAdPattern.h1:
@@ -44,6 +49,8 @@ extension DisableAdPatternExt on DisableAdPattern {
   /// Returns the time limit in minutes
   int get timeLimit {
     switch (this) {
+      case DisableAdPattern.m5:
+        return 5;
       case DisableAdPattern.m30:
         return 30;
       case DisableAdPattern.h1:

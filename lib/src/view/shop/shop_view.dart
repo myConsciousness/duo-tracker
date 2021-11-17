@@ -12,6 +12,8 @@ import 'package:duo_tracker/src/component/loading.dart';
 import 'package:duo_tracker/src/component/snackbar/success_snack_bar.dart';
 import 'package:duo_tracker/src/repository/preference/common_shared_preferences_key.dart';
 import 'package:duo_tracker/src/repository/preference/rewarded_ad_shared_preferences.dart';
+import 'package:duo_tracker/src/utils/disable_banner_ad_support.dart';
+import 'package:duo_tracker/src/utils/disable_full_screen_ad_support.dart';
 import 'package:duo_tracker/src/view/shop/disable_ad_type.dart';
 import 'package:duo_tracker/src/view/shop/disable_ad_product_type.dart';
 import 'package:duo_tracker/src/view/shop/purchase_history_tab_view.dart';
@@ -54,6 +56,16 @@ class _ShopViewState extends State<ShopView> {
     _point = await CommonSharedPreferencesKey.rewardPoint.getInt(
       defaultValue: 0,
     );
+
+    if (await DisableFullScreenAdSupport.isEnabled() &&
+        await DisableFullScreenAdSupport.isExpired()) {
+      await DisableFullScreenAdSupport.clearPurchasedProduct();
+    }
+
+    if (await DisableBannerAdSupport.isEnabled() &&
+        await DisableBannerAdSupport.isExpired()) {
+      await DisableBannerAdSupport.clearPurchasedProduct();
+    }
 
     super.setState(() {});
   }
@@ -102,10 +114,8 @@ class _ShopViewState extends State<ShopView> {
         ),
       );
 
-  Widget _buildDisableAdProductsCard({
-    required String title,
-    required String subtitle,
-    required DisableAdProductType productType,
+  Widget _buildProductBasketCard({
+    required Widget products,
   }) =>
       Padding(
         padding: const EdgeInsets.all(5),
@@ -114,77 +124,121 @@ class _ShopViewState extends State<ShopView> {
           elevation: 5,
           child: Padding(
             padding: const EdgeInsets.all(10),
-            child: Column(
+            child: products,
+          ),
+          shape: const RoundedRectangleBorder(
+            borderRadius: BorderRadius.vertical(
+              top: Radius.circular(30),
+              bottom: Radius.circular(30),
+            ),
+          ),
+        ),
+      );
+
+  Widget _buildFreeDisableAdProductCard({
+    required String title,
+    required String subtitle,
+  }) =>
+      _buildProductBasketCard(
+        products: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          crossAxisAlignment: CrossAxisAlignment.center,
+          children: [
+            _buildProductBasketTitle(
+              title: title,
+              subtitle: subtitle,
+            ),
+            const SizedBox(
+              height: 20,
+            ),
+            Row(
               mainAxisAlignment: MainAxisAlignment.center,
               crossAxisAlignment: CrossAxisAlignment.center,
               children: [
-                ListTile(
-                  leading: const Icon(FontAwesomeIcons.shoppingBasket),
-                  title: Text(title),
-                  subtitle: Text(
-                    subtitle,
-                  ),
-                ),
-                const SizedBox(
-                  height: 20,
-                ),
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  crossAxisAlignment: CrossAxisAlignment.center,
-                  children: [
-                    _buildDisableAdProductCard(
-                      title: '30 minutes',
-                      price: 5 * productType.priceWeight,
-                      productType: productType,
-                      disableAdPattern: DisableAdPattern.m30,
-                    ),
-                    _buildDisableAdProductCard(
-                      title: '1 hour',
-                      price: 15 * productType.priceWeight,
-                      productType: productType,
-                      disableAdPattern: DisableAdPattern.h1,
-                    ),
-                  ],
-                ),
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  crossAxisAlignment: CrossAxisAlignment.center,
-                  children: [
-                    _buildDisableAdProductCard(
-                      title: '3 hours',
-                      price: 30 * productType.priceWeight,
-                      productType: productType,
-                      disableAdPattern: DisableAdPattern.h3,
-                    ),
-                    _buildDisableAdProductCard(
-                      title: '6 hours',
-                      price: 50 * productType.priceWeight,
-                      productType: productType,
-                      disableAdPattern: DisableAdPattern.h6,
-                    ),
-                  ],
-                ),
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  crossAxisAlignment: CrossAxisAlignment.center,
-                  children: [
-                    _buildDisableAdProductCard(
-                      title: '12 hours',
-                      price: 80 * productType.priceWeight,
-                      productType: productType,
-                      disableAdPattern: DisableAdPattern.h12,
-                    ),
-                    _buildDisableAdProductCard(
-                      title: '24 hours',
-                      price: 100 * productType.priceWeight,
-                      productType: productType,
-                      disableAdPattern: DisableAdPattern.h24,
-                    ),
-                  ],
+                _buildDisableAdProductCard(
+                  title: '5 minutes',
+                  price: 0,
+                  productType: DisableAdProductType.all,
+                  disableAdPattern: DisableAdPattern.m5,
                 ),
               ],
             ),
-          ),
+          ],
+        ),
+      );
+
+  Widget _buildDisableAdProductsCard({
+    required String title,
+    required String subtitle,
+    required DisableAdProductType productType,
+  }) =>
+      _buildProductBasketCard(
+        products: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          crossAxisAlignment: CrossAxisAlignment.center,
+          children: [
+            _buildProductBasketTitle(
+              title: title,
+              subtitle: subtitle,
+            ),
+            const SizedBox(
+              height: 20,
+            ),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.center,
+              crossAxisAlignment: CrossAxisAlignment.center,
+              children: [
+                _buildDisableAdProductCard(
+                  title: '30 minutes',
+                  price: 5 * productType.priceWeight,
+                  productType: productType,
+                  disableAdPattern: DisableAdPattern.m30,
+                ),
+                _buildDisableAdProductCard(
+                  title: '1 hour',
+                  price: 10 * productType.priceWeight,
+                  productType: productType,
+                  disableAdPattern: DisableAdPattern.h1,
+                ),
+              ],
+            ),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.center,
+              crossAxisAlignment: CrossAxisAlignment.center,
+              children: [
+                _buildDisableAdProductCard(
+                  title: '3 hours',
+                  price: 20 * productType.priceWeight,
+                  productType: productType,
+                  disableAdPattern: DisableAdPattern.h3,
+                ),
+                _buildDisableAdProductCard(
+                  title: '6 hours',
+                  price: 35 * productType.priceWeight,
+                  productType: productType,
+                  disableAdPattern: DisableAdPattern.h6,
+                ),
+              ],
+            ),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.center,
+              crossAxisAlignment: CrossAxisAlignment.center,
+              children: [
+                _buildDisableAdProductCard(
+                  title: '12 hours',
+                  price: 60 * productType.priceWeight,
+                  productType: productType,
+                  disableAdPattern: DisableAdPattern.h12,
+                ),
+                _buildDisableAdProductCard(
+                  title: '24 hours',
+                  price: 80 * productType.priceWeight,
+                  productType: productType,
+                  disableAdPattern: DisableAdPattern.h24,
+                ),
+              ],
+            ),
+          ],
         ),
       );
 
@@ -380,17 +434,34 @@ class _ShopViewState extends State<ShopView> {
             productName: product.name,
             validPeriodInMinutes: disableAdPattern.timeLimit,
             onPressedOk: () async {
-              final newPoint = currentPoint - price;
-              await CommonSharedPreferencesKey.rewardPoint.setInt(newPoint);
+              if (disableAdPattern == DisableAdPattern.m5) {
+                await RewardedAdUtils.showRewarededAd(
+                  context: context,
+                  sharedPreferencesKey:
+                      RewardedAdSharedPreferencesKey.rewardImmediately,
+                  onRewarded: (_) async {
+                    await _disableAds(
+                      productType: product,
+                      disableAdPattern: disableAdPattern,
+                    );
 
-              await _disableAds(
-                productType: product,
-                disableAdPattern: disableAdPattern,
-              );
+                    super.setState(() {});
+                  },
+                  showForce: true,
+                );
+              } else {
+                final newPoint = currentPoint - price;
+                await CommonSharedPreferencesKey.rewardPoint.setInt(newPoint);
 
-              super.setState(() {
-                _point = newPoint;
-              });
+                await _disableAds(
+                  productType: product,
+                  disableAdPattern: disableAdPattern,
+                );
+
+                super.setState(() {
+                  _point = newPoint;
+                });
+              }
             },
           );
         },
@@ -540,6 +611,23 @@ class _ShopViewState extends State<ShopView> {
     }
   }
 
+  Widget _buildProductBasketTitle({
+    required String title,
+    required String subtitle,
+  }) =>
+      ListTile(
+        leading: const Icon(FontAwesomeIcons.shoppingBasket),
+        title: Text(
+          title,
+          style: const TextStyle(
+            fontWeight: FontWeight.bold,
+          ),
+        ),
+        subtitle: Text(
+          subtitle,
+        ),
+      );
+
   @override
   Widget build(BuildContext context) => Scaffold(
         body: CommonNestedScrollView(
@@ -572,10 +660,15 @@ class _ShopViewState extends State<ShopView> {
                 child: Column(
                   children: [
                     _buildWalletCard(),
+                    _buildFreeDisableAdProductCard(
+                      title: 'Disable All Ads (Free)',
+                      subtitle:
+                          'You can disable all ads for 5 minutes. This product is reflected instantly without consuming any points once you watch the ad.',
+                    ),
                     _buildDisableAdProductsCard(
                       title: 'Disable Full Screen Ads',
                       subtitle:
-                          'You can disable full-screen ads for a certain period of time. Ads for recharging points in this store will not be disabled.',
+                          'You can disable full-screen ads for a certain period of time.',
                       productType: DisableAdProductType.disbaleFullScreenAd,
                     ),
                     _buildDisableAdProductsCard(
@@ -587,7 +680,7 @@ class _ShopViewState extends State<ShopView> {
                     _buildDisableAdProductsCard(
                       title: 'Disable All Ads',
                       subtitle:
-                          'You can disable all ads for a certain period of time. Ads for recharging points in this store will not be disabled.',
+                          'You can disable all ads for a certain period of time.',
                       productType: DisableAdProductType.all,
                     ),
                   ],
