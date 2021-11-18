@@ -85,20 +85,21 @@ Future<T?> showPurchaseDialog<T>({
                   pressEvent: () async {
                     await onPressedOk.call();
 
+                    final now = DateTime.now();
                     await _purchaseHistoryService.insert(
                       PurchaseHistory.from(
                         productName: productName,
                         price: price,
                         priceType: PriceType.duoTrackerPoint.code,
                         validPeriodInMinutes: validPeriodInMinutes,
-                        purchasedAt: DateTime.now(),
-                        expiredAt: DateTime.now().add(
+                        purchasedAt: now,
+                        expiredAt: now.add(
                           Duration(
                             minutes: validPeriodInMinutes,
                           ),
                         ),
-                        createdAt: DateTime.now(),
-                        updatedAt: DateTime.now(),
+                        createdAt: now,
+                        updatedAt: now,
                       ),
                     );
 

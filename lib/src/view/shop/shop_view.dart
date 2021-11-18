@@ -428,28 +428,28 @@ class _ShopViewState extends State<ShopView> {
             return;
           }
 
-          await showPurchaseDialog(
-            context: context,
-            price: price,
-            productName: product.name,
-            validPeriodInMinutes: disableAdPattern.timeLimit,
-            onPressedOk: () async {
-              if (disableAdPattern == DisableAdPattern.m5) {
-                await RewardedAdUtils.showRewarededAd(
-                  context: context,
-                  sharedPreferencesKey:
-                      RewardedAdSharedPreferencesKey.rewardImmediately,
-                  onRewarded: (_) async {
-                    await _disableAds(
-                      productType: product,
-                      disableAdPattern: disableAdPattern,
-                    );
-
-                    super.setState(() {});
-                  },
-                  showForce: true,
+          if (disableAdPattern == DisableAdPattern.m5) {
+            await RewardedAdUtils.showRewarededAd(
+              context: context,
+              sharedPreferencesKey:
+                  RewardedAdSharedPreferencesKey.rewardImmediately,
+              onRewarded: (_) async {
+                await _disableAds(
+                  productType: product,
+                  disableAdPattern: disableAdPattern,
                 );
-              } else {
+
+                super.setState(() {});
+              },
+              showForce: true,
+            );
+          } else {
+            await showPurchaseDialog(
+              context: context,
+              price: price,
+              productName: product.name,
+              validPeriodInMinutes: disableAdPattern.timeLimit,
+              onPressedOk: () async {
                 final newPoint = currentPoint - price;
                 await CommonSharedPreferencesKey.rewardPoint.setInt(newPoint);
 
@@ -461,9 +461,9 @@ class _ShopViewState extends State<ShopView> {
                 super.setState(() {
                   _point = newPoint;
                 });
-              }
-            },
-          );
+              },
+            );
+          }
         },
       );
 
@@ -663,7 +663,7 @@ class _ShopViewState extends State<ShopView> {
                     _buildFreeDisableAdProductCard(
                       title: 'Disable All Ads (Free)',
                       subtitle:
-                          'You can disable all ads for 5 minutes. This product is reflected instantly without consuming any points once you watch the ad.',
+                          'You can disable all ads for 5 minutes. This product is reflected instantly without consuming any points once you watch the ad. This product does not create a purchase history.',
                     ),
                     _buildDisableAdProductsCard(
                       title: 'Disable Full Screen Ads',
