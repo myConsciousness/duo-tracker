@@ -3,7 +3,7 @@
 // BSD-style license that can be found in the LICENSE file.
 
 import 'package:duo_tracker/src/repository/preference/common_shared_preferences_key.dart';
-import 'package:duo_tracker/src/view/shop/disable_ad_type.dart';
+import 'package:duo_tracker/src/view/shop/disable_ad_pattern.dart';
 
 class DisableFullScreenAdSupport {
   static Future<bool> isEnabled() async {
@@ -21,7 +21,7 @@ class DisableFullScreenAdSupport {
         await CommonSharedPreferencesKey.datetimeDisabledFullScreen.getInt());
 
     return DateTime.now().difference(purchasedDatetime).inMinutes.abs() >
-        disableAdPattern.timeLimit;
+        disableAdPattern.limit;
   }
 
   static Future<void> clearPurchasedProduct() async {

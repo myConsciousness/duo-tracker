@@ -46,8 +46,8 @@ extension DisableAdPatternExt on DisableAdPattern {
     }
   }
 
-  /// Returns the time limit in minutes
-  int get timeLimit {
+  /// Returns the limit in minutes
+  int get limit {
     switch (this) {
       case DisableAdPattern.m5:
         return 5;
@@ -64,6 +64,60 @@ extension DisableAdPatternExt on DisableAdPattern {
       case DisableAdPattern.h24:
         return 1440;
     }
+  }
+
+  String get name {
+    switch (this) {
+      case DisableAdPattern.m5:
+        return '5 minutes';
+      case DisableAdPattern.m30:
+        return '30 minutes';
+      case DisableAdPattern.h1:
+        return '1 hour';
+      case DisableAdPattern.h3:
+        return '3 hours';
+      case DisableAdPattern.h6:
+        return '6 hours';
+      case DisableAdPattern.h12:
+        return '12 hours';
+      case DisableAdPattern.h24:
+        return '24 hours';
+    }
+  }
+
+  int get price {
+    switch (this) {
+      case DisableAdPattern.m5:
+        return 0;
+      case DisableAdPattern.m30:
+        return 5;
+      case DisableAdPattern.h1:
+        return 10;
+      case DisableAdPattern.h3:
+        return 20;
+      case DisableAdPattern.h6:
+        return 35;
+      case DisableAdPattern.h12:
+        return 50;
+      case DisableAdPattern.h24:
+        return 65;
+    }
+  }
+
+  bool hasPrice() {
+    return price > 0;
+  }
+
+  static List<DisableAdPattern> get paidPatterns {
+    final patterns = <DisableAdPattern>[];
+
+    for (final disableAdPattern in DisableAdPattern.values) {
+      if (disableAdPattern.hasPrice()) {
+        patterns.add(disableAdPattern);
+      }
+    }
+
+    return patterns;
   }
 
   static DisableAdPattern toEnum({

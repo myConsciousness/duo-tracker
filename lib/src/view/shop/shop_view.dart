@@ -5,21 +5,23 @@
 import 'package:awesome_dialog/awesome_dialog.dart';
 import 'package:duo_tracker/src/admob/reawarded_ad_utils.dart';
 import 'package:duo_tracker/src/component/common_nested_scroll_view.dart';
+import 'package:duo_tracker/src/component/common_product_basket_card.dart';
+import 'package:duo_tracker/src/component/common_product_basket_content.dart';
+import 'package:duo_tracker/src/component/common_product_list.dart';
 import 'package:duo_tracker/src/component/dialog/charge_point_dialog.dart';
 import 'package:duo_tracker/src/component/dialog/error_dialog.dart';
 import 'package:duo_tracker/src/component/dialog/purchase_dialog.dart';
-import 'package:duo_tracker/src/component/loading.dart';
 import 'package:duo_tracker/src/component/snackbar/success_snack_bar.dart';
 import 'package:duo_tracker/src/repository/preference/common_shared_preferences_key.dart';
 import 'package:duo_tracker/src/repository/preference/rewarded_ad_shared_preferences.dart';
+import 'package:duo_tracker/src/utils/disable_ad_support.dart';
 import 'package:duo_tracker/src/utils/disable_banner_ad_support.dart';
 import 'package:duo_tracker/src/utils/disable_full_screen_ad_support.dart';
-import 'package:duo_tracker/src/view/shop/disable_ad_type.dart';
+import 'package:duo_tracker/src/view/shop/disable_ad_pattern.dart';
 import 'package:duo_tracker/src/view/shop/disable_ad_product_type.dart';
 import 'package:duo_tracker/src/view/shop/purchase_history_tab_view.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
-import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:intl/intl.dart';
 
 class ShopView extends StatefulWidget {
@@ -114,56 +116,24 @@ class _ShopViewState extends State<ShopView> {
         ),
       );
 
-  Widget _buildProductBasketCard({
-    required Widget products,
-  }) =>
-      Padding(
-        padding: const EdgeInsets.all(5),
-        child: Card(
-          clipBehavior: Clip.antiAlias,
-          elevation: 5,
-          child: Padding(
-            padding: const EdgeInsets.all(10),
-            child: products,
-          ),
-          shape: const RoundedRectangleBorder(
-            borderRadius: BorderRadius.vertical(
-              top: Radius.circular(30),
-              bottom: Radius.circular(30),
-            ),
-          ),
-        ),
-      );
-
   Widget _buildFreeDisableAdProductCard({
     required String title,
     required String subtitle,
   }) =>
-      _buildProductBasketCard(
-        products: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          crossAxisAlignment: CrossAxisAlignment.center,
-          children: [
-            _buildProductBasketTitle(
-              title: title,
-              subtitle: subtitle,
+      CommonProductBasketCard(
+        content: CommonProductBasketContent(
+          title: title,
+          subtitle: subtitle,
+          body: CommonProductList(
+            productType: DisableAdProductType.all,
+            disableAdPatterns: const [DisableAdPattern.m5],
+            onPressedButton: (price, productType, disableAdPattern) async =>
+                await _onPressedPurchase(
+              price: price,
+              productType: productType,
+              disableAdPattern: disableAdPattern,
             ),
-            const SizedBox(
-              height: 20,
-            ),
-            Row(
-              mainAxisAlignment: MainAxisAlignment.center,
-              crossAxisAlignment: CrossAxisAlignment.center,
-              children: [
-                _buildDisableAdProductCard(
-                  title: '5 minutes',
-                  price: 0,
-                  productType: DisableAdProductType.all,
-                  disableAdPattern: DisableAdPattern.m5,
-                ),
-              ],
-            ),
-          ],
+          ),
         ),
       );
 
@@ -172,300 +142,88 @@ class _ShopViewState extends State<ShopView> {
     required String subtitle,
     required DisableAdProductType productType,
   }) =>
-      _buildProductBasketCard(
-        products: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          crossAxisAlignment: CrossAxisAlignment.center,
-          children: [
-            _buildProductBasketTitle(
-              title: title,
-              subtitle: subtitle,
-            ),
-            const SizedBox(
-              height: 20,
-            ),
-            Row(
-              mainAxisAlignment: MainAxisAlignment.center,
-              crossAxisAlignment: CrossAxisAlignment.center,
-              children: [
-                _buildDisableAdProductCard(
-                  title: '30 minutes',
-                  price: 5 * productType.priceWeight,
-                  productType: productType,
-                  disableAdPattern: DisableAdPattern.m30,
-                ),
-                _buildDisableAdProductCard(
-                  title: '1 hour',
-                  price: 10 * productType.priceWeight,
-                  productType: productType,
-                  disableAdPattern: DisableAdPattern.h1,
-                ),
-              ],
-            ),
-            Row(
-              mainAxisAlignment: MainAxisAlignment.center,
-              crossAxisAlignment: CrossAxisAlignment.center,
-              children: [
-                _buildDisableAdProductCard(
-                  title: '3 hours',
-                  price: 20 * productType.priceWeight,
-                  productType: productType,
-                  disableAdPattern: DisableAdPattern.h3,
-                ),
-                _buildDisableAdProductCard(
-                  title: '6 hours',
-                  price: 35 * productType.priceWeight,
-                  productType: productType,
-                  disableAdPattern: DisableAdPattern.h6,
-                ),
-              ],
-            ),
-            Row(
-              mainAxisAlignment: MainAxisAlignment.center,
-              crossAxisAlignment: CrossAxisAlignment.center,
-              children: [
-                _buildDisableAdProductCard(
-                  title: '12 hours',
-                  price: 60 * productType.priceWeight,
-                  productType: productType,
-                  disableAdPattern: DisableAdPattern.h12,
-                ),
-                _buildDisableAdProductCard(
-                  title: '24 hours',
-                  price: 80 * productType.priceWeight,
-                  productType: productType,
-                  disableAdPattern: DisableAdPattern.h24,
-                ),
-              ],
-            ),
-          ],
-        ),
-      );
-
-  Future<String> _buildPurchaseButtonTitle({
-    required DisableAdProductType productType,
-    required DisableAdPattern disableAdType,
-    required String defaultTitle,
-  }) async {
-    switch (productType) {
-      case DisableAdProductType.disbaleFullScreenAd:
-        final disableFullScreenTypeCode =
-            await CommonSharedPreferencesKey.disableFullScreenPattern.getInt();
-
-        if (disableFullScreenTypeCode == -1) {
-          return defaultTitle;
-        }
-
-        final purchasedDisableAdType =
-            DisableAdPatternExt.toEnum(code: disableFullScreenTypeCode);
-
-        if (purchasedDisableAdType == disableAdType) {
-          return 'Enabled';
-        }
-
-        return defaultTitle;
-      case DisableAdProductType.disableBannerAd:
-        final disableBannerTypeCode =
-            await CommonSharedPreferencesKey.disableBannerPattern.getInt();
-
-        if (disableBannerTypeCode == -1) {
-          return defaultTitle;
-        }
-
-        final purchasedDisableAdType =
-            DisableAdPatternExt.toEnum(code: disableBannerTypeCode);
-
-        if (purchasedDisableAdType == disableAdType) {
-          return 'Enabled';
-        }
-
-        return defaultTitle;
-      case DisableAdProductType.all:
-        final disableFullScreenTypeCode =
-            await CommonSharedPreferencesKey.disableFullScreenPattern.getInt();
-        final disableBannerTypeCode =
-            await CommonSharedPreferencesKey.disableBannerPattern.getInt();
-
-        if (disableFullScreenTypeCode == -1 && disableBannerTypeCode == -1) {
-          return defaultTitle;
-        }
-
-        if (await _disabledAll(disableAdType: disableAdType)) {
-          final purchasedDisableAdType =
-              DisableAdPatternExt.toEnum(code: disableFullScreenTypeCode);
-
-          if (purchasedDisableAdType == disableAdType) {
-            return 'Enabled';
-          }
-
-          return defaultTitle;
-        } else {
-          return defaultTitle;
-        }
-    }
-  }
-
-  Future<bool> _disabledAll({
-    required DisableAdPattern disableAdType,
-  }) async {
-    final disableFullScreenTypeCode =
-        await CommonSharedPreferencesKey.disableFullScreenPattern.getInt();
-    final disableBannerTypeCode =
-        await CommonSharedPreferencesKey.disableBannerPattern.getInt();
-
-    if (disableFullScreenTypeCode == -1 || disableBannerTypeCode == -1) {
-      return false;
-    }
-
-    final datetimeDisabledFullScreen =
-        await CommonSharedPreferencesKey.datetimeDisabledFullScreen.getInt();
-    final datetimeDisabledBanner =
-        await CommonSharedPreferencesKey.datetimeDisabledBanner.getInt();
-
-    return disableFullScreenTypeCode == disableAdType.code &&
-        disableBannerTypeCode == disableAdType.code &&
-        datetimeDisabledFullScreen == datetimeDisabledBanner;
-  }
-
-  Widget _buildDisableAdProductCard({
-    required String title,
-    required int price,
-    required DisableAdProductType productType,
-    required DisableAdPattern disableAdPattern,
-  }) =>
-      Expanded(
-        child: Padding(
-          padding: const EdgeInsets.all(5),
-          child: Card(
-            elevation: 0,
-            child: Column(
-              mainAxisAlignment: MainAxisAlignment.center,
-              crossAxisAlignment: CrossAxisAlignment.center,
-              children: [
-                Text(
-                  title,
-                  style: const TextStyle(
-                    fontWeight: FontWeight.bold,
-                  ),
-                ),
-                Padding(
-                  padding: const EdgeInsets.fromLTRB(20, 0, 20, 10),
-                  child: FutureBuilder(
-                    future: _buildPurchaseButtonTitle(
-                      productType: productType,
-                      disableAdType: disableAdPattern,
-                      defaultTitle: '$price Points',
-                    ),
-                    builder:
-                        (BuildContext context, AsyncSnapshot titleSnapshot) {
-                      if (!titleSnapshot.hasData) {
-                        return const Loading();
-                      }
-
-                      return FutureBuilder(
-                        future: _getDisableAdPurchaseButtonColor(
-                          productType: productType,
-                          disableAdPattern: disableAdPattern,
-                        ),
-                        builder: (BuildContext context,
-                            AsyncSnapshot buttonColorSnapshot) {
-                          if (!buttonColorSnapshot.hasData) {
-                            return const Loading();
-                          }
-
-                          return _buildDisableAdPurchaseButton(
-                            title: titleSnapshot.data,
-                            color: buttonColorSnapshot.data,
-                            price: price,
-                            product: productType,
-                            disableAdPattern: disableAdPattern,
-                          );
-                        },
-                      );
-                    },
-                  ),
-                ),
-              ],
+      CommonProductBasketCard(
+        content: CommonProductBasketContent(
+          title: title,
+          subtitle: subtitle,
+          body: CommonProductList(
+            productType: productType,
+            disableAdPatterns: DisableAdPatternExt.paidPatterns,
+            onPressedButton: (price, productType, disableAdPattern) async =>
+                await _onPressedPurchase(
+              price: price,
+              productType: productType,
+              disableAdPattern: disableAdPattern,
             ),
           ),
         ),
       );
 
-  Widget _buildDisableAdPurchaseButton({
-    required String title,
-    required Color color,
+  Future<void> _onPressedPurchase({
     required int price,
-    required DisableAdProductType product,
+    required DisableAdProductType productType,
     required DisableAdPattern disableAdPattern,
-  }) =>
-      AnimatedButton(
-        isFixedHeight: false,
-        text: title,
-        color: color,
-        pressEvent: () async {
-          if (await _alreadyAdDisabled(productType: product)) {
-            // If the disable setting is enabled, do not let the user make a new purchase.
-            await showErrorDialog(
-              context: context,
-              title: 'Purchase Error',
-              content:
-                  'Disabling ads is already enabled. Please wait for the time limit of the last product you purchased to expire.',
-            );
-            return;
-          }
+  }) async {
+    if (await _alreadyAdDisabled(productType: productType)) {
+      // If the disable setting is enabled, do not let the user make a new purchase.
+      await showErrorDialog(
+        context: context,
+        title: 'Purchase Error',
+        content:
+            'Disabling ads is already enabled. Please wait for the time limit of the last product you purchased to expire.',
+      );
+      return;
+    }
 
-          final currentPoint =
-              await CommonSharedPreferencesKey.rewardPoint.getInt();
+    final currentPoint = await CommonSharedPreferencesKey.rewardPoint.getInt();
 
-          if (currentPoint < price) {
-            await showChargePointDialog(
-              context: context,
-              onRewarded: (int amount) async => await _refreshPointOnRewarded(
-                rewardedAmount: amount,
-              ),
-            );
+    if (currentPoint < price) {
+      await showChargePointDialog(
+        context: context,
+        onRewarded: (int amount) async => await _refreshPointOnRewarded(
+          rewardedAmount: amount,
+        ),
+      );
 
-            return;
-          }
+      return;
+    }
 
-          if (disableAdPattern == DisableAdPattern.m5) {
-            await RewardedAdUtils.showRewarededAd(
-              context: context,
-              sharedPreferencesKey:
-                  RewardedAdSharedPreferencesKey.rewardImmediately,
-              onRewarded: (_) async {
-                await _disableAds(
-                  productType: product,
-                  disableAdPattern: disableAdPattern,
-                );
+    if (disableAdPattern == DisableAdPattern.m5) {
+      await RewardedAdUtils.showRewarededAd(
+        context: context,
+        sharedPreferencesKey: RewardedAdSharedPreferencesKey.rewardImmediately,
+        onRewarded: (_) async {
+          await _disableAds(
+            productType: productType,
+            disableAdPattern: disableAdPattern,
+          );
 
-                super.setState(() {});
-              },
-              showForce: true,
-            );
-          } else {
-            await showPurchaseDialog(
-              context: context,
-              price: price,
-              productName: product.name,
-              validPeriodInMinutes: disableAdPattern.timeLimit,
-              onPressedOk: () async {
-                final newPoint = currentPoint - price;
-                await CommonSharedPreferencesKey.rewardPoint.setInt(newPoint);
+          super.setState(() {});
+        },
+        showForce: true,
+      );
+    } else {
+      await showPurchaseDialog(
+        context: context,
+        price: price,
+        productName: productType.name,
+        validPeriodInMinutes: disableAdPattern.limit,
+        onPressedOk: () async {
+          final newPoint = currentPoint - price;
+          await CommonSharedPreferencesKey.rewardPoint.setInt(newPoint);
 
-                await _disableAds(
-                  productType: product,
-                  disableAdPattern: disableAdPattern,
-                );
+          await _disableAds(
+            productType: productType,
+            disableAdPattern: disableAdPattern,
+          );
 
-                super.setState(() {
-                  _point = newPoint;
-                });
-              },
-            );
-          }
+          super.setState(() {
+            _point = newPoint;
+          });
         },
       );
+    }
+  }
 
   Future<void> _refreshPointOnRewarded({
     required int rewardedAmount,
@@ -490,104 +248,29 @@ class _ShopViewState extends State<ShopView> {
     );
   }
 
-  Future<Color> _getDisableAdPurchaseButtonColor({
-    required DisableAdProductType productType,
-    required DisableAdPattern disableAdPattern,
-  }) async {
-    switch (productType) {
-      case DisableAdProductType.disbaleFullScreenAd:
-        final disableAdTypeCode =
-            await CommonSharedPreferencesKey.disableFullScreenPattern.getInt();
-
-        if (disableAdTypeCode == -1) {
-          // Available color
-          return Theme.of(context).colorScheme.secondaryVariant;
-        }
-
-        if (disableAdTypeCode == disableAdPattern.code) {
-          // Enabled color
-          return Theme.of(context).colorScheme.secondaryVariant;
-        }
-
-        return Colors.grey;
-      case DisableAdProductType.disableBannerAd:
-        final disableAdTypeCode =
-            await CommonSharedPreferencesKey.disableBannerPattern.getInt();
-
-        if (disableAdTypeCode == -1) {
-          // Available color
-          return Theme.of(context).colorScheme.secondaryVariant;
-        }
-
-        if (disableAdTypeCode == disableAdPattern.code) {
-          // Enabled color
-          return Theme.of(context).colorScheme.secondaryVariant;
-        }
-
-        return Colors.grey;
-      case DisableAdProductType.all:
-        final disableFullScreenAdTypeCode =
-            await CommonSharedPreferencesKey.disableFullScreenPattern.getInt();
-        final disableBannerAdTypeCode =
-            await CommonSharedPreferencesKey.disableBannerPattern.getInt();
-
-        if (disableFullScreenAdTypeCode == -1 &&
-            disableBannerAdTypeCode == -1) {
-          // Available color
-          return Theme.of(context).colorScheme.secondaryVariant;
-        }
-
-        final datetimeDisabledFullScreen = await CommonSharedPreferencesKey
-            .datetimeDisabledFullScreen
-            .getInt();
-        final datetimeDisabledBanner =
-            await CommonSharedPreferencesKey.datetimeDisabledBanner.getInt();
-
-        if (disableFullScreenAdTypeCode == disableAdPattern.code &&
-            disableBannerAdTypeCode == disableAdPattern.code &&
-            datetimeDisabledFullScreen == datetimeDisabledBanner) {
-          // Enabled color
-          return Theme.of(context).colorScheme.secondaryVariant;
-        }
-
-        return Colors.grey;
-    }
-  }
-
   Future<void> _disableAds({
     required DisableAdProductType productType,
     required DisableAdPattern disableAdPattern,
   }) async {
     switch (productType) {
       case DisableAdProductType.disbaleFullScreenAd:
-        await CommonSharedPreferencesKey.disableFullScreenPattern
-            .setInt(disableAdPattern.code);
-        await CommonSharedPreferencesKey.datetimeDisabledFullScreen.setInt(
-          DateTime.now().millisecondsSinceEpoch,
+        await DisableAdSupport.disableFullScreen(
+          disableAdPattern: disableAdPattern,
         );
 
-        break;
+        return;
       case DisableAdProductType.disableBannerAd:
-        await CommonSharedPreferencesKey.disableBannerPattern
-            .setInt(disableAdPattern.code);
-        await CommonSharedPreferencesKey.datetimeDisabledBanner.setInt(
-          DateTime.now().millisecondsSinceEpoch,
+        await DisableAdSupport.disableBanner(
+          disableAdPattern: disableAdPattern,
         );
 
-        break;
+        return;
       case DisableAdProductType.all:
-        // Enables all at the same time
-        final now = DateTime.now().millisecondsSinceEpoch;
+        await DisableAdSupport.disableAll(
+          disableAdPattern: disableAdPattern,
+        );
 
-        await CommonSharedPreferencesKey.disableFullScreenPattern
-            .setInt(disableAdPattern.code);
-        await CommonSharedPreferencesKey.datetimeDisabledFullScreen.setInt(now);
-
-        await CommonSharedPreferencesKey.disableBannerPattern
-            .setInt(disableAdPattern.code);
-        await CommonSharedPreferencesKey.datetimeDisabledBanner.setInt(now);
-
-        break;
+        return;
     }
   }
 
@@ -596,37 +279,14 @@ class _ShopViewState extends State<ShopView> {
   }) async {
     switch (productType) {
       case DisableAdProductType.disbaleFullScreenAd:
-        return await CommonSharedPreferencesKey.disableFullScreenPattern
-                .getInt() !=
-            -1;
+        return await DisableFullScreenAdSupport.isEnabled();
       case DisableAdProductType.disableBannerAd:
-        return await CommonSharedPreferencesKey.disableBannerPattern.getInt() !=
-            -1;
+        return await DisableBannerAdSupport.isEnabled();
       case DisableAdProductType.all:
-        return await CommonSharedPreferencesKey.disableFullScreenPattern
-                    .getInt() !=
-                -1 ||
-            await CommonSharedPreferencesKey.disableBannerPattern.getInt() !=
-                -1;
+        return await DisableFullScreenAdSupport.isEnabled() &&
+            await DisableBannerAdSupport.isEnabled();
     }
   }
-
-  Widget _buildProductBasketTitle({
-    required String title,
-    required String subtitle,
-  }) =>
-      ListTile(
-        leading: const Icon(FontAwesomeIcons.shoppingBasket),
-        title: Text(
-          title,
-          style: const TextStyle(
-            fontWeight: FontWeight.bold,
-          ),
-        ),
-        subtitle: Text(
-          subtitle,
-        ),
-      );
 
   @override
   Widget build(BuildContext context) => Scaffold(

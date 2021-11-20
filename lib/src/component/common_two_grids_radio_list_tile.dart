@@ -25,44 +25,44 @@ class CommonTwoGridsRadioListTile<T> extends StatefulWidget {
 
 class _CommonTwoGridsRadioListTileState<T>
     extends State<CommonTwoGridsRadioListTile> {
+  Widget _buildRadioListTile({
+    required String title,
+    required dynamic value,
+  }) =>
+      Flexible(
+        child: RadioListTile(
+          title: Text(
+            title,
+            style: const TextStyle(
+              fontSize: 11,
+            ),
+          ),
+          value: value,
+          groupValue: widget.groupValue,
+          onChanged: widget.onChanged,
+        ),
+      );
+
   @override
   Widget build(BuildContext context) {
-    final firstFlexibleRadioListTiles = <Flexible>[];
-    final secondFlexibleRadioListTiles = <Flexible>[];
+    final firstFlexibleRadioListTiles = <Widget>[];
+    final secondFlexibleRadioListTiles = <Widget>[];
 
     int count = 1;
     widget.dataSource.forEach(
       (title, value) {
         if (count % 2 == 0) {
           secondFlexibleRadioListTiles.add(
-            Flexible(
-              child: RadioListTile(
-                title: Text(
-                  title,
-                  style: const TextStyle(
-                    fontSize: 11,
-                  ),
-                ),
-                value: value,
-                groupValue: widget.groupValue,
-                onChanged: widget.onChanged,
-              ),
+            _buildRadioListTile(
+              title: title,
+              value: value,
             ),
           );
         } else {
           firstFlexibleRadioListTiles.add(
-            Flexible(
-              child: RadioListTile(
-                title: Text(
-                  title,
-                  style: const TextStyle(
-                    fontSize: 11,
-                  ),
-                ),
-                value: value,
-                groupValue: widget.groupValue,
-                onChanged: widget.onChanged,
-              ),
+            _buildRadioListTile(
+              title: title,
+              value: value,
             ),
           );
         }
