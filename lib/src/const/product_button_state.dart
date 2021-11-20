@@ -25,7 +25,7 @@ extension ProductButtonStateExt on ProductButtonState {
     }
   }
 
-  String getName({
+  String getTitle({
     String enabledName = '',
     String disabledName = '',
   }) {

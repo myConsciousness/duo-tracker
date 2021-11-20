@@ -5,7 +5,7 @@
 import 'package:duo_tracker/src/const/product_button_state.dart';
 import 'package:awesome_dialog/awesome_dialog.dart';
 import 'package:duo_tracker/src/component/loading.dart';
-import 'package:duo_tracker/src/repository/preference/common_shared_preferences_key.dart';
+import 'package:duo_tracker/src/utils/disable_all_ad_support.dart';
 import 'package:duo_tracker/src/utils/disable_banner_ad_support.dart';
 import 'package:duo_tracker/src/utils/disable_full_screen_ad_support.dart';
 import 'package:duo_tracker/src/view/shop/disable_ad_product_type.dart';
@@ -42,12 +42,6 @@ class _CommonProductItemState extends State<CommonProductItem> {
   late int _price;
 
   @override
-  void initState() {
-    super.initState();
-    _price = widget.disableAdPattern.price * widget.productType.priceWeight;
-  }
-
-  @override
   void didChangeDependencies() {
     super.didChangeDependencies();
   }
@@ -55,6 +49,12 @@ class _CommonProductItemState extends State<CommonProductItem> {
   @override
   void dispose() {
     super.dispose();
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    _price = widget.disableAdPattern.price * widget.productType.priceWeight;
   }
 
   Future<Color> _getDisableAdPurchaseButtonColor({
@@ -76,31 +76,11 @@ class _CommonProductItemState extends State<CommonProductItem> {
 
         return buttonState.getColor(context: context);
       case DisableAdProductType.all:
-        final disableFullScreenAdTypeCode =
-            await CommonSharedPreferencesKey.disableFullScreenPattern.getInt();
-        final disableBannerAdTypeCode =
-            await CommonSharedPreferencesKey.disableBannerPattern.getInt();
+        final buttonState = await DisableAllAdSupport.getProductButtonState(
+          disableAdPattern: disableAdPattern,
+        );
 
-        if (disableFullScreenAdTypeCode == -1 &&
-            disableBannerAdTypeCode == -1) {
-          // Available color
-          return Theme.of(context).colorScheme.secondaryVariant;
-        }
-
-        final datetimeDisabledFullScreen = await CommonSharedPreferencesKey
-            .datetimeDisabledFullScreen
-            .getInt();
-        final datetimeDisabledBanner =
-            await CommonSharedPreferencesKey.datetimeDisabledBanner.getInt();
-
-        if (disableFullScreenAdTypeCode == disableAdPattern.code &&
-            disableBannerAdTypeCode == disableAdPattern.code &&
-            datetimeDisabledFullScreen == datetimeDisabledBanner) {
-          // Enabled color
-          return Theme.of(context).colorScheme.secondaryVariant;
-        }
-
-        return Colors.grey;
+        return buttonState.getColor(context: context);
     }
   }
 
@@ -121,85 +101,30 @@ class _CommonProductItemState extends State<CommonProductItem> {
 
   Future<String> _buildPurchaseButtonTitle({
     required DisableAdProductType productType,
-    required DisableAdPattern disableAdType,
+    required DisableAdPattern disableAdPattern,
     required String defaultTitle,
   }) async {
     switch (productType) {
       case DisableAdProductType.disbaleFullScreenAd:
-        final disableFullScreenTypeCode =
-            await CommonSharedPreferencesKey.disableFullScreenPattern.getInt();
+        final buttonState =
+            await DisableFullScreenAdSupport.getProductButtonState(
+          disableAdPattern: disableAdPattern,
+        );
 
-        if (disableFullScreenTypeCode == -1) {
-          return defaultTitle;
-        }
-
-        final purchasedDisableAdType =
-            DisableAdPatternExt.toEnum(code: disableFullScreenTypeCode);
-
-        if (purchasedDisableAdType == disableAdType) {
-          return 'Enabled';
-        }
-
-        return defaultTitle;
+        return buttonState.getTitle(disabledName: defaultTitle);
       case DisableAdProductType.disableBannerAd:
-        final disableBannerTypeCode =
-            await CommonSharedPreferencesKey.disableBannerPattern.getInt();
+        final buttonState = await DisableBannerAdSupport.getProductButtonState(
+          disableAdPattern: disableAdPattern,
+        );
 
-        if (disableBannerTypeCode == -1) {
-          return defaultTitle;
-        }
-
-        final purchasedDisableAdType =
-            DisableAdPatternExt.toEnum(code: disableBannerTypeCode);
-
-        if (purchasedDisableAdType == disableAdType) {
-          return 'Enabled';
-        }
-
-        return defaultTitle;
+        return buttonState.getTitle(disabledName: defaultTitle);
       case DisableAdProductType.all:
-        final disableFullScreenTypeCode =
-            await CommonSharedPreferencesKey.disableFullScreenPattern.getInt();
-        final disableBannerTypeCode =
-            await CommonSharedPreferencesKey.disableBannerPattern.getInt();
+        final buttonState = await DisableAllAdSupport.getProductButtonState(
+          disableAdPattern: disableAdPattern,
+        );
 
-        if (disableFullScreenTypeCode == -1 && disableBannerTypeCode == -1) {
-          return defaultTitle;
-        }
-
-        if (await _disabledAll(disableAdType: disableAdType)) {
-          final purchasedDisableAdType =
-              DisableAdPatternExt.toEnum(code: disableFullScreenTypeCode);
-
-          if (purchasedDisableAdType == disableAdType) {
-            return 'Enabled';
-          }
-        }
-
-        return defaultTitle;
+        return buttonState.getTitle(disabledName: defaultTitle);
     }
-  }
-
-  Future<bool> _disabledAll({
-    required DisableAdPattern disableAdType,
-  }) async {
-    final disableFullScreenTypeCode =
-        await CommonSharedPreferencesKey.disableFullScreenPattern.getInt();
-    final disableBannerTypeCode =
-        await CommonSharedPreferencesKey.disableBannerPattern.getInt();
-
-    if (disableFullScreenTypeCode == -1 || disableBannerTypeCode == -1) {
-      return false;
-    }
-
-    final datetimeDisabledFullScreen =
-        await CommonSharedPreferencesKey.datetimeDisabledFullScreen.getInt();
-    final datetimeDisabledBanner =
-        await CommonSharedPreferencesKey.datetimeDisabledBanner.getInt();
-
-    return disableFullScreenTypeCode == disableAdType.code &&
-        disableBannerTypeCode == disableAdType.code &&
-        datetimeDisabledFullScreen == datetimeDisabledBanner;
   }
 
   @override
@@ -223,7 +148,7 @@ class _CommonProductItemState extends State<CommonProductItem> {
                   child: FutureBuilder(
                     future: _buildPurchaseButtonTitle(
                       productType: widget.productType,
-                      disableAdType: widget.disableAdPattern,
+                      disableAdPattern: widget.disableAdPattern,
                       defaultTitle: '$_price Points',
                     ),
                     builder:
