@@ -4,7 +4,7 @@
 
 import 'package:duo_tracker/main.dart';
 import 'package:duo_tracker/src/admob/interstitial_ad_resolver.dart';
-import 'package:duo_tracker/src/admob/rewarded_interstitial_ad_resolver.dart';
+import 'package:duo_tracker/src/admob/rewarded_ad_resolver.dart';
 import 'package:duo_tracker/src/provider/theme_mode_provider.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_flavor/flutter_flavor.dart';

@@ -3,7 +3,7 @@
 // BSD-style license that can be found in the LICENSE file.
 
 import 'package:duo_tracker/flavors.dart';
-import 'package:duo_tracker/src/admob/rewarded_interstitial_ad_resolver.dart';
+import 'package:duo_tracker/src/admob/rewarded_ad_resolver.dart';
 import 'package:duo_tracker/src/component/dialog/error_dialog.dart';
 import 'package:duo_tracker/src/repository/preference/rewarded_ad_shared_preferences.dart';
 import 'package:duo_tracker/src/utils/disable_full_screen_ad_support.dart';

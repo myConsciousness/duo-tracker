@@ -2,9 +2,12 @@
 // Use of this source code is governed by a
 // BSD-style license that can be found in the LICENSE file.
 
+import 'package:duo_tracker/src/const/product_button_state.dart';
 import 'package:awesome_dialog/awesome_dialog.dart';
 import 'package:duo_tracker/src/component/loading.dart';
 import 'package:duo_tracker/src/repository/preference/common_shared_preferences_key.dart';
+import 'package:duo_tracker/src/utils/disable_banner_ad_support.dart';
+import 'package:duo_tracker/src/utils/disable_full_screen_ad_support.dart';
 import 'package:duo_tracker/src/view/shop/disable_ad_product_type.dart';
 import 'package:duo_tracker/src/view/shop/disable_ad_pattern.dart';
 import 'package:flutter/material.dart';
@@ -60,35 +63,18 @@ class _CommonProductItemState extends State<CommonProductItem> {
   }) async {
     switch (productType) {
       case DisableAdProductType.disbaleFullScreenAd:
-        final disableAdTypeCode =
-            await CommonSharedPreferencesKey.disableFullScreenPattern.getInt();
+        final buttonState =
+            await DisableFullScreenAdSupport.getProductButtonState(
+          disableAdPattern: disableAdPattern,
+        );
 
-        if (disableAdTypeCode == -1) {
-          // Available color
-          return Theme.of(context).colorScheme.secondaryVariant;
-        }
-
-        if (disableAdTypeCode == disableAdPattern.code) {
-          // Enabled color
-          return Theme.of(context).colorScheme.secondaryVariant;
-        }
-
-        return Colors.grey;
+        return buttonState.getColor(context: context);
       case DisableAdProductType.disableBannerAd:
-        final disableAdTypeCode =
-            await CommonSharedPreferencesKey.disableBannerPattern.getInt();
+        final buttonState = await DisableBannerAdSupport.getProductButtonState(
+          disableAdPattern: disableAdPattern,
+        );
 
-        if (disableAdTypeCode == -1) {
-          // Available color
-          return Theme.of(context).colorScheme.secondaryVariant;
-        }
-
-        if (disableAdTypeCode == disableAdPattern.code) {
-          // Enabled color
-          return Theme.of(context).colorScheme.secondaryVariant;
-        }
-
-        return Colors.grey;
+        return buttonState.getColor(context: context);
       case DisableAdProductType.all:
         final disableFullScreenAdTypeCode =
             await CommonSharedPreferencesKey.disableFullScreenPattern.getInt();

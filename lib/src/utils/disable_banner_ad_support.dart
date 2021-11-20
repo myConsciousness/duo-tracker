@@ -2,6 +2,7 @@
 // Use of this source code is governed by a
 // BSD-style license that can be found in the LICENSE file.
 
+import 'package:duo_tracker/src/const/product_button_state.dart';
 import 'package:duo_tracker/src/repository/preference/common_shared_preferences_key.dart';
 import 'package:duo_tracker/src/view/shop/disable_ad_pattern.dart';
 
@@ -27,5 +28,22 @@ class DisableBannerAdSupport {
   static Future<void> clearPurchasedProduct() async {
     await CommonSharedPreferencesKey.disableBannerPattern.setInt(-1);
     await CommonSharedPreferencesKey.datetimeDisabledBanner.setInt(-1);
+  }
+
+  static Future<ProductButtonState> getProductButtonState({
+    required DisableAdPattern disableAdPattern,
+  }) async {
+    final disableAdTypeCode =
+        await CommonSharedPreferencesKey.disableBannerPattern.getInt();
+
+    if (disableAdTypeCode == -1) {
+      return ProductButtonState.enabled;
+    }
+
+    if (disableAdTypeCode == disableAdPattern.code) {
+      return ProductButtonState.enabled;
+    }
+
+    return ProductButtonState.disabled;
   }
 }
