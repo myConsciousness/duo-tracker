@@ -14,7 +14,6 @@ import 'package:duo_tracker/src/component/dialog/purchase_dialog.dart';
 import 'package:duo_tracker/src/component/snackbar/success_snack_bar.dart';
 import 'package:duo_tracker/src/repository/preference/common_shared_preferences_key.dart';
 import 'package:duo_tracker/src/repository/preference/rewarded_ad_shared_preferences.dart';
-import 'package:duo_tracker/src/utils/disable_ad_support.dart';
 import 'package:duo_tracker/src/utils/disable_all_ad_support.dart';
 import 'package:duo_tracker/src/utils/disable_banner_ad_support.dart';
 import 'package:duo_tracker/src/utils/disable_full_screen_ad_support.dart';
@@ -255,19 +254,19 @@ class _ShopViewState extends State<ShopView> {
   }) async {
     switch (productType) {
       case DisableAdProductType.disbaleFullScreenAd:
-        await DisableAdSupport.disableFullScreen(
+        await DisableFullScreenAdSupport.disable(
           disableAdPattern: disableAdPattern,
         );
 
         return;
       case DisableAdProductType.disableBannerAd:
-        await DisableAdSupport.disableBanner(
+        await DisableBannerAdSupport.disable(
           disableAdPattern: disableAdPattern,
         );
 
         return;
       case DisableAdProductType.all:
-        await DisableAdSupport.disableAll(
+        await DisableAllAdSupport.disable(
           disableAdPattern: disableAdPattern,
         );
 

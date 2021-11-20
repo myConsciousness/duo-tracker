@@ -30,6 +30,19 @@ class DisableFullScreenAdSupport {
     await CommonSharedPreferencesKey.datetimeDisabledFullScreen.setInt(-1);
   }
 
+  static Future<void> disable({
+    required DisableAdPattern disableAdPattern,
+    DateTime? appliedDateTime,
+  }) async {
+    appliedDateTime ??= DateTime.now();
+
+    await CommonSharedPreferencesKey.disableFullScreenPattern
+        .setInt(disableAdPattern.code);
+    await CommonSharedPreferencesKey.datetimeDisabledFullScreen.setInt(
+      appliedDateTime.millisecondsSinceEpoch,
+    );
+  }
+
   static Future<ProductButtonState> getProductButtonState({
     required DisableAdPattern disableAdPattern,
   }) async {

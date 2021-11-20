@@ -30,6 +30,19 @@ class DisableBannerAdSupport {
     await CommonSharedPreferencesKey.datetimeDisabledBanner.setInt(-1);
   }
 
+  static Future<void> disable({
+    required DisableAdPattern disableAdPattern,
+    DateTime? appliedDateTime,
+  }) async {
+    appliedDateTime ??= DateTime.now();
+
+    await CommonSharedPreferencesKey.disableBannerPattern
+        .setInt(disableAdPattern.code);
+    await CommonSharedPreferencesKey.datetimeDisabledBanner.setInt(
+      appliedDateTime.millisecondsSinceEpoch,
+    );
+  }
+
   static Future<ProductButtonState> getProductButtonState({
     required DisableAdPattern disableAdPattern,
   }) async {

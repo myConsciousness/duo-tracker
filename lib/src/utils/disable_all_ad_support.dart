@@ -19,6 +19,23 @@ class DisableAllAdSupport {
     await DisableBannerAdSupport.clearPurchasedProduct();
   }
 
+  static Future<void> disable({
+    required DisableAdPattern disableAdPattern,
+  }) async {
+    // Enables for all ads at the same time
+    final now = DateTime.now();
+
+    await DisableFullScreenAdSupport.disable(
+      disableAdPattern: disableAdPattern,
+      appliedDateTime: now,
+    );
+
+    await DisableBannerAdSupport.disable(
+      disableAdPattern: disableAdPattern,
+      appliedDateTime: now,
+    );
+  }
+
   static Future<ProductButtonState> getProductButtonState({
     required DisableAdPattern disableAdPattern,
   }) async {
