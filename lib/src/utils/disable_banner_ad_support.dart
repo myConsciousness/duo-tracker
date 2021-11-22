@@ -2,7 +2,7 @@
 // Use of this source code is governed by a
 // BSD-style license that can be found in the LICENSE file.
 
-import 'package:duo_tracker/src/const/product_button_state.dart';
+import 'package:duo_tracker/src/const/product_banner_button_state.dart';
 import 'package:duo_tracker/src/repository/preference/common_shared_preferences_key.dart';
 import 'package:duo_tracker/src/view/shop/disable_ad_pattern.dart';
 
@@ -43,20 +43,20 @@ class DisableBannerAdSupport {
     );
   }
 
-  static Future<ProductButtonState> getProductButtonState({
+  static Future<ProductBannerButtonState> getProductButtonState({
     required DisableAdPattern disableAdPattern,
   }) async {
     final disableAdTypeCode =
         await CommonSharedPreferencesKey.disableBannerPattern.getInt();
 
     if (disableAdTypeCode == -1) {
-      return ProductButtonState.enabled;
+      return ProductBannerButtonState.enabled;
     }
 
     if (disableAdTypeCode == disableAdPattern.code) {
-      return ProductButtonState.enabled;
+      return ProductBannerButtonState.enabled;
     }
 
-    return ProductButtonState.disabled;
+    return ProductBannerButtonState.disabled;
   }
 }

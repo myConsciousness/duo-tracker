@@ -115,6 +115,13 @@ enum CommonSharedPreferencesKey {
   datetimeLastShowedAppReview,
 
   //! The Review Config ↑
+
+  //! The Guide Config ↓
+
+  /// The count showed interstitial ad
+  countShowedInterstitialAd,
+
+  //! The Guide Config ↑
 }
 
 extension KeyFeature on CommonSharedPreferencesKey {
@@ -176,6 +183,8 @@ extension KeyFeature on CommonSharedPreferencesKey {
         return 'overview_default_sort_pattern';
       case CommonSharedPreferencesKey.datetimeLastShowedAppReview:
         return 'datetime_last_showed_app_review';
+      case CommonSharedPreferencesKey.countShowedInterstitialAd:
+        return 'count_showed_interstitial_ad';
     }
   }
 

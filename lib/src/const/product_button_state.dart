@@ -6,7 +6,7 @@ import 'package:flutter/material.dart';
 
 /// The enum represents product button state.
 enum ProductButtonState {
-  /// Enabled
+  /// Enabled full screen
   enabled,
 
   /// Disabled
@@ -26,14 +26,18 @@ extension ProductButtonStateExt on ProductButtonState {
   }
 
   String getTitle({
-    String enabledName = '',
-    String disabledName = '',
+    required String title,
+    bool adDisabled = false,
   }) {
     switch (this) {
       case ProductButtonState.enabled:
-        return enabledName.isEmpty ? 'Enabled' : enabledName;
+        if (adDisabled) {
+          return 'Enabled';
+        }
+
+        return title;
       case ProductButtonState.disabled:
-        return disabledName.isEmpty ? 'Disabled' : disabledName;
+        return title;
     }
   }
 }

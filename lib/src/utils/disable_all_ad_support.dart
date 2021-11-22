@@ -2,7 +2,7 @@
 // Use of this source code is governed by a
 // BSD-style license that can be found in the LICENSE file.
 
-import 'package:duo_tracker/src/const/product_button_state.dart';
+import 'package:duo_tracker/src/const/product_all_button_state.dart';
 import 'package:duo_tracker/src/repository/preference/common_shared_preferences_key.dart';
 import 'package:duo_tracker/src/utils/disable_banner_ad_support.dart';
 import 'package:duo_tracker/src/utils/disable_full_screen_ad_support.dart';
@@ -36,7 +36,7 @@ class DisableAllAdSupport {
     );
   }
 
-  static Future<ProductButtonState> getProductButtonState({
+  static Future<ProductAllButtonState> getProductButtonState({
     required DisableAdPattern disableAdPattern,
   }) async {
     final disableFullScreenAdTypeCode =
@@ -45,7 +45,7 @@ class DisableAllAdSupport {
         await CommonSharedPreferencesKey.disableBannerPattern.getInt();
 
     if (disableFullScreenAdTypeCode == -1 && disableBannerAdTypeCode == -1) {
-      return ProductButtonState.enabled;
+      return ProductAllButtonState.enabled;
     }
 
     final datetimeDisabledFullScreen =
@@ -56,9 +56,9 @@ class DisableAllAdSupport {
     if (disableFullScreenAdTypeCode == disableAdPattern.code &&
         disableBannerAdTypeCode == disableAdPattern.code &&
         datetimeDisabledFullScreen == datetimeDisabledBanner) {
-      return ProductButtonState.enabled;
+      return ProductAllButtonState.enabled;
     }
 
-    return ProductButtonState.disabled;
+    return ProductAllButtonState.disabled;
   }
 }
