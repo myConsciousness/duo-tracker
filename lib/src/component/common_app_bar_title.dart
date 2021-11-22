@@ -19,7 +19,7 @@ class CommonAppBarTitle extends StatelessWidget {
           title,
           style: const TextStyle(
             color: Colors.white,
-            fontSize: 17,
+            fontSize: 20,
           ),
         ),
       );

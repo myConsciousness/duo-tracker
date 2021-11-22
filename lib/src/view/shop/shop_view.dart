@@ -185,7 +185,6 @@ class _ShopViewState extends State<ShopView> {
           rewardedAmount: amount,
         ),
       );
-
       return;
     }
 
