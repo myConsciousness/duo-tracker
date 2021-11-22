@@ -5,8 +5,10 @@
 import 'package:duo_tracker/src/admob/banner_ad_utils.dart';
 import 'package:duo_tracker/src/admob/interstitial_ad_utils.dart';
 import 'package:duo_tracker/src/component/chart/radical_bar_chart.dart';
+import 'package:duo_tracker/src/component/common_app_bar_title.dart';
 import 'package:duo_tracker/src/component/common_card_header_text.dart';
 import 'package:duo_tracker/src/component/common_divider.dart';
+import 'package:duo_tracker/src/component/common_nested_scroll_view.dart';
 import 'package:duo_tracker/src/component/dialog/auth_dialog.dart';
 import 'package:duo_tracker/src/component/dialog/loading_dialog.dart';
 import 'package:duo_tracker/src/component/dialog/select_score_goals_dialog.dart';
@@ -39,6 +41,9 @@ class UserOverviewView extends StatefulWidget {
 }
 
 class _UserOverviewViewState extends State<UserOverviewView> {
+  /// The banner ad
+  BannerAd? _bannerAd;
+
   /// The chart service
   final _chartService = ChartService.getInstance();
 
@@ -59,9 +64,6 @@ class _UserOverviewViewState extends State<UserOverviewView> {
 
   /// The user service
   final _userService = UserService.getInstance();
-
-  /// The banner ad
-  BannerAd? _bannerAd;
 
   @override
   void didChangeDependencies() {
@@ -434,6 +436,23 @@ class _UserOverviewViewState extends State<UserOverviewView> {
     );
   }
 
+  Future<void> _refreshUserInformation() async {
+    await DuolingoApiUtils.authenticateAccount(context: context);
+
+    await showLoadingDialog(
+      context: context,
+      title: 'Updating User Information',
+      future: DuolingoApiUtils.refreshUser(context: context),
+    );
+
+    super.setState(() {});
+
+    await InterstitialAdUtils.showInterstitialAd(
+      context: context,
+      sharedPreferencesKey: InterstitialAdSharedPreferencesKey.countSyncUser,
+    );
+  }
+
   @override
   Widget build(BuildContext context) => Scaffold(
         floatingActionButtonLocation:
@@ -480,8 +499,9 @@ class _UserOverviewViewState extends State<UserOverviewView> {
             ),
           ],
         ),
-        body: SafeArea(
-          child: SingleChildScrollView(
+        body: CommonNestedScrollView(
+          title: const CommonAppBarTitle(title: 'User Dashboard'),
+          body: SingleChildScrollView(
             child: FutureBuilder(
               future: _findUser(),
               builder: (BuildContext context, AsyncSnapshot snapshot) {
@@ -526,21 +546,4 @@ class _UserOverviewViewState extends State<UserOverviewView> {
           ),
         ),
       );
-
-  Future<void> _refreshUserInformation() async {
-    await DuolingoApiUtils.authenticateAccount(context: context);
-
-    await showLoadingDialog(
-      context: context,
-      title: 'Updating User Information',
-      future: DuolingoApiUtils.refreshUser(context: context),
-    );
-
-    super.setState(() {});
-
-    await InterstitialAdUtils.showInterstitialAd(
-      context: context,
-      sharedPreferencesKey: InterstitialAdSharedPreferencesKey.countSyncUser,
-    );
-  }
 }

@@ -2,7 +2,9 @@
 // Use of this source code is governed by a
 // BSD-style license that can be found in the LICENSE file.
 
+import 'package:duo_tracker/src/component/common_app_bar_title.dart';
 import 'package:duo_tracker/src/component/common_divider.dart';
+import 'package:duo_tracker/src/component/common_nested_scroll_view.dart';
 import 'package:duo_tracker/src/component/common_tappable_list_title.dart';
 import 'package:duo_tracker/src/component/dialog/select_date_time_format_dialog.dart';
 import 'package:duo_tracker/src/component/loading.dart';
@@ -36,76 +38,75 @@ class _ThemeSettingsViewState extends State<ThemeSettingsView> {
     super.initState();
   }
 
+  Future<String> _getCurrentDateFormatPattern() async {
+    final dateFormatCode = await CommonSharedPreferencesKey.dateFormat.getInt();
+    return DateFormatPatternExt.toEnum(code: dateFormatCode).pattern;
+  }
+
   @override
   Widget build(BuildContext context) {
     final ThemeModeProvider themeModeProvider = Provider.of(context);
     return Scaffold(
-      body: SafeArea(
-        child: SingleChildScrollView(
-          child: Column(
-            children: [
-              const SizedBox(
-                height: 10,
-              ),
-              Row(
-                children: [
-                  Expanded(
-                    child: CommonTappableListTile(
-                      icon: const Icon(Icons.dark_mode),
-                      title: 'Use Dark Mode',
-                      subtitle:
-                          'Switch the theme of app to dark mode. Dark mode consumes less power and is less stressful on your eyes.',
-                      onTap: () async {
-                        final applyDarkTheme = await CommonSharedPreferencesKey
-                            .applyDarkTheme
-                            .getBool();
-                        await themeModeProvider.notify(
-                            appliedDarkTheme: !applyDarkTheme);
-                        super.setState(() {});
-                      },
-                    ),
-                  ),
-                  Switch(
-                    value: themeModeProvider.appliedDarkTheme,
-                    onChanged: (value) async {
-                      await themeModeProvider.notify(appliedDarkTheme: value);
+      body: CommonNestedScrollView(
+        title: const CommonAppBarTitle(title: 'Settings'),
+        body: Column(
+          children: [
+            const SizedBox(
+              height: 10,
+            ),
+            Row(
+              children: [
+                Expanded(
+                  child: CommonTappableListTile(
+                    icon: const Icon(Icons.dark_mode),
+                    title: 'Use Dark Mode',
+                    subtitle:
+                        'Switch the theme of app to dark mode. Dark mode consumes less power and is less stressful on your eyes.',
+                    onTap: () async {
+                      final applyDarkTheme = await CommonSharedPreferencesKey
+                          .applyDarkTheme
+                          .getBool();
+                      await themeModeProvider.notify(
+                          appliedDarkTheme: !applyDarkTheme);
                       super.setState(() {});
                     },
                   ),
-                ],
-              ),
-              const CommonDivider(),
-              FutureBuilder(
-                future: _getCurrentDateFormatPattern(),
-                builder: (_, AsyncSnapshot snapshot) {
-                  if (!snapshot.hasData) {
-                    return const Loading();
-                  }
+                ),
+                Switch(
+                  value: themeModeProvider.appliedDarkTheme,
+                  onChanged: (value) async {
+                    await themeModeProvider.notify(appliedDarkTheme: value);
+                    super.setState(() {});
+                  },
+                ),
+              ],
+            ),
+            const CommonDivider(),
+            FutureBuilder(
+              future: _getCurrentDateFormatPattern(),
+              builder: (_, AsyncSnapshot snapshot) {
+                if (!snapshot.hasData) {
+                  return const Loading();
+                }
 
-                  return CommonTappableListTile(
-                    icon: const Icon(FontAwesomeIcons.clock),
-                    title: 'Date Format',
-                    subtitle: snapshot.data,
-                    onTap: () async {
-                      await showSelectDateTimeFormatDialog(
-                        context: context,
-                        onSubmitted: () {
-                          super.setState(() {});
-                        },
-                      );
-                    },
-                  );
-                },
-              ),
-            ],
-          ),
+                return CommonTappableListTile(
+                  icon: const Icon(FontAwesomeIcons.clock),
+                  title: 'Date Format',
+                  subtitle: snapshot.data,
+                  onTap: () async {
+                    await showSelectDateTimeFormatDialog(
+                      context: context,
+                      onSubmitted: () {
+                        super.setState(() {});
+                      },
+                    );
+                  },
+                );
+              },
+            ),
+          ],
         ),
       ),
     );
-  }
-
-  Future<String> _getCurrentDateFormatPattern() async {
-    final dateFormatCode = await CommonSharedPreferencesKey.dateFormat.getInt();
-    return DateFormatPatternExt.toEnum(code: dateFormatCode).pattern;
   }
 }

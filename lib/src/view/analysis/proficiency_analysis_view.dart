@@ -4,9 +4,13 @@
 
 import 'package:duo_tracker/src/admob/banner_ad_utils.dart';
 import 'package:duo_tracker/src/component/chart/tracker_column_chart.dart';
+import 'package:duo_tracker/src/component/common_app_bar_titles.dart';
 import 'package:duo_tracker/src/component/common_divider.dart';
+import 'package:duo_tracker/src/component/common_nested_scroll_view.dart';
 import 'package:duo_tracker/src/component/loading.dart';
+import 'package:duo_tracker/src/repository/preference/common_shared_preferences_key.dart';
 import 'package:duo_tracker/src/repository/service/chart_service.dart';
+import 'package:duo_tracker/src/utils/language_converter.dart';
 import 'package:duo_tracker/src/view/analysis/proficiency_range.dart';
 import 'package:flutter/material.dart';
 import 'package:google_mobile_ads/google_mobile_ads.dart';
@@ -25,6 +29,9 @@ class _ProficiencyAnalysisViewState extends State<ProficiencyAnalysisView> {
   /// The chart service
   final _chartService = ChartService.getInstance();
 
+  /// The app bar subtitle
+  String _appBarSubTitle = '';
+
   /// The selected proficiency range
   SfRangeValues _selectedProficiencyRange = const SfRangeValues(10.0, 50.0);
 
@@ -37,6 +44,7 @@ class _ProficiencyAnalysisViewState extends State<ProficiencyAnalysisView> {
   @override
   void initState() {
     super.initState();
+    _asyncInitState();
     _headerBannerAd = BannerAdUtils.loadBannerAd();
   }
 
@@ -51,10 +59,33 @@ class _ProficiencyAnalysisViewState extends State<ProficiencyAnalysisView> {
     super.dispose();
   }
 
+  Future<void> _asyncInitState() async {
+    await _buildAppBarSubTitle();
+  }
+
+  Future<void> _buildAppBarSubTitle() async {
+    final fromLanguage =
+        await CommonSharedPreferencesKey.currentFromLanguage.getString();
+    final learningLanguage =
+        await CommonSharedPreferencesKey.currentLearningLanguage.getString();
+    final fromLanguageName =
+        LanguageConverter.toName(languageCode: fromLanguage);
+    final learningLanguageName =
+        LanguageConverter.toName(languageCode: learningLanguage);
+
+    super.setState(() {
+      _appBarSubTitle = '$fromLanguageName → $learningLanguageName';
+    });
+  }
+
   @override
   Widget build(BuildContext context) => Scaffold(
-        body: SafeArea(
-          child: SingleChildScrollView(
+        body: CommonNestedScrollView(
+          title: CommonAppBarTitles(
+            title: 'Skill Analysis',
+            subTitle: _appBarSubTitle,
+          ),
+          body: SingleChildScrollView(
             child: Padding(
               padding: const EdgeInsets.all(20),
               child: Column(
@@ -91,7 +122,7 @@ class _ProficiencyAnalysisViewState extends State<ProficiencyAnalysisView> {
 
                         return TrackerColumnChart(
                           chartTitle: ChartTitle(
-                            text: 'Skill Analysis By Proficiency',
+                            text: 'Proficiency',
                             textStyle: TextStyle(
                               color: Theme.of(context).colorScheme.secondary,
                               fontWeight: FontWeight.bold,

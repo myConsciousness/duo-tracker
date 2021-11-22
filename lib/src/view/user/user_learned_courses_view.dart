@@ -4,7 +4,9 @@
 
 import 'package:duo_tracker/src/admob/banner_ad_list.dart';
 import 'package:duo_tracker/src/admob/banner_ad_utils.dart';
+import 'package:duo_tracker/src/component/common_app_bar_title.dart';
 import 'package:duo_tracker/src/component/common_card_header_text.dart';
+import 'package:duo_tracker/src/component/common_nested_scroll_view.dart';
 import 'package:duo_tracker/src/component/loading.dart';
 import 'package:duo_tracker/src/component/text_with_horizontal_divider.dart';
 import 'package:duo_tracker/src/repository/model/course_model.dart';
@@ -247,8 +249,9 @@ class _UserLearnedCoursesViewState extends State<UserLearnedCoursesView> {
 
   @override
   Widget build(BuildContext context) => Scaffold(
-        body: SafeArea(
-          child: SingleChildScrollView(
+        body: CommonNestedScrollView(
+          title: const CommonAppBarTitle(title: 'User Dashboard'),
+          body: SingleChildScrollView(
             child: Padding(
               padding: const EdgeInsets.all(20),
               child: FutureBuilder(

@@ -4,6 +4,7 @@
 
 import 'package:awesome_dialog/awesome_dialog.dart';
 import 'package:duo_tracker/src/admob/reawarded_ad_utils.dart';
+import 'package:duo_tracker/src/component/common_app_bar_title.dart';
 import 'package:duo_tracker/src/component/common_nested_scroll_view.dart';
 import 'package:duo_tracker/src/component/common_product_basket_card.dart';
 import 'package:duo_tracker/src/component/common_product_basket_content.dart';
@@ -290,15 +291,7 @@ class _ShopViewState extends State<ShopView> {
   @override
   Widget build(BuildContext context) => Scaffold(
         body: CommonNestedScrollView(
-          title: const Center(
-            child: Text(
-              'Shop',
-              style: TextStyle(
-                color: Colors.white,
-                fontSize: 17,
-              ),
-            ),
-          ),
+          title: const CommonAppBarTitle(title: 'Shop'),
           actions: [
             IconButton(
               icon: const Icon(Icons.history),

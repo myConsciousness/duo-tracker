@@ -2,9 +2,11 @@
 // Use of this source code is governed by a
 // BSD-style license that can be found in the LICENSE file.
 
-import 'package:duo_tracker/src/const/product_button_state.dart';
 import 'package:awesome_dialog/awesome_dialog.dart';
 import 'package:duo_tracker/src/component/loading.dart';
+import 'package:duo_tracker/src/const/product_full_screen_button_state.dart';
+import 'package:duo_tracker/src/const/product_banner_button_state.dart';
+import 'package:duo_tracker/src/const/product_all_button_state.dart';
 import 'package:duo_tracker/src/utils/disable_all_ad_support.dart';
 import 'package:duo_tracker/src/utils/disable_banner_ad_support.dart';
 import 'package:duo_tracker/src/utils/disable_full_screen_ad_support.dart';
@@ -57,7 +59,7 @@ class _CommonProductItemState extends State<CommonProductItem> {
     _price = widget.disableAdPattern.price * widget.productType.priceWeight;
   }
 
-  Future<Color> _getDisableAdPurchaseButtonColor({
+  Future<Color> _getProductButtonColor({
     required DisableAdProductType productType,
     required DisableAdPattern disableAdPattern,
   }) async {
@@ -84,7 +86,7 @@ class _CommonProductItemState extends State<CommonProductItem> {
     }
   }
 
-  Widget _buildDisableAdPurchaseButton({
+  Widget _buildProductButton({
     required String title,
     required Color color,
   }) =>
@@ -111,19 +113,19 @@ class _CommonProductItemState extends State<CommonProductItem> {
           disableAdPattern: disableAdPattern,
         );
 
-        return buttonState.getTitle(disabledName: defaultTitle);
+        return await buttonState.getTitle(title: defaultTitle);
       case DisableAdProductType.disableBannerAd:
         final buttonState = await DisableBannerAdSupport.getProductButtonState(
           disableAdPattern: disableAdPattern,
         );
 
-        return buttonState.getTitle(disabledName: defaultTitle);
+        return await buttonState.getTitle(title: defaultTitle);
       case DisableAdProductType.all:
         final buttonState = await DisableAllAdSupport.getProductButtonState(
           disableAdPattern: disableAdPattern,
         );
 
-        return buttonState.getTitle(disabledName: defaultTitle);
+        return await buttonState.getTitle(title: defaultTitle);
     }
   }
 
@@ -158,7 +160,7 @@ class _CommonProductItemState extends State<CommonProductItem> {
                       }
 
                       return FutureBuilder(
-                        future: _getDisableAdPurchaseButtonColor(
+                        future: _getProductButtonColor(
                           productType: widget.productType,
                           disableAdPattern: widget.disableAdPattern,
                         ),
@@ -168,7 +170,7 @@ class _CommonProductItemState extends State<CommonProductItem> {
                             return const Loading();
                           }
 
-                          return _buildDisableAdPurchaseButton(
+                          return _buildProductButton(
                             title: titleSnapshot.data,
                             color: buttonColorSnapshot.data,
                           );
