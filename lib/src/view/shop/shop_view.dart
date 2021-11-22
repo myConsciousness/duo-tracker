@@ -178,7 +178,7 @@ class _ShopViewState extends State<ShopView> {
 
     final currentPoint = await CommonSharedPreferencesKey.rewardPoint.getInt();
 
-    if (currentPoint < price) {
+    if (disableAdPattern != DisableAdPattern.m5 && currentPoint < price) {
       await showChargePointDialog(
         context: context,
         onRewarded: (int amount) async => await _refreshPointOnRewarded(
