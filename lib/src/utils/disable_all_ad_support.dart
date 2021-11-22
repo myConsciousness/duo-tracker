@@ -10,7 +10,7 @@ import 'package:duo_tracker/src/view/shop/disable_ad_pattern.dart';
 
 class DisableAllAdSupport {
   static Future<bool> isEnabled() async {
-    return await DisableFullScreenAdSupport.isEnabled() &&
+    return await DisableFullScreenAdSupport.isEnabled() ||
         await DisableBannerAdSupport.isEnabled();
   }
 
