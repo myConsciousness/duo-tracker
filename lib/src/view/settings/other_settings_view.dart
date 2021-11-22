@@ -2,6 +2,8 @@
 // Use of this source code is governed by a
 // BSD-style license that can be found in the LICENSE file.
 
+import 'package:duo_tracker/src/component/common_app_bar_title.dart';
+import 'package:duo_tracker/src/component/common_nested_scroll_view.dart';
 import 'package:duo_tracker/src/component/common_tappable_list_title.dart';
 import 'package:duo_tracker/src/view/settings/overview_settings_view.dart';
 import 'package:flutter/material.dart';
@@ -30,9 +32,10 @@ class _OtherSettingsViewState extends State<OtherSettingsView> {
   }
 
   @override
-  Widget build(BuildContext context) => SafeArea(
-        child: SingleChildScrollView(
-          child: Column(
+  Widget build(BuildContext context) => Scaffold(
+        body: CommonNestedScrollView(
+          title: const CommonAppBarTitle(title: 'Settings'),
+          body: Column(
             children: [
               const SizedBox(
                 height: 10,
