@@ -52,7 +52,7 @@ class _DuoTrackerHomeViewState extends State<DuoTrackerHomeView> {
         dialogText: status.releaseNotes,
         dialogTitle: 'New Version Is Available!',
         updateButtonText: 'Update Right Now',
-        allowDismissal: false,
+        dismissButtonText: 'Skip',
       );
     }
   }
