@@ -37,6 +37,12 @@ class _PurchaseHistoryViewState extends State<PurchaseHistoryView> {
   /// The purchase history service
   final _purchaseHistoryService = PurchaseHistoryService.getInstance();
 
+  @override
+  void dispose() {
+    _bannerAdList.dispose();
+    super.dispose();
+  }
+
   Future<List<PurchaseHistory>> _fetchDataSource() {
     switch (widget.purchaseHistoryTabType) {
       case PurchaseHistoryTabType.valid:
