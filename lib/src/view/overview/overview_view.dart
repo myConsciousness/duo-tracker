@@ -72,11 +72,6 @@ class _OverviewViewState extends State<OverviewView> {
   List<String> _selectedFilterItems = [];
 
   @override
-  void didChangeDependencies() {
-    super.didChangeDependencies();
-  }
-
-  @override
   void dispose() {
     _asyncDispose();
     _bannerAdList.dispose();

@@ -47,16 +47,6 @@ class _OverviewSettingsViewState extends State<OverviewSettingsView> {
   bool _useAutoSync = true;
 
   @override
-  void didChangeDependencies() {
-    super.didChangeDependencies();
-  }
-
-  @override
-  void dispose() {
-    super.dispose();
-  }
-
-  @override
   void initState() {
     super.initState();
     _asyncInitState();

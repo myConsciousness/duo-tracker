@@ -48,19 +48,9 @@ class _FolderItemsViewState extends State<FolderItemsView> {
   late List<FolderItem> _folderItems;
 
   @override
-  void didChangeDependencies() {
-    super.didChangeDependencies();
-  }
-
-  @override
   void dispose() {
     _bannerAdList.dispose();
     super.dispose();
-  }
-
-  @override
-  void initState() {
-    super.initState();
   }
 
   Future<List<FolderItem>> _fetchDataSource({

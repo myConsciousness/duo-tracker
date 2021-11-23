@@ -42,16 +42,6 @@ class _ShopViewState extends State<ShopView> {
   final _walletBalance = WalletBalance.getInstance();
 
   @override
-  void didChangeDependencies() {
-    super.didChangeDependencies();
-  }
-
-  @override
-  void dispose() {
-    super.dispose();
-  }
-
-  @override
   void initState() {
     super.initState();
     _asyncInitState();

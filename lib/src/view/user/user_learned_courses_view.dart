@@ -34,16 +34,6 @@ class _UserLearnedCoursesViewState extends State<UserLearnedCoursesView> {
   final _bannerAdList = BannerAdList.newInstance();
 
   @override
-  void initState() {
-    super.initState();
-  }
-
-  @override
-  void didChangeDependencies() {
-    super.didChangeDependencies();
-  }
-
-  @override
   void dispose() {
     _bannerAdList.dispose();
     super.dispose();

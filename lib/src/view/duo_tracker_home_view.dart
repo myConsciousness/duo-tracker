@@ -25,16 +25,6 @@ class DuoTrackerHomeView extends StatefulWidget {
 
 class _DuoTrackerHomeViewState extends State<DuoTrackerHomeView> {
   @override
-  void didChangeDependencies() {
-    super.didChangeDependencies();
-  }
-
-  @override
-  void dispose() {
-    super.dispose();
-  }
-
-  @override
   void initState() {
     super.initState();
     _checkVersion();

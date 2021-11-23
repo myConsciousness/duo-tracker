@@ -66,11 +66,6 @@ class _UserOverviewViewState extends State<UserOverviewView> {
   final _userService = UserService.getInstance();
 
   @override
-  void didChangeDependencies() {
-    super.didChangeDependencies();
-  }
-
-  @override
   void dispose() {
     if (_bannerAd != null) {
       _bannerAd!.dispose();

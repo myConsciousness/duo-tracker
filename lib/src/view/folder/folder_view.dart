@@ -57,11 +57,6 @@ class _FolderViewState extends State<FolderView> {
   final _numericTextFormat = NumberFormat('#,###');
 
   @override
-  void didChangeDependencies() {
-    super.didChangeDependencies();
-  }
-
-  @override
   void dispose() {
     _bannerAdList.dispose();
     super.dispose();
