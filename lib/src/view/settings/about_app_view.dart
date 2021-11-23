@@ -3,6 +3,7 @@
 // BSD-style license that can be found in the LICENSE file.
 
 import 'package:duo_tracker/flavors.dart';
+import 'package:duo_tracker/src/component/app_info_list_tile.dart';
 import 'package:duo_tracker/src/component/common_app_bar_title.dart';
 import 'package:duo_tracker/src/component/common_divider.dart';
 import 'package:duo_tracker/src/component/common_nested_scroll_view.dart';
@@ -25,37 +26,6 @@ class AboutAppView extends StatefulWidget {
 }
 
 class _AboutAppViewState extends State<AboutAppView> {
-  /// The app name
-  String _appName = '';
-
-  /// The build version
-  String _buildVersion = '';
-
-  @override
-  void didChangeDependencies() {
-    super.didChangeDependencies();
-  }
-
-  @override
-  void dispose() {
-    super.dispose();
-  }
-
-  @override
-  void initState() {
-    super.initState();
-    _asyncInitState();
-  }
-
-  Future<void> _asyncInitState() async {
-    final PackageInfo packageInfo = await PackageInfo.fromPlatform();
-
-    super.setState(() {
-      _appName = packageInfo.appName;
-      _buildVersion = '${packageInfo.version}: ${packageInfo.buildNumber}';
-    });
-  }
-
   @override
   Widget build(BuildContext context) => Scaffold(
         body: CommonNestedScrollView(
@@ -65,11 +35,7 @@ class _AboutAppViewState extends State<AboutAppView> {
               const SizedBox(
                 height: 10,
               ),
-              CommonTappableListTile(
-                icon: const Icon(Icons.app_settings_alt),
-                title: _appName,
-                subtitle: _buildVersion,
-              ),
+              const AppInfoListTile(),
               const CommonDivider(),
               CommonTappableListTile(
                 icon: const Icon(Icons.share),

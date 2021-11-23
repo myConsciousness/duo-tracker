@@ -40,7 +40,7 @@ class _DuoTrackerHomeViewState extends State<DuoTrackerHomeView> {
     _checkVersion();
   }
 
-  void _checkVersion() async {
+  Future<void> _checkVersion() async {
     final newVersion =
         NewVersion(androidId: FlavorConfig.instance.variables['androidId']);
     final status = await newVersion.getVersionStatus();
@@ -49,9 +49,10 @@ class _DuoTrackerHomeViewState extends State<DuoTrackerHomeView> {
       newVersion.showUpdateDialog(
         context: context,
         versionStatus: status,
+        dialogText: status.releaseNotes,
         dialogTitle: 'New Version Is Available!',
         updateButtonText: 'Update Right Now',
-        dismissButtonText: 'Skip',
+        allowDismissal: false,
       );
     }
   }
