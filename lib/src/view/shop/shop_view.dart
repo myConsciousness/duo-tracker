@@ -13,11 +13,13 @@ import 'package:duo_tracker/src/component/dialog/charge_point_dialog.dart';
 import 'package:duo_tracker/src/component/dialog/error_dialog.dart';
 import 'package:duo_tracker/src/component/dialog/purchase_dialog.dart';
 import 'package:duo_tracker/src/component/snackbar/success_snack_bar.dart';
+import 'package:duo_tracker/src/const/operand.dart';
 import 'package:duo_tracker/src/repository/preference/common_shared_preferences_key.dart';
 import 'package:duo_tracker/src/repository/preference/rewarded_ad_shared_preferences.dart';
 import 'package:duo_tracker/src/utils/disable_all_ad_support.dart';
 import 'package:duo_tracker/src/utils/disable_banner_ad_support.dart';
 import 'package:duo_tracker/src/utils/disable_full_screen_ad_support.dart';
+import 'package:duo_tracker/src/utils/wallet_balance.dart';
 import 'package:duo_tracker/src/view/shop/disable_ad_pattern.dart';
 import 'package:duo_tracker/src/view/shop/disable_ad_product_type.dart';
 import 'package:duo_tracker/src/view/shop/purchase_history_tab_view.dart';
@@ -36,8 +38,8 @@ class _ShopViewState extends State<ShopView> {
   /// The format for numeric text
   final _numericTextFormat = NumberFormat('#,###');
 
-  /// The point
-  int _point = 0;
+  /// The wallet balance
+  final _walletBalance = WalletBalance.getInstance();
 
   @override
   void didChangeDependencies() {
@@ -56,10 +58,6 @@ class _ShopViewState extends State<ShopView> {
   }
 
   Future<void> _asyncInitState() async {
-    _point = await CommonSharedPreferencesKey.rewardPoint.getInt(
-      defaultValue: 0,
-    );
-
     if (await DisableFullScreenAdSupport.isEnabled() &&
         await DisableFullScreenAdSupport.isExpired()) {
       await DisableFullScreenAdSupport.clearPurchasedProduct();
@@ -84,7 +82,7 @@ class _ShopViewState extends State<ShopView> {
                 padding: const EdgeInsets.fromLTRB(0, 20, 0, 0),
                 child: Center(
                   child: Text(
-                    'You have ${_numericTextFormat.format(_point)} points!',
+                    'You have ${_numericTextFormat.format(_walletBalance.point)} points!',
                     style: const TextStyle(
                       fontSize: 20,
                       fontWeight: FontWeight.bold,
@@ -178,7 +176,7 @@ class _ShopViewState extends State<ShopView> {
 
     final currentPoint = await CommonSharedPreferencesKey.rewardPoint.getInt();
 
-    if (currentPoint < price) {
+    if (disableAdPattern != DisableAdPattern.m5 && currentPoint < price) {
       await showChargePointDialog(
         context: context,
         onRewarded: (int amount) async => await _refreshPointOnRewarded(
@@ -209,17 +207,17 @@ class _ShopViewState extends State<ShopView> {
         productName: productType.name,
         validPeriodInMinutes: disableAdPattern.limit,
         onPressedOk: () async {
-          final newPoint = currentPoint - price;
-          await CommonSharedPreferencesKey.rewardPoint.setInt(newPoint);
+          await _walletBalance.refresh(
+            operand: Operand.minus,
+            change: price,
+          );
 
           await _disableAds(
             productType: productType,
             disableAdPattern: disableAdPattern,
           );
 
-          super.setState(() {
-            _point = newPoint;
-          });
+          super.setState(() {});
         },
       );
     }
@@ -228,24 +226,17 @@ class _ShopViewState extends State<ShopView> {
   Future<void> _refreshPointOnRewarded({
     required int rewardedAmount,
   }) async {
-    final currentPoint = await CommonSharedPreferencesKey.rewardPoint.getInt(
-      defaultValue: 0,
+    await _walletBalance.refresh(
+      operand: Operand.plus,
+      change: rewardedAmount,
     );
-
-    final newPoint = currentPoint + rewardedAmount;
-
-    await CommonSharedPreferencesKey.rewardPoint.setInt(
-      newPoint,
-    );
-
-    super.setState(() {
-      _point = newPoint;
-    });
 
     SuccessSnackBar.from(context: context).show(
       content:
           'Thank you for looking at ad! Your wallet has been credited with 2 points!',
     );
+
+    super.setState(() {});
   }
 
   Future<void> _disableAds({
