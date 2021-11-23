@@ -49,11 +49,6 @@ class _ProficiencyAnalysisViewState extends State<ProficiencyAnalysisView> {
   }
 
   @override
-  void didChangeDependencies() {
-    super.didChangeDependencies();
-  }
-
-  @override
   void dispose() {
     _headerBannerAd.dispose();
     super.dispose();

@@ -23,21 +23,6 @@ class ThemeSettingsView extends StatefulWidget {
 }
 
 class _ThemeSettingsViewState extends State<ThemeSettingsView> {
-  @override
-  void didChangeDependencies() {
-    super.didChangeDependencies();
-  }
-
-  @override
-  void dispose() {
-    super.dispose();
-  }
-
-  @override
-  void initState() {
-    super.initState();
-  }
-
   Future<String> _getCurrentDateFormatPattern() async {
     final dateFormatCode = await CommonSharedPreferencesKey.dateFormat.getInt();
     return DateFormatPatternExt.toEnum(code: dateFormatCode).pattern;

@@ -38,19 +38,9 @@ class _PurchaseHistoryViewState extends State<PurchaseHistoryView> {
   final _purchaseHistoryService = PurchaseHistoryService.getInstance();
 
   @override
-  void didChangeDependencies() {
-    super.didChangeDependencies();
-  }
-
-  @override
   void dispose() {
     _bannerAdList.dispose();
     super.dispose();
-  }
-
-  @override
-  void initState() {
-    super.initState();
   }
 
   Future<List<PurchaseHistory>> _fetchDataSource() {

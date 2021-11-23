@@ -17,21 +17,6 @@ class OtherSettingsView extends StatefulWidget {
 
 class _OtherSettingsViewState extends State<OtherSettingsView> {
   @override
-  void didChangeDependencies() {
-    super.didChangeDependencies();
-  }
-
-  @override
-  void dispose() {
-    super.dispose();
-  }
-
-  @override
-  void initState() {
-    super.initState();
-  }
-
-  @override
   Widget build(BuildContext context) => Scaffold(
         body: CommonNestedScrollView(
           title: const CommonAppBarTitle(title: 'Settings'),
