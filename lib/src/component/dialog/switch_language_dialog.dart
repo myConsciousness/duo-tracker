@@ -7,6 +7,7 @@ import 'package:dropdown_below/dropdown_below.dart';
 import 'package:duo_tracker/src/component/common_dialog_cancel_button.dart';
 import 'package:duo_tracker/src/component/common_dialog_submit_button.dart';
 import 'package:duo_tracker/src/component/common_dialog_title.dart';
+import 'package:duo_tracker/src/component/common_transparent_text_button.dart';
 import 'package:duo_tracker/src/component/dialog/input_error_dialog.dart';
 import 'package:duo_tracker/src/component/text_with_horizontal_divider.dart';
 import 'package:duo_tracker/src/http/duolingo_page_launcher.dart';
@@ -148,19 +149,12 @@ Future<T?> showSwitchLanguageDialog<T>({
                 const SizedBox(
                   height: 10,
                 ),
-                TextButton(
-                  child: Text(
-                    'Select on Duolingo!',
-                    style: TextStyle(
-                      color: Theme.of(context).colorScheme.secondary,
-                      fontWeight: FontWeight.bold,
-                      fontStyle: FontStyle.italic,
-                    ),
-                  ),
+                CommonTransparentTextButton(
+                  title: 'Select on Duolingo!',
                   onPressed: () async => await DuolingoPageLauncher
                       .selectLangauge.build
                       .execute(context: context),
-                )
+                ),
               ],
             ),
           ),

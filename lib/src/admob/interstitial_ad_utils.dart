@@ -4,10 +4,13 @@
 
 import 'package:duo_tracker/flavors.dart';
 import 'package:duo_tracker/src/admob/interstitial_ad_resolver.dart';
+import 'package:duo_tracker/src/component/dialog/recommended_action_dialog.dart';
 import 'package:duo_tracker/src/component/snackbar/info_snack_bar.dart';
+import 'package:duo_tracker/src/const/operand.dart';
 import 'package:duo_tracker/src/repository/preference/common_shared_preferences_key.dart';
 import 'package:duo_tracker/src/repository/preference/interstitial_ad_shared_preferences_key.dart';
 import 'package:duo_tracker/src/utils/disable_full_screen_ad_support.dart';
+import 'package:duo_tracker/src/utils/wallet_balance.dart';
 import 'package:flutter/material.dart';
 
 class InterstitialAdUtils {
@@ -32,14 +35,14 @@ class InterstitialAdUtils {
         await interstitialAdResolver.showInterstitialAd(
             onAdShowed: (reward) async {
           if (context != null) {
-            final currentPoint =
-                await CommonSharedPreferencesKey.rewardPoint.getInt();
-            await CommonSharedPreferencesKey.rewardPoint
-                .setInt(currentPoint + reward);
+            await _refreshPoint(
+              context: context,
+              reward: reward,
+            );
 
-            InfoSnackbar.from(context: context).show(
-                content:
-                    'Thank you for looking at ad! $reward points were given as a reward!');
+            await _showRecommendationIfNecessary(
+              context: context,
+            );
           }
         });
 
@@ -70,4 +73,37 @@ class InterstitialAdUtils {
 
     return true;
   }
+
+  static Future<void> _refreshPoint({
+    required BuildContext context,
+    required int reward,
+  }) async {
+    await WalletBalance.getInstance().refresh(
+      operand: Operand.plus,
+      change: reward,
+    );
+
+    InfoSnackbar.from(context: context).show(
+      content:
+          'Thank you for looking at ad! $reward points were given as a reward!',
+    );
+  }
+
+  static Future<void> _showRecommendationIfNecessary({
+    required BuildContext context,
+  }) async {
+    int count =
+        await CommonSharedPreferencesKey.countShowedInterstitialAd.getInt();
+
+    if (_canShowRecommendation(count: count)) {
+      await showRecommendedActionDialog(context: context);
+      await CommonSharedPreferencesKey.countShowedInterstitialAd.setInt(0);
+    } else {
+      count++;
+      await CommonSharedPreferencesKey.countShowedInterstitialAd.setInt(count);
+    }
+  }
+
+  static bool _canShowRecommendation({required int count}) =>
+      count == -1 || count > 1;
 }
