@@ -6,7 +6,7 @@ import 'package:awesome_dialog/awesome_dialog.dart';
 import 'package:duo_tracker/src/component/common_dialog_cancel_button.dart';
 import 'package:duo_tracker/src/component/common_dialog_submit_button.dart';
 import 'package:duo_tracker/src/component/common_dialog_title.dart';
-import 'package:duo_tracker/src/component/common_divider.dart';
+import 'package:duo_tracker/src/component/common_product_detail_card.dart';
 import 'package:duo_tracker/src/component/snackbar/success_snack_bar.dart';
 import 'package:duo_tracker/src/repository/model/purchase_history_model.dart';
 import 'package:duo_tracker/src/repository/service/purchase_history_service.dart';
@@ -14,10 +14,9 @@ import 'package:duo_tracker/src/view/shop/price_type.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/painting.dart';
 import 'package:flutter/widgets.dart';
-import 'package:intl/intl.dart';
 
+/// The dialog
 late AwesomeDialog _dialog;
-final _datetimeFormat = DateFormat('yyyy/MM/dd HH:mm');
 
 /// The purchase history service
 final _purchaseHistoryService = PurchaseHistoryService.getInstance();
@@ -29,12 +28,46 @@ Future<T?> showPurchaseDialog<T>({
   required int validPeriodInMinutes,
   required Function onPressedOk,
 }) async {
-  _dialog = AwesomeDialog(
+  _dialog = _buildDialog(
     context: context,
-    animType: AnimType.LEFTSLIDE,
-    dialogType: DialogType.QUESTION,
-    btnOkColor: Theme.of(context).colorScheme.secondary,
-    body: StatefulBuilder(
+    productName: productName,
+    price: price,
+    validPeriodInMinutes: validPeriodInMinutes,
+    onPressedOk: onPressedOk,
+  );
+
+  await _dialog.show();
+}
+
+AwesomeDialog _buildDialog({
+  required BuildContext context,
+  required String productName,
+  required int price,
+  required int validPeriodInMinutes,
+  required Function onPressedOk,
+}) =>
+    AwesomeDialog(
+      context: context,
+      animType: AnimType.LEFTSLIDE,
+      dialogType: DialogType.QUESTION,
+      btnOkColor: Theme.of(context).colorScheme.secondary,
+      body: _buildDialogBody(
+        context: context,
+        productName: productName,
+        price: price,
+        validPeriodInMinutes: validPeriodInMinutes,
+        onPressedOk: onPressedOk,
+      ),
+    );
+
+Widget _buildDialogBody({
+  required BuildContext context,
+  required String productName,
+  required int price,
+  required int validPeriodInMinutes,
+  required Function onPressedOk,
+}) =>
+    StatefulBuilder(
       builder: (BuildContext context, setState) => Padding(
         padding: const EdgeInsets.all(13),
         child: Center(
@@ -45,37 +78,9 @@ Future<T?> showPurchaseDialog<T>({
                 const SizedBox(
                   height: 25,
                 ),
-                Card(
-                  elevation: 0,
-                  child: Padding(
-                    padding: const EdgeInsets.all(20),
-                    child: Column(
-                      children: [
-                        ListTile(
-                          title: Text(
-                            productName,
-                            style: TextStyle(
-                              fontWeight: FontWeight.bold,
-                              color: Theme.of(context).colorScheme.secondary,
-                            ),
-                          ),
-                          subtitle: Text(
-                            'Expiration: ${_datetimeFormat.format(DateTime.now().add(Duration(minutes: validPeriodInMinutes)))}',
-                          ),
-                        ),
-                        const CommonDivider(),
-                        const Center(
-                          child: Text(
-                            '* The expiration datetime is valid since its confirmed.',
-                            style: TextStyle(
-                              fontSize: 13,
-                              fontWeight: FontWeight.bold,
-                            ),
-                          ),
-                        ),
-                      ],
-                    ),
-                  ),
+                CommonProductDetailCard(
+                  productName: productName,
+                  validPeriodInMinutes: validPeriodInMinutes,
                 ),
                 const SizedBox(
                   height: 30,
@@ -122,8 +127,4 @@ Future<T?> showPurchaseDialog<T>({
           ),
         ),
       ),
-    ),
-  );
-
-  await _dialog.show();
-}
+    );
