@@ -14,6 +14,7 @@ import 'package:duo_tracker/src/component/dialog/error_dialog.dart';
 import 'package:duo_tracker/src/component/dialog/purchase_dialog.dart';
 import 'package:duo_tracker/src/component/snackbar/success_snack_bar.dart';
 import 'package:duo_tracker/src/const/operand.dart';
+import 'package:duo_tracker/src/context/disable_ad_context.dart';
 import 'package:duo_tracker/src/repository/preference/common_shared_preferences_key.dart';
 import 'package:duo_tracker/src/repository/preference/rewarded_ad_shared_preferences.dart';
 import 'package:duo_tracker/src/utils/disable_all_ad_support.dart';
@@ -181,10 +182,10 @@ class _ShopViewState extends State<ShopView> {
         context: context,
         sharedPreferencesKey: RewardedAdSharedPreferencesKey.rewardImmediately,
         onRewarded: (_) async {
-          await _disableAds(
-            productType: productType,
+          await DisableAdContext.from(
+            disableAdProductType: productType,
             disableAdPattern: disableAdPattern,
-          );
+          ).execute();
 
           super.setState(() {});
         },
@@ -202,10 +203,10 @@ class _ShopViewState extends State<ShopView> {
             change: price,
           );
 
-          await _disableAds(
-            productType: productType,
+          await DisableAdContext.from(
+            disableAdProductType: productType,
             disableAdPattern: disableAdPattern,
-          );
+          ).execute();
 
           super.setState(() {});
         },
@@ -227,32 +228,6 @@ class _ShopViewState extends State<ShopView> {
     );
 
     super.setState(() {});
-  }
-
-  Future<void> _disableAds({
-    required DisableAdProductType productType,
-    required DisableAdPattern disableAdPattern,
-  }) async {
-    switch (productType) {
-      case DisableAdProductType.disbaleFullScreenAd:
-        await DisableFullScreenAdSupport.disable(
-          disableAdPattern: disableAdPattern,
-        );
-
-        return;
-      case DisableAdProductType.disableBannerAd:
-        await DisableBannerAdSupport.disable(
-          disableAdPattern: disableAdPattern,
-        );
-
-        return;
-      case DisableAdProductType.all:
-        await DisableAllAdSupport.disable(
-          disableAdPattern: disableAdPattern,
-        );
-
-        return;
-    }
   }
 
   Future<bool> _alreadyAdDisabled({
