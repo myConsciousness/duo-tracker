@@ -4,12 +4,8 @@
 
 import 'package:awesome_dialog/awesome_dialog.dart';
 import 'package:duo_tracker/src/component/loading.dart';
-import 'package:duo_tracker/src/const/product_full_screen_button_state.dart';
-import 'package:duo_tracker/src/const/product_banner_button_state.dart';
-import 'package:duo_tracker/src/const/product_all_button_state.dart';
-import 'package:duo_tracker/src/utils/disable_all_ad_support.dart';
-import 'package:duo_tracker/src/utils/disable_banner_ad_support.dart';
-import 'package:duo_tracker/src/utils/disable_full_screen_ad_support.dart';
+import 'package:duo_tracker/src/context/product_button_color_context.dart';
+import 'package:duo_tracker/src/context/purchase_btton_title_context.dart';
 import 'package:duo_tracker/src/view/shop/disable_ad_product_type.dart';
 import 'package:duo_tracker/src/view/shop/disable_ad_pattern.dart';
 import 'package:flutter/material.dart';
@@ -59,33 +55,6 @@ class _CommonProductItemState extends State<CommonProductItem> {
     _price = widget.disableAdPattern.price * widget.productType.priceWeight;
   }
 
-  Future<Color> _getProductButtonColor({
-    required DisableAdProductType productType,
-    required DisableAdPattern disableAdPattern,
-  }) async {
-    switch (productType) {
-      case DisableAdProductType.disbaleFullScreenAd:
-        final buttonState =
-            await DisableFullScreenAdSupport.getProductButtonState(
-          disableAdPattern: disableAdPattern,
-        );
-
-        return buttonState.getColor(context: context);
-      case DisableAdProductType.disableBannerAd:
-        final buttonState = await DisableBannerAdSupport.getProductButtonState(
-          disableAdPattern: disableAdPattern,
-        );
-
-        return buttonState.getColor(context: context);
-      case DisableAdProductType.all:
-        final buttonState = await DisableAllAdSupport.getProductButtonState(
-          disableAdPattern: disableAdPattern,
-        );
-
-        return buttonState.getColor(context: context);
-    }
-  }
-
   Widget _buildProductButton({
     required String title,
     required Color color,
@@ -101,33 +70,40 @@ class _CommonProductItemState extends State<CommonProductItem> {
         ),
       );
 
-  Future<String> _buildPurchaseButtonTitle({
-    required DisableAdProductType productType,
-    required DisableAdPattern disableAdPattern,
-    required String defaultTitle,
-  }) async {
-    switch (productType) {
-      case DisableAdProductType.disbaleFullScreenAd:
-        final buttonState =
-            await DisableFullScreenAdSupport.getProductButtonState(
-          disableAdPattern: disableAdPattern,
-        );
+  Widget _buildPurchaseButton() => Padding(
+        padding: const EdgeInsets.fromLTRB(20, 0, 20, 10),
+        child: FutureBuilder(
+          future: PurchaseButtonTitleContext.from(
+            defaultTitle: '$_price Points',
+            disableAdProductType: widget.productType,
+            disableAdPattern: widget.disableAdPattern,
+          ).execute(),
+          builder: (BuildContext context, AsyncSnapshot titleSnapshot) {
+            if (!titleSnapshot.hasData) {
+              return const Loading();
+            }
 
-        return await buttonState.getTitle(title: defaultTitle);
-      case DisableAdProductType.disableBannerAd:
-        final buttonState = await DisableBannerAdSupport.getProductButtonState(
-          disableAdPattern: disableAdPattern,
-        );
+            return FutureBuilder(
+              future: ProductButtonColorContext.from(
+                context: context,
+                disableAdProductType: widget.productType,
+                disableAdPattern: widget.disableAdPattern,
+              ).execute(),
+              builder:
+                  (BuildContext context, AsyncSnapshot buttonColorSnapshot) {
+                if (!buttonColorSnapshot.hasData) {
+                  return const Loading();
+                }
 
-        return await buttonState.getTitle(title: defaultTitle);
-      case DisableAdProductType.all:
-        final buttonState = await DisableAllAdSupport.getProductButtonState(
-          disableAdPattern: disableAdPattern,
-        );
-
-        return await buttonState.getTitle(title: defaultTitle);
-    }
-  }
+                return _buildProductButton(
+                  title: titleSnapshot.data,
+                  color: buttonColorSnapshot.data,
+                );
+              },
+            );
+          },
+        ),
+      );
 
   @override
   Widget build(BuildContext context) => Expanded(
@@ -145,40 +121,7 @@ class _CommonProductItemState extends State<CommonProductItem> {
                     fontWeight: FontWeight.bold,
                   ),
                 ),
-                Padding(
-                  padding: const EdgeInsets.fromLTRB(20, 0, 20, 10),
-                  child: FutureBuilder(
-                    future: _buildPurchaseButtonTitle(
-                      productType: widget.productType,
-                      disableAdPattern: widget.disableAdPattern,
-                      defaultTitle: '$_price Points',
-                    ),
-                    builder:
-                        (BuildContext context, AsyncSnapshot titleSnapshot) {
-                      if (!titleSnapshot.hasData) {
-                        return const Loading();
-                      }
-
-                      return FutureBuilder(
-                        future: _getProductButtonColor(
-                          productType: widget.productType,
-                          disableAdPattern: widget.disableAdPattern,
-                        ),
-                        builder: (BuildContext context,
-                            AsyncSnapshot buttonColorSnapshot) {
-                          if (!buttonColorSnapshot.hasData) {
-                            return const Loading();
-                          }
-
-                          return _buildProductButton(
-                            title: titleSnapshot.data,
-                            color: buttonColorSnapshot.data,
-                          );
-                        },
-                      );
-                    },
-                  ),
-                ),
+                _buildPurchaseButton(),
               ],
             ),
           ),

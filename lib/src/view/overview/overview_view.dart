@@ -53,7 +53,6 @@ class OverviewView extends StatefulWidget {
 
 class _OverviewViewState extends State<OverviewView> {
   bool _alreadyAuthDialogOpened = false;
-  String _appBarSubTitle = '';
 
   /// The auto sync scheduler
   final _autoSyncScheduler = AutoSyncScheduler();
@@ -81,7 +80,6 @@ class _OverviewViewState extends State<OverviewView> {
   @override
   void initState() {
     super.initState();
-    _asyncInitState();
   }
 
   Future<void> _asyncDispose() async {
@@ -250,11 +248,7 @@ class _OverviewViewState extends State<OverviewView> {
     );
   }
 
-  Future<void> _asyncInitState() async {
-    await _buildAppBarSubTitle();
-  }
-
-  Future<void> _buildAppBarSubTitle() async {
+  Future<String> _buildAppBarSubTitle() async {
     final fromLanguage =
         await CommonSharedPreferencesKey.currentFromLanguage.getString();
     final learningLanguage =
@@ -264,9 +258,7 @@ class _OverviewViewState extends State<OverviewView> {
     final learningLanguageName =
         LanguageConverter.toName(languageCode: learningLanguage);
 
-    super.setState(() {
-      _appBarSubTitle = '$fromLanguageName → $learningLanguageName';
-    });
+    return '$fromLanguageName → $learningLanguageName';
   }
 
   String get _appBarTitle {
@@ -440,6 +432,55 @@ class _OverviewViewState extends State<OverviewView> {
         ),
       ];
 
+  Widget _buildAppBarTitle({required bool searching}) {
+    if (searching) {
+      return _buildSearchBar();
+    }
+
+    return FutureBuilder(
+      future: _buildAppBarSubTitle(),
+      builder: (BuildContext context, AsyncSnapshot snapshot) {
+        if (!snapshot.hasData) {
+          return const Loading();
+        }
+
+        return CommonAppBarTitles(
+          title: _appBarTitle,
+          subTitle: snapshot.data,
+        );
+      },
+    );
+  }
+
+  Widget _buildListView() => FutureBuilder(
+        future: _fetchDataSource(),
+        builder: (_, AsyncSnapshot snapshot) {
+          if (!snapshot.hasData || snapshot.data.isEmpty) {
+            return const Loading();
+          }
+
+          final List<LearnedWord> learnedWords = snapshot.data;
+
+          return RefreshIndicator(
+            onRefresh: () async {
+              super.setState(() {});
+            },
+            child: ReorderableListView.builder(
+              itemCount: learnedWords.length,
+              onReorder: (oldIndex, newIndex) async => await _sortCards(
+                learnedWords: learnedWords,
+                oldIndex: oldIndex,
+                newIndex: newIndex,
+              ),
+              itemBuilder: (_, index) => _buildLearnedWordCard(
+                index: index,
+                learnedWord: learnedWords[index],
+              ),
+            ),
+          );
+        },
+      );
+
   @override
   Widget build(BuildContext context) => Scaffold(
         floatingActionButtonLocation:
@@ -456,41 +497,11 @@ class _OverviewViewState extends State<OverviewView> {
           children: _buildFloatingActions(),
         ),
         body: CommonNestedScrollView(
-          title: _searching
-              ? _buildSearchBar()
-              : CommonAppBarTitles(
-                  title: _appBarTitle,
-                  subTitle: _appBarSubTitle,
-                ),
-          actions: _buildActions(),
-          body: FutureBuilder(
-            future: _fetchDataSource(),
-            builder: (_, AsyncSnapshot snapshot) {
-              if (!snapshot.hasData || snapshot.data.isEmpty) {
-                return const Loading();
-              }
-
-              final List<LearnedWord> learnedWords = snapshot.data;
-
-              return RefreshIndicator(
-                onRefresh: () async {
-                  super.setState(() {});
-                },
-                child: ReorderableListView.builder(
-                  itemCount: learnedWords.length,
-                  onReorder: (oldIndex, newIndex) async => await _sortCards(
-                    learnedWords: learnedWords,
-                    oldIndex: oldIndex,
-                    newIndex: newIndex,
-                  ),
-                  itemBuilder: (_, index) => _buildLearnedWordCard(
-                    index: index,
-                    learnedWord: learnedWords[index],
-                  ),
-                ),
-              );
-            },
+          title: _buildAppBarTitle(
+            searching: _searching,
           ),
+          actions: _buildActions(),
+          body: _buildListView(),
         ),
       );
 }
