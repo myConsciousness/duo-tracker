@@ -2,6 +2,7 @@
 // Use of this source code is governed by a
 // BSD-style license that can be found in the LICENSE file.
 
+// Project imports:
 import 'package:duo_tracker/src/repository/model/chart_data_source_model.dart';
 import 'package:duo_tracker/src/repository/repository.dart';
 import 'package:duo_tracker/src/view/analysis/proficiency_range.dart';

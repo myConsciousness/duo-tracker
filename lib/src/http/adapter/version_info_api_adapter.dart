@@ -2,10 +2,17 @@
 // Use of this source code is governed by a
 // BSD-style license that can be found in the LICENSE file.
 
+// Dart imports:
 import 'dart:convert';
 
+// Flutter imports:
+import 'package:flutter/material.dart';
+
+// Project imports:
 import 'package:duo_tracker/src/http/adapter/api_adapter.dart';
 import 'package:duo_tracker/src/http/api_response.dart';
+import 'package:duo_tracker/src/http/const/error_type.dart';
+import 'package:duo_tracker/src/http/const/from_api.dart';
 import 'package:duo_tracker/src/http/duolingo_api.dart';
 import 'package:duo_tracker/src/http/http_status.dart';
 import 'package:duo_tracker/src/repository/model/supported_language_model.dart';
@@ -13,9 +20,6 @@ import 'package:duo_tracker/src/repository/model/voice_configuration_model.dart'
 import 'package:duo_tracker/src/repository/service/supported_language_service.dart';
 import 'package:duo_tracker/src/repository/service/voice_configuration_service.dart';
 import 'package:duo_tracker/src/utils/language_converter.dart';
-import 'package:duo_tracker/src/http/const/error_type.dart';
-import 'package:duo_tracker/src/http/const/from_api.dart';
-import 'package:flutter/material.dart';
 
 class VersionInfoAdapter extends ApiAdapter {
   /// The supported language service

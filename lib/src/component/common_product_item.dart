@@ -2,13 +2,18 @@
 // Use of this source code is governed by a
 // BSD-style license that can be found in the LICENSE file.
 
+// Flutter imports:
+import 'package:flutter/material.dart';
+
+// Package imports:
 import 'package:awesome_dialog/awesome_dialog.dart';
+
+// Project imports:
 import 'package:duo_tracker/src/component/loading.dart';
 import 'package:duo_tracker/src/context/product_button_color_context.dart';
 import 'package:duo_tracker/src/context/purchase_btton_title_context.dart';
-import 'package:duo_tracker/src/view/shop/disable_ad_product_type.dart';
 import 'package:duo_tracker/src/view/shop/disable_ad_pattern.dart';
-import 'package:flutter/material.dart';
+import 'package:duo_tracker/src/view/shop/disable_ad_product_type.dart';
 
 class CommonProductItem extends StatefulWidget {
   const CommonProductItem({

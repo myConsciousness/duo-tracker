@@ -2,10 +2,15 @@
 // Use of this source code is governed by a
 // BSD-style license that can be found in the LICENSE file.
 
-import 'package:duo_tracker/src/repository/model/chart_data_source_model.dart';
+// Flutter imports:
 import 'package:flutter/material.dart';
-import 'package:syncfusion_flutter_charts/charts.dart';
+
+// Package imports:
 import 'package:intl/intl.dart';
+import 'package:syncfusion_flutter_charts/charts.dart';
+
+// Project imports:
+import 'package:duo_tracker/src/repository/model/chart_data_source_model.dart';
 
 class TrackerColumnChart extends StatefulWidget {
   const TrackerColumnChart({

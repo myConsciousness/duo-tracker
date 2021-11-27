@@ -2,6 +2,7 @@
 // Use of this source code is governed by a
 // BSD-style license that can be found in the LICENSE file.
 
+// Project imports:
 import 'package:duo_tracker/src/const/product_banner_button_state.dart';
 import 'package:duo_tracker/src/repository/preference/common_shared_preferences_key.dart';
 import 'package:duo_tracker/src/view/shop/disable_ad_pattern.dart';

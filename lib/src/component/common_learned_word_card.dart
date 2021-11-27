@@ -2,28 +2,33 @@
 // Use of this source code is governed by a
 // BSD-style license that can be found in the LICENSE file.
 
+// Flutter imports:
+import 'package:flutter/material.dart';
+
+// Package imports:
 import 'package:clipboard/clipboard.dart';
+import 'package:rounded_loading_button/rounded_loading_button.dart';
+
+// Project imports:
 import 'package:duo_tracker/src/admob/interstitial_ad_utils.dart';
 import 'package:duo_tracker/src/component/common_card_header_text.dart';
 import 'package:duo_tracker/src/component/common_divider.dart';
 import 'package:duo_tracker/src/component/common_text.dart';
-import 'package:duo_tracker/src/component/loading.dart';
-import 'package:duo_tracker/src/http/utils/duolingo_api_utils.dart';
-import 'package:duo_tracker/src/repository/model/word_hint_model.dart';
-import 'package:duo_tracker/src/repository/preference/interstitial_ad_shared_preferences_key.dart';
-import 'package:duo_tracker/src/repository/service/word_hint_service.dart';
-import 'package:duo_tracker/src/utils/date_time_formatter.dart';
-import 'package:duo_tracker/src/view/folder/folder_type.dart';
 import 'package:duo_tracker/src/component/dialog/network_error_dialog.dart';
 import 'package:duo_tracker/src/component/dialog/select_folder_dialog.dart';
+import 'package:duo_tracker/src/component/loading.dart';
 import 'package:duo_tracker/src/component/snackbar/info_snack_bar.dart';
 import 'package:duo_tracker/src/http/network.dart';
+import 'package:duo_tracker/src/http/utils/duolingo_api_utils.dart';
 import 'package:duo_tracker/src/repository/model/learned_word_model.dart';
+import 'package:duo_tracker/src/repository/model/word_hint_model.dart';
+import 'package:duo_tracker/src/repository/preference/interstitial_ad_shared_preferences_key.dart';
 import 'package:duo_tracker/src/repository/service/learned_word_service.dart';
+import 'package:duo_tracker/src/repository/service/word_hint_service.dart';
 import 'package:duo_tracker/src/utils/audio_player_utils.dart';
+import 'package:duo_tracker/src/utils/date_time_formatter.dart';
+import 'package:duo_tracker/src/view/folder/folder_type.dart';
 import 'package:duo_tracker/src/view/lesson_tips_view.dart';
-import 'package:flutter/material.dart';
-import 'package:rounded_loading_button/rounded_loading_button.dart';
 
 class CommonLearnedWordCard extends StatefulWidget {
   const CommonLearnedWordCard({

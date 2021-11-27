@@ -2,12 +2,17 @@
 // Use of this source code is governed by a
 // BSD-style license that can be found in the LICENSE file.
 
+// Flutter imports:
+import 'package:flutter/material.dart';
+
+// Package imports:
+import 'package:flutter_html/flutter_html.dart';
+import 'package:google_mobile_ads/google_mobile_ads.dart';
+
+// Project imports:
 import 'package:duo_tracker/src/admob/banner_ad_utils.dart';
 import 'package:duo_tracker/src/component/common_app_bar_titles.dart';
 import 'package:duo_tracker/src/repository/model/tip_and_note_model.dart';
-import 'package:flutter/material.dart';
-import 'package:flutter_html/flutter_html.dart';
-import 'package:google_mobile_ads/google_mobile_ads.dart';
 
 class LessonTipsView extends StatefulWidget {
   const LessonTipsView({
@@ -37,15 +42,9 @@ class _LessonTipsViewState extends State<LessonTipsView> {
   }
 
   @override
-  void didChangeDependencies() {
-    super.didChangeDependencies();
-  }
-
-  @override
   void dispose() {
     _headerBannerAd.dispose();
     _bottomBannerAd.dispose();
-
     super.dispose();
   }
 

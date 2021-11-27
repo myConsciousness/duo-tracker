@@ -2,20 +2,23 @@
 // Use of this source code is governed by a
 // BSD-style license that can be found in the LICENSE file.
 
+// Flutter imports:
+import 'package:flutter/material.dart';
+
+// Package imports:
+import 'package:google_mobile_ads/google_mobile_ads.dart';
+import 'package:syncfusion_flutter_charts/charts.dart';
+import 'package:syncfusion_flutter_sliders/sliders.dart';
+
+// Project imports:
 import 'package:duo_tracker/src/admob/banner_ad_utils.dart';
 import 'package:duo_tracker/src/component/chart/tracker_column_chart.dart';
 import 'package:duo_tracker/src/component/common_app_bar_titles.dart';
 import 'package:duo_tracker/src/component/common_divider.dart';
 import 'package:duo_tracker/src/component/common_nested_scroll_view.dart';
 import 'package:duo_tracker/src/component/loading.dart';
-import 'package:duo_tracker/src/repository/preference/common_shared_preferences_key.dart';
 import 'package:duo_tracker/src/repository/service/chart_service.dart';
-import 'package:duo_tracker/src/utils/language_converter.dart';
 import 'package:duo_tracker/src/view/analysis/proficiency_range.dart';
-import 'package:flutter/material.dart';
-import 'package:google_mobile_ads/google_mobile_ads.dart';
-import 'package:syncfusion_flutter_charts/charts.dart';
-import 'package:syncfusion_flutter_sliders/sliders.dart';
 
 class ProficiencyAnalysisView extends StatefulWidget {
   const ProficiencyAnalysisView({Key? key}) : super(key: key);
@@ -26,27 +29,20 @@ class ProficiencyAnalysisView extends StatefulWidget {
 }
 
 class _ProficiencyAnalysisViewState extends State<ProficiencyAnalysisView> {
+  /// The app bar title
+  final String _appBatTitle = 'Skill Analysis';
+
   /// The chart service
   final _chartService = ChartService.getInstance();
-
-  /// The app bar subtitle
-  String _appBarSubTitle = '';
-
-  /// The selected proficiency range
-  SfRangeValues _selectedProficiencyRange = const SfRangeValues(10.0, 50.0);
-
-  /// The selected bar count
-  int _selectedBarCount = 10;
 
   /// The header banner ad
   late BannerAd _headerBannerAd;
 
-  @override
-  void initState() {
-    super.initState();
-    _asyncInitState();
-    _headerBannerAd = BannerAdUtils.loadBannerAd();
-  }
+  /// The selected bar count
+  int _selectedBarCount = 10;
+
+  /// The selected proficiency range
+  SfRangeValues _selectedProficiencyRange = const SfRangeValues(10.0, 50.0);
 
   @override
   void dispose() {
@@ -54,32 +50,16 @@ class _ProficiencyAnalysisViewState extends State<ProficiencyAnalysisView> {
     super.dispose();
   }
 
-  Future<void> _asyncInitState() async {
-    await _buildAppBarSubTitle();
-  }
-
-  Future<void> _buildAppBarSubTitle() async {
-    final fromLanguage =
-        await CommonSharedPreferencesKey.currentFromLanguage.getString();
-    final learningLanguage =
-        await CommonSharedPreferencesKey.currentLearningLanguage.getString();
-    final fromLanguageName =
-        LanguageConverter.toName(languageCode: fromLanguage);
-    final learningLanguageName =
-        LanguageConverter.toName(languageCode: learningLanguage);
-
-    super.setState(() {
-      _appBarSubTitle = '$fromLanguageName → $learningLanguageName';
-    });
+  @override
+  void initState() {
+    super.initState();
+    _headerBannerAd = BannerAdUtils.loadBannerAd();
   }
 
   @override
   Widget build(BuildContext context) => Scaffold(
         body: CommonNestedScrollView(
-          title: CommonAppBarTitles(
-            title: 'Skill Analysis',
-            subTitle: _appBarSubTitle,
-          ),
+          title: CommonAppBarTitles(title: _appBatTitle),
           body: SingleChildScrollView(
             child: Padding(
               padding: const EdgeInsets.all(20),

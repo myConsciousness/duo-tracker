@@ -2,13 +2,16 @@
 // Use of this source code is governed by a
 // BSD-style license that can be found in the LICENSE file.
 
+// Flutter imports:
+import 'package:flutter/material.dart';
+
+// Project imports:
 import 'package:duo_tracker/src/component/dialog/loading_dialog.dart';
 import 'package:duo_tracker/src/component/dialog/network_error_dialog.dart';
 import 'package:duo_tracker/src/http/launch/launcher.dart';
 import 'package:duo_tracker/src/http/network.dart';
 import 'package:duo_tracker/src/http/session.dart';
 import 'package:duo_tracker/src/http/utils/duolingo_api_utils.dart';
-import 'package:flutter/material.dart';
 
 abstract class PageLauncher extends Launcher {
   /// The session

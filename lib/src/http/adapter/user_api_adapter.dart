@@ -2,10 +2,20 @@
 // Use of this source code is governed by a
 // BSD-style license that can be found in the LICENSE file.
 
+// Dart imports:
 import 'dart:convert';
 
+// Flutter imports:
+import 'package:flutter/material.dart';
+
+// Package imports:
+import 'package:intl/intl.dart';
+
+// Project imports:
 import 'package:duo_tracker/src/http/adapter/api_adapter.dart';
 import 'package:duo_tracker/src/http/api_response.dart';
+import 'package:duo_tracker/src/http/const/error_type.dart';
+import 'package:duo_tracker/src/http/const/from_api.dart';
 import 'package:duo_tracker/src/http/duolingo_api.dart';
 import 'package:duo_tracker/src/http/http_status.dart';
 import 'package:duo_tracker/src/repository/model/course_model.dart';
@@ -18,10 +28,6 @@ import 'package:duo_tracker/src/repository/service/skill_service.dart';
 import 'package:duo_tracker/src/repository/service/tip_and_note_service.dart';
 import 'package:duo_tracker/src/repository/service/user_service.dart';
 import 'package:duo_tracker/src/utils/language_converter.dart';
-import 'package:duo_tracker/src/http/const/error_type.dart';
-import 'package:duo_tracker/src/http/const/from_api.dart';
-import 'package:flutter/material.dart';
-import 'package:intl/intl.dart';
 
 class UserApiAdapter extends ApiAdapter {
   /// The max length of tip and note content

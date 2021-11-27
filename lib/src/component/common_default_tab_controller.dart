@@ -2,7 +2,10 @@
 // Use of this source code is governed by a
 // BSD-style license that can be found in the LICENSE file.
 
+// Flutter imports:
 import 'package:flutter/material.dart';
+
+// Package imports:
 import 'package:tab_indicator_styler/tab_indicator_styler.dart';
 
 class CommonDefaultTabController extends StatelessWidget {

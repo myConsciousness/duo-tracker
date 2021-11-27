@@ -2,6 +2,14 @@
 // Use of this source code is governed by a
 // BSD-style license that can be found in the LICENSE file.
 
+// Flutter imports:
+import 'package:flutter/material.dart';
+
+// Package imports:
+import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+import 'package:provider/provider.dart';
+
+// Project imports:
 import 'package:duo_tracker/src/component/common_app_bar_title.dart';
 import 'package:duo_tracker/src/component/common_divider.dart';
 import 'package:duo_tracker/src/component/common_nested_scroll_view.dart';
@@ -11,9 +19,6 @@ import 'package:duo_tracker/src/component/loading.dart';
 import 'package:duo_tracker/src/const/date_format_pattern.dart';
 import 'package:duo_tracker/src/provider/theme_mode_provider.dart';
 import 'package:duo_tracker/src/repository/preference/common_shared_preferences_key.dart';
-import 'package:flutter/material.dart';
-import 'package:font_awesome_flutter/font_awesome_flutter.dart';
-import 'package:provider/provider.dart';
 
 class ThemeSettingsView extends StatefulWidget {
   const ThemeSettingsView({Key? key}) : super(key: key);

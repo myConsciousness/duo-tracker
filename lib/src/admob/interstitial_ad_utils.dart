@@ -2,6 +2,10 @@
 // Use of this source code is governed by a
 // BSD-style license that can be found in the LICENSE file.
 
+// Flutter imports:
+import 'package:flutter/material.dart';
+
+// Project imports:
 import 'package:duo_tracker/flavors.dart';
 import 'package:duo_tracker/src/admob/interstitial_ad_resolver.dart';
 import 'package:duo_tracker/src/component/dialog/recommended_action_dialog.dart';
@@ -11,7 +15,6 @@ import 'package:duo_tracker/src/repository/preference/common_shared_preferences_
 import 'package:duo_tracker/src/repository/preference/interstitial_ad_shared_preferences_key.dart';
 import 'package:duo_tracker/src/utils/disable_full_screen_ad_support.dart';
 import 'package:duo_tracker/src/utils/wallet_balance.dart';
-import 'package:flutter/material.dart';
 
 class InterstitialAdUtils {
   static Future<void> showInterstitialAd({

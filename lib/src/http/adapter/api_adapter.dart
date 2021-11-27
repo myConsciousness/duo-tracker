@@ -2,6 +2,10 @@
 // Use of this source code is governed by a
 // BSD-style license that can be found in the LICENSE file.
 
+// Flutter imports:
+import 'package:flutter/material.dart';
+
+// Project imports:
 import 'package:duo_tracker/src/component/dialog/auth_dialog.dart';
 import 'package:duo_tracker/src/component/dialog/error_dialog.dart';
 import 'package:duo_tracker/src/component/dialog/input_error_dialog.dart';
@@ -12,7 +16,6 @@ import 'package:duo_tracker/src/http/api_response.dart';
 import 'package:duo_tracker/src/http/const/error_type.dart';
 import 'package:duo_tracker/src/http/const/from_api.dart';
 import 'package:duo_tracker/src/http/network.dart';
-import 'package:flutter/material.dart';
 
 abstract class ApiAdapter implements Adapter {
   @override

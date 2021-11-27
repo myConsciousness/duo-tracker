@@ -2,11 +2,14 @@
 // Use of this source code is governed by a
 // BSD-style license that can be found in the LICENSE file.
 
+// Flutter imports:
+import 'package:flutter/material.dart';
+
+// Project imports:
 import 'package:duo_tracker/src/component/common_app_bar_title.dart';
 import 'package:duo_tracker/src/component/common_nested_scroll_view.dart';
 import 'package:duo_tracker/src/component/common_tappable_list_title.dart';
 import 'package:duo_tracker/src/view/settings/overview_settings_view.dart';
-import 'package:flutter/material.dart';
 
 class OtherSettingsView extends StatefulWidget {
   const OtherSettingsView({Key? key}) : super(key: key);

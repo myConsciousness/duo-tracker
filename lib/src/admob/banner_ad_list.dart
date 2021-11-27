@@ -2,8 +2,11 @@
 // Use of this source code is governed by a
 // BSD-style license that can be found in the LICENSE file.
 
-import 'package:duo_tracker/src/admob/banner_ad_utils.dart';
+// Package imports:
 import 'package:google_mobile_ads/google_mobile_ads.dart';
+
+// Project imports:
+import 'package:duo_tracker/src/admob/banner_ad_utils.dart';
 
 class BannerAdList {
   /// Returns the new instance of [BannerAdList].

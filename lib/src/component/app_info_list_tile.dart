@@ -2,17 +2,22 @@
 // Use of this source code is governed by a
 // BSD-style license that can be found in the LICENSE file.
 
+// Flutter imports:
+import 'package:flutter/material.dart';
+
+// Package imports:
+import 'package:flutter_flavor/flutter_flavor.dart';
+import 'package:new_version/new_version.dart';
+import 'package:package_info/package_info.dart';
+import 'package:url_launcher/url_launcher.dart';
+
+// Project imports:
 import 'package:duo_tracker/src/component/common_tappable_list_title.dart';
 import 'package:duo_tracker/src/component/dialog/network_error_dialog.dart';
 import 'package:duo_tracker/src/component/loading.dart';
 import 'package:duo_tracker/src/component/snackbar/info_snack_bar.dart';
 import 'package:duo_tracker/src/http/network.dart';
 import 'package:duo_tracker/src/utils/version_status_wrapper.dart';
-import 'package:flutter/material.dart';
-import 'package:flutter_flavor/flutter_flavor.dart';
-import 'package:new_version/new_version.dart';
-import 'package:package_info/package_info.dart';
-import 'package:url_launcher/url_launcher.dart';
 
 class AppInfoListTile extends StatelessWidget {
   const AppInfoListTile({Key? key}) : super(key: key);

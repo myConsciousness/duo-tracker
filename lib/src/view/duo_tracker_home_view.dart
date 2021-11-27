@@ -2,6 +2,15 @@
 // Use of this source code is governed by a
 // BSD-style license that can be found in the LICENSE file.
 
+// Flutter imports:
+import 'package:flutter/material.dart';
+
+// Package imports:
+import 'package:flutter_flavor/flutter_flavor.dart';
+import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+import 'package:new_version/new_version.dart';
+
+// Project imports:
 import 'package:duo_tracker/flavors.dart';
 import 'package:duo_tracker/src/component/common_default_tab_controller.dart';
 import 'package:duo_tracker/src/view/analysis/proficiency_analysis_view.dart';
@@ -11,10 +20,6 @@ import 'package:duo_tracker/src/view/settings/settings_tab_view.dart';
 import 'package:duo_tracker/src/view/shop/shop_view.dart';
 import 'package:duo_tracker/src/view/tips/tips_and_notes_tab_view.dart';
 import 'package:duo_tracker/src/view/user/user_account_tab_view.dart';
-import 'package:flutter/material.dart';
-import 'package:flutter_flavor/flutter_flavor.dart';
-import 'package:font_awesome_flutter/font_awesome_flutter.dart';
-import 'package:new_version/new_version.dart';
 
 class DuoTrackerHomeView extends StatefulWidget {
   const DuoTrackerHomeView({Key? key}) : super(key: key);

@@ -2,10 +2,13 @@
 // Use of this source code is governed by a
 // BSD-style license that can be found in the LICENSE file.
 
+// Flutter imports:
+import 'package:flutter/material.dart';
+
+// Project imports:
 import 'package:duo_tracker/src/http/duolingo_api_adapter.dart';
 import 'package:duo_tracker/src/repository/preference/common_shared_preferences_key.dart';
 import 'package:duo_tracker/src/security/encryption.dart';
-import 'package:flutter/material.dart';
 
 class DuolingoApiUtils {
   static Future<bool> refreshVersionInfo({

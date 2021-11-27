@@ -2,8 +2,9 @@
 // Use of this source code is governed by a
 // BSD-style license that can be found in the LICENSE file.
 
-import 'package:duo_tracker/src/repository/utils/boolean_text.dart';
+// Project imports:
 import 'package:duo_tracker/src/repository/const/column/tip_and_note_column.dart';
+import 'package:duo_tracker/src/repository/utils/boolean_text.dart';
 
 class TipAndNote {
   int id = -1;

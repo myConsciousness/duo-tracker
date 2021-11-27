@@ -2,12 +2,17 @@
 // Use of this source code is governed by a
 // BSD-style license that can be found in the LICENSE file.
 
+// Flutter imports:
+import 'package:flutter/material.dart';
+
+// Package imports:
 import 'package:awesome_dialog/awesome_dialog.dart';
+import 'package:open_settings/open_settings.dart';
+
+// Project imports:
 import 'package:duo_tracker/src/component/common_dialog_content.dart';
 import 'package:duo_tracker/src/component/common_dialog_submit_button.dart';
 import 'package:duo_tracker/src/component/common_dialog_title.dart';
-import 'package:flutter/material.dart';
-import 'package:open_settings/open_settings.dart';
 
 AwesomeDialog? _dialog;
 

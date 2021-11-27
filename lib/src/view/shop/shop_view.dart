@@ -2,7 +2,15 @@
 // Use of this source code is governed by a
 // BSD-style license that can be found in the LICENSE file.
 
+// Flutter imports:
+import 'package:flutter/material.dart';
+import 'package:flutter/widgets.dart';
+
+// Package imports:
 import 'package:awesome_dialog/awesome_dialog.dart';
+import 'package:intl/intl.dart';
+
+// Project imports:
 import 'package:duo_tracker/src/admob/reawarded_ad_utils.dart';
 import 'package:duo_tracker/src/component/common_app_bar_title.dart';
 import 'package:duo_tracker/src/component/common_nested_scroll_view.dart';
@@ -24,9 +32,6 @@ import 'package:duo_tracker/src/utils/wallet_balance.dart';
 import 'package:duo_tracker/src/view/shop/disable_ad_pattern.dart';
 import 'package:duo_tracker/src/view/shop/disable_ad_product_type.dart';
 import 'package:duo_tracker/src/view/shop/purchase_history_tab_view.dart';
-import 'package:flutter/material.dart';
-import 'package:flutter/widgets.dart';
-import 'package:intl/intl.dart';
 
 class ShopView extends StatefulWidget {
   const ShopView({Key? key}) : super(key: key);
