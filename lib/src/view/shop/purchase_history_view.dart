@@ -2,6 +2,10 @@
 // Use of this source code is governed by a
 // BSD-style license that can be found in the LICENSE file.
 
+// Flutter imports:
+import 'package:flutter/material.dart';
+
+// Project imports:
 import 'package:duo_tracker/src/admob/banner_ad_list.dart';
 import 'package:duo_tracker/src/admob/banner_ad_utils.dart';
 import 'package:duo_tracker/src/component/common_card_header_text.dart';
@@ -12,7 +16,6 @@ import 'package:duo_tracker/src/repository/model/purchase_history_model.dart';
 import 'package:duo_tracker/src/repository/service/purchase_history_service.dart';
 import 'package:duo_tracker/src/utils/date_time_formatter.dart';
 import 'package:duo_tracker/src/view/shop/purchase_history_tab_type.dart';
-import 'package:flutter/material.dart';
 
 class PurchaseHistoryView extends StatefulWidget {
   const PurchaseHistoryView({

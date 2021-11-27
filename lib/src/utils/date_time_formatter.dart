@@ -2,9 +2,12 @@
 // Use of this source code is governed by a
 // BSD-style license that can be found in the LICENSE file.
 
+// Package imports:
+import 'package:intl/intl.dart';
+
+// Project imports:
 import 'package:duo_tracker/src/const/date_format_pattern.dart';
 import 'package:duo_tracker/src/repository/preference/common_shared_preferences_key.dart';
-import 'package:intl/intl.dart';
 
 class DateTimeFormatter {
   /// The datetime format

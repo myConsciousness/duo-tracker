@@ -2,6 +2,18 @@
 // Use of this source code is governed by a
 // BSD-style license that can be found in the LICENSE file.
 
+// Flutter imports:
+import 'package:flutter/cupertino.dart';
+import 'package:flutter/material.dart';
+import 'package:flutter/painting.dart';
+import 'package:flutter/rendering.dart';
+import 'package:flutter/widgets.dart';
+
+// Package imports:
+import 'package:flutter_speed_dial/flutter_speed_dial.dart';
+import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+
+// Project imports:
 import 'package:duo_tracker/src/admob/banner_ad_list.dart';
 import 'package:duo_tracker/src/admob/banner_ad_utils.dart';
 import 'package:duo_tracker/src/admob/interstitial_ad_utils.dart';
@@ -9,35 +21,28 @@ import 'package:duo_tracker/src/component/common_app_bar_titles.dart';
 import 'package:duo_tracker/src/component/common_learned_word_card.dart';
 import 'package:duo_tracker/src/component/common_nested_scroll_view.dart';
 import 'package:duo_tracker/src/component/const/filter_pattern.dart';
-import 'package:duo_tracker/src/component/dialog/network_error_dialog.dart';
-import 'package:duo_tracker/src/component/dialog/switch_language_dialog.dart';
-import 'package:duo_tracker/src/component/snackbar/success_snack_bar.dart';
-import 'package:duo_tracker/src/http/network.dart';
-import 'package:duo_tracker/src/repository/preference/interstitial_ad_shared_preferences_key.dart';
-import 'package:duo_tracker/src/repository/utils/shared_preferences_utils.dart';
-import 'package:duo_tracker/src/view/folder/folder_type.dart';
 import 'package:duo_tracker/src/component/const/match_pattern.dart';
 import 'package:duo_tracker/src/component/dialog/loading_dialog.dart';
+import 'package:duo_tracker/src/component/dialog/network_error_dialog.dart';
 import 'package:duo_tracker/src/component/dialog/select_filter_method_dialog.dart';
 import 'package:duo_tracker/src/component/dialog/select_search_method_dialog.dart';
 import 'package:duo_tracker/src/component/dialog/select_sort_method_dialog.dart';
+import 'package:duo_tracker/src/component/dialog/switch_language_dialog.dart';
 import 'package:duo_tracker/src/component/loading.dart';
-import 'package:duo_tracker/src/repository/preference/common_shared_preferences_key.dart';
-import 'package:duo_tracker/src/repository/model/learned_word_model.dart';
-import 'package:duo_tracker/src/repository/service/learned_word_service.dart';
+import 'package:duo_tracker/src/component/snackbar/success_snack_bar.dart';
+import 'package:duo_tracker/src/http/network.dart';
 import 'package:duo_tracker/src/http/utils/duolingo_api_utils.dart';
+import 'package:duo_tracker/src/repository/model/learned_word_model.dart';
+import 'package:duo_tracker/src/repository/preference/common_shared_preferences_key.dart';
+import 'package:duo_tracker/src/repository/preference/interstitial_ad_shared_preferences_key.dart';
+import 'package:duo_tracker/src/repository/service/learned_word_service.dart';
+import 'package:duo_tracker/src/repository/utils/shared_preferences_utils.dart';
 import 'package:duo_tracker/src/utils/language_converter.dart';
+import 'package:duo_tracker/src/view/folder/folder_type.dart';
 import 'package:duo_tracker/src/view/overview/auto_sync_scheduler.dart';
 import 'package:duo_tracker/src/view/overview/overview_tab_type.dart';
 import 'package:duo_tracker/src/view/overview/word_filter.dart';
 import 'package:duo_tracker/src/view/settings/overview_settings_view.dart';
-import 'package:flutter/cupertino.dart';
-import 'package:flutter/material.dart';
-import 'package:flutter/painting.dart';
-import 'package:flutter/rendering.dart';
-import 'package:flutter/widgets.dart';
-import 'package:flutter_speed_dial/flutter_speed_dial.dart';
-import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 
 class OverviewView extends StatefulWidget {
   const OverviewView({
@@ -153,7 +158,7 @@ class _OverviewViewState extends State<OverviewView> {
         DateTime.now().millisecondsSinceEpoch,
       );
 
-      await _buildAppBarSubTitle();
+      super.setState(() {});
 
       await InterstitialAdUtils.showInterstitialAd(
         context: context,
@@ -246,19 +251,6 @@ class _OverviewViewState extends State<OverviewView> {
       title: 'Saving sort order',
       future: _learnedWordService.replaceSortOrdersByIds(learnedWords),
     );
-  }
-
-  Future<String> _buildAppBarSubTitle() async {
-    final fromLanguage =
-        await CommonSharedPreferencesKey.currentFromLanguage.getString();
-    final learningLanguage =
-        await CommonSharedPreferencesKey.currentLearningLanguage.getString();
-    final fromLanguageName =
-        LanguageConverter.toName(languageCode: fromLanguage);
-    final learningLanguageName =
-        LanguageConverter.toName(languageCode: learningLanguage);
-
-    return '$fromLanguageName → $learningLanguageName';
   }
 
   String get _appBarTitle {
@@ -413,9 +405,7 @@ class _OverviewViewState extends State<OverviewView> {
                 );
                 await _searchLearnedWords();
 
-                super.setState(() {
-                  _buildAppBarSubTitle();
-                });
+                super.setState(() {});
               },
             );
           },
@@ -437,19 +427,7 @@ class _OverviewViewState extends State<OverviewView> {
       return _buildSearchBar();
     }
 
-    return FutureBuilder(
-      future: _buildAppBarSubTitle(),
-      builder: (BuildContext context, AsyncSnapshot snapshot) {
-        if (!snapshot.hasData) {
-          return const Loading();
-        }
-
-        return CommonAppBarTitles(
-          title: _appBarTitle,
-          subTitle: snapshot.data,
-        );
-      },
-    );
+    return CommonAppBarTitles(title: _appBarTitle);
   }
 
   Widget _buildListView() => FutureBuilder(

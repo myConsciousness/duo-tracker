@@ -2,8 +2,11 @@
 // Use of this source code is governed by a
 // BSD-style license that can be found in the LICENSE file.
 
-import 'package:duo_tracker/src/http/duolingo_api.dart';
+// Package imports:
 import 'package:http/http.dart' as http;
+
+// Project imports:
+import 'package:duo_tracker/src/http/duolingo_api.dart';
 import 'package:duo_tracker/src/http/request/request.dart';
 
 class VersionInfoRequest extends Request {

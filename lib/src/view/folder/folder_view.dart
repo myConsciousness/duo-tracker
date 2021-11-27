@@ -2,6 +2,13 @@
 // Use of this source code is governed by a
 // BSD-style license that can be found in the LICENSE file.
 
+// Flutter imports:
+import 'package:flutter/material.dart';
+
+// Package imports:
+import 'package:intl/intl.dart';
+
+// Project imports:
 import 'package:duo_tracker/src/admob/banner_ad_list.dart';
 import 'package:duo_tracker/src/admob/banner_ad_utils.dart';
 import 'package:duo_tracker/src/component/add_new_folder_button.dart';
@@ -9,20 +16,17 @@ import 'package:duo_tracker/src/component/common_app_bar_titles.dart';
 import 'package:duo_tracker/src/component/common_card_header_text.dart';
 import 'package:duo_tracker/src/component/common_divider.dart';
 import 'package:duo_tracker/src/component/common_nested_scroll_view.dart';
-import 'package:duo_tracker/src/component/snackbar/info_snack_bar.dart';
-import 'package:duo_tracker/src/utils/date_time_formatter.dart';
-import 'package:duo_tracker/src/view/folder/folder_type.dart';
 import 'package:duo_tracker/src/component/dialog/confirm_dialog.dart';
 import 'package:duo_tracker/src/component/dialog/edit_folder_dialog.dart';
 import 'package:duo_tracker/src/component/loading.dart';
+import 'package:duo_tracker/src/component/snackbar/info_snack_bar.dart';
 import 'package:duo_tracker/src/repository/model/folder_model.dart';
 import 'package:duo_tracker/src/repository/preference/common_shared_preferences_key.dart';
 import 'package:duo_tracker/src/repository/service/folder_item_service.dart';
 import 'package:duo_tracker/src/repository/service/folder_service.dart';
-import 'package:duo_tracker/src/utils/language_converter.dart';
+import 'package:duo_tracker/src/utils/date_time_formatter.dart';
 import 'package:duo_tracker/src/view/folder/folder_items_view.dart';
-import 'package:flutter/material.dart';
-import 'package:intl/intl.dart';
+import 'package:duo_tracker/src/view/folder/folder_type.dart';
 
 class FolderView extends StatefulWidget {
   const FolderView({
@@ -38,9 +42,6 @@ class FolderView extends StatefulWidget {
 }
 
 class _FolderViewState extends State<FolderView> {
-  /// The app bar subtitle
-  String _appBarSubTitle = 'N/A';
-
   /// The banner ad list
   final _bannerAdList = BannerAdList.newInstance();
 
@@ -60,27 +61,6 @@ class _FolderViewState extends State<FolderView> {
   void dispose() {
     _bannerAdList.dispose();
     super.dispose();
-  }
-
-  @override
-  void initState() {
-    super.initState();
-    _buildAppBarSubTitle();
-  }
-
-  Future<void> _buildAppBarSubTitle() async {
-    final fromLanguage =
-        await CommonSharedPreferencesKey.currentFromLanguage.getString();
-    final learningLanguage =
-        await CommonSharedPreferencesKey.currentLearningLanguage.getString();
-    final fromLanguageName =
-        LanguageConverter.toName(languageCode: fromLanguage);
-    final learningLanguageName =
-        LanguageConverter.toName(languageCode: learningLanguage);
-
-    super.setState(() {
-      _appBarSubTitle = '$fromLanguageName → $learningLanguageName';
-    });
   }
 
   Future<void> _sortCards({
@@ -326,10 +306,7 @@ class _FolderViewState extends State<FolderView> {
   @override
   Widget build(BuildContext context) => Scaffold(
         body: CommonNestedScrollView(
-          title: CommonAppBarTitles(
-            title: _appBarTitle,
-            subTitle: _appBarSubTitle,
-          ),
+          title: CommonAppBarTitles(title: _appBarTitle),
           actions: [
             IconButton(
               tooltip: 'Add Folder',

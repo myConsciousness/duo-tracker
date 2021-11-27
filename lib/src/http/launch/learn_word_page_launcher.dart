@@ -2,10 +2,15 @@
 // Use of this source code is governed by a
 // BSD-style license that can be found in the LICENSE file.
 
+// Flutter imports:
+import 'package:flutter/material.dart';
+
+// Package imports:
+import 'package:url_launcher/url_launcher.dart';
+
+// Project imports:
 import 'package:duo_tracker/src/http/duolingo_page_launcher.dart';
 import 'package:duo_tracker/src/http/launch/page_launcher.dart';
-import 'package:flutter/material.dart';
-import 'package:url_launcher/url_launcher.dart';
 
 class LearnWordPageLauncher extends PageLauncher {
   /// The required parameter for learning language

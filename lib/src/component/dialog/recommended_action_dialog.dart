@@ -2,7 +2,15 @@
 // Use of this source code is governed by a
 // BSD-style license that can be found in the LICENSE file.
 
+// Flutter imports:
+import 'package:flutter/material.dart';
+
+// Package imports:
 import 'package:awesome_dialog/awesome_dialog.dart';
+import 'package:flutter_flavor/flutter_flavor.dart';
+import 'package:url_launcher/url_launcher.dart';
+
+// Project imports:
 import 'package:duo_tracker/src/admob/reawarded_ad_utils.dart';
 import 'package:duo_tracker/src/component/common_dialog_submit_button.dart';
 import 'package:duo_tracker/src/component/common_dialog_title.dart';
@@ -14,9 +22,6 @@ import 'package:duo_tracker/src/utils/disable_all_ad_support.dart';
 import 'package:duo_tracker/src/view/shop/disable_ad_pattern.dart';
 import 'package:duo_tracker/src/view/shop/disable_ad_product_type.dart';
 import 'package:duo_tracker/src/view/shop/shop_view.dart';
-import 'package:flutter/material.dart';
-import 'package:flutter_flavor/flutter_flavor.dart';
-import 'package:url_launcher/url_launcher.dart';
 
 /// The dialog
 late AwesomeDialog _dialog;

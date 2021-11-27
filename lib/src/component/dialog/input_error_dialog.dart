@@ -2,8 +2,11 @@
 // Use of this source code is governed by a
 // BSD-style license that can be found in the LICENSE file.
 
-import 'package:duo_tracker/src/component/dialog/warning_dialog.dart';
+// Flutter imports:
 import 'package:flutter/material.dart';
+
+// Project imports:
+import 'package:duo_tracker/src/component/dialog/warning_dialog.dart';
 
 Future<void> showInputErrorDialog<T>({
   required BuildContext context,

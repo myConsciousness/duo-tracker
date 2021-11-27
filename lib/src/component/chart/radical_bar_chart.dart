@@ -2,9 +2,14 @@
 // Use of this source code is governed by a
 // BSD-style license that can be found in the LICENSE file.
 
-import 'package:duo_tracker/src/repository/model/chart_data_source_model.dart';
+// Flutter imports:
 import 'package:flutter/material.dart';
+
+// Package imports:
 import 'package:syncfusion_flutter_charts/charts.dart';
+
+// Project imports:
+import 'package:duo_tracker/src/repository/model/chart_data_source_model.dart';
 
 class RadicalBarChart extends StatelessWidget {
   /// The chart title

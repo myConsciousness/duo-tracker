@@ -2,9 +2,10 @@
 // Use of this source code is governed by a
 // BSD-style license that can be found in the LICENSE file.
 
-import 'package:duo_tracker/src/view/folder/folder_type.dart';
+// Project imports:
 import 'package:duo_tracker/src/repository/folder_repository.dart';
 import 'package:duo_tracker/src/repository/model/folder_model.dart';
+import 'package:duo_tracker/src/view/folder/folder_type.dart';
 
 class FolderService extends FolderRepository {
   /// The internal constructor.

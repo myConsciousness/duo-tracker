@@ -2,6 +2,10 @@
 // Use of this source code is governed by a
 // BSD-style license that can be found in the LICENSE file.
 
+// Flutter imports:
+import 'package:flutter/material.dart';
+
+// Project imports:
 import 'package:duo_tracker/src/admob/banner_ad_list.dart';
 import 'package:duo_tracker/src/admob/banner_ad_utils.dart';
 import 'package:duo_tracker/src/component/common_app_bar_titles.dart';
@@ -11,10 +15,8 @@ import 'package:duo_tracker/src/component/loading.dart';
 import 'package:duo_tracker/src/repository/model/tip_and_note_model.dart';
 import 'package:duo_tracker/src/repository/preference/common_shared_preferences_key.dart';
 import 'package:duo_tracker/src/repository/service/tip_and_note_service.dart';
-import 'package:duo_tracker/src/utils/language_converter.dart';
 import 'package:duo_tracker/src/view/lesson_tips_view.dart';
 import 'package:duo_tracker/src/view/tips/tips_and_notes_tab_type.dart';
-import 'package:flutter/material.dart';
 
 class TipsAndNotesView extends StatefulWidget {
   const TipsAndNotesView({
@@ -30,30 +32,19 @@ class TipsAndNotesView extends StatefulWidget {
 }
 
 class _TipsAndNotesViewState extends State<TipsAndNotesView> {
-  /// The app bar sub itle
-  String _appBarSubTitle = '';
-
-  /// The tip and note service
-  final _tipAndNoteService = TipAndNoteService.getInstance();
+  /// The app bar title
+  final String _appBarTitle = 'Tips & Notes';
 
   /// The banner ad list
   final _bannerAdList = BannerAdList.newInstance();
 
-  @override
-  void didChangeDependencies() {
-    super.didChangeDependencies();
-  }
+  /// The tip and note service
+  final _tipAndNoteService = TipAndNoteService.getInstance();
 
   @override
   void dispose() {
     _bannerAdList.dispose();
     super.dispose();
-  }
-
-  @override
-  void initState() {
-    super.initState();
-    _buildAppBarSubTitle();
   }
 
   Widget _buildTipAndNoteCard({
@@ -181,21 +172,6 @@ class _TipsAndNotesViewState extends State<TipsAndNotesView> {
     );
   }
 
-  Future<void> _buildAppBarSubTitle() async {
-    final fromLanguage =
-        await CommonSharedPreferencesKey.currentFromLanguage.getString();
-    final learningLanguage =
-        await CommonSharedPreferencesKey.currentLearningLanguage.getString();
-    final fromLanguageName =
-        LanguageConverter.toName(languageCode: fromLanguage);
-    final learningLanguageName =
-        LanguageConverter.toName(languageCode: learningLanguage);
-
-    super.setState(() {
-      _appBarSubTitle = '$fromLanguageName → $learningLanguageName';
-    });
-  }
-
   Future<List<TipAndNote>> _fetchDataSource() async {
     final userId = await CommonSharedPreferencesKey.userId.getString();
     final fromLanguage =
@@ -231,10 +207,7 @@ class _TipsAndNotesViewState extends State<TipsAndNotesView> {
   @override
   Widget build(BuildContext context) => Scaffold(
         body: CommonNestedScrollView(
-          title: CommonAppBarTitles(
-            title: 'Tips & Notes',
-            subTitle: _appBarSubTitle,
-          ),
+          title: CommonAppBarTitles(title: _appBarTitle),
           body: FutureBuilder(
             future: _fetchDataSource(),
             builder: (_, AsyncSnapshot snapshot) {

@@ -2,6 +2,13 @@
 // Use of this source code is governed by a
 // BSD-style license that can be found in the LICENSE file.
 
+// Flutter imports:
+import 'package:flutter/material.dart';
+
+// Package imports:
+import 'package:intl/intl.dart';
+
+// Project imports:
 import 'package:duo_tracker/src/component/common_divider.dart';
 import 'package:duo_tracker/src/component/common_tappable_list_title.dart';
 import 'package:duo_tracker/src/component/const/match_pattern.dart';
@@ -17,8 +24,6 @@ import 'package:duo_tracker/src/component/dialog/warning_dialog.dart';
 import 'package:duo_tracker/src/component/loading.dart';
 import 'package:duo_tracker/src/repository/preference/common_shared_preferences_key.dart';
 import 'package:duo_tracker/src/repository/service/learned_word_service.dart';
-import 'package:flutter/material.dart';
-import 'package:intl/intl.dart';
 
 class OverviewSettingsView extends StatefulWidget {
   const OverviewSettingsView({Key? key}) : super(key: key);

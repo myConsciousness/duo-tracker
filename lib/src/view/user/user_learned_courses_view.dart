@@ -2,6 +2,14 @@
 // Use of this source code is governed by a
 // BSD-style license that can be found in the LICENSE file.
 
+// Flutter imports:
+import 'package:flutter/material.dart';
+import 'package:flutter/widgets.dart';
+
+// Package imports:
+import 'package:intl/intl.dart';
+
+// Project imports:
 import 'package:duo_tracker/src/admob/banner_ad_list.dart';
 import 'package:duo_tracker/src/admob/banner_ad_utils.dart';
 import 'package:duo_tracker/src/component/common_app_bar_title.dart';
@@ -12,9 +20,6 @@ import 'package:duo_tracker/src/component/text_with_horizontal_divider.dart';
 import 'package:duo_tracker/src/repository/model/course_model.dart';
 import 'package:duo_tracker/src/repository/service/course_service.dart';
 import 'package:duo_tracker/src/utils/language_converter.dart';
-import 'package:flutter/material.dart';
-import 'package:flutter/widgets.dart';
-import 'package:intl/intl.dart';
 
 class UserLearnedCoursesView extends StatefulWidget {
   const UserLearnedCoursesView({Key? key}) : super(key: key);

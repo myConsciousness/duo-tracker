@@ -2,9 +2,10 @@
 // Use of this source code is governed by a
 // BSD-style license that can be found in the LICENSE file.
 
-import 'package:duo_tracker/src/repository/utils/boolean_text.dart';
+// Project imports:
 import 'package:duo_tracker/src/repository/chart_repository.dart';
 import 'package:duo_tracker/src/repository/model/chart_data_source_model.dart';
+import 'package:duo_tracker/src/repository/utils/boolean_text.dart';
 import 'package:duo_tracker/src/view/analysis/proficiency_range.dart';
 
 class ChartService extends ChartRepository {

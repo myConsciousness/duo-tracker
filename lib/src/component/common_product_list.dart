@@ -2,10 +2,13 @@
 // Use of this source code is governed by a
 // BSD-style license that can be found in the LICENSE file.
 
+// Flutter imports:
+import 'package:flutter/material.dart';
+
+// Project imports:
 import 'package:duo_tracker/src/component/common_product_item.dart';
 import 'package:duo_tracker/src/view/shop/disable_ad_pattern.dart';
 import 'package:duo_tracker/src/view/shop/disable_ad_product_type.dart';
-import 'package:flutter/material.dart';
 
 class CommonProductList extends StatelessWidget {
   const CommonProductList({

@@ -2,11 +2,16 @@
 // Use of this source code is governed by a
 // BSD-style license that can be found in the LICENSE file.
 
+// Flutter imports:
+import 'package:flutter/material.dart';
+
+// Package imports:
+import 'package:google_mobile_ads/google_mobile_ads.dart';
+
+// Project imports:
 import 'package:duo_tracker/flavors.dart';
 import 'package:duo_tracker/src/admob/duo_tracker_admob_unit_ids.dart';
 import 'package:duo_tracker/src/utils/disable_banner_ad_support.dart';
-import 'package:flutter/material.dart';
-import 'package:google_mobile_ads/google_mobile_ads.dart';
 
 class BannerAdUtils {
   static Widget createBannerAdWidget(BannerAd bannerAd) => SizedBox(

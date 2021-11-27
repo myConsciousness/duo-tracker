@@ -2,8 +2,11 @@
 // Use of this source code is governed by a
 // BSD-style license that can be found in the LICENSE file.
 
-import 'package:duo_tracker/src/repository/const/column/chart_column.dart';
+// Flutter imports:
 import 'package:flutter/material.dart';
+
+// Project imports:
+import 'package:duo_tracker/src/repository/const/column/chart_column.dart';
 
 class ChartDataSource {
   ChartDataSource.from({

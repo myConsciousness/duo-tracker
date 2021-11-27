@@ -2,9 +2,12 @@
 // Use of this source code is governed by a
 // BSD-style license that can be found in the LICENSE file.
 
+// Flutter imports:
+import 'package:flutter/material.dart';
+
+// Project imports:
 import 'package:duo_tracker/src/const/product_button_state.dart';
 import 'package:duo_tracker/src/utils/disable_all_ad_support.dart';
-import 'package:flutter/material.dart';
 
 /// The enum represents product all button state.
 enum ProductAllButtonState {

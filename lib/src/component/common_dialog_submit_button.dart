@@ -2,8 +2,11 @@
 // Use of this source code is governed by a
 // BSD-style license that can be found in the LICENSE file.
 
-import 'package:awesome_dialog/awesome_dialog.dart';
+// Flutter imports:
 import 'package:flutter/material.dart';
+
+// Package imports:
+import 'package:awesome_dialog/awesome_dialog.dart';
 
 class CommonDialogSubmitButton extends StatelessWidget {
   const CommonDialogSubmitButton({

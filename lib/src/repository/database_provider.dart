@@ -2,10 +2,15 @@
 // Use of this source code is governed by a
 // BSD-style license that can be found in the LICENSE file.
 
-import 'package:duo_tracker/src/repository/const/sql/create_table_statement.dart';
-import 'package:sqflite/sqflite.dart';
-import 'package:path/path.dart';
+// Flutter imports:
 import 'package:flutter/services.dart' show rootBundle;
+
+// Package imports:
+import 'package:path/path.dart';
+import 'package:sqflite/sqflite.dart';
+
+// Project imports:
+import 'package:duo_tracker/src/repository/const/sql/create_table_statement.dart';
 
 class DatabaseProvider {
   /// The internal constructor for singleton.

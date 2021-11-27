@@ -2,8 +2,11 @@
 // Use of this source code is governed by a
 // BSD-style license that can be found in the LICENSE file.
 
-import 'package:duo_tracker/src/admob/duo_tracker_admob_unit_ids.dart';
+// Package imports:
 import 'package:google_mobile_ads/google_mobile_ads.dart';
+
+// Project imports:
+import 'package:duo_tracker/src/admob/duo_tracker_admob_unit_ids.dart';
 
 class RewardedAdResolver {
   /// The internal constructor.

@@ -2,12 +2,15 @@
 // Use of this source code is governed by a
 // BSD-style license that can be found in the LICENSE file.
 
+// Flutter imports:
+import 'package:flutter/material.dart';
+
+// Project imports:
 import 'package:duo_tracker/flavors.dart';
 import 'package:duo_tracker/src/admob/rewarded_ad_resolver.dart';
 import 'package:duo_tracker/src/component/dialog/error_dialog.dart';
 import 'package:duo_tracker/src/repository/preference/rewarded_ad_shared_preferences.dart';
 import 'package:duo_tracker/src/utils/disable_full_screen_ad_support.dart';
-import 'package:flutter/material.dart';
 
 class RewardedAdUtils {
   static Future<void> showRewarededAd({

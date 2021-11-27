@@ -2,7 +2,14 @@
 // Use of this source code is governed by a
 // BSD-style license that can be found in the LICENSE file.
 
+// Flutter imports:
+import 'package:flutter/material.dart';
+
+// Package imports:
 import 'package:awesome_dialog/awesome_dialog.dart';
+import 'package:quiver/iterables.dart';
+
+// Project imports:
 import 'package:duo_tracker/src/component/add_new_folder_button.dart';
 import 'package:duo_tracker/src/component/common_dialog_cancel_button.dart';
 import 'package:duo_tracker/src/component/common_dialog_submit_button.dart';
@@ -17,8 +24,6 @@ import 'package:duo_tracker/src/repository/preference/common_shared_preferences_
 import 'package:duo_tracker/src/repository/service/folder_item_service.dart';
 import 'package:duo_tracker/src/repository/service/folder_service.dart';
 import 'package:duo_tracker/src/view/folder/folder_type.dart';
-import 'package:flutter/material.dart';
-import 'package:quiver/iterables.dart';
 
 late AwesomeDialog _dialog;
 late List<bool> _checkMarkers;
