@@ -26,6 +26,9 @@ enum InterstitialAdSharedPreferencesKey {
   /// The count play audio
   countPlayAudio,
 
+  /// The count play all audio
+  countPlayAllAudio,
+
   // The count download word hint
   countDownloadWordHint,
 
@@ -50,6 +53,8 @@ extension KeyFeature on InterstitialAdSharedPreferencesKey {
         return 'count_sync_user';
       case InterstitialAdSharedPreferencesKey.countPlayAudio:
         return 'count_play_audio';
+      case InterstitialAdSharedPreferencesKey.countPlayAllAudio:
+        return 'count_play_all_audio';
       case InterstitialAdSharedPreferencesKey.countDownloadWordHint:
         return 'count_download_word_hint';
       case InterstitialAdSharedPreferencesKey.immediately:
@@ -73,6 +78,8 @@ extension KeyFeature on InterstitialAdSharedPreferencesKey {
         return 2;
       case InterstitialAdSharedPreferencesKey.countPlayAudio:
         return 5;
+      case InterstitialAdSharedPreferencesKey.countPlayAllAudio:
+        return 3;
       case InterstitialAdSharedPreferencesKey.countDownloadWordHint:
         return 5;
       case InterstitialAdSharedPreferencesKey.immediately:
