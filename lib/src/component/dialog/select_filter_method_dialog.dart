@@ -42,6 +42,10 @@ Future<T?> showSelectFilterMethodDialog<T>({
   final fromLanguage =
       await CommonSharedPreferencesKey.currentFromLanguage.getString();
 
+  final filterPatternCode =
+      await CommonSharedPreferencesKey.filterPattern.getInt();
+  _filterPattern = FilterPatternExt.toEnum(code: filterPatternCode);
+
   await _refreshDataSource(
     filterPattern: _filterPattern,
     userId: userId,
@@ -184,6 +188,10 @@ Future<T?> showSelectFilterMethodDialog<T>({
 
                           return;
                         }
+
+                        await CommonSharedPreferencesKey.filterPattern.setInt(
+                          _filterPattern.code,
+                        );
 
                         onPressedOk.call(_filterPattern, _selectedItems);
 

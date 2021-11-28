@@ -35,6 +35,9 @@ enum CommonSharedPreferencesKey {
   /// The sort pattern
   sortPattern,
 
+  /// The filter pattern
+  filterPattern,
+
   //! The Search Config ↑
 
   //! The Score Goals ↓
@@ -140,6 +143,8 @@ extension KeyFeature on CommonSharedPreferencesKey {
         return 'sort_item';
       case CommonSharedPreferencesKey.sortPattern:
         return 'sort_pattern';
+      case CommonSharedPreferencesKey.filterPattern:
+        return 'filter_pattern';
       case CommonSharedPreferencesKey.scoreGoalsDailyXp:
         return 'score_goals_daily_xp';
       case CommonSharedPreferencesKey.scoreGoalsWeeklyXp:
