@@ -25,7 +25,7 @@ enum FilterPattern {
   gender,
 }
 
-extension FilterItemExt on FilterPattern {
+extension FilterPatternExt on FilterPattern {
   int get code {
     switch (this) {
       case FilterPattern.none:
@@ -58,5 +58,17 @@ extension FilterItemExt on FilterPattern {
       case FilterPattern.gender:
         return LearnedWordColumn.gender;
     }
+  }
+
+  static FilterPattern toEnum({
+    required int code,
+  }) {
+    for (final filterPattern in FilterPattern.values) {
+      if (filterPattern.code == code) {
+        return filterPattern;
+      }
+    }
+
+    return FilterPattern.lesson;
   }
 }

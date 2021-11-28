@@ -65,14 +65,22 @@ class _OverviewViewState extends State<OverviewView> {
   /// The banner ad list
   final _bannerAdList = BannerAdList.newInstance();
 
+  /// The filter pattern
   FilterPattern _filterPattern = FilterPattern.none;
 
   /// The learned word service
   final _learnedWordService = LearnedWordService.getInstance();
 
+  /// The match pattern for searching
   MatchPattern _matchPattern = MatchPattern.partial;
+
+  /// The word for searching
   String _searchWord = '';
+
+  /// The flag represents user is searching or not
   bool _searching = false;
+
+  /// The selected items for filtering
   List<String> _selectedFilterItems = [];
 
   @override
@@ -82,16 +90,44 @@ class _OverviewViewState extends State<OverviewView> {
     super.dispose();
   }
 
-  @override
-  void initState() {
-    super.initState();
+  Future<void> _asyncDispose() async {
+    await _resetMatchPattern();
+    await _resetSortPattern();
+    await _resetFilterPattern();
   }
 
-  Future<void> _asyncDispose() async {
-    // Reset filter config
+  Future<void> _resetMatchPattern() async {
     await CommonSharedPreferencesKey.matchPattern.setInt(-1);
+  }
+
+  Future<void> _resetSortPattern() async {
     await CommonSharedPreferencesKey.sortItem.setInt(-1);
     await CommonSharedPreferencesKey.sortPattern.setInt(-1);
+  }
+
+  Future<void> _resetFilterPattern() async {
+    await CommonSharedPreferencesKey.filterPattern.setInt(-1);
+    _selectedFilterItems = [];
+  }
+
+  Future<void> _resetStateOnSwitched() async {
+    await _resetMatchPattern();
+    await _resetSortPattern();
+    await _resetFilterPattern();
+
+    final matchPatternCode =
+        await SharedPreferencesUtils.getCurrentIntValueOrDefault(
+      currentKey: CommonSharedPreferencesKey.matchPattern,
+      defaultKey: CommonSharedPreferencesKey.overviewDefaultMatchPattern,
+    );
+
+    super.setState(() {
+      _matchPattern = MatchPatternExt.toEnum(code: matchPatternCode);
+      _filterPattern = FilterPattern.none;
+
+      _searching = false;
+      _searchWord = '';
+    });
   }
 
   Future<List<LearnedWord>> _fetchDataSource() async {
@@ -131,6 +167,9 @@ class _OverviewViewState extends State<OverviewView> {
             learningLanguage: switchLearningLanguage,
           ),
         );
+
+        // Reset filter and search state
+        await _resetStateOnSwitched();
 
         final fromLanguageName =
             LanguageConverter.toName(languageCode: switchFromLanguage);
@@ -301,8 +340,9 @@ class _OverviewViewState extends State<OverviewView> {
   }) async {
     final matchPatternCode =
         await SharedPreferencesUtils.getCurrentIntValueOrDefault(
-            currentKey: CommonSharedPreferencesKey.matchPattern,
-            defaultKey: CommonSharedPreferencesKey.overviewDefaultMatchPattern);
+      currentKey: CommonSharedPreferencesKey.matchPattern,
+      defaultKey: CommonSharedPreferencesKey.overviewDefaultMatchPattern,
+    );
 
     super.setState(() {
       _searchWord = searchWord;
@@ -475,8 +515,10 @@ class _OverviewViewState extends State<OverviewView> {
           children: _buildFloatingActions(),
         ),
         body: CommonNestedScrollView(
-          title: _buildAppBarTitle(
-            searching: _searching,
+          title: SingleChildScrollView(
+            child: _buildAppBarTitle(
+              searching: _searching,
+            ),
           ),
           actions: _buildActions(),
           body: _buildListView(),
