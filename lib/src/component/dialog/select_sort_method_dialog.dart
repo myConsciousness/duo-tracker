@@ -133,8 +133,7 @@ AwesomeDialog _buildDialog({
 
                       await InterstitialAdUtils.showInterstitialAd(
                         context: context,
-                        sharedPreferencesKey:
-                            InterstitialAdSharedPreferencesKey.countSortWords,
+                        key: InterstitialAdSharedPreferencesKey.countSortWords,
                       );
                     },
                   ),

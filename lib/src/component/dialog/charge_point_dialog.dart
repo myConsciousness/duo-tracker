@@ -48,8 +48,7 @@ Future<T?> showChargePointDialog<T>({
                   pressEvent: () async {
                     await RewardedAdUtils.showRewarededAd(
                       context: context,
-                      sharedPreferencesKey:
-                          RewardedAdSharedPreferencesKey.rewardImmediately,
+                      key: RewardedAdSharedPreferencesKey.rewardImmediately,
                       onRewarded: onRewarded,
                       showForce: true,
                     );

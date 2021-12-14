@@ -5,13 +5,14 @@
 // Flutter imports:
 import 'package:flutter/material.dart';
 
+// Package imports:
+import 'package:duolingo4d/duolingo4d.dart';
+
 // Project imports:
 import 'package:duo_tracker/src/http/adapter/api_adapter.dart';
 import 'package:duo_tracker/src/http/api_response.dart';
 import 'package:duo_tracker/src/http/const/error_type.dart';
 import 'package:duo_tracker/src/http/const/from_api.dart';
-import 'package:duo_tracker/src/http/duolingo_api.dart';
-import 'package:duo_tracker/src/http/http_status.dart';
 import 'package:duo_tracker/src/repository/preference/common_shared_preferences_key.dart';
 
 class SwitchLanguageApiAdapter extends ApiAdapter {
@@ -21,11 +22,12 @@ class SwitchLanguageApiAdapter extends ApiAdapter {
     final params = const <String, String>{},
   }) async {
     try {
-      final response =
-          await DuolingoApi.switchLanguage.request.send(params: params);
-      final httpStatus = HttpStatus.from(code: response.statusCode);
+      final response = await Duolingo.instance.switchLanguage(
+        fromLanguage: params['fromLanguage'],
+        learningLanguage: params['learningLanguage'],
+      );
 
-      if (httpStatus.isAccepted) {
+      if (response.status.isOk) {
         await CommonSharedPreferencesKey.currentFromLanguage
             .setString(params['fromLanguage']);
         await CommonSharedPreferencesKey.currentLearningLanguage
@@ -35,12 +37,12 @@ class SwitchLanguageApiAdapter extends ApiAdapter {
           fromApi: FromApi.switchLanguage,
           errorType: ErrorType.none,
         );
-      } else if (httpStatus.isClientError) {
+      } else if (response.status.isClientError) {
         return ApiResponse.from(
           fromApi: FromApi.switchLanguage,
           errorType: ErrorType.client,
         );
-      } else if (httpStatus.isServerError) {
+      } else if (response.status.isServerError) {
         return ApiResponse.from(
           fromApi: FromApi.switchLanguage,
           errorType: ErrorType.server,

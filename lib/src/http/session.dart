@@ -5,6 +5,7 @@
 // Package imports:
 import 'package:http/http.dart' as http;
 
+@Deprecated('The process has been delegated to Duolingo4D.')
 class Session {
   /// The internal constructor for singleton.
   Session._internal();

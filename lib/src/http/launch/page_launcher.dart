@@ -5,20 +5,22 @@
 // Flutter imports:
 import 'package:flutter/material.dart';
 
+// Package imports:
+import 'package:duolingo4d/duolingo4d.dart';
+
 // Project imports:
-import 'package:duo_tracker/src/component/dialog/loading_dialog.dart';
 import 'package:duo_tracker/src/component/dialog/network_error_dialog.dart';
 import 'package:duo_tracker/src/http/launch/launcher.dart';
 import 'package:duo_tracker/src/http/network.dart';
-import 'package:duo_tracker/src/http/session.dart';
-import 'package:duo_tracker/src/http/utils/duolingo_api_utils.dart';
 
 abstract class PageLauncher extends Launcher {
-  /// The session
-  final _session = Session.getInstance();
+  /// Returns the new instance of [PageLauncher] based on an argument.
+  PageLauncher.from({
+    required this.session,
+  });
 
-  /// Returns the session
-  Session get session => _session;
+  /// The session
+  final DuolingoSession session;
 
   @override
   Future<bool> execute({
@@ -28,14 +30,6 @@ abstract class PageLauncher extends Launcher {
     if (!await Network.isConnected()) {
       await showNetworkErrorDialog(context: context);
       return false;
-    }
-
-    if (_session.headers.isEmpty) {
-      await showLoadingDialog(
-        context: context,
-        title: 'Authenticating Account',
-        future: DuolingoApiUtils.authenticateAccount(context: context),
-      );
     }
 
     return await doExecute(

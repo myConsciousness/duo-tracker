@@ -2,13 +2,11 @@
 // Use of this source code is governed by a
 // BSD-style license that can be found in the LICENSE file.
 
-// Dart imports:
-import 'dart:convert';
-
 // Flutter imports:
 import 'package:flutter/material.dart';
 
 // Package imports:
+import 'package:duolingo4d/duolingo4d.dart' as duolingo;
 import 'package:intl/intl.dart';
 
 // Project imports:
@@ -16,8 +14,6 @@ import 'package:duo_tracker/src/http/adapter/api_adapter.dart';
 import 'package:duo_tracker/src/http/api_response.dart';
 import 'package:duo_tracker/src/http/const/error_type.dart';
 import 'package:duo_tracker/src/http/const/from_api.dart';
-import 'package:duo_tracker/src/http/duolingo_api.dart';
-import 'package:duo_tracker/src/http/http_status.dart';
 import 'package:duo_tracker/src/repository/model/course_model.dart';
 import 'package:duo_tracker/src/repository/model/skill_model.dart';
 import 'package:duo_tracker/src/repository/model/tip_and_note_model.dart';
@@ -52,27 +48,23 @@ class UserApiAdapter extends ApiAdapter {
   }) async {
     try {
       final userId = await CommonSharedPreferencesKey.userId.getString();
-      final response =
-          await DuolingoApi.user.request.send(params: {'userId': userId});
-      final httpStatus = HttpStatus.from(code: response.statusCode);
+      final response = await duolingo.Duolingo.instance.user(userId: userId);
 
-      if (httpStatus.isAccepted) {
-        final jsonMap = jsonDecode(utf8.decode(response.body.runes.toList()));
-
-        await _updateUser(userId: userId, json: jsonMap);
-        await _refreshCourse(json: jsonMap);
-        await _refreshSkill(json: jsonMap);
+      if (response.status.isOk) {
+        await _updateUser(response: response);
+        await _refreshCourse(response: response);
+        await _refreshSkill(response: response);
 
         return ApiResponse.from(
           fromApi: FromApi.user,
           errorType: ErrorType.none,
         );
-      } else if (httpStatus.isClientError) {
+      } else if (response.status.isClientError) {
         return ApiResponse.from(
           fromApi: FromApi.user,
           errorType: ErrorType.client,
         );
-      } else if (httpStatus.isServerError) {
+      } else if (response.status.isServerError) {
         return ApiResponse.from(
           fromApi: FromApi.user,
           errorType: ErrorType.server,
@@ -92,24 +84,23 @@ class UserApiAdapter extends ApiAdapter {
   }
 
   Future<void> _updateUser({
-    required String userId,
-    required Map<String, dynamic> json,
+    required duolingo.UserResponse response,
   }) async {
-    final learningLanguage = json['trackingProperties']['learning_language'];
-    final fromLanguage = json['fromLanguage'];
+    final learningLanguage = response.trackingProperty.learningLanguage;
+    final fromLanguage = response.fromLanguage;
 
     final now = DateTime.now();
     await _userService.replaceByUserId(
       user: User.from(
-        userId: userId,
-        username: json['username'] ?? '',
-        name: json['name'] ?? '',
-        bio: json['bio'] ?? '',
-        email: json['email'] ?? '',
-        location: json['location'] ?? '',
-        profileCountry: json['profileCountry'] ?? '',
-        inviteUrl: json['inviteURL'] ?? '',
-        currentCourseId: json['currentCourseId'] ?? '',
+        userId: response.id,
+        username: response.username,
+        name: response.name,
+        bio: response.biography,
+        email: response.email,
+        location: '',
+        profileCountry: response.profileCountry,
+        inviteUrl: response.inviteUrl,
+        currentCourseId: response.currentCourseId,
         learningLanguage: learningLanguage,
         fromLanguage: fromLanguage,
         formalLearningLanguage: LanguageConverter.toFormalLanguageCode(
@@ -118,18 +109,18 @@ class UserApiAdapter extends ApiAdapter {
         formalFromLanguage: LanguageConverter.toFormalLanguageCode(
           languageCode: fromLanguage,
         ),
-        timezone: json['timezone'] ?? '',
-        timezoneOffset: json['timezoneOffset'] ?? '',
-        pictureUrl: json['picture'] ?? '',
-        plusStatus: json['plusStatus'] ?? '',
-        lingots: json['lingots'],
-        gems: json['gems'],
-        totalXp: json['totalXp'],
-        xpGoal: json['xpGoal'],
-        weeklyXp: json['weeklyXp'],
-        monthlyXp: json['monthlyXp'],
-        xpGoalMetToday: json['xpGoalMetToday'],
-        streak: json['streak'],
+        timezone: response.timezone,
+        timezoneOffset: response.timezoneOffset,
+        pictureUrl: response.pictureUrl,
+        plusStatus: response.plusStatus,
+        lingots: response.lingots,
+        gems: response.gems,
+        totalXp: response.totalXp,
+        xpGoal: response.xpGoal,
+        weeklyXp: response.weeklyXp,
+        monthlyXp: response.monthlyXp,
+        xpGoalMetToday: response.xpGoalMetToday,
+        streak: response.streak,
         createdAt: now,
         updatedAt: now,
       ),
@@ -142,25 +133,25 @@ class UserApiAdapter extends ApiAdapter {
   }
 
   Future<void> _refreshCourse({
-    required Map<String, dynamic> json,
+    required duolingo.UserResponse response,
   }) async {
     await _courseService.deleteAll();
 
     final courses = <Course>[];
     final now = DateTime.now();
-    for (final Map<String, dynamic> course in json['courses']) {
+    for (final course in response.courses) {
       courses.add(
         Course.from(
-          courseId: course['id'],
-          title: course['title'],
+          courseId: course.id,
+          title: course.title,
           formalLearningLanguage: LanguageConverter.toFormalLanguageCode(
-            languageCode: course['learningLanguage'],
+            languageCode: course.learningLanguage,
           ),
           formalFromLanguage: LanguageConverter.toFormalLanguageCode(
-            languageCode: course['fromLanguage'],
+            languageCode: course.fromLanguage,
           ),
-          xp: course['xp'],
-          crowns: course['crowns'],
+          xp: course.xp,
+          crowns: course.crowns,
           createdAt: now,
           updatedAt: now,
         ),
@@ -171,7 +162,7 @@ class UserApiAdapter extends ApiAdapter {
   }
 
   Future<void> _refreshSkill({
-    required Map<String, dynamic> json,
+    required duolingo.UserResponse response,
   }) async {
     await _skillService.deleteAll();
 
@@ -186,42 +177,39 @@ class UserApiAdapter extends ApiAdapter {
         LanguageConverter.toFormalLanguageCode(languageCode: learningLanguage);
 
     final now = DateTime.now();
-    for (final List<dynamic> skillsInternal in json['currentCourse']
-        ['skills']) {
+    for (final skill in response.currentCourse.skills) {
       final skills = <Skill>[];
-      for (final Map<String, dynamic> skill in skillsInternal) {
-        final skillId = skill['id'];
-        final skillName = skill['name'];
+      final skillId = skill.id;
+      final skillName = skill.name;
 
-        skills.add(
-          Skill.from(
+      skills.add(
+        Skill.from(
+          skillId: skillId,
+          name: skillName,
+          shortName: skill.shortName,
+          urlName: skill.urlName,
+          accessible: skill.isAccessible,
+          iconId: skill.iconId,
+          lessons: skill.lessons,
+          strength: skill.proficiency,
+          lastLessonPerfect: skill.isPerfectOnLastLesson,
+          finishedLevels: skill.finishedLevels,
+          levels: skill.levels,
+          tipAndNoteId: await _fetchTipAndNoteId(
             skillId: skillId,
-            name: skillName,
-            shortName: skill['shortName'],
-            urlName: skill['urlName'],
-            accessible: skill['accessible'] ?? false,
-            iconId: skill['iconId'],
-            lessons: skill['lessons'],
-            strength: skill['strength'] ?? 0,
-            lastLessonPerfect: skill['lastLessonPerfect'],
-            finishedLevels: skill['finishedLevels'],
-            levels: skill['levels'],
-            tipAndNoteId: await _fetchTipAndNoteId(
-              skillId: skillId,
-              skillName: skillName,
-              content: skill['tipsAndNotes'] ?? '',
-              userId: userId,
-              fromLanguage: fromLanguage,
-              learningLanguage: learningLanguage,
-              formalFromLanguage: formalFromLanguage,
-              formalLearningLanguage: formalLearningLanguage,
-              now: now,
-            ),
-            createdAt: now,
-            updatedAt: now,
+            skillName: skillName,
+            content: skill.tipsAndNotes,
+            userId: userId,
+            fromLanguage: fromLanguage,
+            learningLanguage: learningLanguage,
+            formalFromLanguage: formalFromLanguage,
+            formalLearningLanguage: formalLearningLanguage,
+            now: now,
           ),
-        );
-      }
+          createdAt: now,
+          updatedAt: now,
+        ),
+      );
 
       await _skillService.insertAll(skills: skills);
     }

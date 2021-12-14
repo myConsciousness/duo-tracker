@@ -66,8 +66,7 @@ Widget _buildDialogBody() => StatefulBuilder(
                   pressEvent: () async {
                     await RewardedAdUtils.showRewarededAd(
                       context: context,
-                      sharedPreferencesKey:
-                          RewardedAdSharedPreferencesKey.rewardImmediately,
+                      key: RewardedAdSharedPreferencesKey.rewardImmediately,
                       onRewarded: (_) async {
                         await DisableAllAdSupport.disable(
                           disableAdPattern: DisableAdPattern.m5,

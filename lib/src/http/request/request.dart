@@ -8,6 +8,8 @@ import 'package:flutter/material.dart';
 // Package imports:
 import 'package:http/http.dart' as http;
 
+@Deprecated('The process has been delegated to Duolingo4D.')
+
 /// The class that represents http request.
 abstract class Request {
   Future<http.Response> send({Map<String, String> params});

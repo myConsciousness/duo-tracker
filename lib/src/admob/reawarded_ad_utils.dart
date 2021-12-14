@@ -7,15 +7,14 @@ import 'package:flutter/material.dart';
 
 // Project imports:
 import 'package:duo_tracker/flavors.dart';
-import 'package:duo_tracker/src/admob/rewarded_ad_resolver.dart';
-import 'package:duo_tracker/src/component/dialog/error_dialog.dart';
+import 'package:duo_tracker/src/admob/rewarded_ad.dart';
 import 'package:duo_tracker/src/repository/preference/rewarded_ad_shared_preferences.dart';
 import 'package:duo_tracker/src/utils/disable_full_screen_ad_support.dart';
 
 class RewardedAdUtils {
   static Future<void> showRewarededAd({
     required BuildContext context,
-    required RewardedAdSharedPreferencesKey sharedPreferencesKey,
+    required RewardedAdSharedPreferencesKey key,
     required Function(int amount) onRewarded,
     bool showForce = false,
   }) async {
@@ -24,36 +23,30 @@ class RewardedAdUtils {
     }
 
     if (!showForce) {
-      if (await _adDisabled(sharedPreferencesKey: sharedPreferencesKey)) {
+      if (await _adDisabled(key: key)) {
         return;
       }
     }
 
-    int count = await sharedPreferencesKey.getInt();
+    int count = await key.getInt();
+    count++;
 
-    if (count >= sharedPreferencesKey.limitCount) {
-      final rewardedAdResolver = RewardedAdResolver.getInstance();
+    if (count >= key.limit) {
+      final rewardedAd = RewardedAd.instance;
 
-      if (rewardedAdResolver.adLoaded) {
-        await rewardedAdResolver.showRewardedAd(
-          onRewarded: onRewarded,
-        );
-        await sharedPreferencesKey.setInt(0);
-      } else {
-        await showErrorDialog(
-          context: context,
-          title: 'No Ads are ready to show',
-          content: 'Failed to load ads to get rewards. Please try again.',
-        );
-      }
+      await rewardedAd.show(
+        onRewarded: (amount) async {
+          await onRewarded.call(amount);
+          await key.setInt(0);
+        },
+      );
     } else {
-      count++;
-      await sharedPreferencesKey.setInt(count);
+      key.setInt(count);
     }
   }
 
   static Future<bool> _adDisabled({
-    required RewardedAdSharedPreferencesKey sharedPreferencesKey,
+    required RewardedAdSharedPreferencesKey key,
   }) async {
     if (!await DisableFullScreenAdSupport.isEnabled()) {
       return false;
@@ -64,10 +57,10 @@ class RewardedAdUtils {
       return false;
     }
 
-    int count = await sharedPreferencesKey.getInt();
+    int count = await key.getInt();
 
     count++;
-    await sharedPreferencesKey.setInt(count);
+    await key.setInt(count);
 
     return true;
   }

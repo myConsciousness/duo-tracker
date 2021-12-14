@@ -2,11 +2,6 @@
 // Use of this source code is governed by a
 // BSD-style license that can be found in the LICENSE file.
 
-// Project imports:
-import 'package:duo_tracker/src/http/launch/launcher.dart';
-import 'package:duo_tracker/src/http/launch/learn_word_page_launcher.dart';
-import 'package:duo_tracker/src/http/launch/select_language_page_launcher.dart';
-
 enum DuolingoPageLauncher {
   /// The learn word
   learnWord,
@@ -22,15 +17,6 @@ extension DuolingoPageLauncherExt on DuolingoPageLauncher {
         return 'https://www.duolingo.com/skill';
       case DuolingoPageLauncher.selectLangauge:
         return 'https://www.duolingo.com/courses';
-    }
-  }
-
-  Launcher get build {
-    switch (this) {
-      case DuolingoPageLauncher.learnWord:
-        return LearnWordPageLauncher();
-      case DuolingoPageLauncher.selectLangauge:
-        return SelectLanguagePageLauncher();
     }
   }
 }

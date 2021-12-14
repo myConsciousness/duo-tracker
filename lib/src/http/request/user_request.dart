@@ -10,6 +10,7 @@ import 'package:duo_tracker/src/http/duolingo_api.dart';
 import 'package:duo_tracker/src/http/request/request.dart';
 import 'package:duo_tracker/src/http/session.dart';
 
+@Deprecated('The process has been delegated to Duolingo4D.')
 class UserRequest extends Request {
   /// The internal constructor for singleton.
   UserRequest._internal();

@@ -4,8 +4,6 @@
 
 // Flutter imports:
 import 'package:flutter/material.dart';
-import 'package:flutter/painting.dart';
-import 'package:flutter/widgets.dart';
 
 // Package imports:
 import 'package:awesome_dialog/awesome_dialog.dart';

@@ -3,7 +3,6 @@
 // BSD-style license that can be found in the LICENSE file.
 
 // Flutter imports:
-import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 
 // Package imports:

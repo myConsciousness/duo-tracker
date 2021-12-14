@@ -4,7 +4,6 @@
 
 // Flutter imports:
 import 'package:flutter/material.dart';
-import 'package:flutter/widgets.dart';
 
 // Package imports:
 import 'package:awesome_dialog/awesome_dialog.dart';
@@ -95,8 +94,7 @@ class _ShopViewState extends State<ShopView> {
                   pressEvent: () async {
                     await RewardedAdUtils.showRewarededAd(
                       context: context,
-                      sharedPreferencesKey:
-                          RewardedAdSharedPreferencesKey.rewardImmediately,
+                      key: RewardedAdSharedPreferencesKey.rewardImmediately,
                       onRewarded: (int amount) async =>
                           await _refreshPointOnRewarded(
                         rewardedAmount: amount,
@@ -185,7 +183,7 @@ class _ShopViewState extends State<ShopView> {
     if (disableAdPattern == DisableAdPattern.m5) {
       await RewardedAdUtils.showRewarededAd(
         context: context,
-        sharedPreferencesKey: RewardedAdSharedPreferencesKey.rewardImmediately,
+        key: RewardedAdSharedPreferencesKey.rewardImmediately,
         onRewarded: (_) async {
           await DisableAdContext.from(
             disableAdProductType: productType,

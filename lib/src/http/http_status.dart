@@ -2,6 +2,7 @@
 // Use of this source code is governed by a
 // BSD-style license that can be found in the LICENSE file.
 
+@Deprecated('The process has been delegated to Duolingo4D.')
 class HttpStatus {
   /// Returns the new instance of [HttpStatus] based on [code] passed as an argument.
   HttpStatus.from({

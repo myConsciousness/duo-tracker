@@ -6,6 +6,7 @@
 import 'package:flutter/material.dart';
 
 // Package imports:
+import 'package:duolingo4d/duolingo4d.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 // Project imports:
@@ -13,6 +14,10 @@ import 'package:duo_tracker/src/http/duolingo_page_launcher.dart';
 import 'package:duo_tracker/src/http/launch/page_launcher.dart';
 
 class SelectLanguagePageLauncher extends PageLauncher {
+  SelectLanguagePageLauncher.from({
+    required DuolingoSession session,
+  }) : super.from(session: session);
+
   @override
   Future<bool> doExecute({
     required BuildContext context,
@@ -20,6 +25,6 @@ class SelectLanguagePageLauncher extends PageLauncher {
   }) async =>
       await launch(
         DuolingoPageLauncher.selectLangauge.url,
-        headers: super.session.headers,
+        headers: super.session.requestHeader.toMap(),
       );
 }

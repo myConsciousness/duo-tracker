@@ -8,6 +8,7 @@ import 'package:flutter/material.dart';
 // Package imports:
 import 'package:awesome_dialog/awesome_dialog.dart';
 import 'package:dropdown_below/dropdown_below.dart';
+import 'package:duolingo4d/duolingo4d.dart';
 
 // Project imports:
 import 'package:duo_tracker/src/component/common_dialog_cancel_button.dart';
@@ -16,7 +17,7 @@ import 'package:duo_tracker/src/component/common_dialog_title.dart';
 import 'package:duo_tracker/src/component/common_transparent_text_button.dart';
 import 'package:duo_tracker/src/component/dialog/input_error_dialog.dart';
 import 'package:duo_tracker/src/component/text_with_horizontal_divider.dart';
-import 'package:duo_tracker/src/http/duolingo_page_launcher.dart';
+import 'package:duo_tracker/src/http/launch/select_language_page_launcher.dart';
 import 'package:duo_tracker/src/repository/preference/common_shared_preferences_key.dart';
 import 'package:duo_tracker/src/repository/service/supported_language_service.dart';
 import 'package:duo_tracker/src/utils/language_converter.dart';
@@ -156,9 +157,11 @@ Future<T?> showSwitchLanguageDialog<T>({
                 ),
                 CommonTransparentTextButton(
                   title: 'Select on Duolingo!',
-                  onPressed: () async => await DuolingoPageLauncher
-                      .selectLangauge.build
-                      .execute(context: context),
+                  onPressed: () async {
+                    final session = Duolingo.instance.session;
+                    await SelectLanguagePageLauncher.from(session: session)
+                        .execute(context: context);
+                  },
                 ),
               ],
             ),
