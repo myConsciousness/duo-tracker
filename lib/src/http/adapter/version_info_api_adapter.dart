@@ -2,19 +2,17 @@
 // Use of this source code is governed by a
 // BSD-style license that can be found in the LICENSE file.
 
-// Dart imports:
-import 'dart:convert';
-
 // Flutter imports:
 import 'package:flutter/material.dart';
+
+// Package imports:
+import 'package:duolingo4d/duolingo4d.dart';
 
 // Project imports:
 import 'package:duo_tracker/src/http/adapter/api_adapter.dart';
 import 'package:duo_tracker/src/http/api_response.dart';
 import 'package:duo_tracker/src/http/const/error_type.dart';
 import 'package:duo_tracker/src/http/const/from_api.dart';
-import 'package:duo_tracker/src/http/duolingo_api.dart';
-import 'package:duo_tracker/src/http/http_status.dart';
 import 'package:duo_tracker/src/repository/model/supported_language_model.dart';
 import 'package:duo_tracker/src/repository/model/voice_configuration_model.dart';
 import 'package:duo_tracker/src/repository/service/supported_language_service.dart';
@@ -34,30 +32,27 @@ class VersionInfoAdapter extends ApiAdapter {
     params = const <String, String>{},
   }) async {
     try {
-      final response = await DuolingoApi.versionInfo.request.send();
-      final httpStatus = HttpStatus.from(code: response.statusCode);
+      final response = await Duolingo.instance.versionInfo();
 
-      if (httpStatus.isAccepted) {
-        final jsonMap = jsonDecode(response.body);
-
+      if (response.status.isOk) {
         await _refreshSupportedLanguage(
-          json: jsonMap,
+          response: response,
         );
 
         await _refreshVoiceConfiguration(
-          json: jsonMap,
+          response: response,
         );
 
         return ApiResponse.from(
           fromApi: FromApi.versionInfo,
           errorType: ErrorType.none,
         );
-      } else if (httpStatus.isClientError) {
+      } else if (response.status.isClientError) {
         return ApiResponse.from(
           fromApi: FromApi.versionInfo,
           errorType: ErrorType.client,
         );
-      } else if (httpStatus.isServerError) {
+      } else if (response.status.isServerError) {
         return ApiResponse.from(
           fromApi: FromApi.versionInfo,
           errorType: ErrorType.server,
@@ -77,49 +72,39 @@ class VersionInfoAdapter extends ApiAdapter {
   }
 
   Future<void> _refreshSupportedLanguage({
-    required Map<String, dynamic> json,
+    required VersionInfoResponse response,
   }) async {
     _supportedLanguageService.deleteAll();
 
     final now = DateTime.now();
-    json['supported_directions'].forEach(
-      (fromLanguage, learningLanguages) {
-        learningLanguages.forEach(
-          (learningLanguage) {
-            _supportedLanguageService.insert(
-              SupportedLanguage.from(
-                fromLanguage: fromLanguage,
-                learningLanguage: learningLanguage,
-                formalFromLanguage: LanguageConverter.toFormalLanguageCode(
-                  languageCode: fromLanguage,
-                ),
-                formalLearningLanguage: LanguageConverter.toFormalLanguageCode(
-                  languageCode: learningLanguage,
-                ),
-                createdAt: now,
-                updatedAt: now,
-              ),
-            );
-          },
+    for (final supportedDirection in response.supportedDirections) {
+      for (final learningLanguage in supportedDirection.learningLanguages) {
+        _supportedLanguageService.insert(
+          SupportedLanguage.from(
+            fromLanguage: supportedDirection.fromLanguage,
+            learningLanguage: learningLanguage,
+            formalFromLanguage: LanguageConverter.toFormalLanguageCode(
+              languageCode: supportedDirection.fromLanguage,
+            ),
+            formalLearningLanguage: LanguageConverter.toFormalLanguageCode(
+              languageCode: learningLanguage,
+            ),
+            createdAt: now,
+            updatedAt: now,
+          ),
         );
-      },
-    );
+      }
+    }
   }
 
   Future<void> _refreshVoiceConfiguration({
-    required Map<String, dynamic> json,
+    required VersionInfoResponse response,
   }) async {
     _voiceConfigurationService.deleteAll();
-
-    final ttsBaseUrlHttps = json['tts_base_url'];
-    final ttsBaseUrlHttp = json['tts_base_url_http'];
-    final ttsVoiceConfiguration = json['tts_voice_configuration'];
 
     // Find all supported languages from English
     final supportedLanguages =
         await _supportedLanguageService.findByFromLanguage(fromLanguage: 'en');
-    final Map<String, dynamic> ttsVoiceConfigurations =
-        jsonDecode(ttsVoiceConfiguration['voices']);
 
     final now = DateTime.now();
     for (final supportedLanguage in supportedLanguages) {
@@ -130,15 +115,30 @@ class VersionInfoAdapter extends ApiAdapter {
           formalLanguage: LanguageConverter.toFormalLanguageCode(
             languageCode: learningLanguage,
           ),
-          voiceType:
-              ttsVoiceConfigurations[learningLanguage] ?? learningLanguage,
-          ttsBaseUrlHttps: ttsBaseUrlHttps,
-          ttsBaseUrlHttp: ttsBaseUrlHttp,
+          voiceType: _findVoiceType(
+            learningLanguage: learningLanguage,
+            voiceDirections: response.ttsVoiceConfiguration.voiceDirections,
+          ),
+          ttsBaseUrlHttps: response.ttsBaseUrl,
+          ttsBaseUrlHttp: response.ttsBaseUrl,
           path: 'tts',
           createdAt: now,
           updatedAt: now,
         ),
       );
     }
+  }
+
+  String _findVoiceType({
+    required String learningLanguage,
+    required List<VoiceDirection> voiceDirections,
+  }) {
+    for (final voiceDirection in voiceDirections) {
+      if (learningLanguage == voiceDirection.language) {
+        return voiceDirection.voice;
+      }
+    }
+
+    return '';
   }
 }

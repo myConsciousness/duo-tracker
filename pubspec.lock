@@ -42,7 +42,7 @@ packages:
       name: async
       url: "https://pub.dartlang.org"
     source: hosted
-    version: "2.8.1"
+    version: "2.8.2"
   audioplayers:
     dependency: "direct main"
     description:
@@ -50,6 +50,13 @@ packages:
       url: "https://pub.dartlang.org"
     source: hosted
     version: "0.20.0"
+  authorization_header:
+    dependency: transitive
+    description:
+      name: authorization_header
+      url: "https://pub.dartlang.org"
+    source: hosted
+    version: "1.0.3"
   awesome_dialog:
     dependency: "direct main"
     description:
@@ -64,13 +71,20 @@ packages:
       url: "https://pub.dartlang.org"
     source: hosted
     version: "2.1.0"
+  cache_storage:
+    dependency: transitive
+    description:
+      name: cache_storage
+      url: "https://pub.dartlang.org"
+    source: hosted
+    version: "1.0.0"
   characters:
     dependency: transitive
     description:
       name: characters
       url: "https://pub.dartlang.org"
     source: hosted
-    version: "1.1.0"
+    version: "1.2.0"
   charcode:
     dependency: transitive
     description:
@@ -155,6 +169,13 @@ packages:
       url: "https://pub.dartlang.org"
     source: hosted
     version: "1.0.0"
+  duolingo4d:
+    dependency: "direct main"
+    description:
+      name: duolingo4d
+      url: "https://pub.dartlang.org"
+    source: hosted
+    version: "0.1.3"
   encrypt:
     dependency: "direct main"
     description:
@@ -265,13 +286,6 @@ packages:
       url: "https://pub.dartlang.org"
     source: hosted
     version: "1.2.3"
-  flutter_plugin_android_lifecycle:
-    dependency: transitive
-    description:
-      name: flutter_plugin_android_lifecycle
-      url: "https://pub.dartlang.org"
-    source: hosted
-    version: "2.0.3"
   flutter_speed_dial:
     dependency: "direct main"
     description:
@@ -323,7 +337,7 @@ packages:
       name: google_mobile_ads
       url: "https://pub.dartlang.org"
     source: hosted
-    version: "0.13.4"
+    version: "1.0.1"
   html:
     dependency: transitive
     description:
@@ -401,20 +415,13 @@ packages:
       url: "https://pub.dartlang.org"
     source: hosted
     version: "1.0.1"
-  local_auth:
-    dependency: "direct main"
-    description:
-      name: local_auth
-      url: "https://pub.dartlang.org"
-    source: hosted
-    version: "1.1.8"
   matcher:
     dependency: transitive
     description:
       name: matcher
       url: "https://pub.dartlang.org"
     source: hosted
-    version: "0.12.10"
+    version: "0.12.11"
   meta:
     dependency: transitive
     description:
@@ -749,6 +756,13 @@ packages:
       url: "https://pub.dartlang.org"
     source: hosted
     version: "2.0.0"
+  sweet_cookie_jar:
+    dependency: transitive
+    description:
+      name: sweet_cookie_jar
+      url: "https://pub.dartlang.org"
+    source: hosted
+    version: "1.0.3"
   syncfusion_flutter_charts:
     dependency: "direct main"
     description:
@@ -797,7 +811,7 @@ packages:
       name: test_api
       url: "https://pub.dartlang.org"
     source: hosted
-    version: "0.4.2"
+    version: "0.4.3"
   tint:
     dependency: transitive
     description:
@@ -888,7 +902,7 @@ packages:
       name: vector_math
       url: "https://pub.dartlang.org"
     source: hosted
-    version: "2.1.0"
+    version: "2.1.1"
   video_player:
     dependency: transitive
     description:
@@ -981,5 +995,5 @@ packages:
     source: hosted
     version: "3.1.0"
 sdks:
-  dart: ">=2.14.0 <3.0.0"
+  dart: ">=2.15.0 <3.0.0"
   flutter: ">=2.5.0"

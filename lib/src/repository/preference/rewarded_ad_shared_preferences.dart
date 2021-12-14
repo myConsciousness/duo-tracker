@@ -18,7 +18,7 @@ extension KeyFeature on RewardedAdSharedPreferencesKey {
     }
   }
 
-  int get limitCount {
+  int get limit {
     switch (this) {
       case RewardedAdSharedPreferencesKey.rewardImmediately:
         return 0;

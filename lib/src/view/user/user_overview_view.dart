@@ -3,11 +3,7 @@
 // BSD-style license that can be found in the LICENSE file.
 
 // Flutter imports:
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/painting.dart';
-import 'package:flutter/rendering.dart';
-import 'package:flutter/widgets.dart';
 
 // Package imports:
 import 'package:flutter_speed_dial/flutter_speed_dial.dart';
@@ -449,7 +445,7 @@ class _UserOverviewViewState extends State<UserOverviewView> {
 
     await InterstitialAdUtils.showInterstitialAd(
       context: context,
-      sharedPreferencesKey: InterstitialAdSharedPreferencesKey.countSyncUser,
+      key: InterstitialAdSharedPreferencesKey.countSyncUser,
     );
   }
 

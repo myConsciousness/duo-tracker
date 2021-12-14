@@ -7,12 +7,12 @@ import 'package:flutter/material.dart';
 
 // Package imports:
 import 'package:flutter_flavor/flutter_flavor.dart';
-import 'package:google_mobile_ads/google_mobile_ads.dart';
+import 'package:google_mobile_ads/google_mobile_ads.dart' as admob;
 
 // Project imports:
 import 'package:duo_tracker/main.dart';
-import 'package:duo_tracker/src/admob/interstitial_ad_resolver.dart';
-import 'package:duo_tracker/src/admob/rewarded_ad_resolver.dart';
+import 'package:duo_tracker/src/admob/interstitial_ad.dart';
+import 'package:duo_tracker/src/admob/rewarded_ad.dart';
 import 'package:duo_tracker/src/provider/theme_mode_provider.dart';
 import 'package:duo_tracker/src/utils/wallet_balance.dart';
 import 'flavors.dart';
@@ -20,19 +20,19 @@ import 'flavors.dart';
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await ThemeModeProvider.getInstance().initialize();
-  await MobileAds.instance.initialize();
+  await admob.MobileAds.instance.initialize();
 
-  final configuration = RequestConfiguration(
+  final configuration = admob.RequestConfiguration(
     testDeviceIds: ['12FA608E7D2E2A96D30BE9C3D4A6ACA5'],
-    tagForChildDirectedTreatment: TagForChildDirectedTreatment.yes,
-    maxAdContentRating: MaxAdContentRating.g,
+    tagForChildDirectedTreatment: admob.TagForChildDirectedTreatment.yes,
+    maxAdContentRating: admob.MaxAdContentRating.g,
   );
 
-  await MobileAds.instance.updateRequestConfiguration(configuration);
+  await admob.MobileAds.instance.updateRequestConfiguration(configuration);
 
   await WalletBalance.getInstance().loadCurrentPoint();
-  await InterstitialAdResolver.getInstance().loadInterstitialAd();
-  await RewardedAdResolver.getInstance().loadRewardedAd();
+  await InterstitialAd.instance.load();
+  await RewardedAd.instance.load();
 
   FlavorConfig(
     variables: {

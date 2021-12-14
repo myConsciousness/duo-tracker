@@ -9,6 +9,7 @@ import 'package:http/http.dart' as http;
 import 'package:duo_tracker/src/http/duolingo_api.dart';
 import 'package:duo_tracker/src/http/request/request.dart';
 
+@Deprecated('The process has been delegated to Duolingo4D.')
 class VersionInfoRequest extends Request {
   /// The internal constructor for singleton.
   VersionInfoRequest._internal();

@@ -6,6 +6,7 @@
 import 'package:flutter/material.dart';
 
 // Package imports:
+import 'package:duolingo4d/duolingo4d.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 // Project imports:
@@ -13,6 +14,10 @@ import 'package:duo_tracker/src/http/duolingo_page_launcher.dart';
 import 'package:duo_tracker/src/http/launch/page_launcher.dart';
 
 class LearnWordPageLauncher extends PageLauncher {
+  LearnWordPageLauncher.from({
+    required DuolingoSession session,
+  }) : super.from(session: session);
+
   /// The required parameter for learning language
   static const _paramLearningLanguage = 'learningLanguage';
 
@@ -29,7 +34,7 @@ class LearnWordPageLauncher extends PageLauncher {
 
     return await launch(
       '${DuolingoPageLauncher.learnWord.url}/${params[_paramLearningLanguage]}/${params[_paramSkillUrlTitle]}/1',
-      headers: super.session.headers,
+      headers: super.session.requestHeader.toMap(),
       forceSafariVC: true,
       forceWebView: true,
     );

@@ -10,6 +10,7 @@ import 'package:duo_tracker/src/http/duolingo_api.dart';
 import 'package:duo_tracker/src/http/request/request.dart';
 import 'package:duo_tracker/src/http/session.dart';
 
+@Deprecated('The process has been delegated to Duolingo4D.')
 class WordHintRequest extends Request {
   /// The internal constructor for singleton.
   WordHintRequest._internal();

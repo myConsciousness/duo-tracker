@@ -2,19 +2,17 @@
 // Use of this source code is governed by a
 // BSD-style license that can be found in the LICENSE file.
 
-// Dart imports:
-import 'dart:convert';
-
 // Flutter imports:
 import 'package:flutter/material.dart';
+
+// Package imports:
+import 'package:duolingo4d/duolingo4d.dart';
 
 // Project imports:
 import 'package:duo_tracker/src/http/adapter/api_adapter.dart';
 import 'package:duo_tracker/src/http/api_response.dart';
 import 'package:duo_tracker/src/http/const/error_type.dart';
 import 'package:duo_tracker/src/http/const/from_api.dart';
-import 'package:duo_tracker/src/http/duolingo_api.dart';
-import 'package:duo_tracker/src/http/http_status.dart';
 import 'package:duo_tracker/src/repository/model/learned_word_model.dart';
 import 'package:duo_tracker/src/repository/preference/common_shared_preferences_key.dart';
 import 'package:duo_tracker/src/repository/service/learned_word_service.dart';
@@ -33,14 +31,12 @@ class LearnedWordApiAdapter extends ApiAdapter {
     final params = const <String, String>{},
   }) async {
     try {
-      final response = await DuolingoApi.learnedWord.request.send();
-      final httpStatus = HttpStatus.from(code: response.statusCode);
+      final response = await Duolingo.instance.overview();
 
-      if (httpStatus.isAccepted) {
-        final jsonMap = jsonDecode(response.body);
-        final String languageString = jsonMap['language_string'];
-        final String learningLanguage = jsonMap['learning_language'];
-        final String fromLanguage = jsonMap['from_language'];
+      if (response.status.isOk) {
+        final String languageString = response.languageString;
+        final String learningLanguage = response.learningLanguage;
+        final String fromLanguage = response.fromLanguage;
 
         final formalLearningLanguage = LanguageConverter.toFormalLanguageCode(
           languageCode: learningLanguage,
@@ -54,30 +50,28 @@ class LearnedWordApiAdapter extends ApiAdapter {
 
         int sortOrder = 0;
         final now = DateTime.now();
-        final vocabOverview = jsonMap['vocab_overview'];
-        for (final Map<String, dynamic> overview in vocabOverview) {
-          final String skill = overview['skill'] ?? '';
+        for (final vocabulary in response.vocabularies) {
           learnedWords.add(
             LearnedWord.from(
-              wordId: overview['id'],
+              wordId: vocabulary.id,
               userId: userId,
               languageString: languageString,
               learningLanguage: learningLanguage,
               fromLanguage: fromLanguage,
               formalLearningLanguage: formalLearningLanguage,
               formalFromLanguage: formalFromLanguage,
-              strengthBars: overview['strength_bars'] ?? -1,
-              infinitive: overview['infinitive'] ?? '',
-              wordString: overview['word_string'],
-              normalizedString: overview['normalized_string'] ?? '',
-              pos: overview['pos'] ?? '',
-              lastPracticedMs: overview['last_practiced_ms'] ?? -1,
-              skill: skill,
-              shortSkill: _buildShortSkill(skill: skill),
-              lastPracticed: overview['last_practiced'] ?? '',
-              strength: overview['strength'] ?? 0.0,
-              skillUrlTitle: overview['skill_url_title'] ?? '',
-              gender: overview['gender'] ?? '',
+              strengthBars: vocabulary.strengthBars,
+              infinitive: vocabulary.infinitive,
+              wordString: vocabulary.word,
+              normalizedString: vocabulary.normalizedWord,
+              pos: vocabulary.pos,
+              lastPracticedMs: vocabulary.lastPracticedMs,
+              skill: vocabulary.skill,
+              shortSkill: _buildShortSkill(skill: vocabulary.skill),
+              lastPracticed: vocabulary.lastPracticed,
+              strength: vocabulary.proficiency,
+              skillUrlTitle: vocabulary.skillUrlTitle,
+              gender: vocabulary.gender,
               bookmarked: false,
               completed: false,
               deleted: false,
@@ -96,12 +90,12 @@ class LearnedWordApiAdapter extends ApiAdapter {
           fromApi: FromApi.learnedWord,
           errorType: ErrorType.none,
         );
-      } else if (httpStatus.isClientError) {
+      } else if (response.status.isClientError) {
         return ApiResponse.from(
           fromApi: FromApi.learnedWord,
           errorType: ErrorType.client,
         );
-      } else if (httpStatus.isServerError) {
+      } else if (response.status.isServerError) {
         return ApiResponse.from(
           fromApi: FromApi.learnedWord,
           errorType: ErrorType.server,

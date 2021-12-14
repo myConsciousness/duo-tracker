@@ -53,7 +53,7 @@ class _DuoTrackerState extends State<DuoTracker> {
 
   void _asyncInitState() async {
     await InterstitialAdUtils.showInterstitialAd(
-      sharedPreferencesKey: InterstitialAdSharedPreferencesKey.countOpenApp,
+      key: InterstitialAdSharedPreferencesKey.countOpenApp,
     );
 
     final int datetimeSinceEpock =

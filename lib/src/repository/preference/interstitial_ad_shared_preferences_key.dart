@@ -63,7 +63,7 @@ extension KeyFeature on InterstitialAdSharedPreferencesKey {
     }
   }
 
-  int get limitCount {
+  int get limit {
     switch (this) {
       case InterstitialAdSharedPreferencesKey.countOpenApp:
         return 2;

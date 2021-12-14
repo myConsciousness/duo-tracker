@@ -7,7 +7,7 @@ import 'package:flutter/material.dart';
 
 // Project imports:
 import 'package:duo_tracker/flavors.dart';
-import 'package:duo_tracker/src/admob/interstitial_ad_resolver.dart';
+import 'package:duo_tracker/src/admob/interstitial_ad.dart';
 import 'package:duo_tracker/src/component/dialog/recommended_action_dialog.dart';
 import 'package:duo_tracker/src/component/snackbar/info_snack_bar.dart';
 import 'package:duo_tracker/src/const/operand.dart';
@@ -19,24 +19,24 @@ import 'package:duo_tracker/src/utils/wallet_balance.dart';
 class InterstitialAdUtils {
   static Future<void> showInterstitialAd({
     BuildContext? context,
-    required InterstitialAdSharedPreferencesKey sharedPreferencesKey,
+    required InterstitialAdSharedPreferencesKey key,
   }) async {
     if (F.isPaidBuild) {
       return;
     }
 
-    if (await _adDisabled(sharedPreferencesKey: sharedPreferencesKey)) {
+    if (await _adDisabled(key: key)) {
       return;
     }
 
-    int count = await sharedPreferencesKey.getInt();
+    int count = await key.getInt();
+    count++;
 
-    if (count >= sharedPreferencesKey.limitCount) {
-      final interstitialAdResolver = InterstitialAdResolver.getInstance();
+    if (count >= key.limit) {
+      final interstitialAd = InterstitialAd.instance;
 
-      if (interstitialAdResolver.adLoaded) {
-        await interstitialAdResolver.showInterstitialAd(
-            onAdShowed: (reward) async {
+      await interstitialAd.show(
+        onAdShowed: (reward) async {
           if (context != null) {
             await _refreshPoint(
               context: context,
@@ -46,19 +46,18 @@ class InterstitialAdUtils {
             await _showRecommendationIfNecessary(
               context: context,
             );
-          }
-        });
 
-        await sharedPreferencesKey.setInt(0);
-      }
+            await key.setInt(0);
+          }
+        },
+      );
     } else {
-      count++;
-      await sharedPreferencesKey.setInt(count);
+      await key.setInt(count);
     }
   }
 
   static Future<bool> _adDisabled({
-    required InterstitialAdSharedPreferencesKey sharedPreferencesKey,
+    required InterstitialAdSharedPreferencesKey key,
   }) async {
     if (!await DisableFullScreenAdSupport.isEnabled()) {
       return false;
@@ -69,10 +68,10 @@ class InterstitialAdUtils {
       return false;
     }
 
-    int count = await sharedPreferencesKey.getInt();
+    int count = await key.getInt();
 
     count++;
-    await sharedPreferencesKey.setInt(count);
+    await key.setInt(count);
 
     return true;
   }

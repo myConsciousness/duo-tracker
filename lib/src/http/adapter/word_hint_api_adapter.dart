@@ -2,19 +2,17 @@
 // Use of this source code is governed by a
 // BSD-style license that can be found in the LICENSE file.
 
-// Dart imports:
-import 'dart:convert';
-
 // Flutter imports:
 import 'package:flutter/material.dart';
+
+// Package imports:
+import 'package:duolingo4d/duolingo4d.dart';
 
 // Project imports:
 import 'package:duo_tracker/src/http/adapter/api_adapter.dart';
 import 'package:duo_tracker/src/http/api_response.dart';
 import 'package:duo_tracker/src/http/const/error_type.dart';
 import 'package:duo_tracker/src/http/const/from_api.dart';
-import 'package:duo_tracker/src/http/duolingo_api.dart';
-import 'package:duo_tracker/src/http/http_status.dart';
 import 'package:duo_tracker/src/repository/model/word_hint_model.dart';
 import 'package:duo_tracker/src/repository/preference/common_shared_preferences_key.dart';
 import 'package:duo_tracker/src/repository/service/word_hint_service.dart';
@@ -37,12 +35,15 @@ class WordHintApiAdapter extends ApiAdapter {
     }
 
     try {
-      final response = await DuolingoApi.wordHint.request.send(params: params);
-      final httpStatus = HttpStatus.from(code: response.statusCode);
+      final response = await Duolingo.instance.wordHint(
+        fromLanguage: params['fromLanguage'],
+        learningLanguage: params['learningLanguage'],
+        sentence: params['sentence'],
+      );
 
-      if (httpStatus.isAccepted) {
+      if (response.status.isOk) {
         final hintsMatrix = _createHintsMatrix(
-          json: jsonDecode(response.body),
+          response: response,
         );
 
         if (hintsMatrix.isEmpty) {
@@ -61,12 +62,12 @@ class WordHintApiAdapter extends ApiAdapter {
           fromApi: FromApi.wordHint,
           errorType: ErrorType.none,
         );
-      } else if (httpStatus.isClientError) {
+      } else if (response.status.isClientError) {
         return ApiResponse.from(
           fromApi: FromApi.wordHint,
           errorType: ErrorType.client,
         );
-      } else if (httpStatus.isServerError) {
+      } else if (response.status.isServerError) {
         return ApiResponse.from(
           fromApi: FromApi.wordHint,
           errorType: ErrorType.server,
@@ -86,41 +87,28 @@ class WordHintApiAdapter extends ApiAdapter {
   }
 
   Map<String, List<String>> _createHintsMatrix({
-    required Map<String, dynamic> json,
+    required WordHintResponse response,
   }) {
     final hintsMatrix = <String, List<String>>{};
 
-    for (final Map<String, dynamic> token in json['tokens']) {
-      if (token['hint_table'] == null) {
-        continue;
-      }
+    for (final token in response.tokens) {
+      for (final row in token.table.rows) {
+        final cells = row.cells;
+        for (final cell in cells) {
+          final int colspan = cell.span;
+          final String key = colspan > 0
+              ? _fetchWordString(token: token).substring(0, colspan)
+              : token.value;
 
-      final rows = token['hint_table']['rows'];
+          if (hintsMatrix.containsKey(key)) {
+            final List<String> hintsInternal = hintsMatrix[key]!;
+            final String hint = cell.hint;
 
-      if (rows.isEmpty) {
-        // No hint data
-        return {};
-      }
-
-      for (final Map<String, dynamic> row in rows) {
-        final cells = row['cells'];
-        for (final Map<String, dynamic> cell in cells) {
-          if (cell.isNotEmpty) {
-            final int colspan = cell['colspan'] ?? -1;
-            final String key = colspan > 0
-                ? _fetchWordString(token: token).substring(0, colspan)
-                : token['value'];
-
-            if (hintsMatrix.containsKey(key)) {
-              final List<String> hintsInternal = hintsMatrix[key]!;
-              final String hint = cell['hint'];
-
-              if (!hintsInternal.contains(hint)) {
-                hintsInternal.add(hint);
-              }
-            } else {
-              hintsMatrix[key] = [cell['hint']];
+            if (!hintsInternal.contains(hint)) {
+              hintsInternal.add(hint);
             }
+          } else {
+            hintsMatrix[key] = [cell.hint];
           }
         }
       }
@@ -130,18 +118,17 @@ class WordHintApiAdapter extends ApiAdapter {
   }
 
   String _fetchWordString({
-    required Map<String, dynamic> token,
+    required HintToken token,
   }) {
-    final hintTable = token['hint_table'];
+    final hintTable = token.table;
 
-    if (!hintTable.containsKey('headers')) {
-      return token['value'];
+    if (hintTable.headers.isEmpty) {
+      return token.value;
     }
 
     String wordString = '';
-
-    for (final Map<String, dynamic> header in hintTable['headers']) {
-      wordString += header['token'];
+    for (final header in hintTable.headers) {
+      wordString += header.token;
     }
 
     return wordString;

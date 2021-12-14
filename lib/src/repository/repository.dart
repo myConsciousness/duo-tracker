@@ -4,7 +4,6 @@
 
 // Package imports:
 import 'package:sqflite/sqflite.dart';
-import 'package:sqflite/sqlite_api.dart';
 
 // Project imports:
 import 'package:duo_tracker/src/repository/database_provider.dart';
