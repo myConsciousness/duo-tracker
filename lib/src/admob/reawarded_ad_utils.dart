@@ -8,6 +8,7 @@ import 'package:flutter/material.dart';
 // Project imports:
 import 'package:duo_tracker/flavors.dart';
 import 'package:duo_tracker/src/admob/rewarded_ad.dart';
+import 'package:duo_tracker/src/component/dialog/error_dialog.dart';
 import 'package:duo_tracker/src/repository/preference/rewarded_ad_shared_preferences.dart';
 import 'package:duo_tracker/src/utils/disable_full_screen_ad_support.dart';
 
@@ -34,12 +35,20 @@ class RewardedAdUtils {
     if (count >= key.limit) {
       final rewardedAd = RewardedAd.instance;
 
-      await rewardedAd.show(
-        onRewarded: (amount) async {
-          await onRewarded.call(amount);
-          await key.setInt(0);
-        },
-      );
+      if (rewardedAd.isLoaded) {
+        await rewardedAd.show(
+          onRewarded: (amount) async {
+            await onRewarded.call(amount);
+            await key.setInt(0);
+          },
+        );
+      } else {
+        await showErrorDialog(
+          context: context,
+          title: 'No Ads are ready to show',
+          content: 'Failed to load ads to get rewards. Please try again.',
+        );
+      }
     } else {
       key.setInt(count);
     }

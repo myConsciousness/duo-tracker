@@ -27,7 +27,7 @@ class InterstitialAd {
   /// Returns true if interstitial ad is already loaded, otherwise false.
   bool get isLoaded => _interstitialAd != null;
 
-  Future<void> _load() async => await admob.InterstitialAd.load(
+  Future<void> load() async => await admob.InterstitialAd.load(
         adUnitId: DuoTrackerAdmobUnitIds.getInstance().releaseInterstitial,
         request: const admob.AdRequest(),
         adLoadCallback: admob.InterstitialAdLoadCallback(
@@ -40,7 +40,7 @@ class InterstitialAd {
             _countLoadAttempt++;
 
             if (_countLoadAttempt <= 5) {
-              await _load();
+              await load();
             }
           },
         ),
@@ -50,7 +50,7 @@ class InterstitialAd {
     required Function(int reward) onAdShowed,
   }) async {
     if (!isLoaded) {
-      await _load();
+      await load();
     }
 
     if (isLoaded) {
@@ -69,6 +69,9 @@ class InterstitialAd {
 
       await _interstitialAd!.show();
       _interstitialAd = null;
+
+      // Load next ad.
+      load();
     }
   }
 }

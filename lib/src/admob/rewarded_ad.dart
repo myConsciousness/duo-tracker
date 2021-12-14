@@ -27,7 +27,7 @@ class RewardedAd {
   /// Returns true if rewarded ad is already loaded, otherwise false.
   bool get isLoaded => _rewardedAd != null;
 
-  Future<void> _load() async => await admob.RewardedAd.load(
+  Future<void> load() async => await admob.RewardedAd.load(
         adUnitId: DuoTrackerAdmobUnitIds.getInstance().releaseRewarded,
         request: const admob.AdRequest(),
         rewardedAdLoadCallback: admob.RewardedAdLoadCallback(
@@ -40,7 +40,7 @@ class RewardedAd {
             _countLoadAttempt++;
 
             if (_countLoadAttempt <= 10) {
-              await _load();
+              await load();
             }
           },
         ),
@@ -50,7 +50,7 @@ class RewardedAd {
     required Function(int amount) onRewarded,
   }) async {
     if (!isLoaded) {
-      await _load();
+      await load();
     }
 
     if (isLoaded) {
@@ -71,6 +71,9 @@ class RewardedAd {
       );
 
       _rewardedAd = null;
+
+      // Load next ad.
+      load();
     }
   }
 }
